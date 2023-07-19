@@ -16,7 +16,7 @@ import * as gameAPI from '../../utils/gameApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
 import Button from 'react-bootstrap/Button';
-import { GAME_ACTIONS, NPC, checkPlayerTrait } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, NPC, checkTraits } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
@@ -33,8 +33,8 @@ import { StoryDialog } from '../ui/StoryDialog';
 import { getNodesForNPC, npcIds } from '../../components/GameCompiler/DialogNode';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAsceanHealthUpdateFetch, getCombatFetch, getCombatSettingFetch, getCombatStateUpdate, getCombatStatisticFetch, getCombatTimerFetch, getEffectTickFetch, getEnemyActionFetch, getStalwartFetch, setEnemyWin, setPlayerWin } from '../reducers/combatState';
-import { getAsceanAndInventoryFetch, getAsceanLevelUpFetch, getDrinkFirewaterFetch, getEnemySetupFetch, getGainExperienceFetch, getInteractingLootFetch, getLootDropFetch, getNpcSetupFetch, getOnlyInventoryFetch, getShowDialogFetch } from '../reducers/gameState';
+import { clearNonAggressiveEnemy, clearNpc, getAsceanHealthUpdateFetch, getCombatFetch, getCombatSettingFetch, getCombatStateUpdate, getCombatStatisticFetch, getCombatTimerFetch, getEffectTickFetch, getEnemyActionFetch, getEnemySetupFetch, getNpcSetupFetch, getStalwartFetch, setEnemyWin, setPlayerWin } from '../reducers/combatState';
+import { getAsceanAndInventoryFetch, getAsceanLevelUpFetch, getDrinkFirewaterFetch, getGainExperienceFetch, getInteractingLootFetch, getLootDropFetch, getOnlyInventoryFetch, setShowDialog, setMerchantEquipment } from '../reducers/gameState';
 import PhaserCombatText from '../ui/PhaserCombatText';
 
 export const usePhaserEvent = (event: string, callback: any) => {
@@ -57,20 +57,17 @@ export const useKeyEvent = (event: string, callback: any) => {
 }; 
 
 interface Props {
-    gameState: any;
-    gameDispatch: any;
-    asceanState: any;
-    setAsceanState: React.Dispatch<React.SetStateAction<any>>;
     assets: any;
 };
 
-const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, assets }: Props) => {
+const HostScene = ({ assets }: Props) => {
     const { asceanID } = useParams();
-    const superState = useSelector((state: any) => state);
+    const dispatch = useDispatch();
     const user = useSelector((state: any) => state.user.user);
     const combatState = useSelector((state: any) => state.combat);
     const ascean = useSelector((state: any) => state.game.player);
-    const dispatch = useDispatch();
+    const asceanState = useSelector((state: any) => state.game.asceanState);
+    const gameState = useSelector((state: any) => state.game);
     const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
     const [currentGame, setCurrentGame] = useState<any>(false);
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
@@ -146,10 +143,7 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
     }, []);
 
     useEffect(() => {
-        console.log(ascean, superState, "Ascean in Host Scene");
-    }, [ascean]);
-
-    useEffect(() => {
+        console.log(combatState, "CombatState")
         updateCombatListener(combatState);
     }, [combatState]); 
 
@@ -163,7 +157,7 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
                     }, 1000);
                     
                     return () => {
-                        if (checkPlayerTrait("Kyn'gian", gameState) && gameTimer % 10 === 0) {
+                        if (checkTraits("Kyn'gian", gameState.traits) && gameTimer % 10 === 0) {
                             setStaminaPercentage(staminaPercentage + (combatState.player_attributes.stamina / 100));
                             EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (combatState.player_attributes.stamina / 100)) / 100) * combatState.player_attributes.stamina));
                             dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
@@ -200,42 +194,11 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game');
         };
-    }, [asceanID]);
-
-    // const getAsceanLeveled = async (): Promise<void> => {
-    //     try {
-    //         const firstResponse = await asceanAPI.getCleanAscean(asceanID);
-    //         gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_LEVEL_UP, payload: firstResponse.data });
-    //         const response = await asceanAPI.getAsceanStats(asceanID);
-    //         dispatch({
-    //             type: ACTIONS.SET_PLAYER_LEVEL_UP,
-    //             payload: response.data.data
-    //          });
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error Getting Ascean Leveled');
-    //     };
-    // };
+    }, [asceanID]); 
     
     const levelUpAscean = async (vaEsai: any): Promise<void> => {
         try {
-            dispatch(getAsceanLevelUpFetch(vaEsai));
-            // let response = await asceanAPI.levelUp(vaEsai); 
-            // setAsceanState({
-            //     ...asceanState,
-            //     ascean: response.data,
-            //     constitution: 0,
-            //     strength: 0,
-            //     agility: 0,
-            //     achre: 0,
-            //     caeren: 0,
-            //     kyosir: 0,
-            //     level: response.data.level,
-            //     experience: response.data.experience,
-            //     experienceNeeded: response.data.level * 1000,
-            //     mastery: response.data.mastery,
-            //     faith: response.data.faith,
-            // });
-            // await getAsceanLeveled();
+            dispatch(getAsceanLevelUpFetch(vaEsai)); 
         } catch (err: any) {
             console.log(err.message, 'Error Leveling Up');
         };
@@ -252,40 +215,9 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
 
     const updateEnemyAction = async (e: any): Promise<void> => {
         try {
-            dispatch(getEnemyActionFetch(e));
-            // const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = e;
-            // let enemyData = {
-            //     ...state,
-            //     computer: enemy,
-            //     computer_attributes: combatStats.attributes,
-            //     computer_weapon_one: combatStats.combat_weapon_one,
-            //     computer_weapon_two: combatStats.combat_weapon_two,
-            //     computer_weapon_three: combatStats.combat_weapon_three,
-            //     new_computer_health: health,
-            //     current_computer_health: health,
-            //     computer_health: combatStats.healthTotal,
-            //     computer_defense: combatStats.defense,
-            //     enemyID: '',
-            //     computer_weapons: weapons,
-            //     action: '',
-            //     computer_action: actionData.action,
-            //     computer_counter_guess: actionData.counter,
-            //     computer_damage_type: damageType,
-            //     computerEffects: [],
-            // };
-            // console.log(`%c Enemy Action: "${enemyData.computer_action} ${enemyData.computer_counter_guess}"`, 'color: red; font-size: 16px; font-weight: bold;` ');
-            // let response = await gameAPI.phaserAction(enemyData);
-            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            // dispatch({ type: ACTIONS.REGISTER_ENEMY_ACTIONS, payload: response.data });
-            // response.data.enemyID = enemyID;
-            // await updateCombat(response.data);
-            // await soundEffects(response.data);
-            shakeScreen(gameState.shake);
-            // if (response.data.player_win === true) await handlePlayerWin(response.data);
-            // if (response.data.computer_win === true) await handleComputerWin(response.data);
-            // setTimeout(() => {
-            //     dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
-            // }, 1500);
+            dispatch(getEnemyActionFetch(e)); 
+            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime); 
+            shakeScreen(gameState.shake); 
         } catch (err: any) {
             console.log(err.message, 'Error Updating Enemy Action');
         };
@@ -294,20 +226,15 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
     // const updateState = async (e: any): Promise<void> => dispatch({ type: ACTIONS.SET_UPDATE_STATE, payload: e });
     const updateState = async (e: any) => dispatch(getCombatStateUpdate(e));
 
-    const clearNonAggressiveEnemy = async (e: any): Promise<void> => {
-        // dispatch(getClearNonAggressiveEnemyFetch()); TODO:FIXME:
-        // dispatch({ type: ACTIONS.CLEAR_NON_AGGRESSIVE_ENEMY, payload: null });
-        // gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+    const clearNAEnemy = async (e: any): Promise<void> => {
+        dispatch(clearNonAggressiveEnemy()); 
     };
 
-    const clearNpc = async (e: any): Promise<void> => {
-        // dispatch(getClearNpcFetch()); TODO:FIXME:
-        // dispatch({ type: ACTIONS.CLEAR_NPC, payload: null });
-        // gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+    const clearNPC = async (e: any): Promise<void> => {
+        dispatch(clearNpc()); 
         if (gameState.merchantEquipment.length > 0) {
             await deleteEquipment(gameState.merchantEquipment);
-            // dispatch(getMerchantEquipmentFetch([])); TODO:FIXME:
-            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: [] });
+            dispatch(setMerchantEquipment([])); 
         };
     };
 
@@ -371,30 +298,14 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
     };
 
     const setupEnemy = async (e: any): Promise<void> => {
-        dispatch(getEnemySetupFetch(e));
-        // await getOpponentDialog(e.enemy.name);
-        // gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.game });
-        // setAsceanState({ ...asceanState, 'opponent': e.game.level });
-        // dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_ENEMY, payload: { enemy: e.enemy, health: e.health, enemyID: e.id, isAggressive: e.isAggressive, startedAggressive: e.startedAggressive, isDefeated: e.isDefeated, isTriumphant: e.isTriumphant } }); 
+        dispatch(getEnemySetupFetch(e)); 
     };
 
     const setupNpc = async (e: any): Promise<void> => {
-        dispatch(getNpcSetupFetch(e));
-        // gameDispatch({ type: GAME_ACTIONS.SET_OPPONENT, payload: e.game });
-        // const dialog = getNodesForNPC(npcIds[e.type]);
-        // dispatch({ type: ACTIONS.SET_PHASER_COMPUTER_NPC, payload: { enemy: e.enemy, health: e.health, enemyID: e.id, npcType: e.type } }); 
-        // gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: dialog });
+        console.log(e, 'SETUP NPC');
+        dispatch(getNpcSetupFetch(e)); 
     };
-
-    // const getOpponentDialog = async (enemy: string): Promise<void> => {
-    //     try {
-    //         const response = getNpcDialog(enemy);
-    //         if (!response) return;
-    //         gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
-    //     } catch (err: any) {
-    //         console.log(err.message, '<- Error in Getting an Ascean to Edit')
-    //     };
-    // }; 
+ 
 
     const fetchNpc = async (e: any): Promise<void> => { 
         try {
@@ -425,53 +336,11 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
         };
     }; 
 
-    useEffect(() => {
-        if (!gameState.itemSaved) return;
-        getOnlyInventory();
-        return () => gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
-    }, [gameState, gameState.itemSaved]);
-
-    useEffect(() => {
-        if (!gameState.eqpSwap) return;
-        getAsceanAndInventory();
-        return () => gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: false });
-    }, [gameState, gameState.eqpSwap]);
-
-    useEffect(() => {
-        if (!gameState.removeItem) return;
-        getOnlyInventory();
-        return () => gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: false });
-    }, [gameState, gameState.removeItem]);
-
-    useEffect(() => {
-        if (!gameState.repositionInventory) return;
-        getOnlyInventory();
-        return () => gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: false });
-    }, [gameState, gameState.repositionInventory]);
-
-    // useEffect(() => {
-    //     if (!gameState.saveExp) return;
-    //     saveExperience();
-    //     return () => {
-    //         gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
-    //     };
-    // }, [asceanState, gameState.saveExp]); 
-
-    useEffect(() => {
-        if (!combatState.player_luckout) return;
-        handlePlayerLuckout();
-    }, [combatState.player_luckout]);  
-
     const handlePlayerLuckout = async (): Promise<void> => {
         try {
             playReligion();
             dispatch(getGainExperienceFetch({ asceanState, combatState })); 
-            dispatch(getLootDropFetch({ enemyID: combatState.enemyID, level: combatState.computer.level })); 
-
-            // This is where I dispatch ?? or separate cause handlePlayerWin calls it and such ?? 
-            // await getOneLootDrop(state.computer.level);
-            // await gainExperience(state);
-            // dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
+            dispatch(getLootDropFetch({ enemyID: combatState.enemyID, level: combatState.computer.level }));  
         } catch (err: any) {
             console.log("Error Handling Player Win");
         };
@@ -483,196 +352,16 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
         } catch (err) {
             console.log(err, 'Error!')
         };
-    };
-
-    const getAsceanAndInventory = async (): Promise<void> => {
-        try {
-            dispatch(getAsceanAndInventoryFetch(asceanID)); 
-            // const firstResponse = await asceanAPI.getAsceanAndInventory(asceanID);
-            // gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_AND_INVENTORY, payload: firstResponse.data });
-            // const response = await asceanAPI.getAsceanStats(asceanID);
-            // dispatch({
-            //     type: ACTIONS.SET_PLAYER_SLICK,
-            //     payload: response.data.data
-            // });
-            // gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
-        } catch (err: any) {
-            console.log(err.message, 'Error Getting Ascean Quickly');
-        };
-    };
-
-    const getOnlyInventory = async (): Promise<void> => {
-        try {
-            dispatch(getOnlyInventoryFetch(asceanID)); 
-            // const firstResponse = await asceanAPI.getAsceanInventory(asceanID);
-            // gameDispatch({ type: GAME_ACTIONS.SET_INVENTORY, payload: firstResponse });
-            // gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
-        } catch (err: any) {
-            console.log(err.message, 'Error Getting Ascean Quickly');
-        };
-    };
+    }; 
 
     const drinkFirewater = async (): Promise<void> => {
-        // ascean.firewater.charges
-        if (gameState.player?.firewater?.charges === 0) return;
+        if (ascean?.firewater?.charges === 0) return;
         try {
-            dispatch(getDrinkFirewaterFetch(asceanID)); 
-            // dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
-            // const response = await asceanAPI.drinkFirewater(state.player._id);
-            // gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
-            // gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+            dispatch(getDrinkFirewaterFetch(asceanID));  
         } catch (err: any) {
             console.log(err, "Error Drinking Firewater");
         };
-    };
-
-    // const saveExperience = async (): Promise<void> => {
-    //     console.log('Saving Experience!', gameState.saveExp, state.player_win);
-    //     if (!gameState.saveExp) return;
-    //     try {
-    //         await asceanAPI.saveExperience(asceanState); 
-    //         const cleanRes = await asceanAPI.getCleanAscean(asceanID);
-    //         gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: cleanRes.data });
-    //         dispatch({
-    //             type: ACTIONS.SAVE_EXPERIENCE,
-    //             payload: cleanRes.data
-    //         });
-    //         setAsceanState({
-    //             ...asceanState,
-    //             'ascean': cleanRes.data,
-    //             'currentHealth': cleanRes.data.health.current,
-    //             'constitution': 0,
-    //             'strength': 0,
-    //             'agility': 0,
-    //             'achre': 0,
-    //             'caeren': 0,
-    //             'kyosir': 0,
-    //             'level': cleanRes.data.level,
-    //             'opponent': 0,
-    //             'opponentExp': 0,
-    //             'experience': cleanRes.data.experience,
-    //             'experienceNeeded': cleanRes.data.level * 1000,
-    //             'mastery': cleanRes.data.mastery,
-    //             'faith': cleanRes.data.faith,
-    //         });
-    //         gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: false });
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error Saving Experience');
-    //     };
-    // };
-    
-    const gainExperience = async (data: CombatData): Promise<void> => {
-        try {
-            // dispatch(getGainExperienceFetch({ asceanState, combatState: data })); TODO:FIXME:
-            
-            // let opponentExp: number = Math.round(state.computer.level * 100 * (state.computer.level / state.player.level) + state.player_attributes.rawKyosir);
-            // if (data.prayerData.includes('Avarice')) opponentExp = Math.round(opponentExp * 1.2);
-            // console.log(opponentExp, 'Opponent Exp in Gain Experience');
-            // if (asceanState.ascean.experience + opponentExp >= asceanState.experienceNeeded) {
-            //     setAsceanState({
-            //         ...asceanState,
-            //         'opponentExp': opponentExp,
-            //         'currentHealth': state.new_player_health,
-            //         'experience': asceanState.experienceNeeded,
-            //         'avarice': data.prayerData.includes('Avarice') ? true : false,
-            //     });
-            //     gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
-            // };
-            // if (asceanState.experienceNeeded > asceanState.ascean.experience + opponentExp) {
-            //     setAsceanState({
-            //         ...asceanState,
-            //         'opponentExp': opponentExp,
-            //         'currentHealth': state.new_player_health,
-            //         'experience': Math.round(asceanState.experience + opponentExp),
-            //         'avarice': data.prayerData.includes('Avarice') ? true : false,
-            //     });
-            //     gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
-            // };
-        } catch (err: any) {
-            console.log(err.message, 'Error Gaining Experience');
-        };
     }; 
-    
-    const getOneLootDrop = async (level: number): Promise<void> => {
-        try {
-            // dispatch(getLootDropFetch({ enemyID: combatState.enemyID, level })); TODO:FIXME:
-
-            // let response = await eqpAPI.getLootDrop(level);
-            // gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROPS, payload: response.data[0] });
-            // let roll = Math.floor(Math.random() * 100) + 1;
-            // if (roll <= 25) {
-            //     let second = await eqpAPI.getLootDrop(level);
-            //     gameDispatch({ type: GAME_ACTIONS.SET_LOOT_DROPS, payload: second.data[0] });
-            //     EventEmitter.emit('enemyLootDrop', { enemyID: state.enemyID, drops: [response.data[0], second.data[0]] });
-            // } else {
-            //     EventEmitter.emit('enemyLootDrop', { enemyID: state.enemyID, drops: response.data });
-            // };
-            // gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: false });
-            // if (gameState.player.tutorial.firstLoot === true) await checkTutorial('firstLoot', gameState.player);
-        } catch (err: any) {
-            console.log(err, 'Error Getting Loot Drop');
-        };
-    };
-
-    async function soundEffects(effects: CombatData): Promise<void> {
-        try {
-            if (effects.realized_player_damage > 0) {
-                const soundEffectMap = {
-                    Spooky: playDaethic,
-                    Righteous: playDaethic,
-                    Wild: playWild,
-                    Earth: playEarth,
-                    Fire: playFire,
-                    Frost: playFrost,
-                    Lightning: playLightning,
-                    Sorcery: playSorcery,
-                    Wind: playWind,
-                    Pierce: (weapons: any[]) => (weapons[0].type === "Bow" || weapons[0].type === "Greatbow") ? playBow() : playPierce(),
-                    Slash: playSlash,
-                    Blunt: playBlunt,
-                };
-            
-                const { player_damage_type, weapons } = effects;
-                const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
-                if (soundEffectFn) {
-                    soundEffectFn(weapons);
-                };
-            };
-            if (effects.realized_computer_damage > 0) {
-                const soundEffectMap = {
-                    Spooky: playDaethic,
-                    Righteous: playDaethic,
-                    Wild: playWild,
-                    Earth: playEarth,
-                    Fire: playFire,
-                    Frost: playFrost,
-                    Lightning: playLightning,
-                    Sorcery: playSorcery,
-                    Wind: playWind,
-                    Pierce: (computer_weapons: any[]) => (computer_weapons[0].type === "Bow" || computer_weapons[0].type === 'Greatbow') ? playBow() : playPierce(),
-                    Slash: playSlash,
-                    Blunt: playBlunt,
-                };
-            
-                const { computer_damage_type, computer_weapons } = effects;
-                const soundEffectFn = soundEffectMap[computer_damage_type as keyof typeof soundEffectMap];
-                if (soundEffectFn) {
-                    soundEffectFn(computer_weapons);
-                };
-            };
-            if (effects.religious_success === true) {
-                playReligion();
-            };
-            if (effects.roll_success === true || effects.computer_roll_success === true) {
-                playRoll();
-            };
-            if (effects.counter_success === true || effects.computer_counter_success === true) {
-                playCounter();
-            };
-        } catch (err: any) {
-            console.log(err.message, 'Error Setting Sound Effects')
-        };
-    };
 
     const statFiler = (data: CombatData, win: boolean): Object => {
         const stat = {
@@ -814,13 +503,14 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
    const setWeaponOrder = async (e: any): Promise<void> => {
         try {
             const newWeap = combatState.weapons.filter((w: { _id: string; }) => w?._id === e.target.value);
+            console.log(newWeap, 'New Weapon Order');
             const newWeaponOrder = async () => combatState?.weapons.sort((a: any, b: any) => {
                 return ( a._id === newWeap[0]._id ? -1 : b._id === newWeap[0]._id ? 1 : 0 )
             });
             const res = await newWeaponOrder();
+            console.log(res, 'New Weapon Order');
             playWO();
             dispatch(getCombatSettingFetch({ loadout: res, type: 'Weapon' })); 
-            // dispatch({ type: ACTIONS.SET_WEAPON_ORDER, payload: response });
         } catch (err: any) {
             console.log(err.message, 'Error Setting Weapon Order');
         };
@@ -829,8 +519,7 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
    const setDamageType = async (e: any): Promise<void> => {
         try {    
             playWO();
-            dispatch(getCombatSettingFetch({ damageType: e.target.value, type: 'Damage' }));
-            // dispatch({ type: ACTIONS.SET_DAMAGE_TYPE, payload: e.target.value });
+            dispatch(getCombatSettingFetch({ loadout: e.target.value, type: 'Damage' }));
         } catch (err: any) {
             console.log(err.message, 'Error Setting Damage Type');
         };
@@ -839,8 +528,7 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
    const setPrayerBlessing = async (e: any): Promise<void> => {
         try {
             playWO();
-            dispatch(getCombatSettingFetch({ prayerBlessing: e.target.value, type: 'Prayer' }));
-            // dispatch({ type: ACTIONS.SET_PRAYER_BLESSING, payload: e.target.value });
+            dispatch(getCombatSettingFetch({ loadout: e.target.value, type: 'Prayer' }));
         } catch (err: any) {
             console.log(err.message, 'Error Setting Prayer');
         };
@@ -848,17 +536,9 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
 
     const updateCombatListener = async (data: CombatData) => EventEmitter.emit('update-combat-data', data);
 
-    const updateCombat = async (combatData: CombatData): Promise<void> => {
-        try {
-            EventEmitter.emit('update-combat', combatData);
-        } catch (err: any) {
-            console.log(err.message, 'Error Updating Combat Listener');
-        };
-    };
-
     const toggleCombatHud = (e: { preventDefault: () => void; key: string; keyCode: number }) => {
         e.preventDefault();
-        if (e.key === 'v' || e.key === 'V') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog });
+        if (e.key === 'v' || e.key === 'V') dispatch(setShowDialog(!gameState.showDialog));
         if (e.key === 'c' || e.key === 'C') setShowPlayer((prev: boolean) => !prev);
         if (e.key === 'x' || e.key === 'X') {
             setAsceanViews((prev: string) => {
@@ -918,12 +598,7 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
 
     const combatEngaged = async (e: boolean) => {
         try {
-            dispatch(getCombatFetch(e));
-            // if (e) {
-            //     dispatch({ type: ACTIONS.SET_DUEL, payload: true });
-            // } else {
-            //     dispatch({ type: ACTIONS.CLEAR_DUEL, payload: false });
-            // };
+            dispatch(getCombatFetch(e)); 
         } catch (err: any) {
             console.log(err, "Error Handling Dialog Middleware");
         }; 
@@ -939,8 +614,8 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
 
     useKeyEvent('keydown', toggleCombatHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);
-    usePhaserEvent('clear-non-aggressive-enemy', clearNonAggressiveEnemy);
-    usePhaserEvent('clear-npc', clearNpc);
+    usePhaserEvent('clear-non-aggressive-enemy', clearNAEnemy);
+    usePhaserEvent('clear-npc', clearNPC);
     usePhaserEvent('fetch-enemy', fetchEnemy);
     usePhaserEvent('fetch-npc', fetchNpc);
     usePhaserEvent('setup-enemy', setupEnemy);
@@ -971,18 +646,18 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
                         <h3 style={{ fontSize: '12px', textAlign: 'center' }}>{combatState.player.name}</h3>
                     </Button>
                     { ascean?.journal.entries.length > 0 ?
-                        <StoryJournal quests={ascean.quests} dispatch={dispatch} gameDispatch={gameDispatch} ascean={ascean} />
+                        <StoryJournal ascean={ascean} />
                     : '' }
                     { dialogTag ? (
                         // dispatch(getShowDialogFetch(!gameState.showDialog)) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })
-                        <Button variant='' className='ascean-ui' onClick={() => dispatch(getShowDialogFetch(!gameState.showDialog))}>
+                        <Button variant='' className='ascean-ui' onClick={() => dispatch(setShowDialog(!gameState.showDialog))}>
                             <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>
                         </Button>
                     ) : ( '' ) }
                 </div>
-                <CombatMouseSettings state={combatState} damageType={combatState.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} setWeaponOrder={setWeaponOrder} weapons={combatState.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
+                <CombatMouseSettings damageType={combatState.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} weapons={combatState.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
                 { showPlayer ? (  
-                    <StoryAscean asceanViews={asceanViews} gameState={gameState} gameDispatch={gameDispatch} ascean={combatState.player} damaged={combatState.playerDamaged} state={combatState} dispatch={dispatch} loading={loading} asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+                    <StoryAscean ascean={ascean} asceanViews={asceanViews} loading={loading} levelUpAscean={levelUpAscean} />
                 ) : ( 
                     <div style={{ position: "absolute", zIndex: 1 }}>
                         <CombatUI handleCallback={handleEffectTick} staminaPercentage={staminaPercentage} pauseState={pauseState} />
@@ -998,11 +673,11 @@ const HostScene = ({ gameState, gameDispatch, asceanState, setAsceanState, asset
                         ) : ( '' ) }
                     </div>
                 ) }
-                { gameState.showDialog && gameState.opponent && dialogTag ?    
-                    <StoryDialog state={combatState} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} deleteEquipment={deleteEquipment} />
+                { gameState.showDialog && dialogTag ?    
+                    <StoryDialog state={combatState} deleteEquipment={deleteEquipment} handlePlayerLuckout={handlePlayerLuckout} />
                 : ( '' )}
-                { gameState?.lootDrops.length > 0 && gameState.showLootOne ? (
-                    <LootDropUI gameState={gameState} gameDispatch={gameDispatch} state={combatState} />   
+                { gameState?.lootDrops.length > 0 && gameState.showLoot ? (
+                    <LootDropUI />   
                 ) : ( '' ) }
             </> ) : ( '' ) }
             <div id='story-game' style={{ textAlign: 'center' }} ref={gameRef}></div>

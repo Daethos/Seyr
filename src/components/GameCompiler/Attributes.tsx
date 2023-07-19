@@ -116,7 +116,7 @@ const Attributes = ({ asceanState, setAsceanState }: Props) => {
             };
         };
     };
-    checkPoolTotal();
+    // checkPoolTotal();
 
     function handleConMinus(e: any) {
         e.preventDefault();

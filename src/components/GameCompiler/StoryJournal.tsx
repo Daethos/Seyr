@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
-import Loading from '../../components/Loading/Loading';
 import ToastAlert from '../../components/ToastAlert/ToastAlert';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
@@ -34,16 +33,11 @@ const JournalEntry = ({ entry }: { entry: any }) => {
 
 interface JournalProps {
     ascean: any;
-    dispatch: any;
-    gameDispatch: any;
-    quests: any;
 };
 
-const StoryJournal = ({ dispatch, gameDispatch, ascean, quests }: JournalProps) => {
-    const [questData, setQuestData] = useState<any>(quests[0]);
+const StoryJournal = ({ ascean }: JournalProps) => {
     const [journalEntries, setJournalEntries] = useState(ascean.journal.entries);
     const [entry, setEntry] = useState(ascean.journal.currentEntry);
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [showJournal, setShowJournal] = useState<boolean>(false);
 
@@ -51,22 +45,10 @@ const StoryJournal = ({ dispatch, gameDispatch, ascean, quests }: JournalProps) 
         setJournalEntries(ascean?.journal?.entries);
         setEntry(ascean?.journal?.entries[ascean?.journal?.currentEntry]);
     }, [ascean]);
+ 
 
-    useEffect(() => {
-        if (quests.length > 0) {
-            setQuestData(quests[0]);
-        };
-    }, [quests]);
-
-    const handleJournal = (journal: any) => {
-        setEntry(ascean?.journal?.entries[journal]);
-    };
-
-    if (loading) {
-        return (
-            <Loading Combat={true} />
-        );
-    };
+    const handleJournal = (journal: any) => setEntry(ascean?.journal?.entries[journal]);
+    
 
     return (
         <>

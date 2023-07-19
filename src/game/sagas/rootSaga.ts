@@ -9,8 +9,8 @@ import userService from "../../utils/userService";
 import { getUserLogout, getUserSuccess, getUserAsceanSuccess } from '../reducers/userState'; 
 import { getCommunityAsceanSuccess, getFocusAsceanSuccess } from '../reducers/communityState';
 import { Player, getAsceanTraits } from '../../components/GameCompiler/GameStore';
-import { setAsceanState, setCurrency, setDialog, setExperience, setFirewater, setInitialAsceanState, setInventory, setLootDrops, setPlayer, setPlayerLevelUp, setSettings, setShowDialog, setShowLoot, setStatistics, setTraits } from '../reducers/gameState';
-import { setCombatInitiated, setCombatInput, setCombatPlayer, setDamageType, setEffectResponse, setEnemyActions, setPlayerBlessing, setRest, setToggleDamaged, setWeaponOrder, setCombat, clearCombat, setStalwart, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatTimer, setPhaser } from '../reducers/combatState';
+import { setAsceanState, setCurrency, setDialog, setExperience, setFirewater, setInitialAsceanState, setInventory, setLootDrops, setMerchantEquipment, setPlayer, setPlayerLevelUp, setSettings, setShowDialog, setShowLoot, setStatistics, setTraits } from '../reducers/gameState';
+import { setCombatInitiated, setCombatInput, setCombatPlayer, setDamageType, setEffectResponse, setEnemyActions, setPlayerBlessing, setRest, setToggleDamaged, setWeaponOrder, setCombat, clearCombat, setStalwart, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatTimer, setPhaser, setEnemyPersuaded, setPlayerLuckout } from '../reducers/combatState';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 import { useSoundEffects } from '../../game/phaser/SoundEffects';
 import EventEmitter from '../phaser/EventEmitter';
@@ -25,11 +25,21 @@ const compareScores = (a: any, b: any) => {
 export const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const getOpponentDialog = (enemy: string) => {
+    console.log(enemy, 'getOpponentDialog');
     const res = getNpcDialog(enemy);
+    console.log(res, 'getOpponentDialog');
     return res;
-    // if (!response) return;
-    // gameDispatch({ type: GAME_ACTIONS.SET_DIALOG, payload: response });
 }; 
+const checkStatisticalValue = (rarity: string) => {
+    switch (rarity) {
+        case 'Common': return 10;
+        case 'Uncommon': return 100;
+        case 'Rare': return 400;
+        case 'Epic': return 1200;
+        case 'Legendary': return 12000;
+        default: return 0;
+    };
+};
 
 // ==================== User ====================
 
@@ -61,7 +71,6 @@ function* workGetUserAsceanFetch(): SagaIterator {
 // ************************ Community ************************ \\
 
 function* communitySaga(): SagaIterator {
-    console.log("Community Listener");
     yield takeEvery('community/getCommunityAsceanFetch', workGetAsceanAllFetch);
     yield takeEvery('community/getFocusAsceanFetch', workGetAsceanFocusFetch);
 };
@@ -104,6 +113,8 @@ function* combatSaga(): SagaIterator {
     yield takeEvery('combat/getCombatStatisticFetch', workGetCombatStatistic);
     yield takeEvery('combat/getStalwartFetch', workGetStalwart);
     yield takeEvery('combat/getCombatTimerFetch', workGetCombatTimer);
+    yield takeEvery('combat/getPersuasionFetch', workGetPersuasion);
+    yield takeEvery('combat/getLuckoutFetch', workGetLuckout);
 };
 
 function* workGetCombat(action: any): SagaIterator {
@@ -122,7 +133,10 @@ function* workGetEnemySetup(action: any): SagaIterator {
     yield put(setEnemy({ enemy: action.payload.enemy, health: action.payload.health, enemyID: action.payload.id, isAggressive: action.payload.isAggressive, startedAggressive: action.payload.startedAggressive, isDefeated: action.payload.isDefeated, isTriumphant: action.payload.isTriumphant }));
 };
 function* workGetNpcSetup(action: any): SagaIterator {
+    console.log(action.payload, "NPC Information in Setup");
+    console.log(npcIds[action.payload.type], "NPC ID");
     const dialog = yield call(() => getNodesForNPC(npcIds[action.payload.type]));
+    console.log(dialog, "Dialog in NPC Setup");
     if (dialog) yield put(setDialog(dialog));
     yield put(setNpc({ enemy: action.payload.enemy, health: action.payload.health, enemyID: action.payload.id, npcType: action.payload.type }));
 };
@@ -141,6 +155,7 @@ function* workGetCombatState(action: any): SagaIterator {
     yield put(setCombatInput(action.payload));
 };
 function* workGetCombatSetting(action: any): SagaIterator {
+    console.log(action.payload, "Combat Setting");
     switch (action.payload.type) {
         case 'Damage':
             yield put(setDamageType(action.payload.loadout));
@@ -234,6 +249,34 @@ function* workGetCombatStatistic(action: any): SagaIterator {
 function* workGetAsceanHealthUpdate(action: any): SagaIterator {
     yield call(() => asceanAPI.asceanHealth(action.payload));
 };
+function* workGetPersuasion(action: any): SagaIterator { 
+    const { persuasion, id, persuaded } = action.payload;
+    const stat = {
+        asceanID: id,
+        name: 'persuasion',
+        type: persuasion === "Kyr'naic" ? 'Kyrnaic' : persuasion,
+        successes: persuaded ? 1 : 0,
+        failures: persuaded ? 0 : 1,
+        total: 1,
+    };
+    const res = yield call(() => asceanAPI.recordNonCombatStatistic(stat));
+    yield put(setStatistics(res));
+    yield put(setEnemyPersuaded({ enemyPersuaded: persuaded, playerTrait: persuasion }));
+};
+function* workGetLuckout(action: any): SagaIterator {
+    const { luck, id, luckedOut } = action.payload;
+    const stat = {
+        asceanID: id,
+        name: 'luckout',
+        type: luck === "Kyr'naic" ? 'Kyrnaic' : luck,
+        successes: luckedOut ? 1 : 0,
+        failures: luckedOut ? 0 : 1,
+        total: 1,
+    };
+    const res = yield call(() => asceanAPI.recordNonCombatStatistic(stat));
+    yield put(setStatistics(res));
+    yield put(setPlayerLuckout({ playerLuckout: luckedOut, playerTrait: luck }));
+};
 
 // *********************** Game *********************** \\
 
@@ -241,13 +284,15 @@ function* gameSaga(): SagaIterator {
     yield takeEvery('game/getGameFetch', workGetGameFetch);
     yield takeEvery('game/getAsceanLevelUpFetch', workGetAsceanLevelUpFetch);
     yield takeEvery('game/getDrinkFirewaterFetch', workGetDrinkFirewaterFetch);
+    yield takeEvery('game/getReplenishFirewaterFetch', workGetReplenishFirewaterFetch);
     yield takeEvery('game/getGainExperienceFetch', workGetGainExperienceFetch);
     yield takeEvery('game/getAsceanAndInventoryFetch', workGetAsceanAndInventoryFetch);
     yield takeEvery('game/getOnlyInventoryFetch', workGetOnlyInventoryFetch);
     yield takeEvery('game/getLootDropFetch', workGetLootDropFetch);
     yield takeEvery('game/getCombatStatisticFetch', workGetCombatStatistic);
     yield takeEvery('game/getInteracingLootFetch', workGetInteracingLootFetch);
-    yield takeEvery('game/getShowDialogFetch', workGetShowDialogFetch);
+    yield takeEvery('game/getPurchaseFetch', workGetPurchaseFetch);
+    yield takeEvery('game/getThieverySuccessFetch', workGetThieverySuccessFetch);
 };
 
 function* workGetGameFetch(action: any): SagaIterator {
@@ -262,10 +307,7 @@ function* workGetGameFetch(action: any): SagaIterator {
     yield put(setSettings(settingsResponse));
     yield put(setTraits(traitResponse));
     yield put(setPhaser(true));
-};
-function* workGetShowDialogFetch(action: any): SagaIterator {
-    yield put(setShowDialog(action.payload));
-};
+}; 
 function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
     const res = yield call(() => asceanAPI.levelUp(action.payload));
     const asceanState = {
@@ -293,6 +335,11 @@ function* workGetDrinkFirewaterFetch(action: any): SagaIterator {
     const res = yield call(() => asceanAPI.drinkFirewater(action.payload));
     yield put(setFirewater(res.firewater));
     yield put(setRest(40));
+};
+function* workGetReplenishFirewaterFetch(action: any): SagaIterator {
+    const res = yield call(() => asceanAPI.replenishFirewater(action.payload));
+    yield put(setExperience(res.data.experience));
+    yield put(setFirewater(res.data.firewater));
 };
 function* workGetGainExperienceFetch(action: any): SagaIterator {
     let { asceanState, combatState } = action.payload;
@@ -332,7 +379,8 @@ function* workGetAsceanAndInventoryFetch(action: any): SagaIterator {
 };
 function* workGetOnlyInventoryFetch(action: any): SagaIterator {
     const res = yield call(() => asceanAPI.getAsceanInventory(action.payload));
-    yield put(setInventory(res.data));
+    console.log(res, "Response Fetching Only Inventory");
+    yield put(setInventory(res.inventory));
 };
 function* workGetLootDropFetch(action: any): SagaIterator {
     const res = yield call(() => equipmentAPI.getLootDrop(action.payload.level));
@@ -349,7 +397,24 @@ function* workGetLootDropFetch(action: any): SagaIterator {
 function* workGetInteracingLootFetch(action: any): SagaIterator {
     yield put(setShowLoot(action.payload));
 };
-
+function* workGetThieverySuccessFetch(action: any): SagaIterator {
+    const { item, id } = action.payload;
+    yield call(() => asceanAPI.purchaseToInventory(item));
+    const stat = {
+        asceanID: id, 
+        successes: 1,
+        failures: 0,
+        total: 1,
+        totalValue: checkStatisticalValue(item.item.rarity),
+    };
+    const res = yield call(() => asceanAPI.recordThievery(stat));
+    yield put(setStatistics(res));
+};
+function* workGetPurchaseFetch(action: any): SagaIterator {
+    const res = yield call(() => asceanAPI.purchaseToInventory(action.payload));
+    console.log(res, "Response Purchasing Item")
+    yield put(setCurrency(res.currency));
+};
 
 // ==================== Root ====================
 

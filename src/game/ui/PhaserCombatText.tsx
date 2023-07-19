@@ -7,9 +7,8 @@ const PhaserCombatText = () => {
         height: "120px",
         width: "450px",  
         fontSize: "12px",
-        borderRadius: "3px",
-        border: "4px solid #2A0134",
-        boxShadow: "2px 2px 2px black"
+        border: 'none',
+        zIndex: '1',
     };
     const text = () => {
         let result = "";
@@ -30,13 +29,13 @@ const PhaserCombatText = () => {
     };
     return (
         <div>
-            <img src={messageWindow} alt="message window" style={{ position: 'absolute' }} />
             <textarea 
                 style={storyStyle}
                 id='story-console' 
                 value={text()}
                 readOnly>
             </textarea>
+            <img src={messageWindow} alt="message window" style={{ position: 'absolute', top: '100px', transform: 'scale(1.1)' }} />
         </div>
     );
 };

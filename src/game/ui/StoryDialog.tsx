@@ -13,6 +13,9 @@ import { GAME_ACTIONS, GameData, Player, checkPlayerTrait, nameCheck } from '../
 import Typewriter from '../../components/GameCompiler/Typewriter';
 import dialogWindow from '../images/dialog_window.png';
 import EventEmitter from '../phaser/EventEmitter';
+import { useDispatch, useSelector } from 'react-redux';
+import { getReplenishFirewaterFetch, setCurrentDialogNode, setCurrentIntent, setMerchantEquipment, setRendering, setShowDialog } from '../reducers/gameState';
+import { getLuckoutFetch, getPersuasionFetch, setPhaserAggression } from '../reducers/combatState';
 
 interface DialogOptionProps {
     option: DialogNodeOption;
@@ -61,33 +64,36 @@ interface DialogTreeProps {
     dialogNodes: DialogNode[];
     state: any;
     gameState: GameData;
-    gameDispatch: React.Dispatch<any>;
+    dispatch: React.Dispatch<any>;
     actions: any;
     setPlayerResponses: React.Dispatch<React.SetStateAction<string[]>>;
     setKeywordResponses: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
-const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state, actions, setPlayerResponses, setKeywordResponses }: DialogTreeProps) => {
+const DialogTree = ({ ascean, enemy, dialogNodes, gameState, state, actions, setPlayerResponses, setKeywordResponses, dispatch }: DialogTreeProps) => {
     const [currentNodeIndex, setCurrentNodeIndex] = useState(gameState?.currentNodeIndex || 0);
     const [showDialogOptions, setShowDialogOptions] = useState(false);
 
     useEffect(() => {
+        console.log("Current Node Index: ", gameState?.currentNodeIndex, dialogNodes, "Current Node: ", gameState?.currentNode);
         setCurrentNodeIndex(gameState?.currentNodeIndex || 0);
     }, [gameState?.currentNodeIndex]);
     
     useEffect(() => {
-        gameDispatch({
-            type: GAME_ACTIONS.SET_CURRENT_DIALOG_NODE,
-            payload: dialogNodes?.[currentNodeIndex]
-        });
-        gameDispatch({
-            type: GAME_ACTIONS.SET_RENDERING,
-            payload: {
-                options: dialogNodes?.[currentNodeIndex]?.options,
-                text: dialogNodes?.[currentNodeIndex]?.text
-            },
-        });
 
+        // gameDispatch({
+        //     type: GAME_ACTIONS.SET_CURRENT_DIALOG_NODE,
+        //     payload: dialogNodes?.[currentNodeIndex]
+        // });
+        // gameDispatch({
+        //     type: GAME_ACTIONS.SET_RENDERING,
+        //     payload: {
+        //         options: dialogNodes?.[currentNodeIndex]?.options,
+        //         text: dialogNodes?.[currentNodeIndex]?.text
+        //     },
+        // });
+        dispatch(setCurrentDialogNode(dialogNodes?.[currentNodeIndex]));
+        dispatch(setRendering({ options: dialogNodes?.[currentNodeIndex]?.options, text: dialogNodes?.[currentNodeIndex]?.text }));
         const dialogTimeout = setTimeout(() => {
             setShowDialogOptions(true);
         }, dialogNodes?.[currentNodeIndex]?.text.split('').reduce((a: number, s: string | any[]) => a + s.length * 50, 0));
@@ -98,6 +104,7 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
     }, [currentNodeIndex]);
   
     useEffect(() => {
+        console.log("Current Node: ", gameState?.currentNode);
         if (gameState?.currentNode) {
             let newText = gameState?.currentNode?.text;
             let newOptions: DialogNodeOption[] = [];
@@ -136,7 +143,9 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
                     };
                 });
             };
-            gameDispatch({ type: GAME_ACTIONS.SET_RENDERING, payload: { text: newText, options: newOptions } });
+            // gameDispatch({ type: GAME_ACTIONS.SET_RENDERING, payload: { text: newText, options: newOptions } });
+            dispatch(setRendering({ text: newText, options: newOptions }));
+            console.log("New Text: ", newText, "New Options: ", newOptions);
         };
     }, [gameState.currentNode]);
 
@@ -147,11 +156,13 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, gameDispatch, state
   
     const handleOptionClick = (nextNodeId: string | null) => {
         if (nextNodeId === null) {
-            gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_NODE_INDEX, payload: 0 });
+            // gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_NODE_INDEX, payload: 0 });
+            dispatch(setCurrentNodeIndex(0));
         } else {
             let nextNodeIndex = dialogNodes.findIndex((node: { id: string; }) => node.id === nextNodeId);
             if (nextNodeIndex === -1) nextNodeIndex = 0;
-            gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_NODE_INDEX, payload: nextNodeIndex });
+            // gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_NODE_INDEX, payload: nextNodeIndex });
+            dispatch(setCurrentNodeIndex(nextNodeIndex));
         };
     };
   
@@ -220,14 +231,16 @@ interface Region {
 };
 
 interface StoryDialogProps {
-    state: CombatData;
-    dispatch: React.Dispatch<any>;
-    gameState: GameData;
-    gameDispatch: React.Dispatch<any>;
     deleteEquipment: (equipment: any[]) => Promise<void>;
+    handlePlayerLuckout: () => Promise<void>;
+    state: CombatData;
 };
 
-export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEquipment }: StoryDialogProps) => {
+export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: StoryDialogProps) => {
+    const dispatch = useDispatch();
+    // const state = useSelector((state: any) => state.combat);
+    const gameState = useSelector((state: any) => state.game);
+    const influence = useSelector((state: any) => state.combat.weapons[0].influences[0]);
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [persuasionString, setPersuasionString] = useState<string>('');
     const [luckoutString, setLuckoutString] = useState<string>('');
@@ -256,18 +269,16 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
     const [miniGameTraits, setMiniGameTraits] = useState<any>([]);
     const [enemyArticle, setEnemyArticle] = useState<any>('');
 
-
-
     useEffect(() => { 
+        console.log(state, "State.Computer");
         checkLuckout();
         checkPersuasion();
-        checkMiniGame();
-        setNamedEnemy(nameCheck(state.computer?.name));
+        // checkMiniGame();
+        setNamedEnemy(nameCheck(state?.computer?.name));
         setEnemyArticle(() => {
-            console.log((['a', 'e', 'i', 'o', 'u'].includes(state.computer?.name.charAt(0).toLowerCase()) ? 'an' : 'a'), "Enemy Article");
-            return ['a', 'e', 'i', 'o', 'u'].includes(state.computer?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
+            return ['a', 'e', 'i', 'o', 'u'].includes(state?.computer?.name.charAt(0).toLowerCase()) ? 'an' : 'a';
         });
-    }, [state.computer]);
+    }, [state?.computer]);
 
     const hollowClick = () => console.log('Hollow Click');
 
@@ -317,39 +328,40 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
         };
         console.log(persuasionTrait, playerPersuasion, enemyPersuasion, "Persuasion");
         if (playerPersuasion >= enemyPersuasion) {
-            dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: { enemyPersuaded: true, playerTrait: persuasion } });
-            const statistic = {
-                asceanID: state.player._id,
-                name: 'persuasion',
-                type: persuasion === "Kyr'naic" ? "Kyrnaic" : persuasion,
-                successes: 1,
-                failures: 0,
-                total: 1,
-            };
-            const response = await asceanAPI.recordNonCombatStatistic(statistic);
-            console.log(response, "Persuasion Response Recorded");       
+            dispatch(getPersuasionFetch({ persuasion, id: state.player._id, persuaded: true }));
+            // dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: { enemyPersuaded: true, playerTrait: persuasion } });
+            // const statistic = {
+            //     asceanID: state.player._id,
+            //     name: 'persuasion',
+            //     type: persuasion === "Kyr'naic" ? "Kyrnaic" : persuasion,
+            //     successes: 1,
+            //     failures: 0,
+            //     total: 1,
+            // };
+            // const response = await asceanAPI.recordNonCombatStatistic(statistic);
+            // console.log(response, "Persuasion Response Recorded");       
             const num = Math.floor(Math.random() * 2); 
             setPersuasionString(`${persuasionTrait?.persuasion.success[num].replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}',
-                                state.player.weapon_one.influences[0]).replace('{ascean.name}', state.player.name).replace('{enemy.weapon_one.influences[0]}',
+                                influence).replace('{ascean.name}', state.player.name).replace('{enemy.weapon_one.influences[0]}',
                                 state.computer.weapon_one.influences[0]).replace('{enemy.faith}', state.computer.faith)}`);
         } else {
             await checkingLoot();
-            dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: { enemyPersuaded: false, playerTrait: persuasion } });
+            dispatch(getPersuasionFetch({ persuasion, id: state.player._id, persuaded: false }));
+            // dispatch({ type: ACTIONS.ENEMY_PERSUADED, payload: { enemyPersuaded: false, playerTrait: persuasion } });
             setPersuasionString(`Failure. ${persuasionTrait?.persuasion?.failure.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', 
-                                state.player.weapon_one.influences[0]).replace('{ascean.name}', state.player.name).replace('{enemy.weapon_one.influences[0]}', 
+                                influence).replace('{ascean.name}', state.player.name).replace('{enemy.weapon_one.influences[0]}', 
                                 state.computer.weapon_one.influences[0]).replace('{enemy.faith}', state.computer.faith)} \n\n Nevertheless, prepare for some chincanery, ${state.player.name}, and perhaps leave the pleasantries for warmer company.`);
-            const statistic = {
-                asceanID: state.player._id,
-                name: 'persuasion',
-                type: persuasion === "Kyr'naic" ? "Kyrnaic" : persuasion,
-                successes: 0,
-                failures: 1,
-                total: 1,
-            };
-            const response = await asceanAPI.recordNonCombatStatistic(statistic);
-            console.log(response, "Persuasion Response Recorded");
-            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
-            // dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
+            // const statistic = {
+            //     asceanID: state.player._id,
+            //     name: 'persuasion',
+            //     type: persuasion === "Kyr'naic" ? "Kyrnaic" : persuasion,
+            //     successes: 0,
+            //     failures: 1,
+            //     total: 1,
+            // };
+            // const response = await asceanAPI.recordNonCombatStatistic(statistic);
+            // console.log(response, "Persuasion Response Recorded");
+            // gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
         };
     };
 
@@ -389,46 +401,48 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
         };
         console.log(playerLuck, enemyLuck, "Luckout");
         if (playerLuck >= enemyLuck) {
+            dispatch(getLuckoutFetch({ luck, id: state.player._id, luckedOut: true }));
             const num = Math.floor(Math.random() * 2);
-            dispatch({ type: ACTIONS.PLAYER_LUCKOUT, payload: { playerLuckout: true, playerTrait: luck } });
-            setLuckoutString(`${luckoutTrait?.luckout?.success[num].replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0]).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)}`);
-            const statistic = {
-                asceanID: ascean._id,
-                name: 'luckout',
-                type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
-                successes: 1,
-                failures: 0,
-                total: 1,
-            };
-            const response = await asceanAPI.recordNonCombatStatistic(statistic);
-            console.log(response, "Luckout Response Recorded");
-            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
+            // dispatch({ type: ACTIONS.PLAYER_LUCKOUT, payload: { playerLuckout: true, playerTrait: luck } });
+            setLuckoutString(`${luckoutTrait?.luckout?.success[num].replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', influence).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)}`);
+            await handlePlayerLuckout();
+            // const statistic = {
+            //     asceanID: ascean._id,
+            //     name: 'luckout',
+            //     type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
+            //     successes: 1,
+            //     failures: 0,
+            //     total: 1,
+            // };
+            // const response = await asceanAPI.recordNonCombatStatistic(statistic);
+            // console.log(response, "Luckout Response Recorded");
+            // gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             shakeScreen({ duration: 1000, intensity: 1.5 });
             if ('vibrate' in navigator) navigator.vibrate(1000);
         } else {
+            dispatch(getLuckoutFetch({ luck, id: state.player._id, luckedOut: false }));
             await checkingLoot();
-            dispatch({ type: ACTIONS.LUCKOUT_FAILURE, payload: { playerLuckout: false, playerTrait: luck } });
-            setLuckoutString(`${luckoutTrait?.luckout?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0]).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.`);
-            const statistic = {
-                asceanID: ascean._id,
-                name: 'luckout',
-                type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
-                successes: 0,
-                failures: 1,
-                total: 1,
-            };
-            const response = await asceanAPI.recordNonCombatStatistic(statistic);
-            console.log(response, "Luckout Response Recorded");
-            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
-            // dispatch({ type: ACTIONS.SET_DUEL, payload: '' });
+            // dispatch({ type: ACTIONS.LUCKOUT_FAILURE, payload: { playerLuckout: false, playerTrait: luck } });
+            setLuckoutString(`${luckoutTrait?.luckout?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', influence).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.`);
+            // const statistic = {
+            //     asceanID: ascean._id,
+            //     name: 'luckout',
+            //     type: luck === "Kyr'naic" ? "Kyrnaic" : luck,
+            //     successes: 0,
+            //     failures: 1,
+            //     total: 1,
+            // };
+            // const response = await asceanAPI.recordNonCombatStatistic(statistic);
+            // console.log(response, "Luckout Response Recorded");
+            // gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
         };
     };
 
     const checkLuckout = async () => {
         const traits = {
-            primary: gameState?.primary,
-            secondary: gameState?.secondary,
-            tertiary: gameState?.tertiary,
+            primary: gameState?.traits?.primary,
+            secondary: gameState?.traits?.secondary,
+            tertiary: gameState?.traits?.tertiary,
         };
         const luckoutTraits = ['Lilosian', 'Arbituous', "Kyr'naic", 'Chiomic'];
         const matchingTraits = Object.values(traits).filter(trait => luckoutTraits.includes(trait.name));
@@ -501,15 +515,14 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
 
     const engageGrappling = async () => {
         await checkingLoot();
-        gameDispatch({ type: GAME_ACTIONS.LOADING_UNDERLAY, payload: true });
-        gameDispatch({ type: GAME_ACTIONS.SET_MINIGAME_SEVAN, payload: true });
+        // gameDispatch({ type: GAME_ACTIONS.SET_MINIGAME_SEVAN, payload: true });
     }; 
 
     const checkPersuasion = async () => {
         const traits = {
-            primary: gameState?.primary,
-            secondary: gameState?.secondary,
-            tertiary: gameState?.tertiary,
+            primary: gameState?.traits?.primary,
+            secondary: gameState?.traits?.secondary,
+            tertiary: gameState?.traits?.tertiary,
         };
         const persuasionTraits = ['Ilian', 'Lilosian', 'Arbituous', "Kyr'naic", 'Chiomic', 'Fyeran', 'Shaorahi', 'Tashaeral'];
         const matchingTraits = Object.values(traits).filter(trait => persuasionTraits.includes(trait.name));
@@ -559,7 +572,8 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
     const checkingLoot = async () => {
         if (gameState.merchantEquipment.length > 0) {
             await deleteEquipment(gameState.merchantEquipment);
-            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: [] });
+            // gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: [] });
+            dispatch(setMerchantEquipment([]));
         };
     };
 
@@ -582,21 +596,25 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                 cleanIntent = intent;
                 break;
         };
-        gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_INTENT, payload: cleanIntent });
+        // gameDispatch({ type: GAME_ACTIONS.SET_CURRENT_INTENT, payload: cleanIntent });
+        dispatch(setCurrentIntent(cleanIntent));
     };
     const handleRegion = (region: keyof Region) => setProvince(region);
 
     const engageCombat = async () => {
         await checkingLoot();
-        dispatch({ type: ACTIONS.SET_PHASER_AGGRESSION, payload: true });
+        // dispatch({ type: ACTIONS.SET_PHASER_AGGRESSION, payload: true });
+        dispatch(setPhaserAggression(true));
         EventEmitter.emit('aggressive-enemy', { id: state.enemyID, isAggressive: true });
-        gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+        // gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+        dispatch(setShowDialog(false));
     };
 
     const clearDuel = async () => {
         try {
             await checkingLoot();
-            gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+            // gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
+            dispatch(setShowDialog(false));
         } catch (err: any) {
             console.log(err.message, "Error Clearing Duel");
         };
@@ -604,10 +622,11 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
 
     const refillFlask = async () => {
         try {
-            const response = await asceanAPI.restoreFirewater(state.player._id);
-            console.log(response, 'Response Refilling Flask');
-            dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
-            gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
+            dispatch(getReplenishFirewaterFetch(state.player._id));
+            // const response = await asceanAPI.restoreFirewater(state.player._id);
+            // console.log(response, 'Response Refilling Flask');
+            // dispatch({ type: ACTIONS.SET_EXPERIENCE, payload: response });
+            // gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
         } catch (err: any) {
             console.log(err, "Error Refilling Flask");
         };
@@ -631,7 +650,8 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                 response = await eqpAPI.getClothEquipment(state.player.level);
             };
             console.log(response.data, 'Response!');
-            gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data });
+            // gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: response.data });
+            dispatch(setMerchantEquipment(response.data));
         } catch (err) {
             console.log(err, 'Error Getting Loot!');
         };
@@ -654,7 +674,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                 {luckoutTraits.map((trait: any, index: number) => {
                     return (
                         <div key={index}>
-                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
                         </div>
                     )
                 })}
@@ -671,7 +691,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                 {persuasionTraits.map((trait: any, index: number) => {
                     return (
                         <div key={index}>
-                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.modal.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.modal.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
                         </div>
                     )
                 })}
@@ -705,7 +725,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                         upgradeItems.map((item: any, index: number) => {
                             return (
                                 <div key={index} style={{ display: 'inline-block', marginRight: '5%', marginBottom: '10%' }}>
-                                    <Inventory inventory={item} bag={gameState.player.inventory} gameState={gameState} gameDispatch={gameDispatch} ascean={state.player} blacksmith={true} index={index} />
+                                    <Inventory inventory={item} bag={gameState.player.inventory} ascean={state.player} blacksmith={true} index={index} />
                                 </div>
                             )
                         })
@@ -728,8 +748,8 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
             { state.isEnemy ? (
                 <>
                     <DialogTree 
-                        gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={state.player} enemy={gameState.opponent} dialogNodes={getNodesForEnemy(state?.computer?.name)} 
-                        setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} actions={actions}
+                        gameState={gameState} state={state} ascean={state.player} enemy={state.computer} dialogNodes={getNodesForEnemy(state?.computer?.name)} 
+                        setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} actions={actions} dispatch={dispatch}
                     />
                 { gameState.currentIntent === 'challenge' ? (
                     <>
@@ -796,7 +816,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                     {luckoutTraits.map((trait: any, index: number) => {
                                         return (
                                             <div key={index}>
-                                                <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                                                <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
                                             </div>
                                         )
                                     })} 
@@ -902,7 +922,7 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                                 {persuasionTraits.map((trait: any, index: number) => {
                                     return (
                                         <div key={index}>
-                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', state.player.weapon_one.influences[0])}</Button>
+                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
                                     </div>
                                     )
                                 })} 
@@ -946,12 +966,12 @@ export const StoryDialog = ({ state, dispatch, gameState, gameDispatch, deleteEq
                 </>
             ) : state.npcType !== 'Merchant-Alchemy' && state.npcType !== 'Merchant-Smith' ? (
                 <DialogTree 
-                    gameState={gameState} gameDispatch={gameDispatch} state={state} ascean={state.player} enemy={gameState.opponent} dialogNodes={getNodesForNPC(npcIds[state.npcType])} 
-                    setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} actions={actions}
+                    gameState={gameState} state={state} ascean={state.player} enemy={state.computer} dialogNodes={getNodesForNPC(npcIds[state.npcType])} 
+                    setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} actions={actions} dispatch={dispatch}
                 />
             ) : ( '' ) } 
             { gameState?.merchantEquipment.length > 0 ? (
-                <MerchantTable dispatch={dispatch} table={gameState.merchantEquipment} gameDispatch={gameDispatch} gameState={gameState} ascean={state.player} error={error} setError={setError} />
+                <MerchantTable dispatch={dispatch} table={gameState.merchantEquipment} gameState={gameState} ascean={state.player} error={error} setError={setError} />
                 ) : ( '' ) }
             { state.npcType !== '' ? (
                 <Currency ascean={gameState.player} />

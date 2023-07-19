@@ -6,6 +6,8 @@ import Popover from 'react-bootstrap/Popover';
 import { GameData, GAME_ACTIONS } from './GameStore';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { useDispatch, useSelector } from 'react-redux';
+import { getDrinkFirewaterFetch, getReplenishFirewaterFetch } from '../../game/reducers/gameState';
 
 interface Firewater {
     charges: number;
@@ -13,56 +15,48 @@ interface Firewater {
 };
 
 interface FirewaterProps {
-    state: CombatData;
-    dispatch: React.Dispatch<any>;
-    gameDispatch: React.Dispatch<any>;
-    gameState: GameData;
     story?: boolean;
 };
 
-const Firewater = ({ state, dispatch, gameDispatch, gameState, story }: FirewaterProps) => {
+const Firewater = ({ story }: FirewaterProps) => {
+    const dispatch = useDispatch();
+    const ascean = useSelector((state: any) => state.game.player);
+    const state = useSelector((state: any) => state.combat);
+    const loadedAscean = useSelector((state: any) => state.game.loadedAscean);
     const [showFirwawterModal, setShowFirewaterModal] = useState<boolean>(false);
     const [showBleed, setShowBleed] = useState<boolean>(true);
-    const [firewater, setFirewater] = useState(state.player.firewater);
+    const [firewater, setFirewater] = useState(ascean.firewater);
     const [drinking, setDrinking] = useState(false);
 
     useEffect(() => {
-        setFirewater(gameState.player.firewater);
-    }, [gameState.player.firewater]);
+        setFirewater(ascean.firewater);
+    }, [ascean.firewater]);
     
-    useEffect(() => {
-        if (gameState.loadedAscean) {
-        setDrinking(false);
-        setShowBleed(true);
-        setShowFirewaterModal(false);
-        gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: false });
-        };
-    }, [gameState.loadedAscean, drinking]);
-
+    // useEffect(() => {
+    //     if (loadedAscean) {
+    //         setDrinking(false);
+    //         setShowBleed(true);
+    //         setShowFirewaterModal(false);
+    //         // gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: false });
+    //     };
+    // }, [loadedAscean, drinking]);
+    
     const drinkFirewater = async () => {
         if (firewater?.charges === 0) return;
         try {
             setDrinking(true);
-            dispatch({ type: ACTIONS.PLAYER_REST, payload: 40 });
-            const response = await asceanAPI.drinkFirewater(state.player._id);
-            gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
-            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+            dispatch(getDrinkFirewaterFetch(ascean._id));
+            setShowFirewaterModal(false); 
         } catch (err: any) {
             console.log(err, "Error Drinking Firewater");
         };
     };
 
     const replenishFirewater = async () => {
-        setShowBleed(false);
         try {
-            const response = await asceanAPI.replenishFirewater(state.player._id);
-            gameDispatch({ type: GAME_ACTIONS.SET_EXPERIENCE, payload: response });
-            const cleanRes = await asceanAPI.getCleanAscean(state.player._id);
-            dispatch({
-                type: ACTIONS.SAVE_EXPERIENCE,
-                payload: cleanRes.data
-            });
-            gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: true });
+            setShowBleed(false);
+            dispatch(getReplenishFirewaterFetch(ascean._id));
+            setShowFirewaterModal(false); 
         } catch (err: any) {
             console.log(err, "Error Replenishing Firewater");
         };

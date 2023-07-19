@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
-import { Ascean, Equipment, GAME_ACTIONS, GameData } from './GameStore';
+import { Ascean, Equipment, GAME_ACTIONS } from './GameStore';
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
 import Col  from 'react-bootstrap/Col';
+import { getOnlyInventoryFetch, getPurchaseFetch, setMerchantEquipment } from '../../game/reducers/gameState';
+import { useDispatch } from 'react-redux';
 
 interface Props {
     item: Equipment;
@@ -13,8 +15,7 @@ interface Props {
     error: object;
     setError: React.Dispatch<React.SetStateAction<object>>;
     table?: any;
-    gameDispatch: React.Dispatch<any>;
-    gameState: GameData;
+    gameDispatch?: React.Dispatch<any>;
     stealItem: (purchaseSetting: {
         ascean: Ascean;
         item: Equipment;
@@ -26,7 +27,8 @@ interface Props {
     thievery: boolean;
 };
 
-const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, gameState, stealItem, thievery }: Props) => {
+const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, stealItem, thievery }: Props) => {
+    const dispatch = useDispatch();
     const location = useLocation();
     const [purchaseSetting, setPurchaseSetting] = useState({
         ascean: ascean,
@@ -130,13 +132,19 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, game
             return;
         };
         try {
-            const res = await asceanAPI.purchaseToInventory(purchaseSetting);
-            console.log(res, 'Purchased Item!');
-            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
-            gameDispatch({
-                type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT,
-                payload: table.filter((i: any) => i._id !== item._id)
-            });
+            if (gameDispatch) {
+                const res = await asceanAPI.purchaseToInventory(purchaseSetting);
+                console.log(res, 'Purchased Item!');
+                gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
+                gameDispatch({
+                    type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT,
+                    payload: table.filter((i: any) => i._id !== item._id)
+                });
+            } else { // Phaser
+                dispatch(getPurchaseFetch(purchaseSetting));
+                dispatch(setMerchantEquipment(table.filter((i: any) => i._id !== item._id)));
+                dispatch(getOnlyInventoryFetch(ascean._id));
+            };
         } catch (err: any) {
             console.log(err.message, 'Error Purchasing Item!');
             setError({

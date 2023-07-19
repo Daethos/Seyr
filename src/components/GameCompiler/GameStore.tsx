@@ -614,6 +614,11 @@ export const checkPlayerTrait = (trait: string, gameState: GameData) => {
     return false;
 };
 
+export const checkTraits = (trait: string, traits: any) => {
+    if (traits.primary.name.includes(trait) || traits.secondary.name.includes(trait) || traits.tertiary.name.includes(trait)) return true;
+    return false;
+};
+
 export interface GameData {
     player: Player;
     opponent: Enemy;

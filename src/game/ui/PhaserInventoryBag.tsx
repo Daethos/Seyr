@@ -1,18 +1,16 @@
 import Inventory from '../../components/GameCompiler/Inventory';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
- 
+import { useSelector } from 'react-redux'; 
+
 interface IBProps {
-    ascean: any;
-    gameDispatch: React.Dispatch<any>;
-    gameState: any;
     highlighted: { item: null; comparing: boolean; };
     setHighlighted: React.Dispatch<React.SetStateAction<{ item: null; comparing: boolean; }>>;
     dragAndDropInventory: any;
     setDragAndDropInventory: React.SetStateAction<any>;
 }; 
 
-const PhaserInventoryBag = ({ ascean, gameDispatch, gameState, setHighlighted, highlighted, dragAndDropInventory, setDragAndDropInventory }: IBProps) => {
-  
+const PhaserInventoryBag = ({ setHighlighted, highlighted, dragAndDropInventory, setDragAndDropInventory }: IBProps) => {
+    const ascean = useSelector((state: any) => state.game.player);
     const onDragEnd = (result: DropResult) => {
         if (!result.destination) return;
         const { destination, source, draggableId } = result;
@@ -43,7 +41,7 @@ const PhaserInventoryBag = ({ ascean, gameDispatch, gameState, setHighlighted, h
                             <Droppable key={index} droppableId={item._id}>
                             {(provided, snapshot) => (
                             <div ref={provided.innerRef} {...provided.droppableProps} style={snapshot.isDraggingOver ? getDroppingStyle : relaxedStyle}>
-                                <Inventory highlighted={highlighted} setHighlighted={setHighlighted} gameState={gameState} gameDispatch={gameDispatch} bag={dragAndDropInventory} inventory={item} ascean={ascean} index={index} story={true} />
+                                <Inventory ascean={ascean} highlighted={highlighted} setHighlighted={setHighlighted} bag={dragAndDropInventory} inventory={item} index={index} story={true} />
                                 {provided.placeholder}
                             </div>
                             )}

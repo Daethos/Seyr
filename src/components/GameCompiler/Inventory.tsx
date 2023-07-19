@@ -13,13 +13,15 @@ import { useLocation } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd'
 import equipSlot from '../../game/images/equip_slot.png';
 import equipSlotSelected from '../../game/images/equip_slot_selected.png';
+import { useDispatch } from 'react-redux';
+import { getAsceanAndInventoryFetch, getOnlyInventoryFetch } from '../../game/reducers/gameState';
 
 interface Props {
     inventory: any;
     ascean: Player;
     bag: any;
-    gameState: GameData;
-    gameDispatch: React.Dispatch<any>;
+    gameState?: GameData;
+    gameDispatch?: React.Dispatch<any>;
     blacksmith?: boolean;
     index: number;
     story?: boolean;
@@ -32,6 +34,7 @@ interface Props {
 };
 
 const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, gameState, story, compare, setHighlighted, highlighted }: Props) => {
+    const dispatch = useDispatch();
     const [inventoryModalShow, setInventoryModalShow] = useState(false);
     const [removeModalShow, setRemoveModalShow] = useState<boolean>(false);
     const [forgeModalShow, setForgeModalShow] = useState<boolean>(false);
@@ -232,7 +235,11 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             setForgeModalShow(false);
             setLoadingContent('');
             setIsLoading(false);
-            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
+            if (gameDispatch) {
+                gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
+            } else { // Phaser
+                dispatch(getOnlyInventoryFetch(ascean._id));
+            };
         } catch (err: any) {
             console.log(err.message, '<- Error upgrading item');
         };
@@ -252,8 +259,11 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             setRemoveModalShow(false);
             setLoadingContent('');
             setIsLoading(false);
-              
-            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
+            if (gameDispatch) {
+                gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
+            } else { // Phaser 
+                dispatch(getOnlyInventoryFetch(ascean._id));
+            };
         } catch (err: any) {
             console.log(err.message, '<- This is the error in handleRemoveItem');
         };
@@ -283,7 +293,11 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             setInventoryModalShow(false);
             setIsLoading(false);
             setLoadingContent('');
-            gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
+            if (gameDispatch) {
+                gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
+            } else {
+                dispatch(getAsceanAndInventoryFetch(ascean._id));
+            };
         } catch (err) {
             console.log(err, '<- This is the error in Swapping Equipment');
         };
@@ -921,7 +935,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 <>
                 { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
                 </>
-            ) : checkPlayerTrait("Sedyrist", gameState) ? (
+            ) : gameState && checkPlayerTrait("Sedyrist", gameState) ? (
                 <>
                 { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
                 </>

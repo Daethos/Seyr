@@ -6,27 +6,32 @@ import * as eqpAPI from '../../utils/equipmentApi';
 import { GAME_ACTIONS } from './GameStore';
 import Loading from '../Loading/Loading';
 import EventEmitter from '../../game/phaser/EventEmitter';
+import { setClearLootDrop } from '../../game/reducers/gameState';
+import { useDispatch } from 'react-redux';
 interface Props {
     lootDrop: any;
     ascean: any;
-    itemSaved: boolean;
-    gameDispatch: React.Dispatch<any>;
+    itemSaved?: boolean;
+    gameDispatch?: React.Dispatch<any>;
     story?: boolean;
 };
 
 const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) => {
+    const dispatch = useDispatch();
     const article = ['a','e','i','o','u'].includes(lootDrop?.name?.[0].toLowerCase()) ? "an" : "a";
-    
     const saveItem = async () => {
         try {
             const data = { ascean: ascean, lootDrop: lootDrop };
-            const res = await asceanAPI.saveToInventory(data);
-            if (!story) gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
-            gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
-            if (story) {
+            await asceanAPI.saveToInventory(data);
+            if (gameDispatch) {
+                gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
+                gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOT_DROP, payload: lootDrop._id });
-                EventEmitter.emit('destroy-lootdrop', lootDrop._id);
             };
+            if (story) {
+                dispatch(setClearLootDrop(lootDrop._id));
+            };
+            EventEmitter.emit('destroy-lootdrop', lootDrop._id);
         } catch (err: any) {
             console.log(err.message, 'Error Saving Item to Inventory!');
         };
@@ -34,13 +39,16 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
 
     const destroyItem = async () => {
         try {
-            const res = await eqpAPI.deleteEquipment([lootDrop]);
-            if (!story) gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
-            gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
-            if (story) {
+             await eqpAPI.deleteEquipment([lootDrop]);
+            if (gameDispatch) {
+                gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
+                gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOT_DROP, payload: lootDrop._id });
-                EventEmitter.emit('destroy-lootdrop', lootDrop._id);
+            } 
+            if (story) {
+                dispatch(setClearLootDrop(lootDrop._id));    
             };
+            EventEmitter.emit('destroy-lootdrop', lootDrop._id);
         } catch (err: unknown) {
             console.log(err, 'Error Destroying Item!');
         };
@@ -93,7 +101,7 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
                 </div>
             {/* <div style={{ textAlign: "center" }}>
                 <Button variant='' style={{ color: 'red', fontWeight: 600, fontSize: '18px' }} onClick={destroyItem}>Destroy</Button>
-            </div>                 */}
+            </div> */}
             </Popover.Body>
         </Popover>
     );

@@ -7,7 +7,6 @@ import Form from 'react-bootstrap/Form';
 import ExperienceBar from '../../components/GameCompiler/ExperienceBar';
 import { useEffect, useState } from 'react';
 import PhaserInventoryBag from './PhaserInventoryBag';
-import { GAME_ACTIONS, GameData } from '../../components/GameCompiler/GameStore';
 import statPng from '../../game/images/newStats.png';
 import Inventory from '../../components/GameCompiler/Inventory';
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler';
@@ -16,24 +15,32 @@ import * as asceanAPI from '../../utils/asceanApi';
 import { useNavigate } from 'react-router-dom';
 import Firewater from '../../components/GameCompiler/Firewater';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { getOnlyInventoryFetch, setAsceanState, setVolume } from '../reducers/gameState';
+import { Player } from '../../components/GameCompiler/GameStore';
+const CHARACTERS = {
+    STATISTICS: 'Statistics',
+    TRAITS: 'Traits',
+};
+const VIEWS = {
+    CHARACTER: 'Character',
+    INVENTORY: 'Inventory',
+    SETTINGS: 'Settings',
+};
+const SETTINGS = {
+    ACTIONS: 'Actions',
+    INVENTORY: 'Inventory',
+    GENERAL: 'General',
+    TACTICS: 'Tactics',
+};
 interface Props {
-    // ascean: any;
-    // state: any;
-    // dispatch: React.Dispatch<any>;
+    ascean: Player;
     loading: boolean;
-    // gameState: GameData;
-    // gameDispatch: React.Dispatch<any>;
-    // asceanState: any;
-    // setAsceanState: any;
     levelUpAscean: any;
-    damaged?: boolean;
     asceanViews: string;
 };
 
-const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) => {
+const StoryAscean = ({ ascean, loading, levelUpAscean, asceanViews }: Props) => {
     const dispatch = useDispatch();
-    const ascean = useSelector((state: any) => state.game.player);
     const gameState = useSelector((state: any) => state.game);
     const state = useSelector((state: any) => state.combat);
     const asceanState = useSelector((state: any) => state.game.asceanState);
@@ -48,22 +55,6 @@ const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) =>
         item: null as any,
         comparing: false,
     });
-    const CHARACTERS = {
-        STATISTICS: 'Statistics',
-        TRAITS: 'Traits',
-    }
-
-    const VIEWS = {
-        CHARACTER: 'Character',
-        INVENTORY: 'Inventory',
-        SETTINGS: 'Settings',
-    };
-    const SETTINGS = {
-        ACTIONS: 'Actions',
-        INVENTORY: 'Inventory',
-        GENERAL: 'General',
-        TACTICS: 'Tactics',
-    };
 
     useEffect(() => {
         playerTraits();
@@ -90,7 +81,7 @@ const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) =>
             const data = { ascean: ascean._id, inventory: flattenedInventory };
             await asceanAPI.saveAsceanInventory(data);
             // gameDispatch({ type: GAME_ACTIONS.REPOSITION_INVENTORY, payload: true });
-            // TODO:FIXME:
+            dispatch(getOnlyInventoryFetch(ascean._id));
             setSavingInventory(false);
         } catch (err: any) {
             console.log(err, "Error Saving Inventory");
@@ -225,9 +216,9 @@ const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) =>
             };
         };
         setPlayerTraitWrapper({
-            'primary': await fetchTrait(gameState.primary.name),
-            'secondary': await fetchTrait(gameState.secondary.name),
-            'tertiary': await fetchTrait(gameState.tertiary.name)
+            'primary': await fetchTrait(gameState.traits.primary.name),
+            'secondary': await fetchTrait(gameState.traits.secondary.name),
+            'tertiary': await fetchTrait(gameState.traits.tertiary.name)
         });
     };
 
@@ -250,8 +241,8 @@ const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) =>
             console.log(err, "Error Saving Game Settings");
         };
     };
-    // TODO:FIXME:
-    // const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>): void => gameDispatch({ type: GAME_ACTIONS.SET_VOLUME, payload: parseFloat(e.target.value) });
+    const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => dispatch(setVolume(parseFloat(e.target.value)));
+    // gameDispatch({ type: GAME_ACTIONS.SET_VOLUME, payload: parseFloat(e.target.value) });
     const handleSettingChange = (e: any): void => setCurrentSetting(e.target.value); 
     const handleCharacterChange = (e: any): void => setCurrentCharacter(e.target.value);
 
@@ -485,7 +476,7 @@ const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) =>
             Inventory
             </h3> 
             {/* TODO:FIXME: */}
-            <Firewater state={state} dispatch={dispatch} gameState={gameState} gameDispatch={gameDispatch} story={true} />
+            <Firewater story={true} />
             <div className='story-save-inventory-outer'>
                 <Button size='sm' onClick={() => saveInventory(dragAndDropInventory)} variant='' className='story-save-inventory'>
                 { savingInventory ? ( 
@@ -514,7 +505,6 @@ const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) =>
         <div className="story-block" style={{ zIndex: 9999, fontFamily: "Cinzel", }}>
             <div className='story-ascean'> 
                 { asceanState.experience === asceanState.experienceNeeded ? (
-                    // TODO:FIXME:
                     <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} story={true} />
                 ) : ( '' ) } 
                 <div style={{ textAlign: 'center', color: "#fdf6d8" }}>
@@ -537,7 +527,7 @@ const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) =>
                     trinket={ascean.trinket}
                     gameDisplay={true}
                     loading={loading}
-                    damage={damaged}
+                    damage={state.playerDamaged}
                     key={ascean._id}
                     story={true}
                 />
@@ -564,8 +554,7 @@ const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) =>
             ) : asceanViews === VIEWS.INVENTORY ? (
                 <>
                 { highlighted.comparing ? (
-                    // TODO:FIXME:
-                    <Inventory gameState={gameState} gameDispatch={gameDispatch} bag={gameState.player.inventory} inventory={highlighted.item} ascean={ascean} index={0} compare={true} story={true} />
+                    <Inventory bag={ascean.inventory} inventory={highlighted.item} ascean={ascean} index={0} compare={true} story={true} />
                 ) : ( '' ) }
                 </> 
             ) : asceanViews === VIEWS.SETTINGS ? (
@@ -597,7 +586,7 @@ const StoryAscean = ({ loading, levelUpAscean, damaged, asceanViews }: Props) =>
                     {createCharacterInfo(currentCharacter)}
                 </div>
             ) : asceanViews === VIEWS.INVENTORY ? (
-                <PhaserInventoryBag setDragAndDropInventory={setDragAndDropInventory} dragAndDropInventory={dragAndDropInventory} highlighted={highlighted} setHighlighted={setHighlighted} gameState={gameState} gameDispatch={gameDispatch} ascean={gameState.player} /> 
+                <PhaserInventoryBag setDragAndDropInventory={setDragAndDropInventory} dragAndDropInventory={dragAndDropInventory} highlighted={highlighted} setHighlighted={setHighlighted} /> 
             ) : asceanViews === VIEWS.SETTINGS ? (
                 <div className='p-2' style={{ overflowY: "scroll", scrollbarWidth: "none", height: "100%" }}>{createSettingInfo(currentSetting)}</div>
             ) : ( '' ) }

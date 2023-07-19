@@ -27,7 +27,7 @@ const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean, story }: Pro
             <h3 style={{ fontSize: 20 + 'px', textAlign: 'center', color: '' }} className=''>Congratulations {asceanState.ascean.name}, You Can Now Level Up To {asceanState.ascean.level + 1}!!</h3>
             <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
             { asceanState.level % 2 !== 0 ? (
-                    <Attributes asceanState={asceanState} setAsceanState={setAsceanState} />
+                <Attributes asceanState={asceanState} setAsceanState={setAsceanState} />
             ) : ( '' ) }
             <Faith asceanState={asceanState} setAsceanState={setAsceanState} />
             <Button variant='outline-warning' 

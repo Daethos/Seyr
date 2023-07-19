@@ -16,6 +16,12 @@ const combatSlice = createSlice({
         getCombatFetch: (state, _action) => {},
         getStalwartFetch: (state, _action) => {},
         getCombatTimerFetch: (state, _action) => {},
+        getPersuasionFetch: (state, _action) => {},
+        getLuckoutFetch: (state, _action) => {},
+        getEnemySetupFetch: (state, _action) => {},
+        getNpcSetupFetch: (state, action) => {
+            console.log('getNpcSetupFetch', action.payload);
+        },
         // ===== Combat Setup / Breakdown ===== \\
         setCombatPlayer: (state, action) => {
             state.player = action.payload.ascean;
@@ -103,6 +109,10 @@ const combatSlice = createSlice({
         },
         setPhaser: (state, action) => {
             state.phaser = action.payload;
+        },
+        setPhaserAggression: (state, action) => {
+            state.combatEngaged = action.payload;
+            state.isAggressive = action.payload;
         },
         setRest: (state, action) => {
             const percentage = action.payload;
@@ -301,7 +311,10 @@ export const {
     getCombatFetch,
     getStalwartFetch,
     getCombatTimerFetch,
-
+    getPersuasionFetch,
+    getLuckoutFetch,
+    getEnemySetupFetch,
+    getNpcSetupFetch,
 
     setCombatPlayer,
     setEnemy,
@@ -313,6 +326,7 @@ export const {
     setPhaser,
     setRest,
     setWeather,
+    setPhaserAggression,
 
     setCombatTimer,
     setCombatInput,
@@ -330,7 +344,7 @@ export const {
     setPrayerSacrifice,
     setInstantStatus,
     setRemoveEffect,
-    
+
     setEffectResponse,
     setPlayerWin,
     setEnemyWin,

@@ -12,13 +12,7 @@ export const gameSlice = createSlice({
         loadingDeity: false,
         loadedAscean: false,
         playerBlessed: false,
-        saveExp: false,
-        itemSaved: false,
-        eqpSwap: false,
         checkLoot: false,
-        removeItem: false,
-        repositionInventory: false,
-        purchasingItem: false,
         combatResolved: false,
         instantStatus: false,
         showDialog: false,
@@ -62,6 +56,9 @@ export const gameSlice = createSlice({
         getDrinkFirewaterFetch: (state, _action) => {
             state.loadedAscean = false;
         },
+        getReplenishFirewaterFetch: (state, _action) => {
+            state.loadedAscean = false;
+        },
         getGainExperienceFetch: (state, _action) => {
             state.loadedAscean = false;
         },
@@ -76,12 +73,11 @@ export const gameSlice = createSlice({
             state.loadedAscean = false;
         },
         getInteractingLootFetch: (state, _action) => {},
-        getShowDialogFetch: (state, _action) => {},
-        getEnemySetupFetch: (state, _action) => {},
-        getNpcSetupFetch: (state, _action) => {},
         getAsceanLevelUpFetch: (state, _action) => {
             state.loadedAscean = false;
         },
+        getThieverySuccessFetch: (state, _action) => {},
+        getPurchaseFetch: (state, _action) => {},
         // ===== Player Concerns ===== \\
         setPlayer: (state, action) => {
             state.player = action.payload;
@@ -126,7 +122,7 @@ export const gameSlice = createSlice({
                 'experienceNeeded': action.payload.ascean.level * 1000,
                 'mastery': action.payload.ascean.mastery,
                 'faith': action.payload.ascean.faith,
-            }
+            };
         },
         setInventory: (state, action) => {
             state.player.inventory = action.payload;
@@ -148,7 +144,6 @@ export const gameSlice = createSlice({
         },
         setStatistics: (state, action) => {
             state.player.statistics = action.payload;
-            state.loadedAscean = true;
         },
         setTraits: (state, action) => {
             state.traits = action.payload;
@@ -168,29 +163,12 @@ export const gameSlice = createSlice({
         },
         setInstantStatus: (state, action) => {
             state.instantStatus = action.payload;
-        },
-        setItemSaved: (state, action) => {
-            state.itemSaved = action.payload;
-        },
-        setEqpSwap: (state, action) => {
-            state.eqpSwap = action.payload;
-        },
+        }, 
         setPlayerBlessing: (state, action) => {
             state.playerBlessed = action.payload;
-        },
-        setPurchasingItem: (state, action) => {
-            state.purchasingItem = action.payload;
-        },
-        setRemoveItem: (state, action) => {
-            state.removeItem = action.payload;
-        },
-        setRepositionInventory: (state, action) => {
-            state.repositionInventory = action.payload;
-        },
-        setSaveExp: (state, action) => {
-            state.saveExp = action.payload;
-        },
+        }, 
         setShowDialog: (state, action) => {
+            console.log(`setShowDialog: ${action.payload}`);
             state.showDialog = action.payload;
         },
         setShowInventory: (state, action) => {
@@ -205,6 +183,10 @@ export const gameSlice = createSlice({
                 ...state.lootDrops,
                 action.payload,
             ];
+        },
+        setClearLootDrop: (state, action) => {
+            const lootDrops = state.lootDrops.filter((drop) => drop._id !== action.payload);
+            state.lootDrops = lootDrops;
         },
         setClearLootDrops: (state) => {
             state.lootDrops = [];
@@ -221,10 +203,14 @@ export const gameSlice = createSlice({
                     ...state.showLootIds.filter((id) => id !== action.payload.loot),
                 ];
                 state.showLoot = state.showLootIds.length > 1 ? state.showLoot : false;
-            }
+            };
+        },
+        setShowLootOne: (state, action) => {
+            state.showLoot = action.payload;
         }, 
         // ===== Dialogue ===== \\
         setCurrentDialogNode: (state, action) => {
+            console.log(`setCurrentDialogNode: ${action.payload}`);
             state.currentNode = action.payload;
         },
         setCurrentNodeIndex: (state, action) => {
@@ -234,8 +220,71 @@ export const gameSlice = createSlice({
             state.renderedText = action.payload.text;
             state.renderedOptions = action.payload.options;
         },
+        // ====== Settings ====== \\
+        setVolume: (state, action) => {
+            state.soundEffectVolume = action.payload;
+        },
+        setShake: (state, action) => {
+            state.shake = action.payload;
+        },
+        setVibrationTime: (state, action) => {
+            state.vibrationTime = action.payload;
+        },
     },
 });
 
-export const { getGameFetch, getAsceanLevelUpFetch, getEnemySetupFetch, getNpcSetupFetch, getShowDialogFetch, getLootDropFetch, getOnlyInventoryFetch, getAsceanAndInventoryFetch, getDrinkFirewaterFetch, getInteractingLootFetch, getGainExperienceFetch, setPlayerLevelUp, setPlayer, setSettings, setAsceanState, setInitialAsceanState, setAttributes, setCheckLoot, setCurrency, setExperience, setFirewater, setInventory, setTraits, setStatistics, setJournal, setJournalEntry, setPlayerBlessing, setPurchasingItem, setRepositionInventory, setInstantStatus, setCombatResolved, setEqpSwap, setSaveExp, setItemSaved, setRemoveItem, setMerchantEquipment, setDialog, setShowDialog, setShowInventory, setLootDrops, setShowLoot, setClearLootDrops, setCurrentDialogNode, setCurrentIntent, setCurrentNodeIndex, setRendering } = gameSlice.actions;
+export const { 
+    getGameFetch, 
+    getAsceanAndInventoryFetch, 
+    getAsceanLevelUpFetch, 
+    getDrinkFirewaterFetch, 
+    getInteractingLootFetch, 
+    getGainExperienceFetch, 
+    getLootDropFetch, 
+    getOnlyInventoryFetch, 
+    getPurchaseFetch, 
+    getReplenishFirewaterFetch, 
+    getThieverySuccessFetch, 
+    
+    setPlayer, 
+    setSettings, 
+    setInitialAsceanState,
+    setPlayerLevelUp, 
+    setShake, 
+    setVibrationTime, 
+    setVolume, 
+    
+    setAsceanState, 
+    setAttributes, 
+    setCurrency, 
+    setExperience, 
+    setFirewater, 
+    setInventory, 
+    setJournal, 
+    setJournalEntry, 
+    setStatistics, 
+    setTraits, 
+    
+    setCombatResolved, 
+    setInstantStatus, 
+    setMerchantEquipment, 
+    setPlayerBlessing, 
+    
+    setShowInventory, 
+    setCheckLoot, 
+    setLootDrops, 
+    setShowLoot, 
+    setClearLootDrops, 
+    setClearLootDrop, 
+    setShowLootOne, 
+    
+    setDialog, 
+    setShowDialog, 
+    setCurrentDialogNode, 
+    setCurrentIntent, 
+    setCurrentNodeIndex, 
+    setRendering, 
+
+} = gameSlice.actions;
+
 export default gameSlice.reducer;

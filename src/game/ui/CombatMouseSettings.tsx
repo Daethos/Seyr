@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { useKeyEvent } from '../scenes/HostScene';
+import { useDispatch } from 'react-redux';
+import { getCombatSettingFetch } from '../reducers/combatState';
+import useGameSounds from '../../components/GameCompiler/Sounds';
 
 interface CombatMouseSettingsProps {
     setPrayerBlessing: (prayer: any) => void;
     setDamageType: (damageType: any) => void;
     damageType: any[];
-    setWeaponOrder: (weapon: any) => void;
     weapons: any[];
-    state: any;
 };
 
-const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, setWeaponOrder, weapons, state }: CombatMouseSettingsProps) => {
+const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, weapons }: CombatMouseSettingsProps) => {
+    const dispatch = useDispatch();
+    const { playWO } = useGameSounds(0.25);
     const [prayers, setPrayers] = useState([ 'Buff', 'Heal', 'Debuff', 'Damage', 'Avarice', 'Denial', 'Dispel', 'Silence']);
     const [selectedWeaponIndex, setSelectedWeaponIndex] = useState<number>(0);
     const [selectedDamageTypeIndex, setSelectedDamageTypeIndex] = useState<number>(0);
@@ -38,8 +41,10 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, set
             newIndex = direction === 1 ? 2 : 1;
             if (!weapons[newIndex]) return;
             setSelectedWeaponIndex(newIndex);
-            setWeaponOrder( { target: { value: weapons[newIndex]._id } } );
+            const one = [weapons[newIndex], weapons[0], weapons[2]._id === weapons[newIndex]._id ? weapons[1] : weapons[2]];
+            dispatch(getCombatSettingFetch({ loadout: one, type: 'Weapon' }));
             setSelectedHighlight('Weapon');
+            playWO();
         };
     };
 
