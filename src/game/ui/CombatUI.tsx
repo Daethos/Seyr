@@ -13,18 +13,23 @@ import PhaserEffects from './PhaserEffects';
 import ItemPopover, { getBorderStyle, itemPopover } from './ItemPopover';
 
 interface CombatUIProps {
+    state: CombatData;
     staminaPercentage: number;
     pauseState: boolean;    
     handleCallback: (state: CombatData, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
-const CombatUI = ({ staminaPercentage, pauseState, handleCallback }: CombatUIProps) => {
-    const state = useSelector((state: any) => state.combat);
+const CombatUI = ({ state, staminaPercentage, pauseState, handleCallback }: CombatUIProps) => {
+    // const state = useSelector((state: any) => state.combat);
     const gameState = useSelector((state: any) => state.game);
     const dispatch = useDispatch();
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
     const [prayerModal, setPrayerModal] = useState<boolean>(false);
+
+    useEffect(() => {
+        console.log(state.playerEffects, 'Combat UI State')
+    }, [state]);
 
     useEffect(() => {
         updatePlayerHealthPercentage();

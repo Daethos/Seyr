@@ -12,29 +12,25 @@ import Menu from './Menu';
 import Play from './Play';
 import StoryAscean from '../ui/StoryAscean';
 import * as asceanAPI from '../../utils/asceanApi';
-import * as gameAPI from '../../utils/gameApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
 import Button from 'react-bootstrap/Button';
-import { GAME_ACTIONS, NPC, checkTraits } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
+import { NPC, checkTraits } from '../../components/GameCompiler/GameStore';
+import { CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
 import CombatUI from '../ui/CombatUI';
 import EnemyUI from '../ui/EnemyUI';
-import GameCombatText from '../../components/GameCompiler/GameCombatText';
 import screenfull from 'screenfull';
 import StoryJournal from '../../components/GameCompiler/StoryJournal';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects'; 
 import { LootDropUI } from '../ui/LootDropUI';
 import { Merchant } from '../../components/GameCompiler/NPCs';
-import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import { StoryDialog } from '../ui/StoryDialog';
-import { getNodesForNPC, npcIds } from '../../components/GameCompiler/DialogNode';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearNonAggressiveEnemy, clearNpc, getAsceanHealthUpdateFetch, getCombatFetch, getCombatSettingFetch, getCombatStateUpdate, getCombatStatisticFetch, getCombatTimerFetch, getEffectTickFetch, getEnemyActionFetch, getEnemySetupFetch, getNpcSetupFetch, getStalwartFetch, setEnemyWin, setPlayerWin } from '../reducers/combatState';
-import { getAsceanAndInventoryFetch, getAsceanLevelUpFetch, getDrinkFirewaterFetch, getGainExperienceFetch, getInteractingLootFetch, getLootDropFetch, getOnlyInventoryFetch, setShowDialog, setMerchantEquipment } from '../reducers/gameState';
+import { clearNonAggressiveEnemy, clearNpc, getAsceanHealthUpdateFetch, getCombatFetch, getCombatSettingFetch, getCombatStateUpdate, getCombatStatisticFetch, getCombatTimerFetch, getEffectTickFetch, getEnemyActionFetch, getEnemySetupFetch, getInitiateFetch, getNpcSetupFetch, setEnemyWin, setPlayerWin, setRest, setStalwart } from '../reducers/combatState';
+import { getAsceanLevelUpFetch, getDrinkFirewaterFetch, getGainExperienceFetch, getInteractingLootFetch, getLootDropFetch, setShowDialog, setMerchantEquipment } from '../reducers/gameState';
 import PhaserCombatText from '../ui/PhaserCombatText';
 
 export const usePhaserEvent = (event: string, callback: any) => {
@@ -56,6 +52,12 @@ export const useKeyEvent = (event: string, callback: any) => {
     }, [event, callback]);
 }; 
 
+let scenes: any[] = [];
+scenes.push(Boot);
+scenes.push(Preload);
+scenes.push(Menu);
+scenes.push(Play);
+
 interface Props {
     assets: any;
 };
@@ -68,7 +70,8 @@ const HostScene = ({ assets }: Props) => {
     const ascean = useSelector((state: any) => state.game.player);
     const asceanState = useSelector((state: any) => state.game.asceanState);
     const gameState = useSelector((state: any) => state.game);
-    const { playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind, playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound } = useGameSounds(gameState.soundEffectVolume);
+    const stamina = useSelector((state: any) => state.combat.player_attributes.stamina);
+    const { playWO, playDeath, playReligion } = useGameSounds(gameState.soundEffectVolume);
     const [currentGame, setCurrentGame] = useState<any>(false);
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
@@ -78,15 +81,8 @@ const HostScene = ({ assets }: Props) => {
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
     const [asceanViews, setAsceanViews] = useState<string>('Character');
     const [gameTimer, setGameTimer] = useState<number>(0);
-
     const gameRef = useRef<any>({});
-    let scenes: any[] = [];
-    scenes.push(Boot);
-    scenes.push(Preload);
-    scenes.push(Menu);
-    scenes.push(Play);
-
-    const [config, setConfig] = useState({
+    const config = {
         type: Phaser.AUTO,
         parent: 'story-game',
         fullscreenTarget: 'story-game',
@@ -136,14 +132,13 @@ const HostScene = ({ assets }: Props) => {
             ],
         }, 
         backgroundColor: 'transparent',
-    });
+    };
  
     useEffect(() => { 
         startGame();
-    }, []);
+    }, [asceanID]);
 
     useEffect(() => {
-        console.log(combatState, "CombatState")
         updateCombatListener(combatState);
     }, [combatState]); 
 
@@ -158,9 +153,9 @@ const HostScene = ({ assets }: Props) => {
                     
                     return () => {
                         if (checkTraits("Kyn'gian", gameState.traits) && gameTimer % 10 === 0) {
-                            setStaminaPercentage(staminaPercentage + (combatState.player_attributes.stamina / 100));
-                            EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (combatState.player_attributes.stamina / 100)) / 100) * combatState.player_attributes.stamina));
-                            dispatch({ type: ACTIONS.PLAYER_REST, payload: 1 });
+                            setStaminaPercentage(staminaPercentage + (stamina / 100));
+                            EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (stamina / 100)) / 100) * stamina));
+                            dispatch(setRest(1));
                         };
                         clearTimeout(timerInterval);
                     };
@@ -172,9 +167,9 @@ const HostScene = ({ assets }: Props) => {
     useEffect(() => {
         if (staminaPercentage < 100) {
             const timer = setTimeout(() => {
-                setStaminaPercentage(staminaPercentage + (combatState.player_attributes.stamina / 100));
-                EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (combatState.player_attributes.stamina / 100)) / 100) * combatState.player_attributes.stamina));
-            }, 200 - combatState.player_attributes.stamina);
+                setStaminaPercentage(staminaPercentage + (stamina / 100));
+                EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (stamina / 100)) / 100) * stamina));
+            }, 200 - stamina);
 
             return () => {
                 clearTimeout(timer);
@@ -188,8 +183,6 @@ const HostScene = ({ assets }: Props) => {
             gameRef.current = new Phaser.Game(config); 
             setTimeout(() => {
                 setLoading(false);
-
-                // dispatch({ type: ACTIONS.SET_PHASER, payload: true });
             }, 1000);
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game');
@@ -211,8 +204,6 @@ const HostScene = ({ assets }: Props) => {
     const sendGameData = async () => EventEmitter.emit('get-game-data', gameState);
     const updateCombatTimer = async (e: number) => dispatch(getCombatTimerFetch(e)); 
 
-    // dispatch({ type: ACTIONS.SET_COMBAT_TIMER, payload: e });
-
     const updateEnemyAction = async (e: any): Promise<void> => {
         try {
             dispatch(getEnemyActionFetch(e)); 
@@ -223,12 +214,8 @@ const HostScene = ({ assets }: Props) => {
         };
     };
 
-    // const updateState = async (e: any): Promise<void> => dispatch({ type: ACTIONS.SET_UPDATE_STATE, payload: e });
     const updateState = async (e: any) => dispatch(getCombatStateUpdate(e));
-
-    const clearNAEnemy = async (e: any): Promise<void> => {
-        dispatch(clearNonAggressiveEnemy()); 
-    };
+    const clearNAEnemy = async (e: any) => dispatch(clearNonAggressiveEnemy());
 
     const clearNPC = async (e: any): Promise<void> => {
         dispatch(clearNpc()); 
@@ -296,17 +283,6 @@ const HostScene = ({ assets }: Props) => {
         const opponent = await getOpponent();
         EventEmitter.emit('enemy-fetched', opponent);
     };
-
-    const setupEnemy = async (e: any): Promise<void> => {
-        dispatch(getEnemySetupFetch(e)); 
-    };
-
-    const setupNpc = async (e: any): Promise<void> => {
-        console.log(e, 'SETUP NPC');
-        dispatch(getNpcSetupFetch(e)); 
-    };
- 
-
     const fetchNpc = async (e: any): Promise<void> => { 
         try {
             const CITY_OPTIONS = {
@@ -335,6 +311,8 @@ const HostScene = ({ assets }: Props) => {
             console.log("Error Getting an NPC");
         };
     }; 
+    const setupEnemy = async (e: any) => dispatch(getEnemySetupFetch(e)); 
+    const setupNpc = async (e: any) => dispatch(getNpcSetupFetch(e)); 
 
     const handlePlayerLuckout = async (): Promise<void> => {
         try {
@@ -354,14 +332,7 @@ const HostScene = ({ assets }: Props) => {
         };
     }; 
 
-    const drinkFirewater = async (): Promise<void> => {
-        if (ascean?.firewater?.charges === 0) return;
-        try {
-            dispatch(getDrinkFirewaterFetch(asceanID));  
-        } catch (err: any) {
-            console.log(err, "Error Drinking Firewater");
-        };
-    }; 
+    const drinkFirewater = async () => dispatch(getDrinkFirewaterFetch(asceanID));  
 
     const statFiler = (data: CombatData, win: boolean): Object => {
         const stat = {
@@ -382,19 +353,12 @@ const HostScene = ({ assets }: Props) => {
     const handlePlayerWin = async (combatData: CombatData): Promise<void> => {
         try {
             playReligion();
-            // await gainExperience(combatData);
             const stat = statFiler(combatData, true);
-            // const response = await asceanAPI.recordCombatStatistic(stat); 
-            // console.log(response, "Player Win Response Recorded");
-            // gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             dispatch(getGainExperienceFetch({ asceanState, combatState })); 
             dispatch(getCombatStatisticFetch(stat)) 
             dispatch(getLootDropFetch({ enemyID: combatState.enemyID, level: combatState.computer.level })); 
-            // await getOneLootDrop(combatData.computer.level);
             setTimeout(() => {
                 dispatch(setPlayerWin(combatData)); 
-                //     dispatch({ type: ACTIONS.PLAYER_WIN, payload: combatData });
-                //     gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
             }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
@@ -404,18 +368,12 @@ const HostScene = ({ assets }: Props) => {
     const handleComputerWin = async (combatData: CombatData): Promise<void> => {
         try {
             const stat = statFiler(combatData, false);
-            dispatch(getCombatStatisticFetch(stat))
+            dispatch(getCombatStatisticFetch(stat));
             dispatch(getAsceanHealthUpdateFetch({ health: combatData.new_player_health, id: asceanState._id }));
             
-            // const response = await asceanAPI.recordCombatStatistic(stat);
-            // console.log(response, "Player Loss Response Recorded");
-            // gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
-            // await asceanAPI.asceanHealth({ health: combatData.new_player_health, id: asceanID });
             playDeath();
             setTimeout(() => {
                 dispatch(setEnemyWin(combatData));
-                // dispatch({ type: ACTIONS.COMPUTER_WIN, payload: combatData });
-                // gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: false });
             }, 6000);
         } catch (err: any) {
             console.log("Error Handling Player Win");
@@ -425,36 +383,17 @@ const HostScene = ({ assets }: Props) => {
     const handleEffectTick = async (state: CombatData, effect: StatusEffect, effectTimer: number): Promise<void> => {
         try {
             dispatch(getEffectTickFetch({ combatData: state, effect, effectTimer }));
-            // const data = { combatData: state, effect, effectTimer };
-            // const response = await gameAPI.effectTick(data);
-            // console.log(response, "Response From Effect Tick");
-            // dispatch({ type: ACTIONS.EFFECT_RESPONSE, payload: response.data });
-            // if (response.data.player_win === true) await handlePlayerWin(response.data);
-            // if (response.data.computer_win === true) await handleComputerWin(response.data);
-            // setTimeout(() => {
-            //     dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
-            // }, 1500);
         } catch (err: any) {
             console.log(err, "Error In Effect Tick");
         };
     };
 
-    const handleInitiate = async (combatData: CombatData): Promise<void> => {
+    const handleInitiate = async (state: CombatData): Promise<void> => {
         try { 
-            // dispatch(getInitiateFetch({ combatData, type: 'Initiate' })); TODO:FIXME:
+            console.log(`%c Player: Action - ${state.action} Counter -${state.counter_guess} | Computer: Action - ${state.computer_action} Counter -${state.computer_counter_guess}`, 'color: green; font-size: 16px; font-weight: bold;` ')
+            dispatch(getInitiateFetch({ combatData: state, type: 'Initiate' }));
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             shakeScreen(gameState.shake);
-            // console.log(`%c Player: Action - ${combatData.action} Counter -${combatData.counter_guess} | Computer: Action - ${combatData.computer_action} Counter -${combatData.computer_counter_guess}`, 'color: green; font-size: 16px; font-weight: bold;` ')
-            // const response = await gameAPI.phaserAction(combatData);
-            // console.log(response.data, "Initiate Response")
-            // await updateCombat(response.data);
-            // dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
-            // await soundEffects(response.data);
-            // if (response.data.player_win === true) await handlePlayerWin(response.data);
-            // if (response.data.computer_win === true) await handleComputerWin(response.data);
-            // setTimeout(() => {
-            //     dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
-            // }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Combat')
         };
@@ -462,19 +401,11 @@ const HostScene = ({ assets }: Props) => {
 
     const handleInstant = async (state: CombatData): Promise<void> => {
         try {
-            // dispatch(getInitiateFetch({ combatData: state, type: 'Instant' })); TODO:FIXME:
-            // gameDispatch({ type: GAME_ACTIONS.INSTANT_COMBAT, payload: true });
+            console.log('Instant Invocation Dispatched');
+            dispatch(getInitiateFetch({ combatData: state, type: 'Instant' }));
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            // const response = await gameAPI.instantAction(state);
-            // console.log(response.data, "Instant Response");
-            // await updateCombat(response.data);
-            // dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response.data });
-            // if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
             playReligion();
-            // setTimeout(() => {
-            //     dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
-            // }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Insant Action')
         };
@@ -483,38 +414,15 @@ const HostScene = ({ assets }: Props) => {
     const handlePrayer = async (state: CombatData): Promise<void> => {
         try {
             if (state.prayerSacrifice === '') return;
-            // dispatch(getInitiateFetch({ combatData: state, type: 'Prayer' })); TODO:FIXME:
-            // const response = await gameAPI.consumePrayer(state);
-            // console.log(response.data, "Prayer Response");
+            console.log('Prayer Consumption Dispatched');
+            dispatch(getInitiateFetch({ combatData: state, type: 'Prayer' }));
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            // await updateCombat(response.data);
-            // dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
-            // if (response.data.player_win === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
             playReligion();
-            // setTimeout(() => {
-            //     dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
-            // }, 1500);
         } catch (err: any) {
             console.log(err.message, 'Error Initiating Action')
         };
-    };
-
-   const setWeaponOrder = async (e: any): Promise<void> => {
-        try {
-            const newWeap = combatState.weapons.filter((w: { _id: string; }) => w?._id === e.target.value);
-            console.log(newWeap, 'New Weapon Order');
-            const newWeaponOrder = async () => combatState?.weapons.sort((a: any, b: any) => {
-                return ( a._id === newWeap[0]._id ? -1 : b._id === newWeap[0]._id ? 1 : 0 )
-            });
-            const res = await newWeaponOrder();
-            console.log(res, 'New Weapon Order');
-            playWO();
-            dispatch(getCombatSettingFetch({ loadout: res, type: 'Weapon' })); 
-        } catch (err: any) {
-            console.log(err.message, 'Error Setting Weapon Order');
-        };
-    };
+    }; 
 
    const setDamageType = async (e: any): Promise<void> => {
         try {    
@@ -558,7 +466,6 @@ const HostScene = ({ assets }: Props) => {
     };
 
     const toggleFullscreen = () => screenfull.toggle();
-
     const toggleMute = () => {
         const mute = () => {
             let scene = gameRef.current.scene.getScene('Play');
@@ -577,7 +484,6 @@ const HostScene = ({ assets }: Props) => {
             setMuteState(false);
         };
     };
-
     const togglePause = () => {
         const pause = () => {
             let scene = gameRef.current.scene.getScene('Play');
@@ -596,20 +502,11 @@ const HostScene = ({ assets }: Props) => {
         };
     }; 
 
-    const combatEngaged = async (e: boolean) => {
-        try {
-            dispatch(getCombatFetch(e)); 
-        } catch (err: any) {
-            console.log(err, "Error Handling Dialog Middleware");
-        }; 
-    };
-
+    const combatEngaged = async (e: boolean) => dispatch(getCombatFetch(e)); 
     const launchGame = async (e: boolean) => setCurrentGame(e);
     const updateStamina = async (e: number) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e <= 0 ? 0 : prevPercentage - e);
-    const updateStalwart = async (e: boolean) =>  dispatch(getStalwartFetch(e)); //dispatch({ type: ACTIONS.SET_STALWART, payload: e });
-    // dispatch(getStalwartFetch(e)) TODO:FIXME:
-    const interactingLoot = async (e: boolean) => dispatch(getInteractingLootFetch(e)); //gameDispatch({ type: GAME_ACTIONS.SET_SHOW_LOOT, payload: e }); 
-    // dispatch(getInteractingLootFetch(e)) TODO:FIXME:
+    const updateStalwart = async (e: boolean) =>  dispatch(setStalwart(e)); 
+    const interactingLoot = async (e: boolean) => dispatch(getInteractingLootFetch(e)); 
     const showDialog = async (e: boolean) => setDialogTag(e);
 
     useKeyEvent('keydown', toggleCombatHud);
@@ -649,7 +546,6 @@ const HostScene = ({ assets }: Props) => {
                         <StoryJournal ascean={ascean} />
                     : '' }
                     { dialogTag ? (
-                        // dispatch(getShowDialogFetch(!gameState.showDialog)) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: !gameState.showDialog })
                         <Button variant='' className='ascean-ui' onClick={() => dispatch(setShowDialog(!gameState.showDialog))}>
                             <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>
                         </Button>
@@ -660,7 +556,7 @@ const HostScene = ({ assets }: Props) => {
                     <StoryAscean ascean={ascean} asceanViews={asceanViews} loading={loading} levelUpAscean={levelUpAscean} />
                 ) : ( 
                     <div style={{ position: "absolute", zIndex: 1 }}>
-                        <CombatUI handleCallback={handleEffectTick} staminaPercentage={staminaPercentage} pauseState={pauseState} />
+                        <CombatUI state={combatState} handleCallback={handleEffectTick} staminaPercentage={staminaPercentage} pauseState={pauseState} />
                         { combatState.combatEngaged ? (
                             <>
                             <div style={{ position: "absolute", top: "415px", left: "250px", zIndex: 0 }}>

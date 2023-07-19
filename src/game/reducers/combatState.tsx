@@ -12,9 +12,9 @@ const combatSlice = createSlice({
         getAsceanHealthUpdateFetch: (state, _action) => {},
         getInitiateFetch: (state, _action) => {},
         getCombatSettingFetch: (state, _action) => {},
+        getDrinkFirewaterFetch: (state, _action) => {},
         getEffectTickFetch: (state, _action) => {},
         getCombatFetch: (state, _action) => {},
-        getStalwartFetch: (state, _action) => {},
         getCombatTimerFetch: (state, _action) => {},
         getPersuasionFetch: (state, _action) => {},
         getLuckoutFetch: (state, _action) => {},
@@ -115,10 +115,12 @@ const combatSlice = createSlice({
             state.isAggressive = action.payload;
         },
         setRest: (state, action) => {
+            console.log(action.payload, "Percentage to Heal");
             const percentage = action.payload;
             const current = state.new_player_health;
-            const healed = Math.floor(current + (percentage / 100));
+            const healed = Math.floor(current + state.player_health * (percentage / 100));
             const newHealth = healed > state.player_health ? state.player_health : healed;
+            console.log(`Healed ${healed} to ${newHealth}`);
             state.new_player_health = newHealth;
             state.current_player_health = newHealth;
         },
@@ -211,7 +213,9 @@ const combatSlice = createSlice({
         },
         // ===== Combat Resolution Concerns ===== \\
         setCombatInitiated: (state, action) => {
-            state = action.payload;
+            console.log(action.payload, "Combat Initiated");
+            // state = action.payload;
+            return { ...action.payload };
         },
         setEffectResponse: (state, action) => {
             state = action.payload;
@@ -305,11 +309,11 @@ export const {
     getEnemyActionFetch,
     getCombatStatisticFetch,
     getAsceanHealthUpdateFetch,
-    getInitiateFetch,
-    getCombatSettingFetch,
-    getEffectTickFetch,
     getCombatFetch,
-    getStalwartFetch,
+    getCombatSettingFetch,
+    getDrinkFirewaterFetch,
+    getEffectTickFetch,
+    getInitiateFetch,
     getCombatTimerFetch,
     getPersuasionFetch,
     getLuckoutFetch,

@@ -33,8 +33,10 @@ const PhaserEffects = ({ effect, enemy, pauseState, handleCallback }: StatusEffe
 
     useEffect(() => {
         if (!pauseState) return;
+        console.log(effectTimer, endTime, effect.endTime, "Effect Timer");
         if (endTime < effect.endTime) setEndTime(effect.endTime);
         const intervalTimer = setInterval(() => {
+            console.log("Ticking");
             setEffectTimer((effectTimer: number) => effectTimer - 1);
         }, 1000);
         if (endTime === state.combatTimer || effectTimer <= 0 || !state.combatEngaged) {
@@ -42,11 +44,11 @@ const PhaserEffects = ({ effect, enemy, pauseState, handleCallback }: StatusEffe
             clearInterval(intervalTimer);
         };
         if (pauseState) clearInterval(intervalTimer);
+        if (canTick(effect, effectTimer)) { 
+            handleCallback(state, effect, effectTimer);
+        };
         
         return () => {
-            if (canTick(effect, effectTimer)) { 
-                handleCallback(state, effect, effectTimer);
-            };
             clearInterval(intervalTimer); // Clean up the interval on unmount
         };
     }, [effectTimer, pauseState, endTime]);

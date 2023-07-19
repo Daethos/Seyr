@@ -894,7 +894,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(-175);
                         this.spriteShield.setOrigin(0, 0.15);
                         this.actionCounterable = false;
-                        if (entity === 'player' && this.actionAvailable && this.actionTarget && !this.actionCountered) this.actionSuccess = true;
+                        if (entity === 'player' && this.actionAvailable && this.actionTarget && !this.actionCountered) this.actionSuccess = true; 
+                        // TODO:FIXME: Probably just pass the 'action' to be successful here to the front-end ?? 
                         if (entity === 'enemy' && target && !this.isRanged && !this.actionCountered) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();

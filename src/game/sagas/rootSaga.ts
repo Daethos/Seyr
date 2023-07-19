@@ -111,7 +111,6 @@ function* combatSaga(): SagaIterator {
     yield takeEvery('combat/getEffectTickFetch', workGetEffectTick);
     yield takeEvery('combat/getAsceanHealthUpdateFetch', workGetAsceanHealthUpdate);
     yield takeEvery('combat/getCombatStatisticFetch', workGetCombatStatistic);
-    yield takeEvery('combat/getStalwartFetch', workGetStalwart);
     yield takeEvery('combat/getCombatTimerFetch', workGetCombatTimer);
     yield takeEvery('combat/getPersuasionFetch', workGetPersuasion);
     yield takeEvery('combat/getLuckoutFetch', workGetLuckout);
@@ -133,10 +132,7 @@ function* workGetEnemySetup(action: any): SagaIterator {
     yield put(setEnemy({ enemy: action.payload.enemy, health: action.payload.health, enemyID: action.payload.id, isAggressive: action.payload.isAggressive, startedAggressive: action.payload.startedAggressive, isDefeated: action.payload.isDefeated, isTriumphant: action.payload.isTriumphant }));
 };
 function* workGetNpcSetup(action: any): SagaIterator {
-    console.log(action.payload, "NPC Information in Setup");
-    console.log(npcIds[action.payload.type], "NPC ID");
     const dialog = yield call(() => getNodesForNPC(npcIds[action.payload.type]));
-    console.log(dialog, "Dialog in NPC Setup");
     if (dialog) yield put(setDialog(dialog));
     yield put(setNpc({ enemy: action.payload.enemy, health: action.payload.health, enemyID: action.payload.id, npcType: action.payload.type }));
 };
@@ -147,10 +143,7 @@ function* workGetClearEnemy(): SagaIterator {
 function* workGetClearNpc(): SagaIterator {
     yield put(clearNpc());
     yield put(setShowDialog(false));
-};
-function* workGetStalwart(action: any): SagaIterator {
-    yield put(setStalwart(action.payload));
-};
+}; 
 function* workGetCombatState(action: any): SagaIterator {
     yield put(setCombatInput(action.payload));
 };
@@ -176,6 +169,7 @@ function* workGetEffectTick(action: any): SagaIterator {
 };
 function* workGetEnemyAction(action: any): SagaIterator {
     try {
+        console.log(action.payload, "Enemy Not Targeted Performing Free Action");
         const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = action.payload;
         let enemyData: CombatData = {
             ...state,
@@ -197,7 +191,7 @@ function* workGetEnemyAction(action: any): SagaIterator {
         };
         let res = yield call(() => gameAPI.phaserAction(enemyData));
         yield put(setEnemyActions(res.data));
-        yield call(() => useSoundEffects(res.data));
+        // yield call(() => useSoundEffects(res.data));
         res.data.enemyID = enemyID;
         EventEmitter.emit('update-combat', res.data);
         setTimeout(() => {
@@ -208,6 +202,7 @@ function* workGetEnemyAction(action: any): SagaIterator {
     };
 };
 function* workGetInitiate(action: any): SagaIterator {
+    console.log(action.payload, "Action Initiated");
     let res: any;
     switch (action.payload.type) {
         case 'Initiate':
@@ -222,8 +217,9 @@ function* workGetInitiate(action: any): SagaIterator {
         default:
             break;
         };
+    console.log(res.data, "Initiate Response");
     yield put(setCombatInitiated(res.data));
-    yield call(() => useSoundEffects(res.data));
+    // yield call(() => useSoundEffects(res.data));
     EventEmitter.emit('update-combat', res.data);
     setTimeout(() => {
         setToggleDamaged(false);
@@ -338,8 +334,8 @@ function* workGetDrinkFirewaterFetch(action: any): SagaIterator {
 };
 function* workGetReplenishFirewaterFetch(action: any): SagaIterator {
     const res = yield call(() => asceanAPI.replenishFirewater(action.payload));
-    yield put(setExperience(res.data.experience));
-    yield put(setFirewater(res.data.firewater));
+    yield put(setExperience(res.experience));
+    yield put(setFirewater(res.firewater));
 };
 function* workGetGainExperienceFetch(action: any): SagaIterator {
     let { asceanState, combatState } = action.payload;

@@ -421,33 +421,7 @@ export default class Player extends Entity {
         console.log("Entering Combat");
     };
     onCombatUpdate = (dt) => { 
-        if (!this.inCombat) this.stateMachine.setState(States.NONCOMBAT); 
-
-        // if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
-        //     this.scene.setState('counter_guess', 'attack');
-        //     this.stateMachine.setState(States.COUNTER);           
-        // };
-        // if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
-        //     this.scene.setState('counter_guess', 'posture');
-        //     this.stateMachine.setState(States.COUNTER);
-        // };
-        // if (this.stamina >= 15 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
-        //     this.scene.setState('counter_guess', 'roll');
-        //     this.stateMachine.setState(States.COUNTER);
-        // };
-    
-        // if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 25 && this.canSwing) {
-        //     this.stateMachine.setState(States.ATTACK);
-        // };
-
-        // if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 15 && this.canSwing) {
-        //     this.stateMachine.setState(States.POSTURE);
-        // };
-
-        // if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 15 && this.canSwing) {
-        //     this.scene.setState('counter_guess', 'counter');
-        //     this.stateMachine.setState(States.COUNTER);
-        // };
+        if (!this.inCombat) this.stateMachine.setState(States.NONCOMBAT);  
     }; 
 
     onAttackEnter = () => {
@@ -749,6 +723,8 @@ export default class Player extends Entity {
                 if (this.scene.state.playerEffects.length === 0) return;
                 this.isConsuming = true;
                 this.prayerConsuming = this.scene.state.playerEffects[0].prayer;
+                this.scene.state.prayerSacrifice = this.scene.state.playerEffects[0].prayer;
+                this.scene.state.prayerSacrificeName = this.scene.state.playerEffects[0].name;
                 this.scene.sendStateSpecialListener('consume');
                 screenShake(this.scene);
             };

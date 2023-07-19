@@ -251,6 +251,7 @@ export default class Play extends Phaser.Scene {
     };
 
     sendEnemyActionListener = async (enemyID, enemy, damageType, combatStats, weapons, health, actionData, currentTarget) => {
+        console.log('sendEnemyActionListener');
         if (!currentTarget) {
             const data = { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state: this.state };
             EventEmitter.emit('update-enemy-action', data);
@@ -274,6 +275,7 @@ export default class Play extends Phaser.Scene {
             console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
             return; 
         };
+        console.log("Sending State Action");
         EventEmitter.emit('update-state-action', this.state);
     };
 
@@ -283,8 +285,8 @@ export default class Play extends Phaser.Scene {
                 EventEmitter.emit('update-state-invoke', this.state);
                 break;
             case 'consume':
-                this.state.prayerSacrifice = this.state.playerEffects[0].prayer;
-                this.state.prayerSacrificeName = this.state.playerEffects[0].name;
+                // this.state.prayerSacrifice = this.state.playerEffects[0].prayer;
+                // this.state.prayerSacrificeName = this.state.playerEffects[0].name;
                 EventEmitter.emit('update-state-consume', this.state);
                 break;
             default:
@@ -314,22 +316,16 @@ export default class Play extends Phaser.Scene {
         };   
     };
 
-    drinkFlask = async () => {
-        EventEmitter.emit('drink-firewater');
-    };
+    drinkFlask = async () => EventEmitter.emit('drink-firewater');
+    
 
     setState = (key, value) => {
         EventEmitter.emit('update-state', { key, value });
         if (key === 'action') this.checkStamina(value);
     };
 
-    setStateAdd = (key, value) => { // Was Async
-        this.state[key] += value;
-    };
-
-    setGameState = async (key, value) => {
-        this.gameState[key] = value;
-    };
+    setStateAdd = (key, value) => this.state[key] += value;
+    setGameState = async (key, value) => this.gameState[key] = value;
 
     setOnGround = async (key, value) => {
         if (key === 'player') {
@@ -389,7 +385,6 @@ export default class Play extends Phaser.Scene {
     };
 
     startCombatTimer = async () => {
-        console.log("Starting Combat Timer");
         this.combatTimer = this.time.addEvent({
             delay: 1000,
             callback: () => {
@@ -403,7 +398,6 @@ export default class Play extends Phaser.Scene {
     };
 
     stopCombatTimer = async () => {
-        console.log("Stopping Combat Timer");
         this.combatTimer.destroy();
         this.combatTimer = null;
         this.combatTime = 0;

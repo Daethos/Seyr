@@ -293,6 +293,7 @@ export default class Enemy extends Entity {
     enemyStateListener() {
         EventEmitter.on('update-combat', (e) => {
             if (this.enemyID !== e.enemyID) return;
+            console.log('Combat Update', e);
             this.combatData = e;
             this.weapons = e.computer_weapons;
             if (this.health > e.new_computer_health) { 
@@ -330,6 +331,7 @@ export default class Enemy extends Entity {
 
         EventEmitter.on('update-combat-data', (e) => {
             if (this.enemyID !== e.enemyID) return; 
+            console.log(e.new_computer_health, "Update Combat Data");
             this.health = e.new_computer_health;
             if (this.healthbar) this.updateHealthBar(this.health);
             if (e.new_computer_health <= 0) {
@@ -687,6 +689,7 @@ export default class Enemy extends Entity {
 
     enemyActionSuccess = () => {
         if (this.scene.state.computer_action === '') return;
+        console.log("Enemy Action Success");
         this.scene.sendEnemyActionListener(this.enemyID, this.ascean, this.currentDamageType, this.combatStats, this.weapons, this.health, { action: this.currentAction, counter: this.counterAction }, this.isCurrentTarget);
         if (this.particleEffect) {
             this.scene.particleManager.removeEffect(this.particleEffect.id);
