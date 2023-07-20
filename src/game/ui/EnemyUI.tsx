@@ -84,7 +84,7 @@ const EnemyUI = ({ pauseState, handleCallback }: EnemyUIProps) => {
             {state.computerEffects.length > 0 ? (
                 <div className='combat-effects'>
                     {state.computerEffects.map((effect: any, index: number) => {
-                        return ( <PhaserEffects effect={effect} enemy={true} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
+                        return ( <PhaserEffects state={state} effect={effect} enemy={true} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
                     })}
                 </div>
             ) : ( '' ) }

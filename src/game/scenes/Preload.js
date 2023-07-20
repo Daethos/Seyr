@@ -23,6 +23,7 @@ export default class Preload extends Phaser.Scene {
     };
 
     init(data) {
+        console.log(data, "Preload Data");
         this.gameData = data.gameData;
     };
 
@@ -55,6 +56,7 @@ export default class Preload extends Phaser.Scene {
                 this.scene.start('Menu', {
                     gameData: {
                         ascean: this.ascean,
+                        dispatch: this.gameData.dispatch,
                         enemy: this.enemy,
                         state: this.state,
                         gameState: this.gameState

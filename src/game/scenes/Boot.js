@@ -2,9 +2,10 @@ import Phaser from "phaser";
 import EventEmitter from "../phaser/EventEmitter";
 
 export default class Boot extends Phaser.Scene {
-    constructor() {
+    constructor(data) {
         super({ key: 'Boot', active: true });
         this.ascean = {};
+        this.dispatch = data;
         this.enemy = {};
         this.state = {};
         this.gameState = {};
@@ -28,6 +29,7 @@ export default class Boot extends Phaser.Scene {
         this.scene.start('Preload', {
             gameData: {
                 ascean: this.ascean,
+                dispatch: this.dispatch,
                 state: this.state,
                 gameState: this.gameState,
                 assets: this.assets,

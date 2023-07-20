@@ -46,7 +46,6 @@ export default class Menu extends Phaser.Scene {
         this.bg = this.add.graphics({ x: 0, y: 0 });
         this.bg.fillStyle('0x000000', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
-        // Need to create a black border around the backgrounds for the text boxes 
     };
 
     createMenuBorder(text) {

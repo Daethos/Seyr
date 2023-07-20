@@ -9,6 +9,13 @@ import base from '../images/base.png';
 import ParticleManager from '../phaser/ParticleManager';
 import LootDrop from '../matter/LootDrop';
 import EventEmitter from '../phaser/EventEmitter';
+import { useDispatch } from 'react-redux';
+import { getInitiateFetch } from '../reducers/combatState';
+
+export const Game = () => {
+    const dispatch = useDispatch();
+    return <Play dispatch={dispatch} />
+};
 
 export default class Play extends Phaser.Scene {
     constructor() {
@@ -21,6 +28,9 @@ export default class Play extends Phaser.Scene {
     init(data) {
         this.data = data;
         this.ascean = this.data.gameData.gameData.ascean;
+        this.dispatch = this.data.gameData.gameData.dispatch.dispatch;
+        this.dispatcher = this.data.gameData.gameData.dispatch.dispatch;
+        console.log(this.dispatch, this.dispatcher, "Dispatch in Play.js");
         this.enemy = {};
         this.npcs = [];
         this.combat = false;
@@ -236,7 +246,9 @@ export default class Play extends Phaser.Scene {
 
     createStateListener = async () => { // Was window.addEventListener()
         EventEmitter.on('update-combat-data', (e) => {
-            this.state = e;
+            this.state = { 
+                ...e,
+            };
         });
 
         EventEmitter.on('update-game-data', (e) => {
@@ -288,6 +300,7 @@ export default class Play extends Phaser.Scene {
                 // this.state.prayerSacrifice = this.state.playerEffects[0].prayer;
                 // this.state.prayerSacrificeName = this.state.playerEffects[0].name;
                 EventEmitter.emit('update-state-consume', this.state);
+                this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Prayer' }));
                 break;
             default:
                 break;

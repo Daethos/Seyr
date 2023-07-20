@@ -5,17 +5,19 @@ import Popover from 'react-bootstrap/Popover';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 import { useDispatch, useSelector } from 'react-redux';
 import { setRemoveEffect } from '../reducers/combatState';
+import { CombatData } from '../../components/GameCompiler/CombatStore';
 
 interface StatusEffectProps {
+    state: CombatData;
     effect: StatusEffect;
     enemy?: boolean;
     pauseState: boolean;
     handleCallback: (state: any, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
-const PhaserEffects = ({ effect, enemy, pauseState, handleCallback }: StatusEffectProps) => {
+const PhaserEffects = ({ state, effect, enemy, pauseState, handleCallback }: StatusEffectProps) => {
     const dispatch = useDispatch();
-    const state = useSelector((state: any) => state.combat);
+    // const state = useSelector((state: any) => state.combat);
     const [endTime, setEndTime] = useState<number>(effect.endTime);
     const [effectTimer, setEffectTimer] = useState<number>(effect.endTime - effect.startTime);
     const specials = ['Avarice', 'Dispel', 'Denial', 'Silence'];
@@ -26,17 +28,44 @@ const PhaserEffects = ({ effect, enemy, pauseState, handleCallback }: StatusEffe
         'Silence': 'Prevents the enemy from praying.'
     };
 
-    useEffect(() => {
-        setEndTime(effect.endTime);
-        setEffectTimer(effect.endTime - effect.startTime);
-    }, []);
+    // useEffect(() => {
+    //     setEndTime(effect.endTime);
+    //     setEffectTimer(effect.endTime - effect.startTime);
+    // }, []);
 
     useEffect(() => {
-        if (!pauseState) return;
+        console.log(effectTimer, "Effect Timer");
+    }, [effectTimer])
+
+    // useEffect(() => {
+    //     console.log(effectTimer, endTime, "Effect and End Timer");
+    //     if (endTime < effect.endTime) setEndTime(effect.endTime);
+    //     console.log("Ticking");
+    //     const intervalTimer = setInterval(() => {
+    //         setEffectTimer((effectTimer) => --effectTimer);
+    //     }, 1000);
+      
+    //     if (endTime === state.combatTimer || effectTimer <= 0 || !state.combatEngaged) {
+    //         dispatch(setRemoveEffect(effect.id));
+    //         clearInterval(intervalTimer);
+    //     };
+      
+    //     if (canTick(effect, effectTimer)) {
+    //         handleCallback(state, effect, effectTimer);
+    //     };
+      
+    //     return () => {
+    //         clearInterval(intervalTimer); // Clean up the interval on unmount
+    //     };
+    // }, [effectTimer, pauseState, endTime, effect.endTime, state.combatTimer, state.combatEngaged]);
+      
+
+    useEffect(() => {
+        if (pauseState) return;
         console.log(effectTimer, endTime, effect.endTime, "Effect Timer");
         if (endTime < effect.endTime) setEndTime(effect.endTime);
+        console.log("Ticking");
         const intervalTimer = setInterval(() => {
-            console.log("Ticking");
             setEffectTimer((effectTimer: number) => effectTimer - 1);
         }, 1000);
         if (endTime === state.combatTimer || effectTimer <= 0 || !state.combatEngaged) {

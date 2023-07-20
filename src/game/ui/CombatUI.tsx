@@ -20,16 +20,11 @@ interface CombatUIProps {
 };
 
 const CombatUI = ({ state, staminaPercentage, pauseState, handleCallback }: CombatUIProps) => {
-    // const state = useSelector((state: any) => state.combat);
     const gameState = useSelector((state: any) => state.game);
     const dispatch = useDispatch();
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
     const [prayerModal, setPrayerModal] = useState<boolean>(false);
-
-    useEffect(() => {
-        console.log(state.playerEffects, 'Combat UI State')
-    }, [state]);
 
     useEffect(() => {
         updatePlayerHealthPercentage();
@@ -188,10 +183,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState, handleCallback }: Comb
                 fontFamily: "Cinzel", 
                 fontWeight: 700 
             }}>{Math.round((staminaPercentage / 100) * state.player_attributes.stamina)}</p>
-            <div style={{ position: "absolute", left: "185px", top: "0px", transform: "scale(0.75)" }}>
-            {/* <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.weapons[0])}>
-                <img src={state.weapons[0]?.imgURL} className="m-1 eqp-popover spec" alt={state.weapons[0]?.name} style={getItemStyle} />
-            </OverlayTrigger> */}
+            <div style={{ position: "absolute", left: "185px", top: "0px", transform: "scale(0.75)" }}> 
             <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} />
             </div>
             <div style={{ position: "absolute", left: "230px", top: "-10px" }}>
@@ -204,7 +196,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState, handleCallback }: Comb
             {state.playerEffects.length > 0 ? (
                 <div className='combat-effects' style={{ zIndex: 2 }}>
                     {state.playerEffects.map((effect: any, index: number) => {
-                        return ( <PhaserEffects effect={effect} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
+                        return ( <PhaserEffects state={state} effect={effect} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
                     })}
                 </div>
             ) : ( '' ) } 

@@ -73,7 +73,7 @@ const App = () => {
         <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
         <Route path="/Ascean" element={<NewAscean createSuccess={createSuccess} handleAsceanCreate={handleAsceanCreate} />} />
         <Route path="/Solo/:asceanID" element={<GameSolo user={user} />} />
-        <Route path="/Story/:asceanID" element={<Story user={user} />} />
+        <Route path="/Story/:asceanID" element={<Story />} />
         <Route path="/ChatLobby" element={<GameLobby user={user} />} />
         <Route path="/GamePvPLobby" element={<GamePvPLobby user={user} />} />
         <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />} />

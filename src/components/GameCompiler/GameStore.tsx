@@ -35,6 +35,7 @@ export interface Ascean {
     level: number;
     
     coordinates: object;
+    health?: { current: number; total: number; };
     firewater: { charges: number; maxCharges: number; };
     inventory: [];
     maps: [];
@@ -54,7 +55,7 @@ export interface Player extends Ascean {
     primary: { name: string, description: string };
     secondary: { name: string, description: string };
     tertiary: { name: string, description: string };
-    journal: object;
+    journal: { entries: { type: [{ title: String, body: String, footnote: String, date: Date, location: String, coordinates: { x: Number, y: Number, }, }], default: null, length: number, }, currentEntry: { type: Number, default: 0, }, lastEntry: { type: Number, default: 0, }, },
 };
 
 export interface Enemy extends Ascean {

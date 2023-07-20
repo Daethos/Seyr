@@ -1,73 +1,24 @@
-import { useEffect, useState, useReducer } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import * as asceanAPI from '../../utils/asceanApi';  
-import * as settingsAPI from '../../utils/settingsApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import HostScene from '../../game/scenes/HostScene';
-import { GAME_ACTIONS, GameStore, initialGameData, getAsceanTraits } from '../../components/GameCompiler/GameStore';
-import { ACTIONS, CombatStore, initialCombatData } from '../../components/GameCompiler/CombatStore';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGameFetch } from '../../game/reducers/gameState';
 
-interface Props {
-    user: any;
-};
-
-export const Story = ({ user }: Props) => {
+export const Story = () => {
     const { asceanID } = useParams();
+    const ascean = useSelector((state: any) => state.game.player);
     const dispatcher = useDispatch();
-    
-    const [state, dispatch] = useReducer(CombatStore, initialCombatData);
-    const [gameState, gameDispatch] = useReducer(GameStore, initialGameData);
     const [assets, setAssets] = useState([]);
     const [gameChange, setGameChange] = useState<boolean>(true);
-    const [asceanState, setAsceanState] = useState({
-        ascean: {},
-        currentHealth: 0,
-        constitution: 0,
-        strength: 0,
-        agility: 0,
-        achre: 0,
-        caeren: 0,
-        kyosir: 0,
-        level: 0,
-        opponent: 0,
-        opponentExp: 0,
-        experience: 0,
-        experienceNeeded: 0,
-        mastery: '',
-        faith: '',
-        avarice: false,
-    }); 
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchData = async (): Promise<void> => {
             try {
                 dispatcher(getGameFetch(asceanID));
-                const [gameStateResponse, combatStateResponse, gameSettingResponse, assetResponse] = await Promise.all([
-                    asceanAPI.getOneAscean(asceanID),
-                    asceanAPI.getAsceanStats(asceanID),
-                    settingsAPI.getSettings(),
-                    eqpAPI.index(),
-                ]);
-                const traitResponse = await getAsceanTraits(gameStateResponse.data);
-                gameDispatch({ type: GAME_ACTIONS.SET_PLAYER, payload: gameStateResponse.data });
-                dispatch({ type: ACTIONS.SET_PLAYER, payload: combatStateResponse.data.data });
-                gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_TRAITS, payload: traitResponse });
-                setAsceanState({
-                    ...asceanState,
-                    'ascean': combatStateResponse.data.data.ascean,
-                    'currentHealth': combatStateResponse.data.data.ascean.health.current === -10 ? combatStateResponse.data.data.attributes.healthTotal : combatStateResponse.data.data.ascean.health.current,
-                    'level': combatStateResponse.data.data.ascean.level,
-                    'experience': combatStateResponse.data.data.ascean.experience,
-                    'experienceNeeded': combatStateResponse.data.data.ascean.level * 1000,
-                    'mastery': combatStateResponse.data.data.ascean.mastery,
-                    'faith': combatStateResponse.data.data.ascean.faith,
-                });
+                const assetResponse = await eqpAPI.index();
                 const sanitizedAssets = await sanitizeAssets(assetResponse.data);
                 setAssets(sanitizedAssets);
-                gameDispatch({ type: GAME_ACTIONS.SET_GAME_SETTINGS, payload: gameSettingResponse }); 
-                gameDispatch({ type: GAME_ACTIONS.LOADING, payload: false });
                 setGameChange(false);
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
@@ -98,7 +49,7 @@ export const Story = ({ user }: Props) => {
     return (
         <div>
         { gameChange ? ( '' )
-            : ( <HostScene assets={assets} /> 
+            : ( <HostScene assets={assets} ascean={ascean} /> 
         ) }
         </div>
     );

@@ -722,9 +722,11 @@ export default class Player extends Entity {
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
                 if (this.scene.state.playerEffects.length === 0) return;
                 this.isConsuming = true;
-                this.prayerConsuming = this.scene.state.playerEffects[0].prayer;
-                this.scene.state.prayerSacrifice = this.scene.state.playerEffects[0].prayer;
-                this.scene.state.prayerSacrificeName = this.scene.state.playerEffects[0].name;
+                // this.prayerConsuming = this.scene.state.playerEffects[0].prayer;
+                // this.scene.state.prayerSacrifice = this.scene.state.playerEffects[0].prayer;
+                // this.scene.state.prayerSacrificeName = this.scene.state.playerEffects[0].name;
+                this.scene.setState('prayerSacrifice', this.scene.state.playerEffects[0].prayer);
+                this.scene.setState('prayerSacrificeName', this.scene.state.playerEffects[0].name);
                 this.scene.sendStateSpecialListener('consume');
                 screenShake(this.scene);
             };

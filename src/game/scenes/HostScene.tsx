@@ -9,13 +9,13 @@ import { PhaserNavMeshPlugin } from 'phaser-navmesh';
 import Boot from './Boot';
 import Preload from './Preload';
 import Menu from './Menu';
-import Play from './Play';
+import Play, { Game } from './Play';
 import StoryAscean from '../ui/StoryAscean';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
 import Button from 'react-bootstrap/Button';
-import { NPC, checkTraits } from '../../components/GameCompiler/GameStore';
+import { NPC, Player, checkTraits } from '../../components/GameCompiler/GameStore';
 import { CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
@@ -52,22 +52,17 @@ export const useKeyEvent = (event: string, callback: any) => {
     }, [event, callback]);
 }; 
 
-let scenes: any[] = [];
-scenes.push(Boot);
-scenes.push(Preload);
-scenes.push(Menu);
-scenes.push(Play);
-
 interface Props {
+    ascean: Player;
     assets: any;
 };
 
-const HostScene = ({ assets }: Props) => {
+const HostScene = ({ assets, ascean }: Props) => {
     const { asceanID } = useParams();
     const dispatch = useDispatch();
     const user = useSelector((state: any) => state.user.user);
     const combatState = useSelector((state: any) => state.combat);
-    const ascean = useSelector((state: any) => state.game.player);
+    // const ascean = useSelector((state: any) => state.game.player);
     const asceanState = useSelector((state: any) => state.game.asceanState);
     const gameState = useSelector((state: any) => state.game);
     const stamina = useSelector((state: any) => state.combat.player_attributes.stamina);
@@ -82,6 +77,12 @@ const HostScene = ({ assets }: Props) => {
     const [asceanViews, setAsceanViews] = useState<string>('Character');
     const [gameTimer, setGameTimer] = useState<number>(0);
     const gameRef = useRef<any>({});
+    let scenes: any[] = [];
+    const boot = new Boot({ dispatch });
+    scenes.push(boot);
+    scenes.push(Preload);
+    scenes.push(Menu);
+    scenes.push(Play);
     const config = {
         type: Phaser.AUTO,
         parent: 'story-game',
@@ -89,8 +90,8 @@ const HostScene = ({ assets }: Props) => {
         width: 960,
         height: 640,
         scene: scenes,
-        scale: { zoom: 1, },
-        data: { ascean: ascean, user: user },
+        scale: { zoom: 1 },
+        data: { ascean, user, dispatch },
         physics: {
             default: 'matter',
             matter: {
@@ -131,7 +132,7 @@ const HostScene = ({ assets }: Props) => {
                 'VirtualJoysticks/plugin/src/DPad.js',
             ],
         }, 
-        backgroundColor: 'transparent',
+        // backgroundColor: 'transparent',
     };
  
     useEffect(() => { 
