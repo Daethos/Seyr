@@ -80,155 +80,140 @@ export const gameSlice = createSlice({
         getPurchaseFetch: (state, _action) => {},
         // ===== Player Concerns ===== \\
         setPlayer: (state, action) => {
-            state.player = action.payload;
+            return { ...state, player: action.payload };
         },
         setPlayerLevelUp: (state, action) => {
-            state.player = {
-                ...action.payload,
-                inventory: state.player.inventory,
-            };
+            return { ...state, player: { ...action.payload, inventory: state.player.inventory } };
         },
         setAsceanState: (state, action) => {
-            state.asceanState = action.payload;
+            return { ...state, asceanState: action.payload };
         },
         setAttributes: (state, action) => {
-            state.player.constitution = action.payload.constitution;
-            state.player.strength = action.payload.strength;
-            state.player.agility = action.payload.agility;
-            state.player.achre = action.payload.achre;
-            state.player.caeren = action.payload.caeren;
-            state.player.kyosir = action.payload.kyosir;
-            state.player.statistics = action.payload.statistics;
+            const { constitution, strength, agility, achre, caeren, kyosir, statistics } = action.payload;
+            return { ...state, player: { ...state.player, constitution, strength, agility, achre, caeren, kyosir, statistics } };
         },
         setCurrency: (state, action) => {
-            state.player.currency = action.payload;
-            state.loadedAscean = true;
+            return { ...state, player: { ...state.player, currency: action.payload } };
         },
         setExperience: (state, action) => {
-            state.player.experience = action.payload;
-            state.loadedAscean = true;
+            return { ...state, player: { ...state.player, experience: action.payload } };
         },
         setFirewater: (state, action) => {
-            state.player.firewater = action.payload;
-            state.loadedAscean = true;
+            return { ...state, player: { ...state.player, firewater: action.payload } };
         },
         setInitialAsceanState: (state, action) => {
-            state.asceanState = {
-                ...state.asceanState,
-                'ascean': action.payload.ascean,
-                'currentHealth': action.payload.ascean.health.current,
-                'level': action.payload.ascean.level,
-                'experience': action.payload.ascean.experience,
-                'experienceNeeded': action.payload.ascean.level * 1000,
-                'mastery': action.payload.ascean.mastery,
-                'faith': action.payload.ascean.faith,
+            return {
+                ...state,
+                asceanState: {
+                    ...state.asceanState,
+                    'ascean': action.payload.ascean,
+                    'currentHealth': action.payload.ascean.health.current,
+                    'level': action.payload.ascean.level,
+                    'experience': action.payload.ascean.experience,
+                    'experienceNeeded': action.payload.ascean.level * 1000,
+                    'mastery': action.payload.ascean.mastery,
+                    'faith': action.payload.ascean.faith,
+                },
             };
         },
         setInventory: (state, action) => {
-            state.player.inventory = action.payload;
-            state.loadedAscean = true;
+            return { ...state, player: { ...state.player, inventory: action.payload } };
         },
         setJournal: (state, action) => {
-            state.player.journal = action.payload;
+            return { ...state, player: { ...state.player, journal: action.payload } };
         },
         setJournalEntry: (state, action) => {
-            state.player.journal = {
-                ...state.player.journal,
-                currentEntry: action.payload,
-            };
+            return { ...state, player: { ...state.player, journal: { ...state.player.journal, currentEntry: action.payload  } } };
         },
         setSettings: (state, action) => { 
-            state.soundEffectVolume = action.payload.soundEffectVolume;
-            state.shake = action.payload.shake;
-            state.vibrationTime = action.payload.vibrationTime;   
+            return { ...state, soundEffectVolume: action.payload.soundEffectVolume, shake: action.payload.shake, vibrationTime: action.payload.vibrationTime };
         },
         setStatistics: (state, action) => {
-            state.player.statistics = action.payload;
+            return { ...state, player: { ...state.player, statistics: action.payload } };
         },
         setTraits: (state, action) => {
-            state.traits = action.payload;
+            return { ...state, traits: action.payload };
         },
+
         // ===== Game Concerns ===== \\
         setCheckLoot: (state, action) => {
-            state.checkLoot = action.payload;
+            return { ...state, checkLoot: action.payload };
         },
         setCombatResolved: (state, action) => {
-            state.combatResolved = action.payload;
+            return { ...state, combatResolved: action.payload };
         },
         setCurrentIntent: (state, action) => {
-            state.currentIntent = action.payload;
+            return { ...state, currentIntent: action.payload };
         },
         setDialog: (state, action) => {
-            state.dialog = action.payload;
+            return { ...state, dialog: action.payload };
         },
         setInstantStatus: (state, action) => {
-            state.instantStatus = action.payload;
+            return { ...state, instantStatus: action.payload };
         }, 
         setPlayerBlessing: (state, action) => {
-            state.playerBlessed = action.payload;
+            return { ...state, playerBlessed: action.payload };
         }, 
         setShowDialog: (state, action) => {
-            console.log(`setShowDialog: ${action.payload}`);
-            state.showDialog = action.payload;
+            return { ...state, showDialog: action.payload };
         },
         setShowInventory: (state, action) => {
-            state.showInventory = action.payload;
+            return { ...state, showInventory: action.payload };
         },
         setMerchantEquipment: (state, action) => {
-            state.merchantEquipment = action.payload;
+            return { ...state, merchantEquipment: action.payload };
         },
+
         // ===== Loot Drops ===== \\
         setLootDrops: (state, action) => {
-            state.lootDrops = [
-                ...state.lootDrops,
-                action.payload,
-            ];
+            return { ...state, lootDrops: [ ...state.lootDrops, action.payload ] };
         },
         setClearLootDrop: (state, action) => {
             const lootDrops = state.lootDrops.filter((drop) => drop._id !== action.payload);
-            state.lootDrops = lootDrops;
+            return { ...state, lootDrops }; // Was lootDrops: lootDrops
         },
         setClearLootDrops: (state) => {
-            state.lootDrops = [];
+            return { ...state, lootDrops: [] };
         },
         setShowLoot: (state, action) => {
             if (action.payload.interacting) {
-                state.showLootIds = [
-                    ...state.showLootIds,
-                    action.payload.loot,
-                ];
-                state.showLoot = action.payload.interacting
+                return {
+                    ...state,
+                    showLootIds: [ ...state.showLootIds, action.payload.loot ],
+                    showLoot: action.payload.interacting,
+                };
             } else {
-                state.showLootIds = [
-                    ...state.showLootIds.filter((id) => id !== action.payload.loot),
-                ];
-                state.showLoot = state.showLootIds.length > 1 ? state.showLoot : false;
+                return {
+                    ...state,
+                    showLootIds: [ ...state.showLootIds.filter((id) => id !== action.payload.loot) ],
+                    showLoot: state.showLootIds.length > 1 ? state.showLoot : false,
+                };
             };
         },
         setShowLootOne: (state, action) => {
-            state.showLoot = action.payload;
+            return { ...state, showLootIds: action.payload };
         }, 
+
         // ===== Dialogue ===== \\
         setCurrentDialogNode: (state, action) => {
-            console.log(`setCurrentDialogNode: ${action.payload}`);
-            state.currentNode = action.payload;
+            return { ...state, currentNode: action.payload };
         },
         setCurrentNodeIndex: (state, action) => {
-            state.currentNodeIndex = action.payload;
+            return { ...state, currentNodeIndex: action.payload };
         },
         setRendering: (state, action) => {
-            state.renderedText = action.payload.text;
-            state.renderedOptions = action.payload.options;
+            return { ...state, renderedOptions: action.payload.options, renderedText: action.payload.text };
         },
+
         // ====== Settings ====== \\
         setVolume: (state, action) => {
-            state.soundEffectVolume = action.payload;
+            return { ...state, soundEffectVolume: action.payload };
         },
         setShake: (state, action) => {
-            state.shake = action.payload;
+            return { ...state, shake: action.payload };
         },
         setVibrationTime: (state, action) => {
-            state.vibrationTime = action.payload;
+            return { ...state, vibrationTime: action.payload };
         },
     },
 });

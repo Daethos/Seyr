@@ -9,7 +9,7 @@ import { PhaserNavMeshPlugin } from 'phaser-navmesh';
 import Boot from './Boot';
 import Preload from './Preload';
 import Menu from './Menu';
-import Play, { Game } from './Play';
+import Play from './Play';
 import StoryAscean from '../ui/StoryAscean';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
@@ -32,6 +32,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearNonAggressiveEnemy, clearNpc, getAsceanHealthUpdateFetch, getCombatFetch, getCombatSettingFetch, getCombatStateUpdate, getCombatStatisticFetch, getCombatTimerFetch, getEffectTickFetch, getEnemyActionFetch, getEnemySetupFetch, getInitiateFetch, getNpcSetupFetch, setEnemyWin, setPlayerWin, setRest, setStalwart } from '../reducers/combatState';
 import { getAsceanLevelUpFetch, getDrinkFirewaterFetch, getGainExperienceFetch, getInteractingLootFetch, getLootDropFetch, setShowDialog, setMerchantEquipment } from '../reducers/gameState';
 import PhaserCombatText from '../ui/PhaserCombatText';
+import useSoundEffects from '../phaser/SoundEffects';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -141,25 +142,29 @@ const HostScene = ({ assets, ascean }: Props) => {
 
     useEffect(() => {
         updateCombatListener(combatState);
-    }, [combatState]); 
-
+    }, [combatState]);
+    
+    // useEffect(() => {
+    //     if (combatState.soundEffects) {
+    //     };
+    // }, [combatState.soundEffects])
+    
+    // useSoundEffects(combatState);
     useEffect(() => {
         if (gameRef.current) {
-            if (gameRef.current.scene.getScene('Play')) {
-                let scene = gameRef.current.scene.getScene('Play');
-                if (scene && !pauseState) {
-                    const timerInterval = setTimeout(() => {
-                        setGameTimer((timer: number) => (timer + 1));
-                    }, 1000);
-                    
-                    return () => {
-                        if (checkTraits("Kyn'gian", gameState.traits) && gameTimer % 10 === 0) {
-                            setStaminaPercentage(staminaPercentage + (stamina / 100));
-                            EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (stamina / 100)) / 100) * stamina));
-                            dispatch(setRest(1));
-                        };
-                        clearTimeout(timerInterval);
+            let scene = gameRef.current.scene.getScene('Play');
+            if (scene && !pauseState) {
+                const timerInterval = setTimeout(() => {
+                    setGameTimer((timer: number) => (timer + 1));
+                }, 1000);
+                
+                return () => {
+                    if (checkTraits("Kyn'gian", gameState.traits) && gameTimer % 10 === 0) {
+                        setStaminaPercentage(staminaPercentage + (stamina / 100));
+                        EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (stamina / 100)) / 100) * stamina));
+                        dispatch(setRest(1));
                     };
+                    clearTimeout(timerInterval);
                 };
             };
         };
@@ -192,6 +197,7 @@ const HostScene = ({ assets, ascean }: Props) => {
     
     const levelUpAscean = async (vaEsai: any): Promise<void> => {
         try {
+            console.log(vaEsai, 'Leveling Up');
             dispatch(getAsceanLevelUpFetch(vaEsai)); 
         } catch (err: any) {
             console.log(err.message, 'Error Leveling Up');
@@ -207,6 +213,7 @@ const HostScene = ({ assets, ascean }: Props) => {
 
     const updateEnemyAction = async (e: any): Promise<void> => {
         try {
+            console.log(e, 'Enemy Action');
             dispatch(getEnemyActionFetch(e)); 
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime); 
             shakeScreen(gameState.shake); 
@@ -381,49 +388,41 @@ const HostScene = ({ assets, ascean }: Props) => {
         };
     };
 
-    const handleEffectTick = async (state: CombatData, effect: StatusEffect, effectTimer: number): Promise<void> => {
-        try {
-            dispatch(getEffectTickFetch({ combatData: state, effect, effectTimer }));
-        } catch (err: any) {
-            console.log(err, "Error In Effect Tick");
-        };
-    };
+    // const handleInitiate = async (state: CombatData): Promise<void> => {
+    //     try { 
+    //         console.log(`%c Player: Action - ${state.action} Counter -${state.counter_guess} | Computer: Action - ${state.computer_action} Counter -${state.computer_counter_guess}`, 'color: green; font-size: 16px; font-weight: bold;` ')
+    //         dispatch(getInitiateFetch({ combatData: state, type: 'Initiate' }));
+    //         if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+    //         shakeScreen(gameState.shake);
+    //     } catch (err: any) {
+    //         console.log(err.message, 'Error Initiating Combat')
+    //     };
+    // };
 
-    const handleInitiate = async (state: CombatData): Promise<void> => {
-        try { 
-            console.log(`%c Player: Action - ${state.action} Counter -${state.counter_guess} | Computer: Action - ${state.computer_action} Counter -${state.computer_counter_guess}`, 'color: green; font-size: 16px; font-weight: bold;` ')
-            dispatch(getInitiateFetch({ combatData: state, type: 'Initiate' }));
-            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            shakeScreen(gameState.shake);
-        } catch (err: any) {
-            console.log(err.message, 'Error Initiating Combat')
-        };
-    };
+    // const handleInstant = async (state: CombatData): Promise<void> => {
+    //     try {
+    //         console.log('Instant Invocation Dispatched');
+    //         dispatch(getInitiateFetch({ combatData: state, type: 'Instant' }));
+    //         if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+    //         shakeScreen(gameState.shake);
+    //         playReligion();
+    //     } catch (err: any) {
+    //         console.log(err.message, 'Error Initiating Insant Action')
+    //     };
+    // };
 
-    const handleInstant = async (state: CombatData): Promise<void> => {
-        try {
-            console.log('Instant Invocation Dispatched');
-            dispatch(getInitiateFetch({ combatData: state, type: 'Instant' }));
-            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            shakeScreen(gameState.shake);
-            playReligion();
-        } catch (err: any) {
-            console.log(err.message, 'Error Initiating Insant Action')
-        };
-    };
-
-    const handlePrayer = async (state: CombatData): Promise<void> => {
-        try {
-            if (state.prayerSacrifice === '') return;
-            console.log('Prayer Consumption Dispatched');
-            dispatch(getInitiateFetch({ combatData: state, type: 'Prayer' }));
-            if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
-            shakeScreen(gameState.shake);
-            playReligion();
-        } catch (err: any) {
-            console.log(err.message, 'Error Initiating Action')
-        };
-    }; 
+    // const handlePrayer = async (state: CombatData): Promise<void> => {
+    //     try {
+    //         if (state.prayerSacrifice === '') return;
+    //         console.log('Prayer Consumption Dispatched');
+    //         dispatch(getInitiateFetch({ combatData: state, type: 'Prayer' }));
+    //         if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
+    //         shakeScreen(gameState.shake);
+    //         playReligion();
+    //     } catch (err: any) {
+    //         console.log(err.message, 'Error Initiating Action')
+    //     };
+    // }; 
 
    const setDamageType = async (e: any): Promise<void> => {
         try {    
@@ -443,7 +442,7 @@ const HostScene = ({ assets, ascean }: Props) => {
         };
     }; 
 
-    const updateCombatListener = async (data: CombatData) => EventEmitter.emit('update-combat-data', data);
+    const updateCombatListener = (data: CombatData) => EventEmitter.emit('update-combat-data', data); // Was Async
 
     const toggleCombatHud = (e: { preventDefault: () => void; key: string; keyCode: number }) => {
         e.preventDefault();
@@ -530,9 +529,9 @@ const HostScene = ({ assets, ascean }: Props) => {
     usePhaserEvent('update-stalwart', updateStalwart);
     usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-state', updateState);
-    usePhaserEvent('update-state-action', handleInitiate); // handleInitiate
-    usePhaserEvent('update-state-invoke', handleInstant); // handleInstant
-    usePhaserEvent('update-state-consume', handlePrayer); // handlePrayer
+    // usePhaserEvent('update-state-action', handleInitiate); 
+    // usePhaserEvent('update-state-invoke', handleInstant); 
+    // usePhaserEvent('update-state-consume', handlePrayer); 
     usePhaserEvent('update-combat-timer', updateCombatTimer);
     usePhaserEvent('update-enemy-action', updateEnemyAction);
 
@@ -557,16 +556,14 @@ const HostScene = ({ assets, ascean }: Props) => {
                     <StoryAscean ascean={ascean} asceanViews={asceanViews} loading={loading} levelUpAscean={levelUpAscean} />
                 ) : ( 
                     <div style={{ position: "absolute", zIndex: 1 }}>
-                        <CombatUI state={combatState} handleCallback={handleEffectTick} staminaPercentage={staminaPercentage} pauseState={pauseState} />
+                        <CombatUI state={combatState} staminaPercentage={staminaPercentage} pauseState={pauseState} />
                         { combatState.combatEngaged ? (
-                            <>
                             <div style={{ position: "absolute", top: "415px", left: "250px", zIndex: 0 }}>
                                 <PhaserCombatText />
                             </div>
-                            </>
                         ) : ( '' ) }
                         { combatState.computer ? (
-                            <EnemyUI pauseState={pauseState} handleCallback={handleEffectTick} />
+                            <EnemyUI pauseState={pauseState} />
                         ) : ( '' ) }
                     </div>
                 ) }

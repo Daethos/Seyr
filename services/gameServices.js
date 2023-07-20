@@ -2876,7 +2876,7 @@ const phaserActionSplitter = async (combatData) => {
 
     cleanData.combatRound += 1;
     cleanData.sessionRound += 1;
-
+    cleanData.soundEffects = true;
     return cleanData;
 };
 
@@ -2988,6 +2988,7 @@ const newDataCompiler = async (combatData) => {
         isEnemy: combatData.isEnemy,
         isAggressive: combatData.isAggressive,
         startedAggressive: combatData.startedAggressive,
+        soundEffects: combatData.soundEffects,
     };
     return newData;
 };

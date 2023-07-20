@@ -150,7 +150,7 @@ export default class Player extends Entity {
         this.knocking = false;
         this.currentRound = 0; 
         
-        this.glow = this.setGlow(this);
+        this.glow = this.setGlow(this, true);
         // this.setGlow(this.spriteWeapon);
         this.highlight = this.scene.add.graphics()
             .lineStyle(1, 0xFFD700)
@@ -167,7 +167,7 @@ export default class Player extends Entity {
         this.checkNpcCollision(playerSensor);
     };
 
-    setGlow = (object) => {
+    setGlow = (object, glow) => {
         const setColor = (mastery) => {
             switch (mastery) {
                 case 'Constitution': return 0xFDF6D8;
@@ -184,7 +184,8 @@ export default class Player extends Entity {
             outerStrength: 1,
             innerStrength: 1,
             glowColor: setColor(this.ascean.mastery),
-            intensity: 0.02,
+            intensity: glow ? 0.2 : 0,
+            knockout: true
         });
     };
 

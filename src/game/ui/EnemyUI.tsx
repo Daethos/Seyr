@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react'
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import enemyHealthBar from '../images/enemy-healthbar.png';
-import { CombatData } from '../../components/GameCompiler/CombatStore';
-import { Equipment } from '../../components/GameCompiler/GameStore';
-import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard';
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler';
 import Modal from 'react-bootstrap/Modal';
@@ -15,10 +10,9 @@ import ItemPopover from './ItemPopover';
 
 interface EnemyUIProps {
     pauseState: boolean;  
-    handleCallback: (state: CombatData, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
-const EnemyUI = ({ pauseState, handleCallback }: EnemyUIProps) => {
+const EnemyUI = ({ pauseState }: EnemyUIProps) => {
     const state = useSelector((state: any) => state.combat);
     const [playerEnemyPercentage, setEnemyHealthPercentage] = useState<number>(0); 
     const [playModalShow, setPlayModalShow] = useState<boolean>(false);
@@ -84,7 +78,7 @@ const EnemyUI = ({ pauseState, handleCallback }: EnemyUIProps) => {
             {state.computerEffects.length > 0 ? (
                 <div className='combat-effects'>
                     {state.computerEffects.map((effect: any, index: number) => {
-                        return ( <PhaserEffects state={state} effect={effect} enemy={true} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
+                        return ( <PhaserEffects state={state} effect={effect} enemy={true} pauseState={pauseState} key={index} /> )
                     })}
                 </div>
             ) : ( '' ) }

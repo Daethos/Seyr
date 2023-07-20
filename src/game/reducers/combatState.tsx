@@ -24,282 +24,373 @@ const combatSlice = createSlice({
         },
         // ===== Combat Setup / Breakdown ===== \\
         setCombatPlayer: (state, action) => {
-            state.player = action.payload.ascean;
-            state.player_health = action.payload.ascean.health.total;
-            state.current_player_health = action.payload.ascean.health.current;
-            state.new_player_health = action.payload.ascean.health.current;
-            state.weapons = [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three];
-            state.weapon_one = action.payload.combat_weapon_one;
-            state.weapon_two = action.payload.combat_weapon_two;
-            state.weapon_three = action.payload.combat_weapon_three;
-            state.player_defense = action.payload.defense;
-            state.player_attributes = action.payload.attributes;
-            state.player_damage_type = action.payload.combat_weapon_one.damage_type[0];
-            state.highScore = action.payload.ascean.high_score;
+            return {
+                ...state,
+                player: action.payload.ascean,
+                player_health: action.payload.ascean.health.total,
+                current_player_health: action.payload.ascean.health.current,
+                new_player_health: action.payload.ascean.health.current,
+                weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                weapon_one: action.payload.combat_weapon_one,
+                weapon_two: action.payload.combat_weapon_two,
+                weapon_three: action.payload.combat_weapon_three,
+                player_defense: action.payload.defense,
+                player_attributes: action.payload.attributes,
+                player_damage_type: action.payload.combat_weapon_one.damage_type[0],
+                highScore: action.payload.ascean.high_score,
+            };
         },
         setEnemy: (state, action) => {
-            state.computer = action.payload.enemy.ascean;
-            state.computer_health = action.payload.enemy.attributes.healthTotal;
-            state.current_computer_health = action.payload.health;
-            state.new_computer_health = action.payload.health;
-            state.computer_weapons = [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three];
-            state.computer_weapon_one = action.payload.enemy.combat_weapon_one;
-            state.computer_weapon_two = action.payload.enemy.combat_weapon_two;
-            state.computer_weapon_three = action.payload.enemy.combat_weapon_three;
-            state.computer_defense = action.payload.enemy.defense;
-            state.computer_attributes = action.payload.enemy.attributes;
-            state.computer_damage_type = action.payload.enemy.combat_weapon_one.damage_type[0];
-            state.new_player_health = state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health;
-            // Phaser Enemy Pieces
-            state.isEnemy = true;
-            state.npcType = '';
-            state.isAggressive = action.payload.isAggressive;
-            state.startedAggressive = action.payload.isAggressive;
-            state.player_win = action.payload.isDefeated;
-            state.computer_win = action.payload.isTriumphant;
-            state.enemyID = action.payload.enemyID;   
+            return {
+                ...state,
+                computer: action.payload.enemy.ascean,
+                computer_health: action.payload.enemy.attributes.healthTotal,
+                current_computer_health: action.payload.health,
+                new_computer_health: action.payload.health,
+                computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+                computer_weapon_one: action.payload.enemy.combat_weapon_one,
+                computer_weapon_two: action.payload.enemy.combat_weapon_two,
+                computer_weapon_three: action.payload.enemy.combat_weapon_three,
+                computer_defense: action.payload.enemy.defense,
+                computer_attributes: action.payload.enemy.attributes,
+                computer_damage_type: action.payload.enemy.combat_weapon_one.damage_type[0],
+                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
+                // Phaser Enemy Pieces
+                isEnemy: true,
+                npcType: '',
+                isAggressive: action.payload.isAggressive,
+                startedAggressive: action.payload.isAggressive,
+                player_win: action.payload.isDefeated,
+                computer_win: action.payload.isTriumphant,
+                enemyID: action.payload.enemyID,   
+            }
         },
         setNpc: (state, action) => {
-            state.computer = action.payload.enemy.ascean;
-            state.computer_health = action.payload.enemy.attributes.healthTotal;
-            state.current_computer_health = action.payload.health;
-            state.new_computer_health = action.payload.health;
-            state.computer_weapons = [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three];
-            state.computer_weapon_one = action.payload.enemy.combat_weapon_one;
-            state.computer_weapon_two = action.payload.enemy.combat_weapon_two;
-            state.computer_weapon_three = action.payload.enemy.combat_weapon_three;
-            state.computer_defense = action.payload.enemy.defense;
-            state.computer_attributes = action.payload.enemy.attributes;
-            state.computer_damage_type = action.payload.enemy.combat_weapon_one.damage_type[0];
-            state.new_player_health = state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health;
-            // Phaser Enemy Pieces
-            state.isEnemy = false;
-            state.isAggressive = false;
-            state.startedAggressive = false;
-            state.player_win = false;
-            state.computer_win = false;
-            state.enemyID = action.payload.enemyID;
-            state.npcType = action.payload.npcType;
+            return {
+                ...state,
+                computer: action.payload.enemy.ascean,
+                computer_health: action.payload.enemy.attributes.healthTotal,
+                current_computer_health: action.payload.health,
+                new_computer_health: action.payload.health,
+                computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+                computer_weapon_one: action.payload.enemy.combat_weapon_one,
+                computer_weapon_two: action.payload.enemy.combat_weapon_two,
+                computer_weapon_three: action.payload.enemy.combat_weapon_three,
+                computer_defense: action.payload.enemy.defense,
+                computer_attributes: action.payload.enemy.attributes,
+                computer_damage_type: action.payload.enemy.combat_weapon_one.damage_type[0],
+                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
+                // Phaser Enemy Pieces
+                isEnemy: false,
+                isAggressive: false,
+                startedAggressive: false,
+                player_win: false,
+                computer_win: false,
+                enemyID: action.payload.enemyID,
+                npcType: action.payload.npcType,
+            };
         },
         setCombat: (state) => {
-            state.combatEngaged = true;
-            state.combatRound = 1;
-            state.sessionRound = state.sessionRound === 0 ? 1 : state.sessionRound;
+            return {
+                ...state,
+                combatEngaged: true,
+                combatRound: 1,
+                sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound,
+            };
         },
         setAggression: (state, action) => {
-            state.isAggressive = action.payload;
-            state.combatEngaged = action.payload;
+            return {
+                ...state,
+                isAggressive: action.payload,
+                startedAggressive: action.payload,
+            };
         },
         clearNonAggressiveEnemy: (state) => {
-            state.computer = null;
-            state.persuasionScenario = false;
-            state.luckoutScenario = false;
-            state.enemyPersuaded = false;
-            state.player_luckout = false;
-            state.player_win = false;
-            state.playerGrapplingWin = false;
-            state.computer_win = false;
-            state.combatEngaged = false;
-            state.playerTrait = '';
-            state.isEnemy = false;
+            return {
+                ...state,
+                computer: null,
+                persuasionScenario: false,
+                luckoutScenario: false,
+                enemyPersuaded: false,
+                player_luckout: false,
+                player_win: false,
+                playerGrapplingWin: false,
+                computer_win: false,
+                combatEngaged: false,
+                playerTrait: '',
+                isEnemy: false,
+            };
         },
         clearNpc: (state) => {
-            state.computer = null;
-            state.npcType = '';
+            return {
+                ...state,
+                computer: null,
+                npcType: '',
+            };
         },
         setPhaser: (state, action) => {
-            state.phaser = action.payload;
+            return {
+                ...state,
+                phaser: action.payload,
+            };
         },
         setPhaserAggression: (state, action) => {
-            state.combatEngaged = action.payload;
-            state.isAggressive = action.payload;
+            return {
+                ...state,
+                isAggressive: action.payload,
+                combatEngaged: action.payload,
+            };
         },
         setRest: (state, action) => {
-            console.log(action.payload, "Percentage to Heal");
-            const percentage = action.payload;
-            const current = state.new_player_health;
-            const healed = Math.floor(current + state.player_health * (percentage / 100));
+            const healed = Math.floor(state.new_player_health + state.player_health * (action.payload / 100)) ;
             const newHealth = healed > state.player_health ? state.player_health : healed;
-            console.log(`Healed ${healed} to ${newHealth}`);
-            state.new_player_health = newHealth;
-            state.current_player_health = newHealth;
+            return {
+                ...state,
+                new_player_health: newHealth,
+                current_player_health: newHealth,
+            };
         },
         setWeather: (state, action) => {
-            state.weather = action.payload;
+            return {
+                ...state,
+                weather: action.payload,
+            };
         },
         // ===== Combat Input Concerns ===== \\
         setCombatInput: (state, action) => {
             const { key, value } = action.payload;
-            state = {
+            return {
                 ...state,
                 [key]: value
             };
         },
         setClearCounter: (state) => {
-            state.counter_guess = '';
-        },
-        setActionStatus: (state, action) => {
-            state.actionStatus = action.payload;
+            return {
+                ...state,
+                counter_guess: '',
+            };
         },
         setAction: (state, action) => {
-            state.action = action.payload;
-            state.counter_guess = '';
+            return {
+                ...state,
+                action: action.payload,
+                counter_guess: '',
+            };
         },
         setCounter: (state, action) => {
-            state.action = 'counter';
-            state.counter_guess = action.payload;
+            return {
+                ...state,
+                action: 'counter',
+                counter_guess: action.payload,
+            };
         },
         setDamageType: (state, action) => {
-            state.player_damage_type = action.payload;
+            return {
+                ...state,
+                player_damage_type: action.payload,
+            };
         },
         setInstantCombat: (state, action) => {
-            state = action.payload;
-            state.action = '';
-            state.instantStatus = true;
-        },
-        setInstantStatus: (state, action) => {
-            state.instantStatus = action.payload;
-        },
+            return {
+                ...action.payload,
+                instantStatus: true,
+                action: '',
+            };
+        }, 
         setPlayerBlessing: (state, action) => {
-            state.playerBlessing = action.payload;
+            return {
+                ...state,
+                playerBlessing: action.payload,
+            }
         },
         setPrayerSacrifice: (state, action) => {
-            state.prayerSacrifice = action.payload.prayer;
-            state.prayerSacrificeName = action.payload.name;
+            return {
+                ...state,
+                prayerSacrifice: action.payload.prayer,
+                prayerSacrificeName: action.payload.name,
+            };
         },
         setWeaponOrder: (state, action) => {
-            state.weapons = action.payload;
-            state.player_damage_type = action.payload[0].damage_type[0];
+            return {
+                ...state,
+                weapons: action.payload,
+                player_damage_type: action.payload[0].damage_type[0],
+            };
         },
         setToggleDamaged: (state, action) => {
-            state.playerDamaged = action.payload;
-            state.computerDamaged = action.payload;
+            return {
+                ...state,
+                playerDamaged: action.payload,
+                computerDamaged: action.payload,
+            };
         },
         setEnemyActions: (state, action) => {
-            state.player_win = action.payload.player_win;
-            state.computer_win = action.payload.computer_win;
-            state.player_action_description = action.payload.player_action_description;
-            state.computer_action_description = action.payload.computer_action_description;
-            state.player_start_description = action.payload.player_start_description;
-            state.computer_start_description = action.payload.computer_start_description;
-            state.player_death_description = action.payload.player_death_description;
-            state.computer_death_description = action.payload.computer_death_description;
-            state.player_special_description = action.payload.player_special_description;
-            state.computer_special_description = action.payload.computer_special_description;
-            state.player_influence_description = action.payload.player_influence_description;
-            state.computer_influence_description = action.payload.computer_influence_description;
-            state.player_influence_description_two = action.payload.player_influence_description_two;
-            state.computer_influence_description_two = action.payload.computer_influence_description_two;
-            state.potential_computer_damage = action.payload.potential_computer_damage;
-            state.realized_computer_damage = action.payload.realized_computer_damage;
-            state.playerDamaged = action.payload.playerDamaged;
-            state.computerDamaged = action.payload.computerDamaged;
-            state.new_player_health = action.payload.new_player_health;
-            state.current_player_health = action.payload.current_player_health;
-            state.computer_roll_success = action.payload.computer_roll_success;
-            state.computer_counter_success = action.payload.computer_counter_success;
-            state.computer_glancing_blow = action.payload.computer_glancing_blow;
-            state.playerEffects = action.payload.playerEffects;  
+            return {
+                ...state,
+                player_win: action.payload.player_win,
+                computer_win: action.payload.computer_win,
+                player_action_description: action.payload.player_action_description,
+                computer_action_description: action.payload.computer_action_description,
+                player_start_description: action.payload.player_start_description,
+                computer_start_description: action.payload.computer_start_description,
+                player_death_description: action.payload.player_death_description,
+                computer_death_description: action.payload.computer_death_description,
+                player_special_description: action.payload.player_special_description,
+                computer_special_description: action.payload.computer_special_description,
+                player_influence_description: action.payload.player_influence_description,
+                computer_influence_description: action.payload.computer_influence_description,
+                player_influence_description_two: action.payload.player_influence_description_two,
+                computer_influence_description_two: action.payload.computer_influence_description_two,
+                potential_computer_damage: action.payload.potential_computer_damage,
+                realized_computer_damage: action.payload.realized_computer_damage,
+                playerDamaged: action.payload.playerDamaged,
+                computerDamaged: action.payload.computerDamaged,
+                new_player_health: action.payload.new_player_health,
+                current_player_health: action.payload.current_player_health,
+                computer_roll_success: action.payload.computer_roll_success,
+                computer_counter_success: action.payload.computer_counter_success,
+                computer_glancing_blow: action.payload.computer_glancing_blow,
+                playerEffects: action.payload.playerEffects,  
+            };
         },
         setRemoveEffect: (state, action) => {
-            state.playerEffects = state.playerEffects.filter(effect => effect.id !== action.payload);
-            state.computerEffects = state.computerEffects.filter(effect => effect.id !== action.payload);
+            return {
+                ...state,
+                playerEffects: state.playerEffects.filter(effect => effect.id !== action.payload),
+                computerEffects: state.computerEffects.filter(effect => effect.id !== action.payload),
+            };
         },
         setStalwart: (state, action) => {
-            state.isStalwart = action.payload;
+            return {
+                ...state,
+                isStalwart: action.payload,
+            };
         },
         setCombatTimer: (state, action) => {
-            state.combatTimer = action.payload;
+            return {
+                ...state,
+                combatTimer: action.payload,
+            };
         },
+        setSoundEffects: (state) => {
+            return {
+                ...state,
+                soundEffects: true,
+            };
+        },
+
         // ===== Combat Resolution Concerns ===== \\
-        setCombatInitiated: (state, action) => {
+        setCombatResolution: (_state, action) => {
             console.log(action.payload, "Combat Initiated");
-            // state = action.payload;
             return { ...action.payload };
         },
-        setEffectResponse: (state, action) => {
-            state = action.payload;
+        setEffectResponse: (_state, action) => {
+            return { ...action.payload };
         },
         setPlayerWin: (state, _action) => {
             const weaps: any[] = state.weapons.map(weapon => [state.weapon_one, state.weapon_two, state.weapon_three].find(w => w._id === weapon._id));
-            state.weapons = weaps;
-            state.winStreak = state.winStreak + 1;
-            state.highScore = state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore;
-            state.loseStreak = 0;
-            state.combatEngaged = false;
-            state.instantStatus = false;
+            return {
+                ...state,
+                weapons: weaps,
+                winStreak: state.winStreak + 1,
+                highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
+                loseStreak: 0,
+                // combatEngaged: false,
+                instantStatus: false
+            };
         },
         setEnemyWin: (state, _action) => {
             const weaps = state.weapons.map(weapon => [state.weapon_one, state.weapon_two, state.weapon_three].find(w => w._id === weapon._id));
-            state.loseStreak = state.loseStreak + 1;
-            state.winStreak = 0;
-            state.combatEngaged = false;
-            state.instantStatus = false;
-            state.weapons = weaps;
+            return {
+                ...state,
+                weapons: weaps,
+                loseStreak: state.loseStreak + 1,
+                winStreak: 0,
+                combatEngaged: false,
+                instantStatus: false
+            };
         },
         clearCombat: (state) => {
-            state.computer = null;
-            state.player_win = false;
-            state.computer_win = false;
-            state.combatEngaged = false;
-            state.enemyPersuaded = false;
-            state.instantStatus = false;
-            state.action = '';
-            state.counter_guess = '';
-            state.computer_action = '';
-            state.computer_counter_guess = '';
-            state.playerTrait = '';
-            state.computer_counter_guess = '';
-            state.player_action_description = '';
-            state.computer_action_description = '';
-            state.player_start_description = '';
-            state.computer_start_description = '';
-            state.player_death_description = '';
-            state.computer_death_description = '';
-            state.player_special_description = '';
-            state.computer_special_description = '';
-            state.player_influence_description = '';
-            state.computer_influence_description = '';
-            state.player_influence_description_two = '';
-            state.computer_influence_description_two = '';
-            state.realized_player_damage = 0;
-            state.realized_computer_damage = 0;
-            state.combatRound = 0;
-            state.actionData = [];
-            state.typeAttackData = [];
-            state.typeDamageData = [];
-            state.totalDamageData = 0;
-            state.prayerData = [];
-            state.deityData = [];
-            state.playerEffects = [];
-            state.computerEffects = [];
+            return {
+                ...state,
+                computer: null,
+                player_win: false,
+                computer_win: false,
+                combatEngaged: false,
+                enemyPersuaded: false,
+                instantStatus: false,
+                action: '',
+                counter_guess: '',
+                computer_action: '',
+                computer_counter_guess: '',
+                playerTrait: '',
+                player_action_description: '',
+                computer_action_description: '',
+                player_start_description: '',
+                computer_start_description: '',
+                player_death_description: '',
+                computer_death_description: '',
+                player_special_description: '',
+                computer_special_description: '',
+                player_influence_description: '',
+                computer_influence_description: '',
+                player_influence_description_two: '',
+                computer_influence_description_two: '',
+                potential_player_damage: 0,
+                potential_computer_damage: 0,
+                realized_player_damage: 0,
+                realized_computer_damage: 0,
+                playerDamaged: false,
+                computerDamaged: false,
+                combatRound: 0,
+                actionData: [],
+                typeAttackData: [],
+                typeDamageData: [],
+                totalDamageData: 0,
+                prayerData: [],
+                deityData: [],
+                playerEffects: [],
+                computerEffects: [],
+            }
         },
         
         // ===== Noncombat Resolution Concerns ===== \\
         setPlayerLuckout: (state, action) => {
-            state.winStreak = state.winStreak + 1;
-            state.highScore = state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore;
-            state.loseStreak = 0;
-            state.new_computer_health = 0;
-            state.current_computer_health = 0;
-            state.player_luckout = action.payload.playerLuckout;
-            state.playerTrait = action.payload.playerTrait;
-            state.player_win = true;
-            state.luckoutScenario = true;    
+            return {
+                ...state,
+                winStreak: state.winStreak + 1,
+                highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
+                loseStreak: 0,
+                new_computer_health: 0,
+                current_computer_health: 0,
+                player_luckout: action.payload.playerLuckout,
+                playerTrait: action.payload.playerTrait,
+                player_win: true,
+                luckoutScenario: true
+            };
         },
         setLuckoutFailure: (state, action) => {
-            state.winStreak = 0;
-            state.player_luckout = action.payload.playerLuckout;
-            state.playerTrait = action.payload.playerTrait;
-            state.luckoutScenario = true;
+            return {
+                ...state,
+                winStreak: 0,
+                player_luckout: action.payload.playerLuckout,
+                playerTrait: action.payload.playerTrait,
+                luckoutScenario: true
+            };
         },
         setEnemyPersuaded: (state, action) => {
-            state.enemyPersuaded = action.payload.enemyPersuaded;
-            state.playerTrait = action.payload.playerTrait;
-            state.persuasionScenario = true;
+            return {
+                ...state,
+                enemyPersuaded: action.payload.enemyPersuaded,
+                playerTrait: action.payload.playerTrait,
+                persuasionScenario: true
+            };
         },
         resetLuckout: (state, action) => {
-            state.player_luckout = action.payload;
+            return {
+                ...state,
+                player_luckout: action.payload,
+            };
         },
     }
 });
@@ -335,19 +426,18 @@ export const {
     setCombatTimer,
     setCombatInput,
     setClearCounter,
-    setActionStatus, 
     setAction,
     setCounter,
     setDamageType, 
     setEnemyActions,
     setToggleDamaged,
     setWeaponOrder,
-    setCombatInitiated,
+    setCombatResolution,
     setInstantCombat,
     setPlayerBlessing,
     setPrayerSacrifice,
-    setInstantStatus,
     setRemoveEffect,
+    setSoundEffects,
 
     setEffectResponse,
     setPlayerWin,

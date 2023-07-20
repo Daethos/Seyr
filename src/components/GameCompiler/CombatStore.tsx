@@ -113,6 +113,7 @@ export interface CombatData {
     isStalwart: boolean; // +10% Defense, -5% Movement
     enemyID: string;
     combatTimer: number;
+    soundEffects: boolean;
 
     isEnemy: boolean;
     npcType: string;
@@ -293,6 +294,7 @@ export const initialCombatData: CombatData = {
     npcType: '',
     isAggressive: false,
     startedAggressive: false,
+    soundEffects: false,
 };
 
 export const CombatStore = (state: CombatData, action: Action) => {

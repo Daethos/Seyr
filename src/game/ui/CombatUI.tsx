@@ -4,7 +4,6 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import playerHealthbar from '../images/player-healthbar.png';
 import playerPortrait from '../images/player-portrait.png';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
-import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,10 +15,9 @@ interface CombatUIProps {
     state: CombatData;
     staminaPercentage: number;
     pauseState: boolean;    
-    handleCallback: (state: CombatData, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
-const CombatUI = ({ state, staminaPercentage, pauseState, handleCallback }: CombatUIProps) => {
+const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
     const gameState = useSelector((state: any) => state.game);
     const dispatch = useDispatch();
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
@@ -196,7 +194,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState, handleCallback }: Comb
             {state.playerEffects.length > 0 ? (
                 <div className='combat-effects' style={{ zIndex: 2 }}>
                     {state.playerEffects.map((effect: any, index: number) => {
-                        return ( <PhaserEffects state={state} effect={effect} pauseState={pauseState} handleCallback={handleCallback} key={index} /> )
+                        return ( <PhaserEffects state={state} effect={effect} pauseState={pauseState} key={index} /> )
                     })}
                 </div>
             ) : ( '' ) } 

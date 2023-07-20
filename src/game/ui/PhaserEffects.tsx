@@ -4,7 +4,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 import { useDispatch, useSelector } from 'react-redux';
-import { setRemoveEffect } from '../reducers/combatState';
+import { getEffectTickFetch, setRemoveEffect } from '../reducers/combatState';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 
 interface StatusEffectProps {
@@ -12,10 +12,9 @@ interface StatusEffectProps {
     effect: StatusEffect;
     enemy?: boolean;
     pauseState: boolean;
-    handleCallback: (state: any, effect: StatusEffect, effectTimer: number) => Promise<void>;
 };
 
-const PhaserEffects = ({ state, effect, enemy, pauseState, handleCallback }: StatusEffectProps) => {
+const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) => {
     const dispatch = useDispatch();
     // const state = useSelector((state: any) => state.combat);
     const [endTime, setEndTime] = useState<number>(effect.endTime);
@@ -28,36 +27,9 @@ const PhaserEffects = ({ state, effect, enemy, pauseState, handleCallback }: Sta
         'Silence': 'Prevents the enemy from praying.'
     };
 
-    // useEffect(() => {
-    //     setEndTime(effect.endTime);
-    //     setEffectTimer(effect.endTime - effect.startTime);
-    // }, []);
-
     useEffect(() => {
         console.log(effectTimer, "Effect Timer");
-    }, [effectTimer])
-
-    // useEffect(() => {
-    //     console.log(effectTimer, endTime, "Effect and End Timer");
-    //     if (endTime < effect.endTime) setEndTime(effect.endTime);
-    //     console.log("Ticking");
-    //     const intervalTimer = setInterval(() => {
-    //         setEffectTimer((effectTimer) => --effectTimer);
-    //     }, 1000);
-      
-    //     if (endTime === state.combatTimer || effectTimer <= 0 || !state.combatEngaged) {
-    //         dispatch(setRemoveEffect(effect.id));
-    //         clearInterval(intervalTimer);
-    //     };
-      
-    //     if (canTick(effect, effectTimer)) {
-    //         handleCallback(state, effect, effectTimer);
-    //     };
-      
-    //     return () => {
-    //         clearInterval(intervalTimer); // Clean up the interval on unmount
-    //     };
-    // }, [effectTimer, pauseState, endTime, effect.endTime, state.combatTimer, state.combatEngaged]);
+    }, [effectTimer]);
       
 
     useEffect(() => {
@@ -74,7 +46,8 @@ const PhaserEffects = ({ state, effect, enemy, pauseState, handleCallback }: Sta
         };
         if (pauseState) clearInterval(intervalTimer);
         if (canTick(effect, effectTimer)) { 
-            handleCallback(state, effect, effectTimer);
+            console.log("Can Tick");
+            dispatch(getEffectTickFetch({ combatData: state, effect, effectTimer }));
         };
         
         return () => {
@@ -83,6 +56,7 @@ const PhaserEffects = ({ state, effect, enemy, pauseState, handleCallback }: Sta
     }, [effectTimer, pauseState, endTime]);
     
     const canTick = (effect: StatusEffect, timer: number): boolean => {
+        console.log(timer, effect.endTime - effect.startTime, "Can Tick")
         if (timer % 3 === 0 && timer !== (effect.endTime - effect.startTime) && (effect.prayer === 'Heal' || effect.prayer === 'Damage')) return true;
         return false;
     }; 

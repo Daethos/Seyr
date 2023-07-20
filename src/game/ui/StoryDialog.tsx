@@ -532,6 +532,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
 
     const engageCombat = async (): Promise<void> => {
         await checkingLoot();
+        console.log("engageCombat in StoryDialog.tsx");
         dispatch(setPhaserAggression(true));
         EventEmitter.emit('aggressive-enemy', { id: state.enemyID, isAggressive: true });
         dispatch(setShowDialog(false));

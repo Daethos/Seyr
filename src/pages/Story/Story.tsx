@@ -8,14 +8,14 @@ import { getGameFetch } from '../../game/reducers/gameState';
 export const Story = () => {
     const { asceanID } = useParams();
     const ascean = useSelector((state: any) => state.game.player);
-    const dispatcher = useDispatch();
+    const dispatch = useDispatch();
     const [assets, setAssets] = useState([]);
     const [gameChange, setGameChange] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             try {
-                dispatcher(getGameFetch(asceanID));
+                dispatch(getGameFetch(asceanID));
                 const assetResponse = await eqpAPI.index();
                 const sanitizedAssets = await sanitizeAssets(assetResponse.data);
                 setAssets(sanitizedAssets);
@@ -25,7 +25,7 @@ export const Story = () => {
             };
         }; 
         fetchData(); 
-    }, [asceanID]); 
+    }, [asceanID, dispatch]); 
 
     const sanitizeAssets = async (assets: any): Promise<[]> => {
         const fields = ['weapons', 'shields', 'helmets', 'chests', 'legs', 'rings', 'amulets', 'trinkets'];

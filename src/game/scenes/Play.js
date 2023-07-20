@@ -9,14 +9,8 @@ import base from '../images/base.png';
 import ParticleManager from '../phaser/ParticleManager';
 import LootDrop from '../matter/LootDrop';
 import EventEmitter from '../phaser/EventEmitter';
-import { useDispatch } from 'react-redux';
-import { getInitiateFetch } from '../reducers/combatState';
-
-export const Game = () => {
-    const dispatch = useDispatch();
-    return <Play dispatch={dispatch} />
-};
-
+import { getInitiateFetch, getCombatStateUpdate, getEnemyActionFetch, getCombatFetch } from '../reducers/combatState';
+ 
 export default class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play', active: false });
@@ -29,8 +23,6 @@ export default class Play extends Phaser.Scene {
         this.data = data;
         this.ascean = this.data.gameData.gameData.ascean;
         this.dispatch = this.data.gameData.gameData.dispatch.dispatch;
-        this.dispatcher = this.data.gameData.gameData.dispatch.dispatch;
-        console.log(this.dispatch, this.dispatcher, "Dispatch in Play.js");
         this.enemy = {};
         this.npcs = [];
         this.combat = false;
@@ -128,7 +120,7 @@ export default class Play extends Phaser.Scene {
         }; 
           
         let camera = this.cameras.main;
-        camera.zoom = 1.5;
+        camera.zoom = 3.5;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 4096, 4096);  
@@ -232,6 +224,7 @@ export default class Play extends Phaser.Scene {
     };
 
     combatEngaged = async (engagement) => {
+        console.log('combatEngaged', engagement);
         if (engagement) { this.combat = true; } else { this.combat = false; };
         EventEmitter.emit('combat-engaged', engagement);
     };
@@ -266,7 +259,8 @@ export default class Play extends Phaser.Scene {
         console.log('sendEnemyActionListener');
         if (!currentTarget) {
             const data = { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state: this.state };
-            EventEmitter.emit('update-enemy-action', data);
+            // EventEmitter.emit('update-enemy-action', data);
+            this.dispatch(getEnemyActionFetch(data));
         } else {
             if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
                 const playerAction = this.state.action;
@@ -288,13 +282,15 @@ export default class Play extends Phaser.Scene {
             return; 
         };
         console.log("Sending State Action");
-        EventEmitter.emit('update-state-action', this.state);
+        // EventEmitter.emit('update-state-action', this.state);
+        this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Weapon' }));
     };
 
     sendStateSpecialListener = async (special) => {
         switch (special) {
             case 'invoke':
-                EventEmitter.emit('update-state-invoke', this.state);
+                // EventEmitter.emit('update-state-invoke', this.state);
+                this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Instant' }));
                 break;
             case 'consume':
                 // this.state.prayerSacrifice = this.state.playerEffects[0].prayer;
@@ -333,7 +329,8 @@ export default class Play extends Phaser.Scene {
     
 
     setState = (key, value) => {
-        EventEmitter.emit('update-state', { key, value });
+        // EventEmitter.emit('update-state', { key, value });
+        this.dispatch(getCombatStateUpdate({ key, value }));
         if (key === 'action') this.checkStamina(value);
     };
 

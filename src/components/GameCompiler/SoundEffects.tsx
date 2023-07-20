@@ -1,5 +1,5 @@
 import useSound from 'use-sound';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 interface SoundEffect {
     name: string,
@@ -119,7 +119,7 @@ export const useSoundEffect = (effect: any) => {
     console.log('useSoundEffect playing', effect);
     const [playSound] = useSound(effect?.url, { volume: effect?.volume });
     playSound();
-}
+};
 
 const UseSoundEffect = ({ effect }: any) => {
     const [playSound] = useSound(effect?.url, { volume: effect?.volume });
@@ -130,7 +130,7 @@ const UseSoundEffect = ({ effect }: any) => {
         }
     }, [effect]);
     return playSound;
-}
+};
 
 
 export const soundEffectFunctions = {
@@ -156,6 +156,6 @@ export const soundEffectFunctions = {
     'Weapon-Order': () => UseSoundEffect('weapon-order'),
     'Death': () => UseSoundEffect('death'),
     'Win': () => UseSoundEffect('win'),
-}
+};
 
 export default UseSoundEffect;
