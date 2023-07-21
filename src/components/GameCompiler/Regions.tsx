@@ -1,3 +1,5 @@
+import Button from 'react-bootstrap/Button';
+
 export interface Region { 
     Astralands: string;
     Kingdom: string;
@@ -18,4 +20,14 @@ export const regionInformation = {
     Firelands: "The Ghosthawk of Greyrock, Theogeni Spiras, has not been seen as of late--his wife's health has been failing worse. He has been leaning on his administration housed with devoted, a strong change from the previous Protectorate, the Ashfyres and their adherence to Fyer, tradition that has persisted since written word. Peculiar, the man, once wildly famed from his crowning at the Ascea in 130, to overthrowing the longstanding Fyerslord, Laveous Ashfyre. The last vestige of their lineage, Searous Ashfyre, has been left in a fragile position, and many are curious as to the future of the Firelands. What do you think?", 
     Sedyrus: "The Sedyren Sun, Cyrian Shyne, has reached an agreement with a lesser Quor'ator to betrothe his firstborn son to one of their daughters, hoping to stem general unrest from the cooling tempers of various families being uprooted of the Quor'eite, who lost a surprise war against their neighboring Sedyreal some decades past--the province solidifying after centuries of a Sedyrus/Quor'eia split into Sedyrus. Would you believe those that say this will leads toward a more peaceful future?", 
     Isles: "The Alluring Isles is its own world, gigantic and terrifying despite its grandeur isolated by strange tides. The land itself a shade of this world, yet what can allow a man to travel a fortnight here, and a day there? I've heard about the size of the animals that stalk those jungles and swim in the waters, hard to believe anyone can sustain themselves there. Would you wish to see this place?",
+};
+
+export const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, handleRegion: any }) => {
+    const buttons = Object.keys(options).map((o: any, i: number) => {
+        console.log(o, 'Options in ProvincialWhispersButtons');
+        return (
+            <Button variant='' className='dialog-buttons' key={i} onClick={() => handleRegion(o)}>{o}</Button>
+        );
+    });
+    return <>{buttons}</>;
 };

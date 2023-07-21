@@ -380,7 +380,16 @@ export const LuckoutModal = ({ traits, callback, name, influence }: TraitModalPr
             </Modal.Body>
         </Modal>
     return (
+        <>
         <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button>
+        {traits.map((trait: any, index: number) => {
+            return (
+                <div key={index}>
+                    <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => callback(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
+                </div>
+            )
+        })}
+        </>
     );
 };
 
@@ -404,6 +413,15 @@ export const PersuasionModal = ({ traits, callback, name, influence }: TraitModa
         </Modal.Body>
     </Modal>
     return (
+        <>
         <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setShow(true)}>[ {'>>>'} Persuasive Alternative(s) {'<<<'} ]</Button>
+        {traits.map((trait: any, index: number) => {
+            return (
+                <div key={index}>
+                <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => callback(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
+            </div>
+            )
+        })}
+        </>
     );
 };

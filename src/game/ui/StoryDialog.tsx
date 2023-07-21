@@ -15,7 +15,7 @@ import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
 import { getReplenishFirewaterFetch, setCurrentDialogNode, setCurrentIntent, setMerchantEquipment, setRendering, setShowDialog } from '../reducers/gameState';
 import { getLuckoutFetch, getPersuasionFetch, setPhaserAggression } from '../reducers/combatState';
-import { Region, regionInformation } from '../../components/GameCompiler/Regions';
+import { ProvincialWhispersButtons, Region, regionInformation } from '../../components/GameCompiler/Regions';
 import { LuckoutModal, PersuasionModal, checkTraits, traitStyle } from '../../components/GameCompiler/PlayerTraits';
 
 interface DialogOptionProps {
@@ -194,18 +194,6 @@ const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any })
     return <>{buttons}</>;
 };
 
-const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, handleRegion: any }) => {
-    const buttons = Object.keys(options).map((o: any, i: number) => {
-        console.log(o, 'Options in ProvincialWhispersButtons');
-        return (
-            <Button variant='' className='dialog-buttons' key={i} onClick={() => handleRegion(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
-        );
-    });
-    return <>{buttons}</>;
-};
-
-
-
 interface StoryDialogProps {
     deleteEquipment: (equipment: any[]) => Promise<void>;
     handlePlayerLuckout: () => Promise<void>;
@@ -236,7 +224,6 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
     const [enemyArticle, setEnemyArticle] = useState<any>('');
 
     useEffect(() => { 
-        console.log(state, "State.Computer");
         checkLuckout();
         checkPersuasion();
         // checkMiniGame();
@@ -777,7 +764,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                                         <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
                                     </div>
                                     )
-                                })} 
+                                })}
                             </div>
                         ) : ('') }
                         { state.persuasionScenario ? (

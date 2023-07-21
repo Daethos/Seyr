@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import LootDrop from './LootDrop';
 import MerchantTable from './MerchantTable';
@@ -10,8 +9,8 @@ import ToastAlert from '../ToastAlert/ToastAlert';
 import { GAME_ACTIONS, GameData, nameCheck } from './GameStore';
 import { getNodesForNPC, npcIds } from './DialogNode';
 import { useLocation } from 'react-router-dom';
-import { Region, regionInformation } from './Regions';
-import { checkPlayerTrait, getAsceanTraits, traitStyle } from './PlayerTraits';
+import { ProvincialWhispersButtons, Region, regionInformation } from './Regions';
+import { LuckoutModal, PersuasionModal, checkPlayerTrait, getAsceanTraits, traitStyle } from './PlayerTraits';
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
     const filteredOptions = Object.keys(options);
@@ -23,27 +22,7 @@ const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any })
         );
     });
     return <>{buttons}</>;
-};
-  
-const CombatDialogButtons = ({ options, handleCombatAction }: { options: any, handleCombatAction: any }) => {
-    const buttons = Object.keys(options).map((o: any, i: number) => {
-        return (
-            <Button variant='' className='dialog-buttons' key={i} onClick={() => handleCombatAction('actions', o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
-        )
-    });
-    return <>{buttons}</>;
-};
-
-const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, handleRegion: any }) => {
-    console.log(options, 'The Options');
-    const buttons = Object.keys(options).map((o: any, i: number) => {
-        console.log(o, 'Options in ProvincialWhispersButtons');
-        return (
-            <Button variant='' className='dialog-buttons' key={i} onClick={() => handleRegion(o)} style={{ color: 'green', fontVariant: 'small-caps', fontWeight: 550 }}>{o}</Button>
-        );
-    });
-    return <>{buttons}</>;
-};
+};  
 
 interface Props {
     ascean: any;
@@ -72,12 +51,8 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, clearOpponent, cu
     const location = useLocation();
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [traits, setTraits] = useState<any | null>(null);
-    const [combatAction, setCombatAction] = useState<any | null>('actions');
     const [province, setProvince] = useState<keyof typeof regionInformation>('Astralands');
     const [error, setError] = useState<any>({ title: '', content: '' });
-    const [luckoutModalShow, setLuckoutModalShow] = useState<boolean>(false);
-    const [persuasionModalShow, setPersuasionModalShow] = useState<boolean>(false);
-    const [miniGameModalShow, setMiniGameModalShow] = useState<boolean>(false);
     const [dialogTree, setDialogTree] = useState<any>([]);
     const [luckout, setLuckout] = useState<boolean>(false);
     const [luckoutTraits, setLuckoutTraits] = useState<any>([]);
@@ -105,11 +80,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, clearOpponent, cu
         if (!enemy.dialogId) return;
         let dialogTree = getNodesForNPC(npcIds[enemy?.dialogId]);
         setDialogTree(dialogTree);
-    };
-
-    const handleCombatAction = (options: any, action: string) => {
-        setCombatAction(action);
-    };
+    }; 
     const handleRegion = (region: keyof Region) => {
         setProvince(region);
     };
@@ -398,55 +369,13 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, clearOpponent, cu
     };
  
     return (
-        <>
-        <Modal show={luckoutModalShow} onHide={() => setLuckoutModalShow(false)} centered id='modal-weapon'>
-            <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Hush and Tendril</Modal.Header>
-            <Modal.Body style={{ textAlign: 'center' }}>
-                These offer a unique opportunity to defeat your enemies without the need for combat. However, failure will result in hostile and immediate engagement. Named Enemies are 25% more difficult to defeat with this method.<br /><br />
-                <div style={{ fontSize: "18px", color: "gold" }}>
-                {luckoutTraits.map((trait: any, index: number) => {
-                    return (
-                        <div key={index}>
-                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} 
-                            onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
-                        </div>
-                    )
-                })}
-                </div>
-                [Note: Your character build has granted this avenue of gameplay experience. There are more in other elements to discover.]<br /><br />
-            </Modal.Body>
-        </Modal>
-        <Modal show={persuasionModalShow} onHide={() => setPersuasionModalShow(false)} centered id='modal-weapon'>
-            <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Correspondence</Modal.Header>
-            <Modal.Body style={{ textAlign: 'center' }}>
-                These offer a unique opportunity to entreat with your enemies without the need for combat. 
-                However, failure may result anywhere from stymied conversation to hostile engagement. 
-                Named Enemies are 25% more difficult to persuade. Perhaps with more notoriety this can change.<br /><br />
-                <div style={{ fontSize: "18px", color: "gold" }}>
-                {persuasionTraits.map((trait: any, index: number) => {
-                    return (
-                        <div key={index}>
-                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.modal.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
-                    </div>
-                    )
-                })}
-                </div>
-                [Note: Your character build has granted this avenue of gameplay experience. There are more in other elements to discover.]<br /><br />
-            </Modal.Body>
-        </Modal>
+        <> 
         <div className='dialog-box'>
             <div className='dialog-text'>
             <ToastAlert error={error} setError={setError} />
             <img src={process.env.PUBLIC_URL + `/images/` + enemy?.origin + '-' + enemy?.sex + '.jpg'} alt={enemy?.name} className='dialog-picture' />
             {' '}{enemy?.name} (Level {enemy?.level}) {!enemy?.alive ? '[Deceased]' : ''}<br />
-                { currentIntent === 'combat' ?
-                    <>
-                        <CombatDialogButtons options={dialog[currentIntent]} handleCombatAction={handleCombatAction}  />
-                        <div style={{ fontSize: '12px', whiteSpace: 'pre-wrap', color: 'gold' }}>
-                            {dialog[currentIntent][combatAction]}
-                        </div>
-                    </>
-                : currentIntent === 'challenge' ?
+                { currentIntent === 'challenge' ?
                     state.enemyPersuaded ?
                         <div style={{ color: "gold" }}>
                         [Success]:{' '}
@@ -647,17 +576,8 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, clearOpponent, cu
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={engageCombat}>Engage in hostilities with {npc}?</Button>
                             </> 
                         ) }
-                        { luckout ?
-                            ( <div>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button>
-                                {luckoutTraits.map((trait: any, index: number) => {
-                                    return (
-                                        <div key={index}>
-                                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
-                                        </div>
-                                    )
-                                })} 
-                            </div>
+                        { luckout ? (
+                            <LuckoutModal traits={luckoutTraits} callback={attemptLuckout} name={enemy?.name} influence={state.weapons[0].influences[0]} /> 
                         ) : ('') }
                         { miniGame ? (
                             <>
@@ -924,16 +844,7 @@ const DialogBox = ({ state, dispatch, gameState, gameDispatch, clearOpponent, cu
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={() => clearDuel()}>Continue moving along your path, there's nothing left to say now.</Button>
                             </>
                         ) : persuasion && !state.enemyPersuaded ? ( 
-                            <div>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
-                                {persuasionTraits.map((trait: any, index: number) => {
-                                    return (
-                                        <div key={index}>
-                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', ascean.weapon_one.influences[0])}</Button>
-                                    </div>
-                                    )
-                                })} 
-                            </div>
+                                <PersuasionModal traits={persuasionTraits} callback={attemptPersuasion} name={enemy.name} influence={state.weapons[0].influences[0]} /> 
                         ) : ('') }
                         { state.enemyPersuaded ?
                             <div style={{ color: "gold" }}>
