@@ -19,7 +19,7 @@ import { getNpcDialog, getMerchantDialog } from '../../components/GameCompiler/D
 import DialogBox from '../../components/GameCompiler/DialogBox';
 import Button from 'react-bootstrap/Button';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
-import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, NPC, getAsceanTraits, checkPlayerTrait } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, NPC } from '../../components/GameCompiler/GameStore';
 import { ACTIONS, CombatStore, initialCombatData, CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData, debounce, getAsceanCoords, getAsceanGroupCoords } from '../../components/GameCompiler/WorldStore';
 import Settings from '../../components/GameCompiler/Settings';
@@ -38,6 +38,7 @@ import GameplayUnderlay from '../../components/GameCompiler/GameplayUnderlay';
 import Tutorial from '../../components/GameCompiler/Tutorial';
 import { User } from '../App/App';
 import GameplayDeity from '../../components/GameCompiler/GameplayDeity';
+import { getAsceanTraits, checkPlayerTrait } from '../../components/GameCompiler/PlayerTraits';
 
 export enum MapMode {
     FULL_MAP,

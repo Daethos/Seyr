@@ -2,14 +2,7 @@ import { useSelector } from 'react-redux';
 import messageWindow from '../images/message_window.png';
 
 const PhaserCombatText = () => {
-    const state = useSelector((state: any) => state.combat);
-    const storyStyle = {
-        height: "120px",
-        width: "450px",  
-        fontSize: "12px",
-        border: 'none',
-        zIndex: '1',
-    };
+    const state = useSelector((state: any) => state.combat); 
     const text = () => {
         let result = "";
         if (state.player_start_description) result += state.player_start_description + "\n";
@@ -30,7 +23,6 @@ const PhaserCombatText = () => {
     return (
         <div>
             <textarea 
-                style={storyStyle}
                 id='story-console' 
                 value={text()}
                 readOnly>

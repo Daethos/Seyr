@@ -8,13 +8,15 @@ import Inventory from '../../components/GameCompiler/Inventory';
 import { DialogNode, getNodesForNPC, npcIds, DialogNodeOption, getNodesForEnemy } from '../../components/GameCompiler/DialogNode';
 import Currency from '../../components/GameCompiler/Currency';
 import { CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
-import { GameData, Player, checkTraits, nameCheck } from '../../components/GameCompiler/GameStore';
+import { GameData, Player, nameCheck } from '../../components/GameCompiler/GameStore';
 import Typewriter from '../../components/GameCompiler/Typewriter';
 import dialogWindow from '../images/dialog_window.png';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
 import { getReplenishFirewaterFetch, setCurrentDialogNode, setCurrentIntent, setMerchantEquipment, setRendering, setShowDialog } from '../reducers/gameState';
 import { getLuckoutFetch, getPersuasionFetch, setPhaserAggression } from '../reducers/combatState';
+import { Region, regionInformation } from '../../components/GameCompiler/Regions';
+import { LuckoutModal, PersuasionModal, checkTraits, traitStyle } from '../../components/GameCompiler/PlayerTraits';
 
 interface DialogOptionProps {
     option: DialogNodeOption;
@@ -202,16 +204,7 @@ const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, ha
     return <>{buttons}</>;
 };
 
-interface Region { 
-    Astralands: string;
-    Kingdom: string;
-    Soverains: string;
-    Fangs: string;
-    Licivitas: string;
-    Firelands: string;
-    Sedyrus: string;
-    Isles: string; 
-};
+
 
 interface StoryDialogProps {
     deleteEquipment: (equipment: any[]) => Promise<void>;
@@ -230,16 +223,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [playerResponses, setPlayerResponses] = useState<string[]>([]);
     const [keywordResponses, setKeywordResponses] = useState<string[]>([]);
-    const regionInformation = {
-        Astralands: "Good one, those Ashtre have quite the mouth on them I hear yet never heard. Perhaps you'll be able to catch their whispers.", 
-        Kingdom: "The King, Mathyus Caderyn II, has been away from his court as of late, his son Dorien sitting the throne--though constant feathers aid his communication when abroad. Despite its unification, groans have increased with disparate and slow recovery from the century long war only having quelled for 7 years prior, with select places receiving abundance of aid over others, the discernment itself seeming weighed in favor of longstanding allies. As the King reaches further East to establish peaceable connections with the Soverains, it leads one to speculate on the disposition of those houses already under his kingship.", 
-        Soverains: "The Soverain-Eulex, Garrick Myelle, is throwing a week's long feast for the coming manhood of his son, Relien Myelle. It is his last surviving son, others perishing in the Kingdom-Soverain War, and his daughter being wed off to the Kingdom as part of a truce. It has been wondered whether the boy can live up to the immense fortune and luck of his father, who started not long ago as a would-be trader lord, slowly building roads and connectivitiy throughout the Soverains during the war, a wild boon during the war economically--its enhancement of intra-provincial aid notwithstanding.", 
-        Fangs: "Word has spread that the growing settlement and peaceable futures of provinces has caused the chaotic stability of mercenary life in the Fangs to decouple from the consistent pattern of war occurring throughout the land for centuries. Some have been accepting work which brings them far and away from their homelands, by whom and for what purpose remains to be recorded. The Fang Lords themselves have outstretched their lands to incorporate better agriculture, with some of the more inland mercenaries providing a challenge as they wish to graze the land as any animal would. What do you believe?", 
-        Licivitas: "The Ascean, General Peroumes, is avoiding the prospect of coming back to Lor without cause of the authority of both the First Lorian and the Dae it seems. Much criticism of his prolonged campaign among the optimate fall to whipsers on the shoulders of the adoring populare, tales of his commentaries reaching further than the Good Lorian's word, its been said. The Cragorean, enemies in the current war against Licivitas, despite their fewer numbers and armament, have proved ruthless in their willingness to defy Licivitan conquest. What do you make of that growing sentiment?", 
-        Firelands: "The Ghosthawk of Greyrock, Theogeni Spiras, has not been seen as of late--his wife's health has been failing worse. He has been leaning on his administration housed with devoted, a strong change from the previous Protectorate, the Ashfyres and their adherence to Fyer, tradition that has persisted since written word. Peculiar, the man, once wildly famed from his crowning at the Ascea in 130, to overthrowing the longstanding Fyerslord, Laveous Ashfyre. The last vestige of their lineage, Searous Ashfyre, has been left in a fragile position, and many are curious as to the future of the Firelands. What do you think?", 
-        Sedyrus: "The Sedyren Sun, Cyrian Shyne, has reached an agreement with a lesser Quor'ator to betrothe his firstborn son to one of their daughters, hoping to stem general unrest from the cooling tempers of various families being uprooted of the Quor'eite, who lost a surprise war against their neighboring Sedyreal some decades past--the province solidifying after centuries of a Sedyrus/Quor'eia split into Sedyrus. Would you believe those that say this will leads toward a more peaceful future?", 
-        Isles: "The Alluring Isles is its own world, gigantic and terrifying despite its grandeur isolated by strange tides. The land itself a shade of this world, yet what can allow a man to travel a fortnight here, and a day there? I've heard about the size of the animals that stalk those jungles and swim in the waters, hard to believe anyone can sustain themselves there. Would you wish to see this place?",
-    };
+
     const [province, setProvince] = useState<keyof typeof regionInformation>('Astralands');
     const [luckoutModalShow, setLuckoutModalShow] = useState<boolean>(false);
     const [persuasionModalShow, setPersuasionModalShow] = useState<boolean>(false);
@@ -385,43 +369,6 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
         setLuckoutTraits(matchingTraits);
     };
 
-    const traitStyle = (trait: string) => {
-        switch (trait) {
-            case 'Arbituous':
-                return 'green';
-            case 'Chiomic':
-                return 'gold';
-            case 'Kyr\'naic':
-                return 'purple';
-            case 'Lilosian':
-                return '#fdf6d8';
-            case 'Ilian':
-                return 'white';
-            case 'Kyn\'gian':
-                return 'brown';
-            case 'Se\'van':
-                return 'red';
-            case 'Shrygeian':
-                return 'orange';
-            case 'Fyeran':
-                return 'orangered';
-            case 'Tshaeral':
-                return 'darkblue';
-            case 'Astral':
-                return 'yellow';
-            case 'Shaorahi':
-                return 'blue';
-            case 'Cambiren':
-                return 'darkgreen';
-            case 'Sedyrist':
-                return 'silver';
-            case 'Ma\'anreic':
-                return 'darkgoldenrod';
-            default:
-                break;
-        };
-    };
-
     const actions = {
         getCombat: () => engageCombat(),
         getArmor: () => getLoot('armor'),
@@ -431,7 +378,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
         getTailor: () => getLoot('cloth'),
         getWeapon: () => getLoot('physical-weapon'),
         getFlask: () => refillFlask()
-      };
+    };
 
     useEffect(() => {
         if (gameState.player.inventory.length > 2) {
@@ -608,8 +555,8 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
             <ToastAlert error={error} setError={setError} />
             <div style={{ color: 'gold', fontSize: '18px', marginBottom: "5%" }}>
                 <div style={{ display: 'inline' }}>
-                <img src={process.env.PUBLIC_URL + `/images/` + state?.computer?.origin + '-' + state?.computer?.sex + '.jpg'} alt={state?.computer?.name} style={{ width: '15%' }} className='dialog-picture' />
-                {' '}<div style={{ display: 'inline' }}>{state?.computer?.name} <p style={{ display: 'inline', fontSize: '12px' }}>[Level {state?.computer?.level}] {!state?.computer?.alive ? '[Deceased]' : ''}</p><br /></div>
+                    <img src={process.env.PUBLIC_URL + `/images/` + state?.computer?.origin + '-' + state?.computer?.sex + '.jpg'} alt={state?.computer?.name} style={{ width: '15%' }} className='dialog-picture' />
+                    {' '}<div style={{ display: 'inline' }}>{state?.computer?.name} <p style={{ display: 'inline', fontSize: '12px' }}>[Level {state?.computer?.level}] {!state?.computer?.alive ? '[Deceased]' : ''}</p><br /></div>
                 </div>
             </div>
             { state.npcType === 'Merchant-Smith' ? (
@@ -715,7 +662,8 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                             ) }
                             { luckout ? ( 
                                 <div>
-                                    <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button>
+                                    {/* <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button> */}
+                                    <LuckoutModal traits={luckoutTraits} callback={attemptLuckout} name={state.computer.name} influence={influence} />
                                     {luckoutTraits.map((trait: any, index: number) => {
                                         return (
                                             <div key={index}>
@@ -821,6 +769,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                             </>
                         ) : persuasion && !state.persuasionScenario ? ( 
                             <div>
+                                <PersuasionModal traits={persuasionTraits} callback={attemptPersuasion} name={state.computer.name} influence={influence} />
                                 <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
                                 {persuasionTraits.map((trait: any, index: number) => {
                                     return (

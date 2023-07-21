@@ -8,13 +8,14 @@ import Form from 'react-bootstrap/Form';
 import * as eqpAPI from '../../utils/equipmentApi';
 import Overlay from 'react-bootstrap/Overlay';
 import Table from 'react-bootstrap/Table';
-import { GAME_ACTIONS, GameData, Player, checkPlayerTrait } from './GameStore';
+import { GAME_ACTIONS, GameData, Player } from './GameStore';
 import { useLocation } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd'
 import equipSlot from '../../game/images/equip_slot.png';
 import equipSlotSelected from '../../game/images/equip_slot_selected.png';
 import { useDispatch } from 'react-redux';
 import { getAsceanAndInventoryFetch, getOnlyInventoryFetch } from '../../game/reducers/gameState';
+import { checkPlayerTrait, checkTraits } from './PlayerTraits';
 
 interface Props {
     inventory: any;
@@ -935,7 +936,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 <>
                 { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
                 </>
-            ) : gameState && checkPlayerTrait("Sedyrist", gameState) ? (
+            ) : gameState && (checkPlayerTrait("Sedyrist", gameState) || checkTraits('Sedyrist', gameState)) ? (
                 <>
                 { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
                 </>

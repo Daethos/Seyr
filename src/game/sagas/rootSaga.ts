@@ -1,4 +1,4 @@
-import { all, call, put, takeEvery, takeLatest, take, AllEffect, select } from 'redux-saga/effects';
+import { all, call, put, takeEvery, takeLatest, take, AllEffect, select, fork } from 'redux-saga/effects';
 import { SagaIterator } from 'redux-saga';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as communityAPI from '../../utils/communityApi';
@@ -8,13 +8,14 @@ import * as settingsAPI from '../../utils/settingsApi';
 import userService from "../../utils/userService";
 import { getUserLogout, getUserSuccess, getUserAsceanSuccess } from '../reducers/userState'; 
 import { getCommunityAsceanSuccess, getFocusAsceanSuccess } from '../reducers/communityState';
-import { Player, getAsceanTraits } from '../../components/GameCompiler/GameStore';
-import { setAsceanState, setCurrency, setDialog, setExperience, setFirewater, setInitialAsceanState, setInstantStatus, setInventory, setLootDrops, setMerchantEquipment, setPlayer, setPlayerLevelUp, setSettings, setShowDialog, setShowLoot, setStatistics, setTraits } from '../reducers/gameState';
-import { setCombatResolution, setCombatInput, setCombatPlayer, setDamageType, setEffectResponse, setEnemyActions, setPlayerBlessing, setRest, setToggleDamaged, setWeaponOrder, setCombat, clearCombat, setStalwart, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatTimer, setPhaser, setEnemyPersuaded, setPlayerLuckout, setPlayerWin, setEnemyWin } from '../reducers/combatState';
+import { Player } from '../../components/GameCompiler/GameStore';
+import { setAsceanState, setCurrency, setDialog, setExperience, setFirewater, setInitialAsceanState, setInstantStatus, setInventory, setLootDrops, setPlayer, setPlayerLevelUp, setSettings, setShowDialog, setShowLoot, setStatistics, setTraits } from '../reducers/gameState';
+import { setCombatResolution, setCombatInput, setCombatPlayer, setDamageType, setEffectResponse, setEnemyActions, setPlayerBlessing, setRest, setToggleDamaged, setWeaponOrder, setCombat, clearCombat, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatTimer, setPhaser, setEnemyPersuaded, setPlayerLuckout, setPlayerWin, setEnemyWin } from '../reducers/combatState';
 import { CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import EventEmitter from '../phaser/EventEmitter';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import { getNodesForNPC, npcIds } from '../../components/GameCompiler/DialogNode';
+import { getAsceanTraits } from '../../components/GameCompiler/PlayerTraits';
 
 const compareScores = (a: any, b: any) => {
     if (a[0] === undefined) a[0] = { score: 0 };
@@ -58,7 +59,6 @@ const statFiler = (data: CombatData, win: boolean): Object => {
 // ==================== User ====================
 
 function* userSaga(): SagaIterator {
-    console.log("User Listener");
     yield takeEvery('user/getUserFetch', workGetUserFetch);
     yield takeEvery('user/getLogoutSaga', workGetLogoutSaga);
     yield takeEvery('user/getUserAsceanFetch', workGetUserAsceanFetch);
@@ -105,7 +105,7 @@ function* workGetAsceanAllFetch(): SagaIterator {
 };
 function* workGetAsceanFocusFetch(action: any): SagaIterator {
     const focusID = action.payload;
-    const response = yield call(() => communityAPI.getOneAscean(focusID));
+    const response = yield call(communityAPI.getOneAscean, focusID);
     const ascean = response.data;
     yield put(getFocusAsceanSuccess(ascean));
 };
@@ -128,24 +128,26 @@ function* combatSaga(): SagaIterator {
     yield takeEvery('combat/getCombatTimerFetch', workGetCombatTimer);
     yield takeEvery('combat/getPersuasionFetch', workGetPersuasion);
     yield takeEvery('combat/getLuckoutFetch', workGetLuckout);
-    watchResolveCombat();
+    // yield fork(workResolveCombat);
 };
 
-function* watchResolveCombat(): SagaIterator {
-    yield takeEvery('', workResolveCombat);
-};
-function* workResolveCombat(): SagaIterator {
-    const state = yield select((state) => state.combat);
+// function* watchResolveCombat(): SagaIterator {
+//     yield takeEvery('workGetInitiate', workResolveCombat);
+// };
+function* workResolveCombat(state: CombatData): SagaIterator {
     if (!state.player_win && !state.computer_win) return;
+    console.log(state.player_win, "Player Won?", state.computer_win, "Computer Won?");
     const stat = yield call(statFiler, state, state.player_win);
     yield call(asceanAPI.recordCombatStatistic, stat);
     yield put(setStatistics(stat));
     if (state.player_win) {
         const asceanState = yield select((state) => state.game.asceanState);
+        console.log(asceanState, "Ascean State Fetched");
         yield call(workGetGainExperienceFetch, { asceanState, state });
         yield call(workGetLootDropFetch, { enemyID: state.enemyID, level: state.computer.level });
         yield put(setPlayerWin(state));
     } else {
+        console.log("Enemy Won");
         yield call(workGetAsceanHealthUpdate, { health: state.new_player_health, id: state.player._id });      
         yield put(setEnemyWin(state));    
     };
@@ -228,8 +230,9 @@ function* workGetEnemyAction(action: any): SagaIterator {
         };
         let res = yield call(gameAPI.phaserAction, enemyData);
         yield put(setEnemyActions(res.data));
+        yield fork(workResolveCombat, res.data);
         res.data.enemyID = enemyID;
-        EventEmitter.emit('update-combat-data', res.data);
+        // EventEmitter.emit('update-combat-data', res.data);
         EventEmitter.emit('update-combat', res.data);
         setTimeout(() => {
             call(() => setToggleDamaged(false));
@@ -240,6 +243,7 @@ function* workGetEnemyAction(action: any): SagaIterator {
 };
 function* workGetInitiate(action: any): SagaIterator {
     console.log(action.payload, "Action Initiated");
+    const game = yield select((state) => state.game);
     let res: any;
     switch (action.payload.type) {
         case 'Weapon':
@@ -255,11 +259,12 @@ function* workGetInitiate(action: any): SagaIterator {
         default:
             break;
         };
-    if ('vibrate' in navigator) navigator.vibrate(150);
-    shakeScreen({ duration: 100, intensity: 0.15 });
+    if ('vibrate' in navigator) navigator.vibrate(game.vibrationTime);
+    shakeScreen(game.shake);
     console.log(res.data, "Initiate Response");
     yield put(setCombatResolution(res.data));
-    EventEmitter.emit('update-combat-data', res.data);
+    yield fork(workResolveCombat, res.data);
+    // EventEmitter.emit('update-combat-data', res.data);
     EventEmitter.emit('update-combat', res.data);
     setTimeout(() => {
         call(() => setToggleDamaged(false));

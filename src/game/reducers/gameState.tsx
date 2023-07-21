@@ -170,7 +170,7 @@ export const gameSlice = createSlice({
         },
         setClearLootDrop: (state, action) => {
             const lootDrops = state.lootDrops.filter((drop) => drop._id !== action.payload);
-            return { ...state, lootDrops }; // Was lootDrops: lootDrops
+            return { ...state, lootDrops: lootDrops }; 
         },
         setClearLootDrops: (state) => {
             return { ...state, lootDrops: [] };

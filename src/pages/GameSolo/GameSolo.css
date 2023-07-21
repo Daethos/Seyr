@@ -206,12 +206,16 @@
 #story-console {
   position: absolute;
   text-align: center;
+  height: 120px;
+  width: 450px;
+  font-size: 12px;
+  border: none;
+  z-index: 1;
   top: 100px;
   background-color: transparent;
   resize: none;
   color: #fdf6d8;
   scrollbar-width: none;
-  z-index: -1;
 }
 #textarea {
   grid-column-start: 3;

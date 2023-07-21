@@ -19,9 +19,7 @@ const combatSlice = createSlice({
         getPersuasionFetch: (state, _action) => {},
         getLuckoutFetch: (state, _action) => {},
         getEnemySetupFetch: (state, _action) => {},
-        getNpcSetupFetch: (state, action) => {
-            console.log('getNpcSetupFetch', action.payload);
-        },
+        getNpcSetupFetch: (state, action) => {},
         // ===== Combat Setup / Breakdown ===== \\
         setCombatPlayer: (state, action) => {
             return {
@@ -106,6 +104,7 @@ const combatSlice = createSlice({
             };
         },
         clearNonAggressiveEnemy: (state) => {
+            console.log('clearNonAggressiveEnemy');
             return {
                 ...state,
                 computer: null,
@@ -122,6 +121,7 @@ const combatSlice = createSlice({
             };
         },
         clearNpc: (state) => {
+            console.log('clearNpc');
             return {
                 ...state,
                 computer: null,

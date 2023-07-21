@@ -6,15 +6,15 @@ import * as io from 'socket.io-client'
 import Container from 'react-bootstrap/Container'
 import Loading from '../../components/Loading/Loading'
 import GameChat from '../../components/GameCompiler/GameChat';
-import { ACTIONS, initialPvPData, PvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore, PlayerData, SpectatorStore, SPECTATOR_ACTIONS } from '../../components/GameCompiler/PvPStore';
-import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player, getAsceanTraits } from '../../components/GameCompiler/GameStore';
+import { ACTIONS, initialPvPData, PvPData, PvPStore, PLAYER_ACTIONS, initialPlayerData, PlayerStore, SpectatorStore, SPECTATOR_ACTIONS } from '../../components/GameCompiler/PvPStore';
+import { GAME_ACTIONS, GameStore, initialGameData, Enemy, Player } from '../../components/GameCompiler/GameStore';
 import { MAP_ACTIONS, MapStore, initialMapData, MapData } from '../../components/GameCompiler/WorldStore';
 import { shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import { Bear, Wolf } from '../../components/GameCompiler/Animals';
 import { getMerchantDialog, getNpcDialog } from '../../components/GameCompiler/Dialog';
 import pako from 'pako';
-import Button from 'react-bootstrap/Button';
+import { getAsceanTraits } from '../../components/GameCompiler/PlayerTraits';
 
 interface Props {
     user: any;
@@ -39,7 +39,6 @@ const GamePvPLobby = ({ user }: Props) => {
     const [room, setRoom] = useState<any>("");
     const [showChat, setShowChat] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
-    // const [socketConnected, setSocketConnected] = useState<boolean>(false);
     const [isTyping, setIsTyping] = useState<boolean>(false);
 
     const [emergencyText, setEmergencyText] = useState<any[]>([])
@@ -1434,8 +1433,7 @@ const GamePvPLobby = ({ user }: Props) => {
 
     return (
         <>
-        { !showChat 
-            ? 
+        { !showChat ? (
             <Container className="Game-Lobby-Chat" style={{ overflow: 'auto' }}>
             <h3 className='welcome-text mt-3'>PvP Lobby</h3>
             <h3 className='welcome-explanation'>
@@ -1459,7 +1457,7 @@ const GamePvPLobby = ({ user }: Props) => {
             </h3>
             <select value={username} onChange={handleAscean} style={{ width: 45 + '%', marginRight: 10 + '%' }}>
                 <option>Ascean</option>
-                {asceanVaEsai.map((ascean: any, index: number) => {
+                {asceanVaEsai.map((ascean: Player, index: number) => {
                     return (
                         <option value={ascean._id} key={index}>{ascean.name}</option>
                     )
@@ -1482,7 +1480,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 </div>
             ) : ( '' ) }
             </Container>
-        :
+        ) : (
             <GameChat 
                 state={state} dispatch={dispatch} playerState={playerState} playerDispatch={playerDispatch} gameState={gameState} gameDispatch={gameDispatch} 
                 user={user} ascean={gameState.player} spectator={spectator} enemy={gameState.opponent}  getOpponent={getOpponent} getNPCDialog={getNPCDialog}
@@ -1495,7 +1493,7 @@ const GamePvPLobby = ({ user }: Props) => {
                 timeLeft={timeLeft} setTimeLeft={setTimeLeft} moveTimer={moveTimer} setMoveTimer={setMoveTimer} asceanState={asceanState} setAsceanState={setAsceanState}
                 specState={specState} specDispatch={specDispatch} handlePvPInitiate={handlePvPInitiate} handlePvPPrayer={handlePvPPrayer} handlePvPInstant={handlePvPInstant}
             />
-        }
+        ) }
         </>
 
     );

@@ -16,6 +16,7 @@ import playerAttacksPNG from '../images/player_attacks.png';
 import playerAttacksJSON from '../images/player_attacks_atlas.json';
 import playerAttacksAnim from '../images/player_attacks_anim.json';
 import EventEmitter from "../phaser/EventEmitter";
+import { getInteractingLootFetch } from "../reducers/gameState";
  
 export default class Player extends Entity {
     static preload(scene) { 
@@ -336,7 +337,8 @@ export default class Player extends Entity {
                 if (other.gameObjectB && other.bodyB.label === 'lootdropCollider') {
                     this.interacting.push(other.gameObjectB);
                     const interactingLoot = { loot: other.gameObjectB._id, interacting: true };
-                    EventEmitter.emit('interacting-loot', interactingLoot);
+                    // EventEmitter.emit('interacting-loot', interactingLoot);
+                    this.scene.dispatch(getInteractingLootFetch, interactingLoot);
                 };
             },
             context: this.scene,
@@ -348,7 +350,8 @@ export default class Player extends Entity {
                 if (other.gameObjectB && other.bodyB.label === 'lootdropCollider') {
                     this.interacting = this.interacting.filter(obj => obj.id !== other.gameObjectB.id);
                     const interactingLoot = { loot: other.gameObjectB._id, interacting: false };
-                    EventEmitter.emit('interacting-loot', interactingLoot);
+                    // EventEmitter.emit('interacting-loot', interactingLoot);
+                    this.scene.dispatch(getInteractingLootFetch, interactingLoot);
                 };
             },
             context: this.scene,
@@ -392,10 +395,10 @@ export default class Player extends Entity {
         return collisionPoint.x < sensorPosition.x;
     };
 
-    playerActionSuccess = () => {
+    playerActionSuccess = async () => {
         console.log("Player Action Success");
         if (this.scene.state.action === '') return;
-        this.scene.sendStateActionListener();
+        await this.scene.sendStateActionListener();
         if (this.particleEffect) {
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();
@@ -429,6 +432,7 @@ export default class Player extends Entity {
         if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
         this.isAttacking = true;
         this.swingReset();
+        this.scene.checkStamina('attack');
     }; 
     onAttackUpdate = (dt) => {
         if (this.frameCount === 16 && !this.isRanged) {
@@ -450,6 +454,7 @@ export default class Player extends Entity {
     onCounterEnter = () => {
         this.isCountering = true;    
         this.swingReset();
+        this.scene.checkStamina('counter');
     };
     onCounterUpdate = (dt) => {
         if (this.frameCount === 5) {
@@ -473,6 +478,7 @@ export default class Player extends Entity {
         if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
         this.isPosturing = true;
         this.swingReset();
+        this.scene.checkStamina('posture');
     };
     onPostureUpdate = (dt) => {
         if (this.frameCount === 11 && !this.isRanged) {
@@ -494,6 +500,7 @@ export default class Player extends Entity {
     onRollEnter = () => {
         this.isRolling = true;
         if (this.inCombat) this.swingReset();
+        this.scene.checkStamina('roll');
     };
     onRollUpdate = (dt) => {
         if (this.frameCount === 10) this.scene.setState('action', 'roll');

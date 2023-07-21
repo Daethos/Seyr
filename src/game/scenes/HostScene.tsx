@@ -15,7 +15,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
 import userService from "../../utils/userService";
 import Button from 'react-bootstrap/Button';
-import { NPC, Player, checkTraits } from '../../components/GameCompiler/GameStore';
+import { NPC, Player } from '../../components/GameCompiler/GameStore';
 import { CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
@@ -33,6 +33,7 @@ import { clearNonAggressiveEnemy, clearNpc, getAsceanHealthUpdateFetch, getComba
 import { getAsceanLevelUpFetch, getDrinkFirewaterFetch, getGainExperienceFetch, getInteractingLootFetch, getLootDropFetch, setShowDialog, setMerchantEquipment } from '../reducers/gameState';
 import PhaserCombatText from '../ui/PhaserCombatText';
 import useSoundEffects from '../phaser/SoundEffects';
+import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -342,51 +343,51 @@ const HostScene = ({ assets, ascean }: Props) => {
 
     const drinkFirewater = async () => dispatch(getDrinkFirewaterFetch(asceanID));  
 
-    const statFiler = (data: CombatData, win: boolean): Object => {
-        const stat = {
-            asceanID: data.player._id,
-            wins: win ? 1 : 0,
-            losses: win ? 0 : 1,
-            total: 1,
-            actionData: data.actionData,
-            typeAttackData: data.typeAttackData,
-            typeDamageData: data.typeDamageData,
-            totalDamageData: data.totalDamageData,
-            prayerData: data.prayerData,
-            deityData: data.deityData,
-        };
-        return stat;
-    };
+    // const statFiler = (data: CombatData, win: boolean): Object => {
+    //     const stat = {
+    //         asceanID: data.player._id,
+    //         wins: win ? 1 : 0,
+    //         losses: win ? 0 : 1,
+    //         total: 1,
+    //         actionData: data.actionData,
+    //         typeAttackData: data.typeAttackData,
+    //         typeDamageData: data.typeDamageData,
+    //         totalDamageData: data.totalDamageData,
+    //         prayerData: data.prayerData,
+    //         deityData: data.deityData,
+    //     };
+    //     return stat;
+    // };
 
-    const handlePlayerWin = async (combatData: CombatData): Promise<void> => {
-        try {
-            playReligion();
-            const stat = statFiler(combatData, true);
-            dispatch(getGainExperienceFetch({ asceanState, combatState })); 
-            dispatch(getCombatStatisticFetch(stat)) 
-            dispatch(getLootDropFetch({ enemyID: combatState.enemyID, level: combatState.computer.level })); 
-            setTimeout(() => {
-                dispatch(setPlayerWin(combatData)); 
-            }, 6000);
-        } catch (err: any) {
-            console.log("Error Handling Player Win");
-        };
-    };
+    // const handlePlayerWin = async (combatData: CombatData): Promise<void> => {
+    //     try {
+    //         playReligion();
+    //         const stat = statFiler(combatData, true);
+    //         dispatch(getGainExperienceFetch({ asceanState, combatState })); 
+    //         dispatch(getCombatStatisticFetch(stat)) 
+    //         dispatch(getLootDropFetch({ enemyID: combatState.enemyID, level: combatState.computer.level })); 
+    //         setTimeout(() => {
+    //             dispatch(setPlayerWin(combatData)); 
+    //         }, 6000);
+    //     } catch (err: any) {
+    //         console.log("Error Handling Player Win");
+    //     };
+    // };
 
-    const handleComputerWin = async (combatData: CombatData): Promise<void> => {
-        try {
-            const stat = statFiler(combatData, false);
-            dispatch(getCombatStatisticFetch(stat));
-            dispatch(getAsceanHealthUpdateFetch({ health: combatData.new_player_health, id: asceanState._id }));
+    // const handleComputerWin = async (combatData: CombatData): Promise<void> => {
+    //     try {
+    //         const stat = statFiler(combatData, false);
+    //         dispatch(getCombatStatisticFetch(stat));
+    //         dispatch(getAsceanHealthUpdateFetch({ health: combatData.new_player_health, id: asceanState._id }));
             
-            playDeath();
-            setTimeout(() => {
-                dispatch(setEnemyWin(combatData));
-            }, 6000);
-        } catch (err: any) {
-            console.log("Error Handling Player Win");
-        };
-    };
+    //         playDeath();
+    //         setTimeout(() => {
+    //             dispatch(setEnemyWin(combatData));
+    //         }, 6000);
+    //     } catch (err: any) {
+    //         console.log("Error Handling Player Win");
+    //     };
+    // };
 
     // const handleInitiate = async (state: CombatData): Promise<void> => {
     //     try { 
@@ -502,7 +503,7 @@ const HostScene = ({ assets, ascean }: Props) => {
         };
     }; 
 
-    const combatEngaged = async (e: boolean) => dispatch(getCombatFetch(e)); 
+    // const combatEngaged = async (e: boolean) => dispatch(getCombatFetch(e)); 
     const launchGame = async (e: boolean) => setCurrentGame(e);
     const updateStamina = async (e: number) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e <= 0 ? 0 : prevPercentage - e);
     const updateStalwart = async (e: boolean) =>  dispatch(setStalwart(e)); 
@@ -511,12 +512,12 @@ const HostScene = ({ assets, ascean }: Props) => {
 
     useKeyEvent('keydown', toggleCombatHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);
-    usePhaserEvent('clear-non-aggressive-enemy', clearNAEnemy);
+    // usePhaserEvent('clear-non-aggressive-enemy', clearNAEnemy);
     usePhaserEvent('clear-npc', clearNPC);
     usePhaserEvent('fetch-enemy', fetchEnemy);
     usePhaserEvent('fetch-npc', fetchNpc);
-    usePhaserEvent('setup-enemy', setupEnemy);
-    usePhaserEvent('setup-npc', setupNpc);
+    // usePhaserEvent('setup-enemy', setupEnemy);
+    // usePhaserEvent('setup-npc', setupNpc);
     usePhaserEvent('request-ascean', sendAscean);
     usePhaserEvent('request-enemy', sendEnemyData);
     usePhaserEvent('request-combat-data', sendCombatData);
@@ -524,8 +525,8 @@ const HostScene = ({ assets, ascean }: Props) => {
     usePhaserEvent('show-dialog', showDialog);
     usePhaserEvent('interacting-loot', interactingLoot);
     usePhaserEvent('launch-game', launchGame);
-    usePhaserEvent('combat-engaged', combatEngaged);
-    usePhaserEvent('drink-firewater', drinkFirewater);
+    // usePhaserEvent('combat-engaged', combatEngaged);
+    // usePhaserEvent('drink-firewater', drinkFirewater);
     usePhaserEvent('update-stalwart', updateStalwart);
     usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-state', updateState);

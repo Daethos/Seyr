@@ -194,20 +194,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.anims.play('player_hurt', true).on('animationcomplete', () => {
             this.isHurt = false;
         }); 
-    };
-
-    stun = () => {
-        // this.stunTimer = this.scene.time.addEvent({
-        //     delay: 1500,
-        //     callback: () => {
-        //         console.log("Stun over, callback fired");
-        //         this.isStunned = false;
-        //     },
-        //     callbackScope: this,
-        //     loop: false
-        // });
-    };
-
+    }; 
+    
     checkHanging() {
         this.scene.matterCollision.addOnCollideStart({
             objectA: this.sensor,
