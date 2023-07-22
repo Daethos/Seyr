@@ -3,9 +3,10 @@ import * as asceanAPI from '../../utils/asceanApi';
 import Loading from '../Loading/Loading';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import { Player } from '../GameCompiler/GameStore';
 
 interface Props {
-    ascean: any;
+    ascean: Player;
     story?: boolean;
 };
 
@@ -15,13 +16,13 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
 
     useEffect(() => {
         asceanAttributeCompiler();
-      }, []);
+    }, [ascean]);
 
     async function asceanAttributeCompiler() {
         setLoading(true)
         try {
-            const response = await asceanAPI.getAsceanStats(ascean._id);
-            setAttributes(response.data.data.attributes);
+            const res = await asceanAPI.getAsceanStats(ascean._id);
+            setAttributes(res.data.data.attributes);
             setLoading(false);
         } catch (err: any) {
             setLoading(false)

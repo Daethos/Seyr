@@ -110,6 +110,10 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         };
     };
 
+    const getId = () => {
+        return damaged ? 'flicker' : ''
+    };
+
     if (loading) {
         return (
             <Loading Combat={true} />
@@ -117,109 +121,106 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     };
     return (
         <>
-        { gameDisplay ? 
+        { gameDisplay ? (
             <Row className={spectator ? "game-ascean spectator" : story ? 'game-ascean story' : "game-ascean"}>
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
-            <Col 
-            style={{marginLeft: -62 + 'px', marginRight: 10 + 'px'}}
-            xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } 
-            className="my-4">
+            <Col style={{marginLeft: -62 + 'px', marginRight: 10 + 'px'}} xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(weapon_one)}>
-            <img src={weapon_one?.imgURL} className="m-1 eqp-popover spec" alt={weapon_one?.name} style={getItemStyle(weapon_one?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={weapon_one?.imgURL} className="m-1 eqp-popover spec" alt={weapon_one?.name} style={getItemStyle(weapon_one?.rarity)} id={getId()} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(weapon_two)}>
-            <img src={weapon_two?.imgURL} className="m-1 eqp-popover spec" alt={weapon_two?.name} style={getItemStyle(weapon_two?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={weapon_two?.imgURL} className="m-1 eqp-popover spec" alt={weapon_two?.name} style={getItemStyle(weapon_two?.rarity)} id={getId()} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(weapon_three)}>
-            <img src={weapon_three?.imgURL} className="m-1 eqp-popover spec" alt={weapon_three?.name} style={getItemStyle(weapon_three?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={weapon_three?.imgURL} className="m-1 eqp-popover spec" alt={weapon_three?.name} style={getItemStyle(weapon_three?.rarity)} id={getId()} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(shield)}>
-            <img src={shield?.imgURL} className="m-1 eqp-popover spec" alt={shield?.name} style={getItemStyle(shield?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={shield?.imgURL} className="m-1 eqp-popover spec" alt={shield?.name} style={getItemStyle(shield?.rarity)} id={getId()} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-5 mx-3" >
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(helmet)}>
-            <img src={helmet?.imgURL} className="m-1 eqp-popover spec" alt={helmet?.name} style={getItemStyle(helmet?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={helmet?.imgURL} className="m-1 eqp-popover spec" alt={helmet?.name} style={getItemStyle(helmet?.rarity)} id={getId()} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(chest)}>
-            <img src={chest?.imgURL} className="m-1 eqp-popover spec" alt={chest?.name} style={getItemStyle(chest?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={chest?.imgURL} className="m-1 eqp-popover spec" alt={chest?.name} style={getItemStyle(chest?.rarity)} id={getId()} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(legs)}>
-            <img src={legs?.imgURL} className="m-1 eqp-popover spec" alt={legs?.name} style={getItemStyle(legs?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={legs?.imgURL} className="m-1 eqp-popover spec" alt={legs?.name} style={getItemStyle(legs?.rarity)} id={getId()} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-2">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(amulet)}>
-            <img src={amulet?.imgURL} className="m-1 eqp-popover spec" alt={amulet?.name} style={getItemStyle(amulet?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={amulet?.imgURL} className="m-1 eqp-popover spec" alt={amulet?.name} style={getItemStyle(amulet?.rarity)} id={getId()} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(ring_one)}>
-            <img src={ring_one?.imgURL} className="m-1 eqp-popover spec" alt={ring_one?.name} style={getItemStyle(ring_one?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={ring_one?.imgURL} className="m-1 eqp-popover spec" alt={ring_one?.name} style={getItemStyle(ring_one?.rarity)} id={getId()} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(ring_two)}>
-            <img src={ring_two?.imgURL} className="m-1 eqp-popover spec" alt={ring_two?.name} style={getItemStyle(ring_two?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={ring_two?.imgURL} className="m-1 eqp-popover spec" alt={ring_two?.name} style={getItemStyle(ring_two?.rarity)} id={getId()} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(trinket)}>
-            <img src={trinket?.imgURL} className="m-1 eqp-popover spec" alt={trinket?.name} style={getItemStyle(trinket?.rarity)} id={damaged ? 'flicker' : ''} />
+                <img src={trinket?.imgURL} className="m-1 eqp-popover spec" alt={trinket?.name} style={getItemStyle(trinket?.rarity)} id={getId()} />
             </OverlayTrigger>
             </Col>
 
             </Row>
-        :
+        ) : (
             <Row className="justify-content-center">
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 }></Col>
             <Col style={{marginLeft: -50 + 'px', marginRight: 10 + 'px'}} xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(weapon_one)}>
-            <img src={weapon_one?.imgURL} className="m-2 eqp-popover spec" alt={weapon_one?.name} style={getItemStyle(weapon_one?.rarity)} />
+                <img src={weapon_one?.imgURL} className="m-2 eqp-popover spec" alt={weapon_one?.name} style={getItemStyle(weapon_one?.rarity)} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(weapon_two)}>
-            <img src={weapon_two?.imgURL} className="m-2 eqp-popover spec" alt={weapon_two?.name} style={getItemStyle(weapon_two?.rarity)} />
+                <img src={weapon_two?.imgURL} className="m-2 eqp-popover spec" alt={weapon_two?.name} style={getItemStyle(weapon_two?.rarity)} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(weapon_three)}>
-            <img src={weapon_three?.imgURL} className="m-2 eqp-popover spec" alt={weapon_three?.name} style={getItemStyle(weapon_three?.rarity)} />
+                <img src={weapon_three?.imgURL} className="m-2 eqp-popover spec" alt={weapon_three?.name} style={getItemStyle(weapon_three?.rarity)} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(shield)}>
-            <img src={shield?.imgURL} className="m-2 eqp-popover spec" alt={shield?.name} style={getItemStyle(shield?.rarity)} />
+                <img src={shield?.imgURL} className="m-2 eqp-popover spec" alt={shield?.name} style={getItemStyle(shield?.rarity)} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-4">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(helmet)}>
-            <img src={helmet?.imgURL} className="m-3 eqp-popover spec" alt={helmet?.name} style={getItemStyle(helmet?.rarity)} />
+                <img src={helmet?.imgURL} className="m-3 eqp-popover spec" alt={helmet?.name} style={getItemStyle(helmet?.rarity)} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(chest)}>
-            <img src={chest?.imgURL} className="m-3 eqp-popover spec" alt={chest?.name} style={getItemStyle(chest?.rarity)} />
+                <img src={chest?.imgURL} className="m-3 eqp-popover spec" alt={chest?.name} style={getItemStyle(chest?.rarity)} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(legs)}>
-            <img src={legs?.imgURL} className="m-3 eqp-popover spec" alt={legs?.name} style={getItemStyle(legs?.rarity)} />
+                <img src={legs?.imgURL} className="m-3 eqp-popover spec" alt={legs?.name} style={getItemStyle(legs?.rarity)} />
             </OverlayTrigger>
             </Col>
 
             <Col xs={ 1 } sm={ 1 } md={ 1 } lg={ 1 } xl={ 1 } xxl={ 1 } className="my-4 mx-4">
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(amulet)}>
-            <img src={amulet?.imgURL} className="m-2 eqp-popover spec" alt={amulet?.name} style={getItemStyle(amulet?.rarity)} />
+                <img src={amulet?.imgURL} className="m-2 eqp-popover spec" alt={amulet?.name} style={getItemStyle(amulet?.rarity)} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(ring_one)}>
-            <img src={ring_one?.imgURL} className="m-2 eqp-popover spec" alt={ring_one?.name} style={getItemStyle(ring_one?.rarity)} />
+                <img src={ring_one?.imgURL} className="m-2 eqp-popover spec" alt={ring_one?.name} style={getItemStyle(ring_one?.rarity)} />
             </OverlayTrigger>
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(ring_two)}>
-            <img src={ring_two?.imgURL} className="m-2 eqp-popover spec" alt={ring_two?.name} style={getItemStyle(ring_two?.rarity)} />
+                <img src={ring_two?.imgURL} className="m-2 eqp-popover spec" alt={ring_two?.name} style={getItemStyle(ring_two?.rarity)} />
             </OverlayTrigger>
             
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(trinket)}>
-            <img src={trinket?.imgURL} className="m-2 eqp-popover spec" alt={trinket?.name} style={getItemStyle(trinket?.rarity)} />
+                <img src={trinket?.imgURL} className="m-2 eqp-popover spec" alt={trinket?.name} style={getItemStyle(trinket?.rarity)} />
             </OverlayTrigger>
             </Col>
             </Row>
-        }
+        ) }
         </>
     );
 };

@@ -1,12 +1,9 @@
-import React from 'react';
-
 interface Props {
     mapState: any;
 };
 
 const Content = ({ mapState }: Props) => {
     const CoordinateStyle = {
-        // zIndex: 100,
         marginTop: "86.75vh",
         height: '100%',
         marginLeft: "auto",

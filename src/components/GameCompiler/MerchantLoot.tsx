@@ -8,6 +8,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import Col  from 'react-bootstrap/Col';
 import { getOnlyInventoryFetch, getPurchaseFetch, setMerchantEquipment } from '../../game/reducers/gameState';
 import { useDispatch } from 'react-redux';
+import { getBorderStyle } from '../../game/ui/ItemPopover';
 
 interface Props {
     item: Equipment;
@@ -211,26 +212,9 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, stea
         </Popover>
     );
 
-    function getBorderStyle(rarity: string) {
-        switch (rarity) {
-            case 'Common':
-                return '2px solid white';
-            case 'Uncommon':
-                return '2px solid green';
-            case 'Rare':
-                return '2px solid blue';
-            case 'Epic':
-                return '2px solid purple';
-            case 'Legendary':
-                return '2px solid orange';
-            default:
-                return '2px solid grey';
-        };
-    };
-
     const getItemStyle = {
         background: 'black',
-        border: getBorderStyle(item?.rarity)
+        border: '2px solid ' + getBorderStyle(item?.rarity)
     };
     
     return (

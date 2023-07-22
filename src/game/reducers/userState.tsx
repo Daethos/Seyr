@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { User } from "../../pages/App/App";
-import { Player } from "../../components/GameCompiler/GameStore";
 import userService from "../../utils/userService";
 
 export const userSlice = createSlice({

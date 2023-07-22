@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
-import Loading from '../Loading/Loading';
 import ToastAlert from '../ToastAlert/ToastAlert'
 import Overlay from 'react-bootstrap/Overlay';
 import Button from 'react-bootstrap/Button';
@@ -10,11 +9,9 @@ import { ACTIONS, CombatData } from './CombatStore';
 import { GAME_ACTIONS } from './GameStore';
 import Inventory from './Inventory';
 import DialogTree, { getNodesForNPC, npcIds } from '../GameCompiler/DialogNode';
-import dialogNodes from "../GameCompiler/DialogNodes.json"
 import Currency from './Currency';
 
 const CityButtons = ({ options, setOptions }: { options: any, setOptions: any }) => {
-    // const filteredOptions = Object.keys(options).filter((option: any) => option !== 'defeat' && option !== 'victory' && option !== 'taunt' && option !== 'praise' && option !== 'greeting');
     const buttons = Object.keys(options).map((o: any, i: number) => {
         return (
             <div key={i} style={{ scrollbarWidth: "none" }}>

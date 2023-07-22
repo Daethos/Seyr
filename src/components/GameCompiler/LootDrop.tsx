@@ -2,12 +2,13 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import * as asceanAPI from '../../utils/asceanApi';
-import * as eqpAPI from '../../utils/equipmentApi';
 import { GAME_ACTIONS } from './GameStore';
 import Loading from '../Loading/Loading';
 import EventEmitter from '../../game/phaser/EventEmitter';
 import { setClearLootDrop } from '../../game/reducers/gameState';
 import { useDispatch } from 'react-redux';
+import { getBorderStyle } from '../../game/ui/ItemPopover';
+
 interface Props {
     lootDrop: any;
     ascean: any;
@@ -35,24 +36,7 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
         } catch (err: any) {
             console.log(err.message, 'Error Saving Item to Inventory!');
         };
-    };
-
-    const destroyItem = async () => {
-        try {
-             await eqpAPI.deleteEquipment([lootDrop]);
-            if (gameDispatch) {
-                gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOTDROP, payload: lootDrop });
-                gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
-                gameDispatch({ type: GAME_ACTIONS.CLEAR_LOOT_DROP, payload: lootDrop._id });
-            } 
-            if (story) {
-                dispatch(setClearLootDrop(lootDrop._id));    
-            };
-            EventEmitter.emit('destroy-lootdrop', lootDrop._id);
-        } catch (err: unknown) {
-            console.log(err, 'Error Destroying Item!');
-        };
-    };
+    }; 
 
     const lootDropPopover = (
         <Popover className="text-info" id="popover" style={{ zIndex: 9999 }}>
@@ -98,30 +82,10 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
                 ) : (
                     <Button variant='' style={{ color: 'green', fontWeight: 700, float: 'right', marginTop: '-5%', fontSize: '20px', marginRight: '-5%' }} onClick={saveItem}>Save</Button>
                 )}
-                </div>
-            {/* <div style={{ textAlign: "center" }}>
-                <Button variant='' style={{ color: 'red', fontWeight: 600, fontSize: '18px' }} onClick={destroyItem}>Destroy</Button>
-            </div> */}
+                </div> 
             </Popover.Body>
         </Popover>
-    );
-
-    function getBorderStyle(rarity: string) {
-        switch (rarity) {
-            case 'Common':
-                return '2px solid white';
-            case 'Uncommon':
-                return '2px solid green';
-            case 'Rare':
-                return '2px solid blue';
-            case 'Epic':
-                return '2px solid purple';
-            case 'Legendary':
-                return '2px solid orange';
-            default:
-                return '2px solid grey';
-        };
-    };
+    ); 
 
     const getScale = () => {
         const width = window.innerWidth;
@@ -151,7 +115,7 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
 
     const getItemStyle = {
         background: 'black',
-        border: getBorderStyle(lootDrop?.rarity),
+        border: '2px solid ' + getBorderStyle(lootDrop?.rarity),
         transform: `scale(${getScale()})`,
     };
 

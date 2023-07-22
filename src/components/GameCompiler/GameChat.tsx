@@ -11,6 +11,43 @@ import { PvPData, PlayerData } from '../../components/GameCompiler/PvPStore';
 import { MapData } from '../../components/GameCompiler/WorldStore';
 import { Enemy, Player } from '../../components/GameCompiler/GameStore';
 
+interface PlayerProps {
+    ascean: Player;
+    player: any;
+    number: number;
+    checkPlayer: () => boolean;
+    generateWorld: (mapName: string) => Promise<void>;
+};
+
+const PlayerCard = ({ ascean, player, number, checkPlayer, generateWorld }: PlayerProps) => {
+    const shadow = (number: number) => {
+        switch (number) {
+            case 1: return 'gold';
+            case 2: return 'purple';
+            case 3: return 'blue';
+            case 4: return 'red';
+        };
+    }
+    return (
+        <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: `0 0 0.7em ${shadow(number)}`}}>
+            <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 25 + 'px', color: shadow(number), fontVariant: 'small-caps' }}>
+            {player.name}
+            </h3>
+            <p>Level: {player.level} | {player.mastery}
+            </p>
+            { ascean._id === player._id && number === 1 ? (
+                <span style={{ float: "right", marginTop: "-12.5%" }}>
+                    <Button variant='' style={{ color: shadow(number)}} onClick={() => generateWorld(`${ascean?.name}_PVP_${Date.now()}`)} disabled={checkPlayer()}>Get Map</Button>
+                </span>
+            ) : ( '' ) }
+            <span style={{ float: "left", marginTop: "-16.5%" }}>
+            <img src={process.env.PUBLIC_URL + `/images/` + player.origin + '-' + player.sex + '.jpg'} alt="Origin Culture Here" 
+                style={{ width: "15vw", borderRadius: "50%", border: `2px solid ${shadow(number)}` }} />
+            </span>
+        </div>
+    );
+};
+
 interface Props {
     state: PvPData;
     dispatch: any;
@@ -288,58 +325,16 @@ const GameChat = ({ handlePvPInstant, handlePvPPrayer, state, dispatch, playerSt
                 <Button variant="outline-info" onClick={sendMessage} style={{ float: 'right', marginTop: -9.25 + '%' }}>Submit</Button>
             </div>
             { playerState.playerOne ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em gold" }}>
-                        <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'gold', fontVariant: 'small-caps' }}>
-                        {playerState.playerOne.ascean.name}
-                        </h3>
-                        <p>Level: {playerState.playerOne.ascean.level} | {playerState.playerOne.ascean.mastery}
-                        </p>
-                        { ascean._id === playerState.playerOne.ascean._id ? (
-                            <span style={{ float: "right", marginTop: "-12.5%" }}>
-                                <Button variant='' style={{ color: "gold" }} onClick={() => generateWorld(`${ascean?.name}_PVP_${Date.now()}`)} disabled={checkPlayer()}>Get Map</Button>
-                            </span>
-                        ) : ( '' ) }
-                        <span style={{ float: "left", marginTop: "-16.5%" }}>
-                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerOne.ascean.origin + '-' + playerState.playerOne.ascean.sex + '.jpg'} alt="Origin Culture Here" 
-                            style={{ width: "15vw", borderRadius: "50%", border: "2px solid gold" }} />
-                        </span>
-                </div>
+                <PlayerCard ascean={ascean} player={playerState.playerOne} number={1} checkPlayer={checkPlayer} generateWorld={generateWorld} /> 
             ) : ( '' ) }
             { playerState.playerTwo ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em purple" }}>
-                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'purple', fontVariant: 'small-caps' }}>
-                        {playerState.playerTwo.ascean.name}
-                        </h3>
-                        <p>Level: {playerState.playerTwo.ascean.level} | {playerState.playerTwo.ascean.mastery}</p>
-                        <span style={{ float: "left", marginTop: "-16.5%" }}>
-                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerTwo.ascean.origin + '-' + playerState.playerTwo.ascean.sex + '.jpg'} alt="Origin Culture Here" 
-                        style={{ width: "15vw", borderRadius: "50%", border: "2px solid purple" }} />
-                        </span>
-                </div>
+                <PlayerCard ascean={ascean} player={playerState.playerTwo} number={2} checkPlayer={checkPlayer} generateWorld={generateWorld} /> 
             ) : ( '' ) }
             { playerState.playerThree ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em blue" }}>
-                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'blue', fontVariant: 'small-caps' }}>
-                        {playerState.playerThree.ascean.name}
-                        </h3>
-                        <p>Level: {playerState.playerThree.ascean.level} | {playerState.playerThree.ascean.mastery}</p>
-                        <span style={{ float: "left", marginTop: "-16.5%" }}>
-                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerThree.ascean.origin + '-' + playerState.playerThree.ascean.sex + '.jpg'} alt="Origin Culture Here" 
-                        style={{ width: "15vw", borderRadius: "50%", border: "2px solid blue" }} />
-                        </span>
-                </div>
+                <PlayerCard ascean={ascean} player={playerState.playerThree} number={3} checkPlayer={checkPlayer} generateWorld={generateWorld} /> 
             ) : ( '' ) }
             { playerState.playerFour ? (
-                <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%", boxShadow: "0 0 0.7em red" }}>
-                    <h3 className='mt-2' style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'red', fontVariant: 'small-caps' }}>
-                        {playerState.playerFour.ascean.name}
-                        </h3>
-                        <p>Level: {playerState.playerFour.ascean.level} | {playerState.playerFour.ascean.mastery}</p>
-                        <span style={{ float: "left", marginTop: "-16.5%" }}>
-                        <img src={process.env.PUBLIC_URL + `/images/` + playerState.playerFour.ascean.origin + '-' + playerState.playerFour.ascean.sex + '.jpg'} alt="Origin Culture Here" 
-                        style={{ width: "15vw", borderRadius: "50%", border: "2px solid red" }} />
-                        </span>
-                </div>
+                <PlayerCard ascean={ascean} player={playerState.playerFour} number={4} checkPlayer={checkPlayer} generateWorld={generateWorld} /> 
             ) : ( '' ) }
             </div>
             </Container>

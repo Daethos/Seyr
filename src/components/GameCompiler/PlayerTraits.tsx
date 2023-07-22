@@ -360,27 +360,28 @@ interface TraitModalProps {
     callback: (trait: string) => void;
     name: string;
     influence: string
-};
+}
+;
 export const LuckoutModal = ({ traits, callback, name, influence }: TraitModalProps) => {
     const [show, setShow] = useState(false);
-    <Modal show={show} onHide={() => setShow(false)} centered id='modal-weapon' style={{ zIndex: 9999, top: '-25%' }}>
-            <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Hush and Tendril</Modal.Header>
-            <Modal.Body style={{ textAlign: 'center' }}>
-                These offer a unique opportunity to defeat your enemies without the need for combat. However, failure will result in hostile and immediate engagement.<br /><br />
-                <div style={{ fontSize: "18px", color: "gold" }}>
-                {traits.map((trait: any, index: number) => {
-                    return (
-                        <div key={index}>
-                            <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => callback(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
-                        </div>
-                    )
-                })}
-                </div>
-                [Note: Your decisions has granted this avenue of gameplay experience. There are more to discover.]<br /><br />
-            </Modal.Body>
-        </Modal>
     return (
         <>
+        <Modal show={show} onHide={() => setShow(false)} centered id='modal-weapon' style={{ zIndex: 9999, top: '-25%' }}>
+        <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Hush and Tendril</Modal.Header>
+        <Modal.Body style={{ textAlign: 'center' }}>
+            These offer a unique opportunity to defeat your enemies without the need for combat. However, failure will result in hostile and immediate engagement.<br /><br />
+            <div style={{ fontSize: "18px", color: "gold" }}>
+            {traits.map((trait: any, index: number) => {
+                return (
+                    <div key={index}>
+                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name), fontSize: "18px" }} onClick={() => callback(trait.name)}>[{trait.name}] - {trait.luckout.modal.replace('{enemy.name}', name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
+                    </div>
+                )
+            })}
+            </div>
+            [Note: Your decisions has granted this avenue of gameplay experience. There are more to discover.]<br /><br />
+        </Modal.Body>
+        </Modal>
         <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button>
         {traits.map((trait: any, index: number) => {
             return (
@@ -395,7 +396,9 @@ export const LuckoutModal = ({ traits, callback, name, influence }: TraitModalPr
 
 export const PersuasionModal = ({ traits, callback, name, influence }: TraitModalProps) => {
     const [show, setShow] = useState(false);
-    <Modal show={show} onHide={() => setShow(false)} centered id='modal-weapon' style={{ zIndex: 9999, top: '-25%' }}>
+    return (
+        <>
+        <Modal show={show} onHide={() => setShow(false)} centered id='modal-weapon' style={{ zIndex: 9999, top: '-25%' }}>
         <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Correspondence</Modal.Header>
         <Modal.Body style={{ textAlign: 'center' }}>
             These offer a unique opportunity to entreat with your enemies without the need for combat. 
@@ -411,9 +414,7 @@ export const PersuasionModal = ({ traits, callback, name, influence }: TraitModa
             </div>
             [Note: Your decisions has granted this avenue of gameplay experience. There are more to discover.]<br /><br />
         </Modal.Body>
-    </Modal>
-    return (
-        <>
+        </Modal>
         <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setShow(true)}>[ {'>>>'} Persuasive Alternative(s) {'<<<'} ]</Button>
         {traits.map((trait: any, index: number) => {
             return (

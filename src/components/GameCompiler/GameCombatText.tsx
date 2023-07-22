@@ -14,22 +14,12 @@ interface Props {
     emergencyText: any[] | (() => any[]);
     combatRoundText: string | number;
     spectator?: boolean;
-    story?: boolean;
-    combatTimer?: number;
 };
 
-const GameCombatText = ({ combatTimer, story, spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
-    const storyStyle = {
-        height: "120px",
-        width: "450px",  
-        fontSize: "12px",
-        borderRadius: "3px",
-        border: "4px solid #2A0134",
-        boxShadow: "2px 2px 2px black"
-    };
+const GameCombatText = ({ spectator, emergencyText, combatRoundText, playerDeathText, computerDeathText, playerReligiousText, computerReligiousText, playerReligiousTextTwo, computerReligiousTextTwo, playerActionText, computerActionText, playerSpecialText, computerSpecialText, playerCombatText, computerCombatText }: Props) => {
     const text = () => {
         let result = "";
-        if (emergencyText && !story) result += emergencyText + "\n";
+        if (emergencyText) result += emergencyText + "\n";
         if (playerActionText) result += playerActionText + "\n";
         if (computerActionText) result += computerActionText + "\n";
         if (playerSpecialText) result += playerSpecialText + "\n";
@@ -42,15 +32,13 @@ const GameCombatText = ({ combatTimer, story, spectator, emergencyText, combatRo
         if (computerReligiousTextTwo) result += computerReligiousTextTwo + "\n";
         if (playerDeathText) result += playerDeathText + "\n";
         if (computerDeathText) result += computerDeathText + "\n";
-        if (combatRoundText && !story) result += `Combat Round: ${combatRoundText} \n`;
-        if (combatTimer) result += `Combat Timer: ${combatTimer} \n`;
+        if (combatRoundText) result += `Combat Round: ${combatRoundText} \n`;
         return result;
     };
     return (
-        <div id={spectator ? 'spectator-textarea' : story ? "" : "textarea"}>
+        <div id={spectator ? 'spectator-textarea' : "textarea"}>
             <textarea 
-                style={story ? storyStyle : {}}
-                className={story ? "" : "text-box"} id={story ? "story-console" : "console"} 
+                className="text-box" id="console"
                 value={text()}
                 readOnly>
             </textarea>

@@ -1,18 +1,20 @@
 import LootDrop from '../../components/GameCompiler/LootDrop';
 import { useEffect, useState } from 'react';
 import logWindow from '../images/log_window.png';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setShowLootOne } from '../reducers/gameState';
+import { Equipment } from '../../components/GameCompiler/GameStore';
 
+interface Props {
+    gameState: any;
+};
 
-export const LootDropUI = () => {
+export const LootDropUI = ({ gameState }: Props) => {
     const dispatch = useDispatch();
-    const gameState = useSelector((state: any) => state.game);
     const [visibleLoot, setVisibleLoot] = useState<any[]>([]);
     useEffect(() => {
-        const visible = gameState.lootDrops?.filter((lootDrop: any) => gameState.showLootIds.includes(lootDrop._id));
+        const visible = gameState?.lootDrops?.filter((drop: Equipment) => gameState?.showLootIds?.includes(drop._id));
         if (visible.length === 0) dispatch(setShowLootOne(false));
-            // gameDispatch({ type: GAME_ACTIONS.CLEAR_SHOW_LOOT_ONE, payload: false });
         setVisibleLoot(visible);
     }, [gameState.showLootIds, gameState.lootDrops]);
     return (

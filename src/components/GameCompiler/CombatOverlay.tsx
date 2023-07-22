@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import Overlay from 'react-bootstrap/Overlay';
-import Button from 'react-bootstrap/Button';
 import { GAME_ACTIONS } from './GameStore';
 
 
@@ -84,7 +83,6 @@ const CombatOverlay = ({ ascean, enemy, combatEngaged, gameDispatch, playerWin, 
                 left: 0,
                 width: '100%',
                 height: '35%',
-                // backgroundColor: 'rgba(0, 0, 0, 0.65)',
                 zIndex: 9999,
             }}
             >

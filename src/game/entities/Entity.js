@@ -56,7 +56,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.knockbackForce = 0.01; // 0.1 is for Platformer, trying to lower it for Top Down
         this.knockbackDirection = {};
         this.knockbackDuration = 250;
-
+        
         this.spriteShield = null;
         this.spriteWeapon = null;
         this.frameCount = 0;
@@ -64,7 +64,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.particleEffect = null;
         this.stunTimer = null;
         this.stunDuration = 1500;
-
+        
+        this.currentRound = 0; 
         this.currentAction = '';
         this.currentActionFrame = 0;
         this.interruptCondition = false;

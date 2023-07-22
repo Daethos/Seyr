@@ -8,7 +8,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import combatReducer from './game/reducers/combatState';
 import communityReducer from './game/reducers/communityState';
 import gameReducer from './game/reducers/gameState';
-import playerReducer from './game/reducers/playerState';
 import userReducer from './game/reducers/userState';
 import rootSaga from './game/sagas/rootSaga';
 
@@ -26,9 +25,7 @@ export const store = configureStore({
 
 saga.run(rootSaga);
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <Provider store={store}>
     <Router>

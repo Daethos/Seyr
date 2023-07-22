@@ -1,13 +1,11 @@
 import Phaser from "phaser";
 import EventEmitter from "../phaser/EventEmitter";
 
-export default class LootDrop extends Phaser.Physics.Matter.Image { 
-
+export default class LootDrop extends Phaser.Physics.Matter.Image {  
     constructor(data) {
         let { scene, enemyID, drop } = data;
         const texture = imgURL(drop.imgURL);
         const enemy = scene.enemies.find((e) => e.enemyID === enemyID);
-        console.log(scene, drop, texture, "Scene, Enemy, Drop");
         super (scene.matter.world, enemy.body.position.x - 16, enemy.body.position.y + 16, texture);
         this.scene = scene;
         this.scene.add.existing(this);

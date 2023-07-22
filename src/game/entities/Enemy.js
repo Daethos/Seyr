@@ -247,7 +247,7 @@ export default class Enemy extends Entity {
     };
 
     createEnemy() {
-        const fetch = { enemyID: this.enemyID };
+        const fetch = { enemyID: this.enemyID, level: this.scene.state.player.level };
         EventEmitter.emit('fetch-enemy', fetch);
         EventEmitter.on('enemy-fetched', this.enemyFetchedOn.bind(this));
     };
@@ -291,54 +291,63 @@ export default class Enemy extends Entity {
     };
  
     enemyStateListener() {
-        EventEmitter.on('update-combat', (e) => {
-            if (this.enemyID !== e.enemyID) return;
-            console.log('Combat Update', e);
-            this.combatData = e;
-            this.weapons = e.computer_weapons;
-            if (this.health > e.new_computer_health) { 
-                let damage = Math.round(this.health - e.new_computer_health);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.critical_success);
-                this.stateMachine.setState(States.HURT);
-                if (this.isStunned) this.isStunned = false;
-            };
-            if (this.currentWeapon._id !== e.computer_weapons[0]._id) this.currentWeapon = e.computer_weapons[0];
-            if (this.currentDamageType !== e.computer_damage_type.toLowerCase()) this.currentDamageType = e.computer_damage_type.toLowerCase();
-            if (this.health < e.new_computer_health) {
-                let heal = Math.round(e.new_computer_health - this.health);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
-            };
-            if (e.counter_success) {
-                console.log("Player Counter Success, Enemy Is Now Stunned");
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect', true);
-                this.isStunned = true;
-            };
-            this.health = e.new_computer_health;
-            if (this.healthbar) this.updateHealthBar(this.health);
-            if (e.new_computer_health <= 0) {
-                // this.stateMachine.setState(States.DEATH);
-                this.stateMachine.setState(States.DEFEATED);
-            };
-            if (e.new_player_health <= 0) {
-                if (!this.stateMachine.isCurrentState(States.LEASH)) this.stateMachine.setState(States.LEASH);
-                this.inCombat = false;
-                this.attacking = null;
-                this.isTriumphant = true;
-                this.isAggressive = false; // Added to see if that helps with post-combat losses for the player
-            };
-            this.checkMeleeOrRanged(e.computer_weapons?.[0]);
-        });
+        EventEmitter.on('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
 
-        EventEmitter.on('update-combat-data', (e) => {
-            if (this.enemyID !== e.enemyID) return; 
-            console.log(e.new_computer_health, "Update Combat Data");
+        // EventEmitter.on('update-combat-data', (e) => {
+            // if (this.enemyID !== e.enemyID) return; 
+            // console.log(e.new_computer_health, "Update Combat Data");
+            // this.health = e.new_computer_health;
+            // if (this.healthbar) this.updateHealthBar(this.health);
+            // if (e.new_computer_health <= 0) {
+            //     // this.stateMachine.setState(States.DEATH);
+            //     this.stateMachine.setState(States.DEFEATED);
+            // };
+        // });
+    };
+
+    combatDataUpdate = (e) => {
+        if (this.enemyID !== e.enemyID || this.currentRound === e.combatRound) return;
+        if (this.currentRound < e.combatRound) {
+            console.log(`New Combat Round (${e.combatRound}) for Enemy ${e.computer.name}`);
+            this.currentRound = e.combatRound;
+        }; 
+        this.combatData = e; // Personal combatState, not used yet but will be for enemy AI
+        this.weapons = e.computer_weapons;
+        if (this.health > e.new_computer_health) { 
+            let damage = Math.round(this.health - e.new_computer_health);
+            this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.critical_success);
+            this.stateMachine.setState(States.HURT);
+            if (this.isStunned) this.isStunned = false;
+        };
+        if (this.currentWeapon._id !== e.computer_weapons[0]._id) this.currentWeapon = e.computer_weapons[0];
+        if (this.currentDamageType !== e.computer_damage_type.toLowerCase()) this.currentDamageType = e.computer_damage_type.toLowerCase();
+        if (this.health < e.new_computer_health) {
+            let heal = Math.round(e.new_computer_health - this.health);
+            this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
+        };
+        if (this.health > e.new_computer_health) {
+            console.log(`${e.player.name} Dealt ${Math.round(e.realized_player_damage)} Damage To ${e.computer.name}`);
             this.health = e.new_computer_health;
             if (this.healthbar) this.updateHealthBar(this.health);
             if (e.new_computer_health <= 0) {
                 // this.stateMachine.setState(States.DEATH);
                 this.stateMachine.setState(States.DEFEATED);
             };
-        });
+        };
+        if (e.counter_success) {
+            console.log("Player Counter Success, Enemy Is Now Stunned");
+            this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect', true);
+            this.isStunned = true;
+        }; 
+        if (e.new_player_health <= 0) {
+            console.log(`${e.computer.name} Has Defeated ${e.player.name}`);
+            if (!this.stateMachine.isCurrentState(States.LEASH)) this.stateMachine.setState(States.LEASH);
+            this.inCombat = false;
+            this.attacking = null;
+            this.isTriumphant = true;
+            this.isAggressive = false; // Added to see if that helps with post-combat losses for the player
+        };
+        this.checkMeleeOrRanged(e.computer_weapons?.[0]);
     };
 
     attackInterval() {
@@ -564,7 +573,7 @@ export default class Enemy extends Entity {
         if (!this.isAttacking) this.evaluateCombatDistance(); 
     };
     onAttackExit = () => {
-        this.scene.setState('computer_action', '');
+        if (this.scene.state.computer_action !== '') this.scene.setState('computer_action', '');
     };
 
     onCounterEnter = () => {
@@ -577,8 +586,8 @@ export default class Enemy extends Entity {
         if (!this.isCountering) this.evaluateCombatDistance();
     };
     onCounterExit = () => {
-        this.scene.setState('computer_action', '');
-        this.scene.setState('computer_counter_guess', '');
+        if (this.scene.state.computer_action !== '') this.scene.setState('computer_action', '');
+        if (this.scene.state.computer_counter_guess !== '') this.scene.setState('computer_counter_guess', '');
     };
 
     onDodgeEnter = () => {
@@ -599,7 +608,7 @@ export default class Enemy extends Entity {
         if (!this.isPosturing) this.evaluateCombatDistance();
     };
     onPostureExit = () => {
-        this.scene.setState('computer_action', '');
+        if (this.scene.state.computer_action !== '') this.scene.setState('computer_action', '');
     };
 
     onRollEnter = () => {
@@ -610,7 +619,7 @@ export default class Enemy extends Entity {
         if (!this.isRolling) this.evaluateCombatDistance();
     };
     onRollExit = () => { 
-        this.scene.setState('computer_action', '');
+        if (this.scene.state.computer_action !== '') this.scene.setState('computer_action', '');
     };
 
     onLeashEnter = () => {

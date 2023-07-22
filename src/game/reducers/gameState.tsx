@@ -72,7 +72,6 @@ export const gameSlice = createSlice({
         getCombatStatisticFetch: (state, _action) => {
             state.loadedAscean = false;
         },
-        getInteractingLootFetch: (state, _action) => {},
         getAsceanLevelUpFetch: (state, _action) => {
             state.loadedAscean = false;
         },
@@ -176,6 +175,7 @@ export const gameSlice = createSlice({
             return { ...state, lootDrops: [] };
         },
         setShowLoot: (state, action) => {
+            console.log(action.payload, "Showing Loot ?");
             if (action.payload.interacting) {
                 return {
                     ...state,
@@ -183,15 +183,17 @@ export const gameSlice = createSlice({
                     showLoot: action.payload.interacting,
                 };
             } else {
+                const updatedShowLootIds = state.showLootIds.filter((id) => id !== action.payload.loot);
+                console.log(updatedShowLootIds, "Updated Show Loot Ids");
                 return {
                     ...state,
-                    showLootIds: [ ...state.showLootIds.filter((id) => id !== action.payload.loot) ],
-                    showLoot: state.showLootIds.length > 1 ? state.showLoot : false,
+                    showLootIds: updatedShowLootIds.length > 0 ? updatedShowLootIds : [],
+                    showLoot: updatedShowLootIds.length > 0,
                 };
             };
         },
         setShowLootOne: (state, action) => {
-            return { ...state, showLootIds: action.payload };
+            return { ...state, showLoot: action.payload };
         }, 
 
         // ===== Dialogue ===== \\
@@ -223,7 +225,6 @@ export const {
     getAsceanAndInventoryFetch, 
     getAsceanLevelUpFetch, 
     getDrinkFirewaterFetch, 
-    getInteractingLootFetch, 
     getGainExperienceFetch, 
     getLootDropFetch, 
     getOnlyInventoryFetch, 

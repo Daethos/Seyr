@@ -1,4 +1,4 @@
-import { all, call, put, takeEvery, takeLatest, take, AllEffect, select, fork } from 'redux-saga/effects';
+import { all, call, put, takeEvery, takeLatest, take, AllEffect, select, fork, actionChannel } from 'redux-saga/effects';
 import { SagaIterator } from 'redux-saga';
 import * as asceanAPI from '../../utils/asceanApi';
 import * as communityAPI from '../../utils/communityApi';
@@ -128,28 +128,38 @@ function* combatSaga(): SagaIterator {
     yield takeEvery('combat/getCombatTimerFetch', workGetCombatTimer);
     yield takeEvery('combat/getPersuasionFetch', workGetPersuasion);
     yield takeEvery('combat/getLuckoutFetch', workGetLuckout);
-    // yield fork(workResolveCombat);
 };
 
-// function* watchResolveCombat(): SagaIterator {
-//     yield takeEvery('workGetInitiate', workResolveCombat);
-// };
+function* watchResolution(): SagaIterator {
+    const req = yield actionChannel('resolution');
+    while (true) {
+        const { payload } = yield take(req);
+        yield call(workResolveCombat, payload);
+    };
+};
+ 
 function* workResolveCombat(state: CombatData): SagaIterator {
-    if (!state.player_win && !state.computer_win) return;
-    console.log(state.player_win, "Player Won?", state.computer_win, "Computer Won?");
-    const stat = yield call(statFiler, state, state.player_win);
-    yield call(asceanAPI.recordCombatStatistic, stat);
-    yield put(setStatistics(stat));
-    if (state.player_win) {
-        const asceanState = yield select((state) => state.game.asceanState);
-        console.log(asceanState, "Ascean State Fetched");
-        yield call(workGetGainExperienceFetch, { asceanState, state });
-        yield call(workGetLootDropFetch, { enemyID: state.enemyID, level: state.computer.level });
-        yield put(setPlayerWin(state));
-    } else {
-        console.log("Enemy Won");
-        yield call(workGetAsceanHealthUpdate, { health: state.new_player_health, id: state.player._id });      
-        yield put(setEnemyWin(state));    
+    try {
+        if (!state.player_win && !state.computer_win) return;
+        const stat = yield call(statFiler, state, state.player_win);
+        const res = yield call(asceanAPI.recordCombatStatistic, stat);
+        yield put(setStatistics(res));
+        if (state.player_win) {
+            console.log("Player Won");
+            const asceanState = yield select((state) => state.game.asceanState);
+            const exp = { payload: { asceanState, combatState: state } };
+            yield call(workGetGainExperienceFetch, exp);
+            const loot = { payload: { enemyID: state.enemyID, level: state.computer.level } };
+            yield call(workGetLootDropFetch, loot);
+            yield put(setPlayerWin(state));
+        } else {
+            console.log("Enemy Won");
+            const health = { payload: { health: state.new_player_health, id: state.player._id } };
+            yield call(workGetAsceanHealthUpdate, health);      
+            yield put(setEnemyWin(state));    
+        };
+    } catch (err: any) {
+        console.log(err, 'Error in workResolveCombat');
     };
 };
 
@@ -230,45 +240,49 @@ function* workGetEnemyAction(action: any): SagaIterator {
         };
         let res = yield call(gameAPI.phaserAction, enemyData);
         yield put(setEnemyActions(res.data));
-        yield fork(workResolveCombat, res.data);
+        yield call(workResolveCombat, res.data);
         res.data.enemyID = enemyID;
-        // EventEmitter.emit('update-combat-data', res.data);
         EventEmitter.emit('update-combat', res.data);
+        // EventEmitter.emit('update-combat-data', res.data);
         setTimeout(() => {
-            call(() => setToggleDamaged(false));
+            call(setToggleDamaged, false);
         }, 1500);
     } catch (err: any) {
         console.log(err, 'Error in workGetEnemyAction');
     };
 };
 function* workGetInitiate(action: any): SagaIterator {
-    console.log(action.payload, "Action Initiated");
-    const game = yield select((state) => state.game);
-    let res: any;
-    switch (action.payload.type) {
-        case 'Weapon':
-            res = yield call(gameAPI.phaserAction, action.payload.combatData);
-            break;
-        case 'Instant':
-            res = yield call(gameAPI.instantAction, action.payload.combatData);
-            yield put(setInstantStatus(true));
-            break;
-        case 'Prayer':
-            res = yield call(gameAPI.consumePrayer, action.payload.combatData);
-            break;
-        default:
-            break;
-        };
-    if ('vibrate' in navigator) navigator.vibrate(game.vibrationTime);
-    shakeScreen(game.shake);
-    console.log(res.data, "Initiate Response");
-    yield put(setCombatResolution(res.data));
-    yield fork(workResolveCombat, res.data);
-    // EventEmitter.emit('update-combat-data', res.data);
-    EventEmitter.emit('update-combat', res.data);
-    setTimeout(() => {
-        call(() => setToggleDamaged(false));
-    }, 1500);
+    try {
+        console.log(action.payload, "Action Initiated");
+        const game = yield select((state) => state.game);
+        let res: any;
+        switch (action.payload.type) {
+            case 'Weapon':
+                res = yield call(gameAPI.phaserAction, action.payload.combatData);
+                break;
+            case 'Instant':
+                res = yield call(gameAPI.instantAction, action.payload.combatData);
+                yield put(setInstantStatus(true));
+                break;
+            case 'Prayer':
+                res = yield call(gameAPI.consumePrayer, action.payload.combatData);
+                break;
+            default:
+                break;
+            };
+        if ('vibrate' in navigator) navigator.vibrate(game.vibrationTime);
+        shakeScreen(game.shake);
+        console.log(res.data, "Initiate Response");
+        yield put(setCombatResolution(res.data));
+        yield call(workResolveCombat, res.data);
+        // EventEmitter.emit('update-combat-data', res.data);
+        // EventEmitter.emit('update-combat', res.data);
+        setTimeout(() => {
+            call(setToggleDamaged, false);
+        }, 1500);
+    } catch (err: any) {
+        console.log(err, 'Error in workGetInitiate');
+    };
 };
 function* workGetCombatStatistic(action: any): SagaIterator {
     const data = action.payload;
@@ -350,8 +364,12 @@ function* workGetGameFetch(action: any): SagaIterator {
     yield put(setPhaser(true));
 }; 
 function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
+    console.log(action.payload, "Leveling Up");
     const res = yield call(asceanAPI.levelUp, action.payload);
-    const asceanState = {
+    console.log(res, "Response Leveling Up");
+    let asceanState = yield select((state) => state.game.asceanState);
+    asceanState = {
+        ...asceanState,
         ascean: res.data,
         constitution: 0,
         strength: 0,
@@ -359,6 +377,8 @@ function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
         achre: 0,
         caeren: 0,
         kyosir: 0,
+        opponent: 0,
+        opponentExp: 0,
         experience: res.data.experience,
         level: res.data.level,
         mastery: res.data.mastery,
@@ -367,7 +387,7 @@ function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
     };
     const resTwo = yield call(asceanAPI.getCleanAscean, res.data._id);
     const resThree = yield call(asceanAPI.getAsceanStats, res.data._id);
-
+    console.log(resTwo, resThree, "Responses to Getting Clean Ascean and Stats");
     yield put(setPlayerLevelUp(resTwo.data));
     yield put(setCombatPlayer(resThree.data.data));
     yield put(setAsceanState(asceanState));
@@ -383,6 +403,7 @@ function* workGetReplenishFirewaterFetch(action: any): SagaIterator {
     yield put(setFirewater(res.firewater));
 };
 function* workGetGainExperienceFetch(action: any): SagaIterator {
+    console.log(action, "Gain Experience");
     let { asceanState, combatState } = action.payload;
     let opponentExp = Math.round(combatState.computer.level * 100 * (combatState.computer.level / combatState.player.level) + combatState.player_attributes.rawKyosir);
     const hasAvaricePrayer = combatState.prayerData.includes('Avarice');
@@ -396,16 +417,15 @@ function* workGetGainExperienceFetch(action: any): SagaIterator {
       'avarice': hasAvaricePrayer ? true : false,
     };
 
-    const response = yield call(asceanAPI.saveExperience, asceanState);
-    const res = yield call(asceanAPI.getCleanAscean, response.data._id);
-
-    yield put(setExperience(res.data.experience));
-    yield put(setCurrency(res.data.currency));
-    yield put(setFirewater(res.data.firewater));
+    const res = yield call(asceanAPI.saveExperience, asceanState);
+    console.log(res, "Response Gain Experience");
+    yield put(setExperience(res.experience));
+    yield put(setCurrency(res.currency));
+    yield put(setFirewater(res.firewater));
     yield put(setAsceanState({
         ...asceanState,
-        'currentHealth': res.data.health.current,
-        'experience': res.data.experience,
+        'currentHealth': res.health.current,
+        'experience': res.experience,
         'avarice': false,
         'opponent': 0,
         'opponentExp': 0
@@ -429,9 +449,9 @@ function* workGetLootDropFetch(action: any): SagaIterator {
     if (roll > 50) {
         let sec = yield call(equipmentAPI.getLootDrop, action.payload.level);
         yield put(setLootDrops(sec.data[0]));
-        EventEmitter.emit('enemyLootDrop', { enemyID: action.payload.enemyID, loot: [res.data[0], sec.data[0]] } );
+        EventEmitter.emit('enemyLootDrop', { enemyID: action.payload.enemyID, drops: [res.data[0], sec.data[0]] } );
     } else {
-        EventEmitter.emit('enemyLootDrop', { enemyID: action.payload.enemyID, loot: res.data } );
+        EventEmitter.emit('enemyLootDrop', { enemyID: action.payload.enemyID, drops: res.data } );
     };
 };
 function* workGetInteracingLootFetch(action: any): SagaIterator {

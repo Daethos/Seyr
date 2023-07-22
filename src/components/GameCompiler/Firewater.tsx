@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import * as asceanAPI from '../../utils/asceanApi';
-import { CombatData, ACTIONS } from './CombatStore';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
-import { GameData, GAME_ACTIONS } from './GameStore';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,30 +18,17 @@ interface FirewaterProps {
 const Firewater = ({ story }: FirewaterProps) => {
     const dispatch = useDispatch();
     const ascean = useSelector((state: any) => state.game.player);
-    const state = useSelector((state: any) => state.combat);
-    const loadedAscean = useSelector((state: any) => state.game.loadedAscean);
     const [showFirwawterModal, setShowFirewaterModal] = useState<boolean>(false);
     const [showBleed, setShowBleed] = useState<boolean>(true);
     const [firewater, setFirewater] = useState(ascean.firewater);
-    const [drinking, setDrinking] = useState(false);
 
     useEffect(() => {
         setFirewater(ascean.firewater);
     }, [ascean.firewater]);
     
-    // useEffect(() => {
-    //     if (loadedAscean) {
-    //         setDrinking(false);
-    //         setShowBleed(true);
-    //         setShowFirewaterModal(false);
-    //         // gameDispatch({ type: GAME_ACTIONS.LOADED_ASCEAN, payload: false });
-    //     };
-    // }, [loadedAscean, drinking]);
-    
     const drinkFirewater = async () => {
         if (firewater?.charges === 0) return;
         try {
-            setDrinking(true);
             dispatch(getDrinkFirewaterFetch(ascean._id));
             setShowFirewaterModal(false); 
         } catch (err: any) {
@@ -55,6 +39,7 @@ const Firewater = ({ story }: FirewaterProps) => {
     const replenishFirewater = async () => {
         try {
             setShowBleed(false);
+            console.log('Bleeding...');
             dispatch(getReplenishFirewaterFetch(ascean._id));
             setShowFirewaterModal(false); 
         } catch (err: any) {

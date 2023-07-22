@@ -1,6 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
+import { borderColor, getInnerWidth } from '../../game/ui/ItemPopover';
 
 export interface StatusEffect {
     id: string;
@@ -81,33 +82,7 @@ const StatusEffects = ({ effect, player, spectator, enemy }: StatusEffectProps) 
                 </p>
             </Popover.Body>
         </Popover>
-    );
-
-    const getInnerWidth = () => {
-        const width = window.innerWidth;
-        if (width > 1200) {
-            return '-10%';
-        } else if (width > 800) {
-            return '1%';
-        } else if (width > 50) {
-            return '12.5%';
-        } else {
-            return -'10%';
-        };
-    };
-
-    const borderColor = (prayer: string) => {
-        switch (prayer) {
-            case 'Buff': return 'gold';
-            case 'Debuff': return 'purple';
-            case 'Heal': return 'green';
-            case 'Damage': return 'red';
-            case 'Avarice' : return 'greenyellow';
-            case 'Denial' : return '#0cf';
-            case 'Silence' : return 'black';
-            default: return 'white';
-        };
-    };
+    ); 
 
     const getEffectStyle = {
         marginTop: player ? getInnerWidth() : '',

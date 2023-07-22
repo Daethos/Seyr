@@ -207,7 +207,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                         <polyline points="0,0 400,2.5 0,5"></polyline>
                     </svg>
                 </div>
-                <AsceanStatCompiler communityFocus={false} ascean={ascean} />
+                <AsceanStatCompiler ascean={ascean} />
                 { userProfile ? ( 
                     <>
                         <div className="actions">

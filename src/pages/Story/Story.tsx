@@ -5,12 +5,12 @@ import HostScene from '../../game/scenes/HostScene';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGameFetch } from '../../game/reducers/gameState';
 
-export const Story = () => {
+const Story = () => {
     const { asceanID } = useParams();
     const ascean = useSelector((state: any) => state.game.player);
     const dispatch = useDispatch();
     const [assets, setAssets] = useState([]);
-    const [gameChange, setGameChange] = useState<boolean>(true);
+    const [gameChange, setGameChange] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
@@ -19,7 +19,7 @@ export const Story = () => {
                 const assetResponse = await eqpAPI.index();
                 const sanitizedAssets = await sanitizeAssets(assetResponse.data);
                 setAssets(sanitizedAssets);
-                setGameChange(false);
+                setGameChange(true);
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
             };
@@ -48,8 +48,8 @@ export const Story = () => {
         
     return (
         <div>
-        { gameChange ? ( '' )
-            : ( <HostScene assets={assets} ascean={ascean} /> 
+        { !gameChange ? ( '' ) : ( 
+            <HostScene assets={assets} ascean={ascean} /> 
         ) }
         </div>
     );

@@ -1,8 +1,6 @@
-import React from 'react'
-
 interface Props {
     mapState: any;
-}
+};
 
 const Coordinates = ({ mapState }: Props) => {
 
@@ -13,7 +11,7 @@ const Coordinates = ({ mapState }: Props) => {
             [ X: {mapState?.currentTile?.x} Y: {mapState?.currentTile?.y} ]
             </p>
         </div>
-    )
-}
+    );
+};
 
-export default Coordinates
+export default Coordinates;

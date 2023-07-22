@@ -648,17 +648,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                                 </> 
                             ) }
                             { luckout ? ( 
-                                <div>
-                                    {/* <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setLuckoutModalShow(true)}>[ {'>>>'} Combat Alternative(s) {'<<<'} ]</Button> */}
-                                    <LuckoutModal traits={luckoutTraits} callback={attemptLuckout} name={state.computer.name} influence={influence} />
-                                    {luckoutTraits.map((trait: any, index: number) => {
-                                        return (
-                                            <div key={index}>
-                                                <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptLuckout(trait.name)}>[{trait.name}] - {trait.luckout.action.replace('{enemy.name}', state.computer.name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
-                                            </div>
-                                        )
-                                    })} 
-                                </div>
+                                <LuckoutModal traits={luckoutTraits} callback={attemptLuckout} name={state.computer.name} influence={influence} /> 
                             ) : ('') }
                             { miniGame ? (
                                 miniGameTraits.map((trait: any, index: number) => {
@@ -747,25 +737,11 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                 ) : gameState.currentIntent === 'persuasion' ? (
                     <>
                         { state.player_win ? (
-                            <>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path, perhaps words will work next time.</Button>
-                            </>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path, perhaps words will work next time.</Button>
                         ) : state.computer_win ? (
-                            <>
-                                <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={() => clearDuel()}>Continue moving along your path, there's nothing left to say now.</Button>
-                            </>
+                            <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={() => clearDuel()}>Continue moving along your path, there's nothing left to say now.</Button>
                         ) : persuasion && !state.persuasionScenario ? ( 
-                            <div>
-                                <PersuasionModal traits={persuasionTraits} callback={attemptPersuasion} name={state.computer.name} influence={influence} />
-                                <Button variant='' className='dialog-buttons inner' style={{ color: "pink" }} onClick={() => setPersuasionModalShow(true)}>[ {'>>>'} Persuasive Alternative {'<<<'} ]</Button>
-                                {persuasionTraits.map((trait: any, index: number) => {
-                                    return (
-                                        <div key={index}>
-                                        <Button variant='' className='dialog-buttons inner' style={{ color: traitStyle(trait.name) }} onClick={() => attemptPersuasion(trait.name)}>[{trait.name}]: {trait.persuasion.action.replace('{enemy.name}', state?.computer?.name).replace('{ascean.weapon_one.influences[0]}', influence)}</Button>
-                                    </div>
-                                    )
-                                })}
-                            </div>
+                            <PersuasionModal traits={persuasionTraits} callback={attemptPersuasion} name={state.computer.name} influence={influence} /> 
                         ) : ('') }
                         { state.persuasionScenario ? (
                             <div style={{ color: "gold" }}>

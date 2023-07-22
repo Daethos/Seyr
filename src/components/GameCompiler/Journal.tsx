@@ -34,43 +34,23 @@ const JournalEntry = ({ entry }: { entry: any }) => {
 
 interface JournalProps {
     ascean: any;
-    dispatch: any;
-    mapState: any;
-    mapDispatch: any;
-    gameDispatch: any;
-    quests: any;
 };
 
-const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests }: JournalProps) => {
-    const [questData, setQuestData] = useState<any>(quests[0]);
+const Journal = ({ ascean }: JournalProps) => {
     const [journalEntries, setJournalEntries] = useState(ascean.journal.entries);
     const [entry, setEntry] = useState(ascean.journal.currentEntry);
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>({ title: '', content: '' });
     const [showJournal, setShowJournal] = useState<boolean>(false);
 
     useEffect(() => {
         setJournalEntries(ascean?.journal?.entries);
         setEntry(ascean?.journal?.entries[ascean?.journal?.currentEntry]);
-    }, [ascean]);
-
-    useEffect(() => {
-        if (quests.length > 0) {
-            setQuestData(quests[0]);
-        };
-    }, [quests]);
- 
+    }, [ascean]); 
 
     const handleJournal = (journal: any) => {
         setEntry(ascean?.journal?.entries[journal]);
     };
- 
-    if (loading) {
-        return (
-            <Loading Combat={true} />
-        );
-    };
-
+  
     return (
         <>
         { showJournal ? (
@@ -85,7 +65,6 @@ const Journal = ({ dispatch, gameDispatch, mapState, mapDispatch, ascean, quests
             </div>
             <div className='dialog-options'>
                 <JournalButtons options={journalEntries} setJournalEntry={handleJournal} />
-                {/* <QuestButtons options={quests} setQuestData={handleQuest} /> */}
             </div>
             </div>
         ) : ('') }

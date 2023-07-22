@@ -17,50 +17,57 @@ const checkDeificConcerns = require('../services/deityServices');
 
 module.exports = {
     create,
+    delete: deleteAscean,
+    editAscean,
     index,
     quickIndex,
-    editAscean,
+
     getOneAscean,
-    delete: deleteAscean,
     getAsceanStats,
-    updateHighScore,
-    updateLevel,
+    animalStats,
+    getOneAsceanClean,
+    getOneAsceanLight,
+    getAsceanAndInventory,
+    getAsceanInventory,
+    getAsceanQuests,
+    
     saveExperience,
     saveToInventory,
     saveInventory,
     swapItems,
     removeItem,
     purchaseToInventory,
+    
     searchAscean,
+    
     saveCoordinates,
     drinkFirewater,
     restoreFirewater,
     replenishFirewater,
-    animalStats,
-    getOneAsceanClean,
     killAscean,
     persistAscean,
-    getAsceanAndInventory,
-    getAsceanInventory,
-    getAsceanQuests,
     killAscean,
     persistAscean,
     firstTutorial,
-    asceanTax,
-    updateHealth,
-    setCurrency,
-    setExperience,
-    getOneAsceanLight,
     blessAscean,
     curseAscean,
+    sacrificeExp,
+    
     addJournalEntry,
     evaluateDeity,
-    updateStatistics,
     recordNonCombatStatistic,
     recordCombatStatistic,
     recordSedyrist,
     recordThievery,
-    sacrificeExp,
+    
+    asceanTax,
+    setCurrency,
+    setExperience,
+    
+    updateHealth,
+    updateHighScore,
+    updateLevel,
+    updateStatistics,
 };
 
 const FIELDS = [
@@ -1138,7 +1145,7 @@ async function saveExperience(req, res) {
         ascean.health.current = health;
 
         await ascean.save();
-        res.status(200).json({ data: {ascean, silver, gold} });
+        res.status(200).json(ascean);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Saving Experience!')
         res.status(400).json({ err });

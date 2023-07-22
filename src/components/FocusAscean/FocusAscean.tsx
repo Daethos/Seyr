@@ -87,7 +87,7 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
         </div>
         <div className="section-right">
             <div className="actions">
-            <AsceanStatCompiler ascean={ascean} communityFocus={true} key={ascean._id} />
+            <AsceanStatCompiler ascean={ascean} key={ascean._id} />
             </div>
         </div>
         <hr className='orange-border bottom' />

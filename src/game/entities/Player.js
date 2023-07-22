@@ -16,7 +16,6 @@ import playerAttacksPNG from '../images/player_attacks.png';
 import playerAttacksJSON from '../images/player_attacks_atlas.json';
 import playerAttacksAnim from '../images/player_attacks_anim.json';
 import EventEmitter from "../phaser/EventEmitter";
-import { getInteractingLootFetch } from "../reducers/gameState";
  
 export default class Player extends Entity {
     static preload(scene) { 
@@ -149,7 +148,6 @@ export default class Player extends Entity {
         this.setExistingBody(compoundBody);                                    
         this.sensor = playerSensor;
         this.knocking = false;
-        this.currentRound = 0; 
         
         this.glow = this.setGlow(this, true);
         // this.setGlow(this.spriteWeapon);
@@ -337,8 +335,7 @@ export default class Player extends Entity {
                 if (other.gameObjectB && other.bodyB.label === 'lootdropCollider') {
                     this.interacting.push(other.gameObjectB);
                     const interactingLoot = { loot: other.gameObjectB._id, interacting: true };
-                    // EventEmitter.emit('interacting-loot', interactingLoot);
-                    this.scene.dispatch(getInteractingLootFetch, interactingLoot);
+                    EventEmitter.emit('interacting-loot', interactingLoot);
                 };
             },
             context: this.scene,
@@ -350,8 +347,7 @@ export default class Player extends Entity {
                 if (other.gameObjectB && other.bodyB.label === 'lootdropCollider') {
                     this.interacting = this.interacting.filter(obj => obj.id !== other.gameObjectB.id);
                     const interactingLoot = { loot: other.gameObjectB._id, interacting: false };
-                    // EventEmitter.emit('interacting-loot', interactingLoot);
-                    this.scene.dispatch(getInteractingLootFetch, interactingLoot);
+                    EventEmitter.emit('interacting-loot', interactingLoot);
                 };
             },
             context: this.scene,
@@ -730,11 +726,8 @@ export default class Player extends Entity {
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
                 if (this.scene.state.playerEffects.length === 0) return;
                 this.isConsuming = true;
-                // this.prayerConsuming = this.scene.state.playerEffects[0].prayer;
-                // this.scene.state.prayerSacrifice = this.scene.state.playerEffects[0].prayer;
-                // this.scene.state.prayerSacrificeName = this.scene.state.playerEffects[0].name;
-                this.scene.setState('prayerSacrifice', this.scene.state.playerEffects[0].prayer);
-                this.scene.setState('prayerSacrificeName', this.scene.state.playerEffects[0].name);
+                // this.scene.setState('prayerSacrifice', this.scene.state.playerEffects[0].prayer);
+                // this.scene.setState('prayerSacrificeName', this.scene.state.playerEffects[0].name);
                 this.scene.sendStateSpecialListener('consume');
                 screenShake(this.scene);
             };

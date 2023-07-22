@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MAP_ACTIONS, MapStore, initialMapData, DIRECTIONS, MapData, debounce, getAsceanCoords, getAsceanGroupCoords } from './WorldStore';
+import { MapData } from './WorldStore';
 import { throttle } from 'lodash';
 type Direction = "up" | "down" | "left" | "right" | "upLeft" | "upRight" | "downLeft" | "downRight";
 
@@ -12,15 +12,8 @@ interface Props {
 };
 
 const Joystick = ({ mapState, onDirectionChange, debouncedHandleDirectionChange, joystickDisabled, isBlocked }: Props) => {
-    const [mobileDisabled, setMobileDisabled] = useState<boolean>(false);
-    const [touchStart, setTouchStart] = useState<{ x: number; y: number }>({
-        x: 0,
-        y: 0,
-    });
-    const [position, setPosition] = useState<{ x: number; y: number }>({
-        x: 0,
-        y: 0,
-    });
+    const [touchStart, setTouchStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+    const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
     const lastDirectionRef = useRef<string>("");
     const throttledSetPosition = throttle(setPosition, 150);
 
@@ -32,15 +25,6 @@ const Joystick = ({ mapState, onDirectionChange, debouncedHandleDirectionChange,
                 ArrowDown: "down",
                 ArrowLeft: "left",
                 ArrowRight: "right",
-                
-                // KeyW: "up",
-                // KeyS: "down",
-                // KeyA: "left",
-                // KeyD: "right",
-                // KeyQ: "upLeft",
-                // KeyE: "upRight",
-                // KeyZ: "downLeft",
-                // KeyC: "downRight",
             };  
             const direction = keyDirectionMap[event.code];
             if (direction) {
@@ -143,11 +127,7 @@ const Joystick = ({ mapState, onDirectionChange, debouncedHandleDirectionChange,
     const handleTouchEnd = () => {
         throttledSetPosition.cancel();
         setPosition({ x: 0, y: 0 });
-    };
-
-    const handleBlockJoystick = (shouldBlock: boolean) => {
-        setMobileDisabled(shouldBlock);
-    };
+    }; 
 
     return (
         <div
@@ -180,42 +160,35 @@ const Joystick = ({ mapState, onDirectionChange, debouncedHandleDirectionChange,
     );
 };
 
-// export default Joystick;
-
 const withJoystickBlocker = <P extends object>(WrappedComponent: React.ComponentType<P>) => {
     return class extends React.Component<P & Props> {
-      shouldJoystickBeBlocked = () => {
-        // console.log(this.props.joystickDisabled, "joystickDisabled")
-        if (this.props.joystickDisabled) {
-            return true;
-        } else {
+        shouldJoystickBeBlocked = () => {
+            if (this.props.joystickDisabled) return true;
             return false;
         };
-    };
   
-      render() {
-        const isBlocked = this.shouldJoystickBeBlocked();
-        
-        const blockedStyle = {
-            zIndex: 1,
-            borderRadius: "50%",
-            backgroundColor: "black",
-            height: "100px",
-            gridColumnStart: 3,
-            gridRowStart: 9,
-            width: "100px",
-            marginLeft: "47.5%",
-            marginTop: "5%",
-        };
+        render() {
+            const isBlocked = this.shouldJoystickBeBlocked(); 
+            const blockedStyle = {
+                zIndex: 1,
+                borderRadius: "50%",
+                backgroundColor: "black",
+                height: "100px",
+                gridColumnStart: 3,
+                gridRowStart: 9,
+                width: "100px",
+                marginLeft: "47.5%",
+                marginTop: "5%",
+            };
 
-        return (
-          <>
-            {isBlocked && <div className="joystick-blocked" style={blockedStyle} />}
-            <WrappedComponent {...this.props} isBlocked={isBlocked} />
-          </>
-        );
-      }
+            return (
+                <>
+                    {isBlocked && <div className="joystick-blocked" style={blockedStyle} />}
+                    <WrappedComponent {...this.props} isBlocked={isBlocked} />
+                </>
+            );
+        };
     };
-  };
+};
   
   export default withJoystickBlocker(Joystick);

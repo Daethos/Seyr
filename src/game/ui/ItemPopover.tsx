@@ -79,13 +79,38 @@ export const getShadowStyle = (prayer: string) => {
     };
 };
 
+export const borderColor = (prayer: string) => {
+    switch (prayer) {
+        case 'Buff': return 'gold';
+        case 'Debuff': return 'purple';
+        case 'Heal': return 'green';
+        case 'Damage': return 'red';
+        case 'Avarice' : return 'greenyellow';
+        case 'Denial' : return '#0cf';
+        case 'Silence' : return 'black';
+        default: return 'white';
+    };
+};
+
+export const getInnerWidth = () => {
+    const width = window.innerWidth;
+    if (width > 1200) {
+        return '-10%';
+    } else if (width > 800) {
+        return '1%';
+    } else if (width > 50) {
+        return '12.5%';
+    } else {
+        return -'10%';
+    };
+}; 
+
 interface Props {
     item: Equipment;
     prayer: string;
 };
 
-const ItemPopover = ({ item, prayer }: Props) => {
-    
+const ItemPopover = ({ item, prayer }: Props) => { 
     const getItemStyle = {
         border: '0.15em solid ' + getShadowStyle(prayer),
         background: 'black',

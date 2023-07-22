@@ -1,4 +1,4 @@
-interface StateInterface {
+export interface StateInterface {
     name: string;
     onEnter?: () => void;
     onUpdate?: (dt: number) => void;

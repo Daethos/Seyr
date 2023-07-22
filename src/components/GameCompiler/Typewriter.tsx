@@ -55,7 +55,6 @@ const styleMap: StyleMap = {
     fontSize: "16px",
     padding: "10px",
     fontVariant: "small-caps"
-    // fontFamily: "Cinzel",
   },
   godBorderConstitution: {
     marginBottom: "15%",

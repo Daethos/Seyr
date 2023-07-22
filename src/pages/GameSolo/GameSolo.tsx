@@ -1851,7 +1851,7 @@ const GameSolo = ({ user }: GameProps) => {
                 <>
                     <GameMap mapData={mapState} canvasRef={canvasRef} gameDispatch={gameDispatch} gameState={gameState} />
                     { gameState.player.journal.entries.length > 0 ?
-                        <Journal quests={gameState.player.quests} dispatch={dispatch} gameDispatch={gameDispatch} mapState={mapState} mapDispatch={mapDispatch} ascean={gameState.player}   />
+                        <Journal ascean={gameState.player} />
                     : ( '' )}
                     { gameState.showDialog && gameState.opponent ?    
                         <DialogBox 

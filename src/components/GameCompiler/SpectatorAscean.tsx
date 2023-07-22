@@ -4,7 +4,6 @@ import GameHealthBar from './GameHealthBar';
 import GamePlayerStats from './GamePlayerStats';
 import ExperienceBar from './ExperienceBar';
 import StatusEffects from './StatusEffects';
-import { useEffect } from 'react';
 
 interface Props {
   ascean: any;

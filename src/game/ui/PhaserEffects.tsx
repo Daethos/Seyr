@@ -3,9 +3,10 @@ import Button from 'react-bootstrap/Button';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getEffectTickFetch, setRemoveEffect } from '../reducers/combatState';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
+import { borderColor, getInnerWidth } from './ItemPopover';
 
 interface StatusEffectProps {
     state: CombatData;
@@ -16,7 +17,6 @@ interface StatusEffectProps {
 
 const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) => {
     const dispatch = useDispatch();
-    // const state = useSelector((state: any) => state.combat);
     const [endTime, setEndTime] = useState<number>(effect.endTime);
     const [effectTimer, setEffectTimer] = useState<number>(effect.endTime - effect.startTime);
     const specials = ['Avarice', 'Dispel', 'Denial', 'Silence'];
@@ -25,18 +25,11 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
         'Dispel': 'Removes the last prayer affecting the enemy.',
         'Denial': 'Prevents the enemy from killing you.',
         'Silence': 'Prevents the enemy from praying.'
-    };
-
-    useEffect(() => {
-        console.log(effectTimer, "Effect Timer");
-    }, [effectTimer]);
-      
+    }; 
 
     useEffect(() => {
         if (pauseState) return;
-        console.log(effectTimer, endTime, effect.endTime, "Effect Timer");
         if (endTime < effect.endTime) setEndTime(effect.endTime);
-        console.log("Ticking");
         const intervalTimer = setInterval(() => {
             setEffectTimer((effectTimer: number) => effectTimer - 1);
         }, 1000);
@@ -105,32 +98,6 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
             </Popover.Body>
         </Popover>
     );
-
-    const getInnerWidth = () => {
-        const width = window.innerWidth;
-        if (width > 1200) {
-            return '-10%';
-        } else if (width > 800) {
-            return '1%';
-        } else if (width > 50) {
-            return '12.5%';
-        } else {
-            return -'10%';
-        };
-    };
-
-    const borderColor = (prayer: string) => {
-        switch (prayer) {
-            case 'Buff': return 'gold';
-            case 'Debuff': return 'purple';
-            case 'Heal': return 'green';
-            case 'Damage': return 'red';
-            case 'Avarice' : return 'greenyellow';
-            case 'Denial' : return '#0cf';
-            case 'Silence' : return 'black';
-            default: return 'white';
-        };
-    };
 
     const getEffectStyle = {
         marginTop: getInnerWidth(),

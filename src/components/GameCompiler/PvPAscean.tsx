@@ -30,11 +30,7 @@ const PvPAscean = ({ state, dispatch, ascean, player, currentPlayerHealth, total
   const getBlockStyle = {
     zIndex: style ? 99999 : 99,
     marginTop: state.playerEffects.length > 0 ? '-19%' : '6%',
-  };
-
-  const spectatorStyle ={
-    zIndex: 99999,
-  };
+  }; 
 
   if (loading) {
     return (

@@ -158,6 +158,7 @@ const combatSlice = createSlice({
         },
         // ===== Combat Input Concerns ===== \\
         setCombatInput: (state, action) => {
+            console.log(action.payload, "Combat Input");
             const { key, value } = action.payload;
             return {
                 ...state,
@@ -281,7 +282,6 @@ const combatSlice = createSlice({
 
         // ===== Combat Resolution Concerns ===== \\
         setCombatResolution: (_state, action) => {
-            console.log(action.payload, "Combat Initiated");
             return { ...action.payload };
         },
         setEffectResponse: (_state, action) => {

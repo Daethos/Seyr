@@ -2873,7 +2873,8 @@ const phaserActionSplitter = async (combatData) => {
     if (cleanData.player_win === true) cleanData.computer_death_description = `${cleanData.computer.name} has been defeated. Hail ${cleanData.player.name}, you have won.`;
     if (cleanData.computer_win === true) cleanData.player_death_description = `You have been defeated. Hail ${cleanData.computer.name}, they have won.`;
     
-
+    cleanData.action = '';
+    cleanData.computer_action = '';
     cleanData.combatRound += 1;
     cleanData.sessionRound += 1;
     cleanData.soundEffects = true;
@@ -3238,7 +3239,10 @@ const instantEffectCheck = async (combatData) => {
     });
 };
 
-const consumePrayerSplitter = async (combatData) => { 
+const consumePrayerSplitter = async (combatData) => {
+    console.log(combatData.prayerSacrifice, combatData.prayerSacrificeName, "Prayer Sacrifice"); 
+    if (combatData.prayerSacrifice === '') combatData.prayerSacrifice = combatData.playerEffects[0].prayer;
+    if (combatData.prayerSacrificeName === '') combatData.prayerSacrificeName = combatData.playerEffects[0].name;
     // ==================== STATISTIC LOGIC ==================== 
     combatData.actionData.push('consume');
     combatData.prayerData.push(combatData.prayerSacrifice);
