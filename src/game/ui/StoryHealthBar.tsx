@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import Loading from '../Loading/Loading';
+import Loading from '../../components/Loading/Loading';
 
 interface GameProps {
     totalPlayerHealth: number;

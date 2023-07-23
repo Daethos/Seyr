@@ -29,7 +29,6 @@ module.exports = {
     getOneAsceanLight,
     getAsceanAndInventory,
     getAsceanInventory,
-    getAsceanQuests,
     
     saveExperience,
     saveToInventory,
@@ -1359,7 +1358,6 @@ async function getOneAscean(req, res) {
     try {
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
-                                 .populate('quests')
                                  .exec(); 
         const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(ascean[field]);
@@ -1396,24 +1394,12 @@ async function getOneAsceanLight(req, res) {
         res.status(400).json({ err });
     };
 };
-
-async function getAsceanQuests(req, res) {
-    try {
-        const ascean = await Ascean.findById({ _id: req.params.id })
-                                   .populate('quests')
-                                   .exec();
-        res.status(200).json(ascean.quests);
-    } catch (err) {
-        console.log(err, 'Error Getting Ascean Quests');
-        res.status(400).json({ err });
-    }
-}
+ 
 
 async function getAsceanAndInventory(req, res) {
     try {
         let ascean = await Ascean.findById({ _id: req.params.id })
                                     .populate('user')
-                                    .populate('quests')
                                     .exec(); 
         const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(ascean[field]);
@@ -1464,7 +1450,6 @@ async function getOneAsceanClean(req, res) {
     try {
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
-                                 .populate('quests')
                                  .exec(); 
         const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(ascean[field]);

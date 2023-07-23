@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initialCombatData } from '../../components/GameCompiler/CombatStore';
+import { compress } from '../sagas/rootSaga';
 
 const combatSlice = createSlice({
     name: 'combat',
@@ -160,10 +161,7 @@ const combatSlice = createSlice({
         setCombatInput: (state, action) => {
             console.log(action.payload, "Combat Input");
             const { key, value } = action.payload;
-            return {
-                ...state,
-                [key]: value
-            };
+            return { ...state, [key]: value };
         },
         setClearCounter: (state) => {
             return {

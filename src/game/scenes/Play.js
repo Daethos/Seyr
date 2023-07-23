@@ -231,11 +231,11 @@ export default class Play extends Phaser.Scene {
 
     createStateListener = async () => { // Was window.addEventListener()
         EventEmitter.on('update-combat-data', (e) => {
-            this.state = { ...e };
+            this.state = e;
         });
 
         EventEmitter.on('update-game-data', (e) => {
-            this.gameState = { ...e };
+            this.gameState = e;
         });
     };
 

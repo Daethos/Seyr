@@ -38,7 +38,7 @@ export const getEnemyLevels = (level: number): { minLevel: number, maxLevel: num
     return { minLevel, maxLevel };
 };
 
-export const fetchEnemy = async (e: any): Promise<void> => {
+export const fetchEnemy = async (e: { enemyID: string; level: number; }): Promise<void> => {
     const getOpponent = async () => {
         try { 
             const { minLevel, maxLevel } = getEnemyLevels(e.level); 
@@ -55,7 +55,7 @@ export const fetchEnemy = async (e: any): Promise<void> => {
     EventEmitter.emit('enemy-fetched', opponent);
 };
 
-export const fetchNpc = async (e: any): Promise<void> => { 
+export const fetchNpc = async (e: { enemyID: string; npcType: string; }): Promise<void> => { 
     try {
         const CITY_OPTIONS = {
             'Merchant-Alchemy': 'Alchemist',
@@ -70,8 +70,8 @@ export const fetchNpc = async (e: any): Promise<void> => {
         const getNPC = async () => {
             let npc: NPC = Object.assign({}, Merchant);
             npc.name = 'Traveling ' + CITY_OPTIONS[e.npcType as keyof typeof CITY_OPTIONS];
-            const response = await asceanAPI.getAnimalStats(npc);
-            return { game: npc, combat: response.data.data, enemyID: e.enemyID };
+            const res = await asceanAPI.getAnimalStats(npc);
+            return { game: npc, combat: res.data.data, enemyID: e.enemyID };
         };
         const npc = await getNPC();
         EventEmitter.emit('npc-fetched', npc);

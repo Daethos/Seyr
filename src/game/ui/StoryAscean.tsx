@@ -1,6 +1,6 @@
 import AsceanImageCard from '../../components/AsceanImageCard/AsceanImageCard';
 import Loading from '../../components/Loading/Loading';
-import StoryHealthBar from '../../components/GameCompiler/StoryHealthBar';
+import StoryHealthBar from './StoryHealthBar';
 import LevelUpModal from '../../components/GameCompiler/LevelUpModal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';

@@ -1012,9 +1012,7 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     if (weapTwoCrit >= weapTwoClearance) {
         secondWeaponCrit = true;
     };
-
     
-    // console.log(firstWeaponCrit, secondWeaponCrit)
     computer_weapon_one_physical_damage *= 1 - ((1 - player_physical_defense_multiplier) * (1 - (weapons[0].physical_penetration / 100 )));
     computer_weapon_one_magical_damage *= 1 - ((1 - player_magical_defense_multiplier) * (1 - (weapons[0].magical_penetration  / 100 )));
 
@@ -1037,12 +1035,11 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     const weatherResultTwo = await weatherEffectCheck(weapons[1], computer_weapon_two_magical_damage, computer_weapon_two_physical_damage, combatData.weather, secondWeaponCrit);
     computer_weapon_two_physical_damage = weatherResultTwo.physicalDamage;
     computer_weapon_two_magical_damage = weatherResultTwo.magicalDamage;
-        // =============== WEATHER EFFECTS ================ \\
+    // =============== WEATHER EFFECTS ================ \\
 
     computer_weapon_one_total_damage = computer_weapon_one_physical_damage + computer_weapon_one_magical_damage;
     computer_weapon_two_total_damage = computer_weapon_two_physical_damage + computer_weapon_two_magical_damage;
 
-    // console.log(computer_weapon_one_total_damage, computer_weapon_two_total_damage);
 
     combatData.realized_computer_damage = computer_weapon_one_total_damage + computer_weapon_two_total_damage;
     if (combatData.realized_computer_damage < 0) {
@@ -1100,9 +1097,8 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     
     combatData.computer_action_description = 
         `${computer.name} dual-wield attacks you with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realized_computer_damage)} ${combatData.computer_damage_type} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''}${weapons[1].damage_type[1] ? ' / ' + weapons[1].damage_type[1] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.computer_glancing_blow === true ? 'Damage (Glancing)' : 'Damage'}.`    
-    return (
-        combatData
-    );
+    
+    return combatData;
 };
 
 const computerAttackCompiler = async (combatData, computer_action) => {
@@ -1114,7 +1110,6 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     let player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalDefenseModifier / 100);
     let player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalDefenseModifier / 100);
 
-    // This is for Players's who are Posturing
     if ((combatData.action === 'posture' || combatData.isStalwart) && combatData.computer_counter_success !== true && combatData.computer_roll_success !== true) {
         player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalPosture / 100);
         player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalPosture / 100);
@@ -1642,15 +1637,6 @@ const computerCriticalCompiler = async (combatData, critChance, critClearance, w
         combatData,
         computer_physical_damage,
         computer_magical_damage
-    };
-};
-
-const computerCounterCompiler = async (combatData, player_action, computer_action) => {
-    computer_action = 'attack';
-    await attackCompiler(combatData, computer_action);
-    return {
-        combatData,
-        computer_action
     };
 };
     
@@ -2334,15 +2320,7 @@ const criticalCompiler = async (combatData, critChance, critClearance, weapon, p
         player_physical_damage,
         player_magical_damage
     }
-};
-
-const counterCompiler = async (combatData, player_action, computer_action) => {
-    player_action = 'attack';
-    await attackCompiler(combatData, player_action)
-    return (
-        combatData
-    );
-};
+}; 
 
 const playerRollCompiler = async (combatData, player_action, computer_action) => { 
     const playerRoll = combatData.weapons[0].roll;
@@ -2915,8 +2893,8 @@ const newDataCompiler = async (combatData) => {
         computer_start_description: '',
         player_special_description: '',
         computer_special_description: '',
-        player_action_description: '', // The combat text to inject from the player
-        computer_action_description: '', // The combat text to inject from the computer
+        player_action_description: '', 
+        computer_action_description: '',
         player_influence_description: '',
         computer_influence_description: '',
         player_influence_description_two: '',
@@ -2994,7 +2972,7 @@ const newDataCompiler = async (combatData) => {
     return newData;
 };
 
-function roundToTwoDecimals(num) {
+const roundToTwoDecimals = (num) => {
     const roundedNum = Number(num.toFixed(2));
     if (roundedNum.toString().match(/\.\d{3,}$/)) {
         return parseFloat(roundedNum);
@@ -3111,7 +3089,6 @@ const prayerSplitter = async (combatData, prayer) => {
 
 const instantDamageSplitter = async (combatData, mastery) => {
     let damage = combatData.player[mastery] * 0.5 + combatData.player.level;
-    // console.log(damage, 'Damage');
     combatData.realized_player_damage = damage;
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; 

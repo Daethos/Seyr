@@ -11,29 +11,24 @@ import Preload from './Preload';
 import Menu from './Menu';
 import Play from './Play';
 import StoryAscean from '../ui/StoryAscean';
-import * as asceanAPI from '../../utils/asceanApi';
 import * as eqpAPI from '../../utils/equipmentApi';
-import userService from "../../utils/userService";
 import Button from 'react-bootstrap/Button';
-import { NPC, Player } from '../../components/GameCompiler/GameStore';
-import { CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
+import { Equipment, Player } from '../../components/GameCompiler/GameStore';
+import { CombatData } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
 import CombatUI from '../ui/CombatUI';
 import EnemyUI from '../ui/EnemyUI';
-import screenfull from 'screenfull';
-import StoryJournal from '../../components/GameCompiler/StoryJournal';
+import StoryJournal from '../ui/StoryJournal';
 import { LootDropUI } from '../ui/LootDropUI';
-import { Merchant } from '../../components/GameCompiler/NPCs';
 import { StoryDialog } from '../ui/StoryDialog';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearNpc, getCombatSettingFetch, getCombatTimerFetch, getEnemyActionFetch, setRest, setStalwart } from '../reducers/combatState';
+import { clearNpc, getCombatSettingFetch, getCombatTimerFetch, setRest } from '../reducers/combatState';
 import { getAsceanLevelUpFetch, getGainExperienceFetch, getLootDropFetch, setShowDialog, setMerchantEquipment, setShowLoot } from '../reducers/gameState';
 import PhaserCombatText from '../ui/PhaserCombatText';
-import useSoundEffects from '../phaser/SoundEffects';
 import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
-import { fetchEnemy, fetchNpc, getEnemyLevels } from '../../components/GameCompiler/EnemyConcerns';
+import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -64,11 +59,10 @@ const HostScene = ({ assets, ascean }: Props) => {
     const dispatch = useDispatch();
     const user = useSelector((state: any) => state.user.user);
     const combatState = useSelector((state: any) => state.combat);
-    // const ascean = useSelector((state: any) => state.game.player);
     const asceanState = useSelector((state: any) => state.game.asceanState);
     const gameState = useSelector((state: any) => state.game);
     const stamina = useSelector((state: any) => state.combat.player_attributes.stamina);
-    const { playWO, playReligion } = useGameSounds(gameState.soundEffectVolume);
+    const { playWO, playDeath, playReligion, playCounter, playRoll, playPierce, playSlash, playBlunt, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind } = useGameSounds(gameState.soundEffectVolume);
     const [currentGame, setCurrentGame] = useState<any>(false);
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
@@ -134,7 +128,6 @@ const HostScene = ({ assets, ascean }: Props) => {
                 'VirtualJoysticks/plugin/src/DPad.js',
             ],
         }, 
-        // backgroundColor: 'transparent',
     };
  
     useEffect(() => { 
@@ -214,22 +207,6 @@ const HostScene = ({ assets, ascean }: Props) => {
             dispatch(setMerchantEquipment([])); 
         };
     }; 
-    
-    // const updateEnemyAction = async (e: any): Promise<void> => {
-    //     try {
-    //         console.log(e, 'Enemy Action');
-    //         dispatch(getEnemyActionFetch(e)); 
-    //         if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime); 
-    //         shakeScreen(gameState.shake); 
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error Updating Enemy Action');
-    //     };
-    // };
-    // const updateState = async (e: any) => dispatch(getCombatStateUpdate(e));
-    // const clearNAEnemy = async (e: any) => dispatch(clearNonAggressiveEnemy());
-    // const setupEnemy = async (e: any) => dispatch(getEnemySetupFetch(e)); 
-    // const setupNpc = async (e: any) => dispatch(getNpcSetupFetch(e)); 
-    // const drinkFirewater = async () => dispatch(getDrinkFirewaterFetch(asceanID));   
 
     const handlePlayerLuckout = async (): Promise<void> => {
         try {
@@ -240,8 +217,6 @@ const HostScene = ({ assets, ascean }: Props) => {
             console.log("Error Handling Player Win");
         };
     };
-
-
 
    const setDamageType = async (e: any): Promise<void> => {
         try {    
@@ -261,6 +236,46 @@ const HostScene = ({ assets, ascean }: Props) => {
         };
     }; 
 
+    const soundEffects = async (sfx: CombatData): Promise<void> => {
+        try {
+            const soundEffectMap = {
+                Spooky: playDaethic,
+                Righteous: playDaethic,
+                Wild: playWild,
+                Earth: playEarth,
+                Fire: playFire,
+                Frost: playFrost,
+                Lightning: playLightning,
+                Sorcery: playSorcery,
+                Wind: playWind,
+                Pierce: ((weapon: Equipment) => (weapon.type === "Bow" || weapon.type === "Greatbow")) ? playBow() : playPierce(),
+                Slash: playSlash,
+                Blunt: playBlunt,
+            };
+            if (sfx.realized_player_damage > 0) {
+                const { player_damage_type } = sfx;
+                const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
+                if (soundEffectFn) soundEffectFn(sfx.weapons[0]);
+            };
+            if (sfx.realized_computer_damage > 0) {
+                const { computer_damage_type } = sfx;
+                const soundEffectFn = soundEffectMap[computer_damage_type as keyof typeof soundEffectMap];
+                if (soundEffectFn) soundEffectFn(sfx.computer_weapons[0]);
+            };
+            if (sfx.religious_success === true) playReligion();
+            if (sfx.roll_success === true || sfx.computer_roll_success === true) playRoll();
+            if (sfx.counter_success === true || sfx.computer_counter_success === true) playCounter();
+            if (sfx.player_win) playReligion();
+            if (sfx.computer_win) playDeath();
+            // setTimeout(() => {
+            //     if (sfx.player_win !== true && sfx.computer_win !== true) {
+            //         playCombatRound();
+            //     };
+            // }, 500);
+        } catch (err: any) {
+            console.log(err.message, 'Error Setting Sound Effects')
+        };
+    };
 
     const toggleCombatHud = (e: { preventDefault: () => void; key: string; keyCode: number }) => {
         e.preventDefault();
@@ -283,36 +298,9 @@ const HostScene = ({ assets, ascean }: Props) => {
         if (e.key === ' ' || e.keyCode === 32) togglePause();
     };
 
-    // const toggleFullscreen = () => screenfull.toggle();
-    // const toggleMute = () => {
-    //     const mute = () => {
-    //         let scene = gameRef.current.scene.getScene('Play');
-    //         console.log(scene, 'What is this Scene I made?')
-    //         scene.sound.setMute();
-    //     };
-    //     const unmute = () => {
-    //         let scene = gameRef.current.scene.getScene('Play');
-    //         scene.sound.setMute(false);
-    //     };
-    //     if (!muteState) {
-    //         mute();
-    //         setMuteState(true);
-    //     } else {
-    //         unmute();
-    //         setMuteState(false);
-    //     };
-    // };
     const togglePause = () => {
         const pause = () => gameRef.current.scene.getScene('Play').pause();
         const resume = () => gameRef.current.scene.getScene('Play').resume();
-        // const pause = () => {
-        //     let scene = gameRef.current.scene.getScene('Play');
-        //     scene.pause();
-        // };
-        // const resume = () => {
-        //     let scene = gameRef.current.scene.getScene('Play');
-        //     scene.resume();
-        // };
         if (!pauseState) {
             pause();
             setPauseState(true);
@@ -322,23 +310,12 @@ const HostScene = ({ assets, ascean }: Props) => {
         };
     }; 
 
-    // const combatEngaged = async (e: boolean) => dispatch(getCombatFetch(e)); 
-    // const updateStalwart = async (e: boolean) =>  dispatch(setStalwart(e)); 
     const launchGame = async (e: boolean) => setCurrentGame(e);
     const updateStamina = async (e: number) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e <= 0 ? 0 : prevPercentage - e);
     const interactingLoot = async (e: boolean) => dispatch(setShowLoot(e)); 
     const showDialog = async (e: boolean) => setDialogTag(e);
+    // const handleSoundEffects = async (e: CombatData) => useSoundEffects(e);
 
-    // usePhaserEvent('clear-non-aggressive-enemy', clearNAEnemy);
-    // usePhaserEvent('setup-enemy', setupEnemy);
-    // usePhaserEvent('setup-npc', setupNpc);
-    // usePhaserEvent('combat-engaged', combatEngaged);
-    // usePhaserEvent('drink-firewater', drinkFirewater);
-    // usePhaserEvent('update-state-action', handleInitiate); 
-    // usePhaserEvent('update-state-invoke', handleInstant); 
-    // usePhaserEvent('update-state-consume', handlePrayer); 
-    // usePhaserEvent('update-state', updateState);
-    
     useKeyEvent('keydown', toggleCombatHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('clear-npc', clearNPC);
@@ -353,8 +330,7 @@ const HostScene = ({ assets, ascean }: Props) => {
     usePhaserEvent('launch-game', launchGame);
     usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-combat-timer', updateCombatTimer);
-    // usePhaserEvent('update-stalwart', updateStalwart);
-    // usePhaserEvent('update-enemy-action', updateEnemyAction);
+    usePhaserEvent('update-sound', soundEffects);
  
     return (
         <div style={{ position: "relative", maxWidth: '960px', maxHeight: '643px', margin: '0 auto', border: currentGame ? "" : "3px solid #fdf6d8" }}>

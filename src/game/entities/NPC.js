@@ -89,7 +89,7 @@ export default class NPC extends Entity {
 
     npcFetchedFinishedListener(e) {
         if (this.enemyID !== e.enemyID) return;
-        console.log(e, "NPC Fetched");
+        console.log("NPC Fetched");
         this.ascean = e.game;
         this.health = e.combat.attributes.healthTotal;
         this.combatStats = e.combat;

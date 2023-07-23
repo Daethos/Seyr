@@ -152,12 +152,11 @@ export default class Enemy extends Entity {
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
         this.originPoint = {}; // For Leashing
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        const colliderWidth = 20; // Original width of the collider
-        const colliderHeight = 36; // Original height of the collider
-        const paddingWidth = 10; // Padding to be added to the width
-        const paddingHeight = 10; // Padding to be added to the height
+        const colliderWidth = 20; 
+        const colliderHeight = 36; 
+        const paddingWidth = 10;         
+        const paddingHeight = 10; 
 
-        // Calculate the new width and height with padding
         const paddedWidth = colliderWidth + 2 * paddingWidth;
         const paddedHeight = colliderHeight + 2 * paddingHeight;
         let enemyCollider = Bodies.rectangle(this.x, this.y + 10, colliderWidth, colliderHeight, { isSensor: false, label: 'enemyCollider' });
@@ -173,6 +172,10 @@ export default class Enemy extends Entity {
         this.setFixedRotation();
         this.enemyStateListener();
         this.enemySensor = enemySensor;
+        this.enemyCollision(enemySensor);
+    };
+    
+    enemyCollision = (enemySensor) => {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
             callback: other => {
@@ -246,15 +249,15 @@ export default class Enemy extends Entity {
         });
     };
 
-    createEnemy() {
+    createEnemy = () => {
         const fetch = { enemyID: this.enemyID, level: this.scene.state.player.level };
         EventEmitter.emit('fetch-enemy', fetch);
         EventEmitter.on('enemy-fetched', this.enemyFetchedOn.bind(this));
     };
 
-    enemyFetchedOn(e) {
+    enemyFetchedOn = (e) => {
         if (this.enemyID !== e.enemyID) return;
-        console.log(e, "Enemy Fetched");
+        console.log("Enemy Fetched");
         this.ascean = e.game;
         this.health = e.game.health.total;
         this.combatStats = e.combat; 
@@ -286,7 +289,7 @@ export default class Enemy extends Entity {
         EventEmitter.off('enemy-fetched', this.enemyFetchedOn.bind(this));
     };
 
-    weaponSprite(weapon) {
+    weaponSprite = (weapon) => {
         return weapon.imgURL.split('/')[2].split('.')[0];
     };
  

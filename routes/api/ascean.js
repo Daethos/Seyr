@@ -19,7 +19,6 @@ router.get('/curse/:id', protect, asceanCtrl.curseAscean);
 router.get('/firewater/:id', protect, asceanCtrl.drinkFirewater);
 router.get('/health/:health/:id', protect, asceanCtrl.updateHealth);
 router.get('/kill/:id', protect, asceanCtrl.killAscean);
-router.get('/quests/:id', protect, asceanCtrl.getAsceanQuests);
 router.get('/replenishFirewater/:id', protect, asceanCtrl.replenishFirewater);
 router.get('/restoreFirewater/:id', protect, asceanCtrl.restoreFirewater);
 router.get('/sacrificeExp/:id', protect, asceanCtrl.sacrificeExp);

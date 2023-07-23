@@ -16,6 +16,7 @@ import EventEmitter from '../phaser/EventEmitter';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import { getNodesForNPC, npcIds } from '../../components/GameCompiler/DialogNode';
 import { getAsceanTraits } from '../../components/GameCompiler/PlayerTraits';
+import pako from 'pako';
 
 const compareScores = (a: any, b: any) => {
     if (a[0] === undefined) a[0] = { score: 0 };
@@ -54,6 +55,18 @@ const statFiler = (data: CombatData, win: boolean): Object => {
         deityData: data.deityData,
     };
     return stat;
+};
+export const decompress = (data: any) => {
+    const decompressed = pako.inflate(data, { to: 'string' });
+    return JSON.parse(decompressed);
+};
+export const compress = (data: any) => {
+    const preSize = new Blob([JSON.stringify(data)]).size;
+    console.log(preSize, "Size of Uncompressed Data");
+    const compressed = pako.deflate(JSON.stringify(data), { to: 'string' });
+    const size = new Blob([compressed]).size;
+    console.log(size, "Size of Compressed Data");
+    return compressed;
 };
 
 // ==================== User ====================
@@ -174,11 +187,13 @@ function* workGetCombatTimer(action: any): SagaIterator {
     yield put(setCombatTimer(action.payload));
 };
 function* workGetEnemySetup(action: any): SagaIterator {
+    const compressed = yield call(compress, action.payload);
     const dialog = yield call(getOpponentDialog, action.payload.enemy.name);
     if (dialog) yield put(setDialog(dialog));
     yield put(setEnemy({ enemy: action.payload.enemy, health: action.payload.health, enemyID: action.payload.id, isAggressive: action.payload.isAggressive, startedAggressive: action.payload.startedAggressive, isDefeated: action.payload.isDefeated, isTriumphant: action.payload.isTriumphant }));
 };
 function* workGetNpcSetup(action: any): SagaIterator {
+    const compressed = yield call(compress, action.payload);
     const dialog = yield call(getNodesForNPC, npcIds[action.payload.type]);
     if (dialog) yield put(setDialog(dialog));
     yield put(setNpc({ enemy: action.payload.enemy, health: action.payload.health, enemyID: action.payload.id, npcType: action.payload.type }));
@@ -219,6 +234,7 @@ function* workGetEffectTick(action: any): SagaIterator {
 };
 function* workGetEnemyAction(action: any): SagaIterator {
     try {
+        const compressed = yield call(compress, action.payload);
         const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = action.payload;
         let enemyData: CombatData = {
             ...state,
@@ -241,9 +257,10 @@ function* workGetEnemyAction(action: any): SagaIterator {
         let res = yield call(gameAPI.phaserAction, enemyData);
         yield put(setEnemyActions(res.data));
         yield call(workResolveCombat, res.data);
+        EventEmitter.emit('update-sound', res.data);
         res.data.enemyID = enemyID;
-        EventEmitter.emit('update-combat', res.data);
-        // EventEmitter.emit('update-combat-data', res.data);
+        // EventEmitter.emit('update-combat', res.data);
+        EventEmitter.emit('update-combat-data', res.data);
         setTimeout(() => {
             call(setToggleDamaged, false);
         }, 1500);
@@ -254,6 +271,7 @@ function* workGetEnemyAction(action: any): SagaIterator {
 function* workGetInitiate(action: any): SagaIterator {
     try {
         console.log(action.payload, "Action Initiated");
+        const compressed = yield call(compress, action.payload.combatData);
         const game = yield select((state) => state.game);
         let res: any;
         switch (action.payload.type) {
@@ -275,6 +293,8 @@ function* workGetInitiate(action: any): SagaIterator {
         console.log(res.data, "Initiate Response");
         yield put(setCombatResolution(res.data));
         yield call(workResolveCombat, res.data);
+        EventEmitter.emit('update-sound', res.data);
+        
         // EventEmitter.emit('update-combat-data', res.data);
         // EventEmitter.emit('update-combat', res.data);
         setTimeout(() => {

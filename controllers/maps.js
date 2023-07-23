@@ -1,14 +1,12 @@
 const Ascean = require('../models/ascean');
 const Map = require('../models/map');
 const WorldMap = require('../services/worldServices.js');
-const ArenaMap = require('../services/arenaServices.js');
 const zlib = require('zlib');
 
 module.exports = {
     createMap,
     saveMap,
     fetchMap,
-    arenaMap
 };
 
 async function fetchMap(req, res) {
@@ -40,17 +38,7 @@ async function createMap(req, res) {
         console.log(err.message, "Error Creating Map");
         res.status(400).json(err);
     };
-};
-
-async function arenaMap(req, res) {
-    try {
-        const map = new ArenaMap(req.body.name, req.body.ascean);
-        res.status(201).json(map);
-    } catch (err) {
-        console.log(err.message, "Error Creating Map");
-        res.status(400).json(err);
-    };
-};
+}; 
 
 async function saveMap(req, res) {
     try {

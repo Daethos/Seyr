@@ -1,5 +1,7 @@
+import { Player } from "./GameStore";
+
 interface CurrencyProps {
-    ascean: any;
+    ascean: Player;
 };
 const Currency = ({ ascean }: CurrencyProps) => {
     return (

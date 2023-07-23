@@ -25,17 +25,15 @@ export default class CombatMachine extends StateMachine {
     };
 
     actionHandlers = {
-        Weapon: (data: any) => Dispatcher.weaponAction(this.dispatch, data),
-        Instant: (data: any) => Dispatcher.instantAction(this.dispatch, data),
-        Prayer: (data: any) => Dispatcher.prayerAction(this.dispatch, data),
+        Weapon: (data: CombatData) => Dispatcher.weaponAction(this.dispatch, data),
+        Instant: (data: CombatData) => Dispatcher.instantAction(this.dispatch, data),
+        Prayer: (data: CombatData) => Dispatcher.prayerAction(this.dispatch, data),
         Enemy: (data: any) => this.sendEnemyActionListener(data),
     };
 
     stateListener = async () => EventEmitter.on('update-combat-data', (e: CombatData) => this.state = e);
 
-    addAction = (action: Action): void => {
-        this.actionQueue.push(action);
-    };
+    addAction = (action: Action): number => this.actionQueue.push(action);
 
     processActions = (): void => {
         while (this.actionQueue.length > 0) {
@@ -54,8 +52,8 @@ export default class CombatMachine extends StateMachine {
 
     sendEnemyActionListener = (data: any): void => {
         console.log('sendEnemyActionListener'); 
-            const newData = { ...data, state: this.state };
-            Dispatcher.enemyAction(this.dispatch, newData);
+        const newData = { ...data, state: this.state };
+        Dispatcher.enemyAction(this.dispatch, newData);
     };
 
     sendStateActionListener = (state: CombatData): void => { // Was Async
