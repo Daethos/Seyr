@@ -27,13 +27,12 @@ class StatusEffect {
         let id = this.name + '_' + this.startTime + '_' + this.endTime;
         return id;
     };
-
     setSpecial = (prayer) => {
         const specials = ['Avarice', 'Denial', 'Dispel', 'Silence'];
         return specials.includes(prayer) ? true : false;
     };
 
-    static getDeity() {
+    static getDeity = () => {
         return this.deity;
     };
     static updateEffectStack(statusEffect, combatData, player, weapon, attributes, prayer) {
@@ -279,20 +278,73 @@ class StatusEffect {
         // Make the functions for the various status effects
         switch (prayer) {
             case "Buff": {
-                return this.effect = this.buff(potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.buff(potentialModifiers, realizedModifiers);
             };
             case "Damage": {
-                return this.effect = this.damage(potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.damage(potentialModifiers, realizedModifiers);
             };
             case "Debuff": {
-                return this.effect = this.debuff(potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.debuff(potentialModifiers, realizedModifiers);
             };
             case "Heal": {
-                return this.effect = this.heal(potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.heal(potentialModifiers, realizedModifiers);
             };
         };
         return this.effect = realizedModifiers;
-    }; 
+    };
+    
+    static buff(potentialModifiers, realizedModifiers) {
+        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture * 100) / 100 : 0;
+        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture * 100) / 100 : 0;
+        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll * 100) / 100 : 0;
+        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge * 100) / 100 : 0;
+        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance * 100) / 100 : 0;
+        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage * 100) / 100 : 0;
+        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration * 100) / 100 : 0;
+        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration * 100) / 100 : 0;
+        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage * 100) / 100 : 0;
+        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage * 100) / 100 : 0;
+        
+        let cleanSlate = {};
+        for (let key in realizedModifiers) {
+            if (realizedModifiers[key] !== 0) {
+                cleanSlate[key] = realizedModifiers[key];
+            };
+        };
+        return cleanSlate;
+    };
+    static damage(potentialModifiers, realizedModifiers) {
+        realizedModifiers.damage = potentialModifiers.damage;
+        return realizedModifiers;
+    };
+    static debuff(potentialModifiers, realizedModifiers) {
+        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
+        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture * 100) / 100 : 0;
+        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture * 100) / 100 : 0;
+        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll * 100) / 100 : 0;
+        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge * 100) / 100 : 0;
+        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance * 100) / 100 : 0;
+        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage * 100) / 100 : 0;
+        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration * 100) / 100 : 0;
+        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration * 100) / 100 : 0;
+        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage * 100) / 100 : 0;
+        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage * 100) / 100 : 0;
+    
+        let cleanSlate = {};
+        for (let key in realizedModifiers) {
+            if (realizedModifiers[key] !== 0) {
+                cleanSlate[key] = realizedModifiers[key];
+            };
+        };
+        return cleanSlate;
+    };
+    static heal(potentialModifiers, realizedModifiers) {
+        realizedModifiers.healing = potentialModifiers.healing;
+        return realizedModifiers;
+    };
 
     setName(deity) {
         return this.name = `Gift of ${deity}`;
@@ -630,75 +682,20 @@ class StatusEffect {
         // Make the functions for the various status effects
         switch (prayer) {
             case "Buff": {
-                return this.effect = this.buff(potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.buff(potentialModifiers, realizedModifiers);
             };
             case "Damage": {
-                return this.effect = this.damage(potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.damage(potentialModifiers, realizedModifiers);
             };
             case "Debuff": {
-                return this.effect = this.debuff(potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.debuff(potentialModifiers, realizedModifiers);
             };
             case "Heal": {
-                return this.effect = this.heal(potentialModifiers, realizedModifiers);
+                return this.effect = StatusEffect.heal(potentialModifiers, realizedModifiers);
             };
         };
         return this.effect = realizedModifiers;
-    };
-
-    buff(potentialModifiers, realizedModifiers) {
-
-        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
-        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
-        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture * 100) / 100 : 0;
-        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture * 100) / 100 : 0;
-        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll * 100) / 100 : 0;
-        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge * 100) / 100 : 0;
-        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance * 100) / 100 : 0;
-        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage * 100) / 100 : 0;
-        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration * 100) / 100 : 0;
-        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration * 100) / 100 : 0;
-        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage * 100) / 100 : 0;
-        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage * 100) / 100 : 0;
-        
-        let cleanSlate = {};
-        for (let key in realizedModifiers) {
-            if (realizedModifiers[key] !== 0) {
-                cleanSlate[key] = realizedModifiers[key];
-            };
-        };
-        return cleanSlate;
-    };
-    damage(potentialModifiers, realizedModifiers) {
-        realizedModifiers.damage = potentialModifiers.damage;
-        return realizedModifiers;
-    };
-    debuff(potentialModifiers, realizedModifiers) {
-        
-        realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
-        realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
-        realizedModifiers.physicalPosture = potentialModifiers.physicalPosture ? Math.round(potentialModifiers.physicalPosture * 100) / 100 : 0;
-        realizedModifiers.magicalPosture = potentialModifiers.magicalPosture ? Math.round(potentialModifiers.magicalPosture * 100) / 100 : 0;
-        realizedModifiers.roll = potentialModifiers.roll ? Math.round(potentialModifiers.roll * 100) / 100 : 0;
-        realizedModifiers.dodge = potentialModifiers.dodge ? Math.round(potentialModifiers.dodge * 100) / 100 : 0;
-        realizedModifiers.critical_chance = potentialModifiers.critical_chance ? Math.round(potentialModifiers.critical_chance * 100) / 100 : 0;
-        realizedModifiers.critical_damage = potentialModifiers.critical_damage ? Math.round(potentialModifiers.critical_damage * 100) / 100 : 0;
-        realizedModifiers.physical_penetration = potentialModifiers.physical_penetration ? Math.round(potentialModifiers.physical_penetration * 100) / 100 : 0;
-        realizedModifiers.magical_penetration = potentialModifiers.magical_penetration ? Math.round(potentialModifiers.magical_penetration * 100) / 100 : 0;
-        realizedModifiers.physical_damage = potentialModifiers.physical_damage ? Math.round(potentialModifiers.physical_damage * 100) / 100 : 0;
-        realizedModifiers.magical_damage = potentialModifiers.magical_damage ? Math.round(potentialModifiers.magical_damage * 100) / 100 : 0;
-    
-        let cleanSlate = {};
-        for (let key in realizedModifiers) {
-            if (realizedModifiers[key] !== 0) {
-                cleanSlate[key] = realizedModifiers[key];
-            };
-        };
-        return cleanSlate;
-    };
-    heal(potentialModifiers, realizedModifiers) {
-        realizedModifiers.healing = potentialModifiers.healing;
-        return realizedModifiers;
-    };
+    }; 
     setDescription(combatData, player, enemy, weapon, attributes, prayer) {
         let duration = this.setDuration(player);
         let effect = this.setEffect(combatData, player, weapon, attributes, prayer);
@@ -709,7 +706,7 @@ class StatusEffect {
         let description = `${weapon.influences[0]} has channeled a gift through their sigil, ${article} ${weapon.name}, ${prayer === 'Debuff' ? `cursing ${enemy.name}` : prayer === 'Heal' ? `renewing ${player.name} for ${Math.round(effect.healing * 0.33)} per round` : prayer === 'Damage' ? `damaging ${enemy.name} for ${Math.round(effect.damage * 0.33)} per round` : `blessing ${player.name}`} for ${duration} combat rounds [Initial].`;
         return this.description = description;
     };
-    setImgURL(weap) {
+    setImgURL = (weap) => {
         return this.imgURL = weap.imgURL;
     };
 };

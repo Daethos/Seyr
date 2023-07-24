@@ -151,8 +151,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             const sensorDisp = 12;
             const colliderDisp = 16;
             if (this.isRolling) {
-                if (this.scene.state.action !== 'roll') this.scene.setState('computer_action', 'roll');
-                if (this.scene.state.counter_guess !== '') this.scene.setState('computer_counter_guess', '');
+                // if (this.scene.state.action !== 'roll') this.scene.setState('computer_action', 'roll');
+                // if (this.scene.state.counter_guess !== '') this.scene.setState('computer_counter_guess', '');
                 this.body.parts[2].position.y += sensorDisp;
                 this.body.parts[2].circleRadius = 21;
                 this.body.parts[1].vertices[0].y += colliderDisp;

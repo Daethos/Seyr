@@ -294,18 +294,17 @@ export default class Enemy extends Entity {
     };
  
     enemyStateListener() {
-        EventEmitter.on('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
+        EventEmitter.on('update-combat', this.combatDataUpdate); // Formerly 'update-combat'
 
-        // EventEmitter.on('update-combat-data', (e) => {
-            // if (this.enemyID !== e.enemyID) return; 
-            // console.log(e.new_computer_health, "Update Combat Data");
-            // this.health = e.new_computer_health;
-            // if (this.healthbar) this.updateHealthBar(this.health);
-            // if (e.new_computer_health <= 0) {
-            //     // this.stateMachine.setState(States.DEATH);
-            //     this.stateMachine.setState(States.DEFEATED);
-            // };
-        // });
+        EventEmitter.on('update-combat-data', (e) => {
+            if (this.enemyID !== e.enemyID) return; 
+            this.health = e.new_computer_health;
+            if (this.healthbar) this.updateHealthBar(this.health);
+            if (e.new_computer_health <= 0) {
+                // this.stateMachine.setState(States.DEATH);
+                this.stateMachine.setState(States.DEFEATED);
+            };
+        });
     };
 
     combatDataUpdate = (e) => {
@@ -329,7 +328,7 @@ export default class Enemy extends Entity {
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
         };
         if (this.health > e.new_computer_health) {
-            console.log(`${e.player.name} Dealt ${Math.round(e.realized_player_damage)} Damage To ${e.computer.name}`);
+            console.log(`${e.player.name} Dealt ${Math.round(e.realized_player_damage)} Damage To ${this.ascean.name}`);
             this.health = e.new_computer_health;
             if (this.healthbar) this.updateHealthBar(this.health);
             if (e.new_computer_health <= 0) {
@@ -343,7 +342,7 @@ export default class Enemy extends Entity {
             this.isStunned = true;
         }; 
         if (e.new_player_health <= 0) {
-            console.log(`${e.computer.name} Has Defeated ${e.player.name}`);
+            console.log(`${this.ascean.name} Has Defeated ${e.player.name}`);
             if (!this.stateMachine.isCurrentState(States.LEASH)) this.stateMachine.setState(States.LEASH);
             this.inCombat = false;
             this.attacking = null;
@@ -584,7 +583,7 @@ export default class Enemy extends Entity {
         this.counter();
     };
     onCounterUpdate = (dt) => {
-        if (this.frameCount === 5) this.scene.setState('computer_action', 'counter');
+        if (this.frameCount === 5 && !this.isRanged) this.scene.setState('computer_action', 'counter');
         if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isCountering) this.evaluateCombatDistance();
     };
@@ -702,7 +701,12 @@ export default class Enemy extends Entity {
     enemyActionSuccess = () => {
         if (this.scene.state.computer_action === '') return;
         console.log("Enemy Action Success");
-        this.scene.sendEnemyActionListener(this.enemyID, this.ascean, this.currentDamageType, this.combatStats, this.weapons, this.health, { action: this.currentAction, counter: this.counterAction }, this.isCurrentTarget);
+        if (this.isCurrentTarget) {
+            this.scene.combatMachine.add({ type: 'Weapon', data: this.scene.state })
+        } else {
+            this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.currentAction, counter: this.counterAction }}})
+            // this.scene.sendEnemyActionListener(this.enemyID, this.ascean, this.currentDamageType, this.combatStats, this.weapons, this.health, { action: this.currentAction, counter: this.counterAction }, this.isCurrentTarget);
+        };
         if (this.particleEffect) {
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();

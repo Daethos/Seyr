@@ -4,6 +4,26 @@ import * as eqpAPI from '../../utils/equipmentApi';
 import HostScene from '../../game/scenes/HostScene';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGameFetch } from '../../game/reducers/gameState';
+import EventEmitter from '../../game/phaser/EventEmitter';
+
+export const usePhaserEvent = (event: string, callback: any) => {
+    useEffect(() => {
+        EventEmitter.on(event, callback);
+        return () => {
+            EventEmitter.off(event, callback);
+        };
+    }, [event, callback]);
+}; 
+
+export const useKeyEvent = (event: string, callback: any) => {
+    useEffect(() => { 
+        const eventListener = (event: Event) => callback(event);
+        window.addEventListener(event, eventListener);
+        return () => {
+            window.removeEventListener(event, eventListener);
+        };
+    }, [event, callback]);
+}; 
 
 const Story = () => {
     const { asceanID } = useParams();

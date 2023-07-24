@@ -260,7 +260,7 @@ export default class Player extends Entity {
                 this.touching = this.touching.filter(obj => obj.enemyID !== e.enemyID);
             };
 
-            this.checkMeleeOrRanged(e.weapons[0]);
+            this.checkMeleeOrRanged(e.weapons[0]); 
         });
 
         EventEmitter.on('update-combat', (e) => {
@@ -271,7 +271,7 @@ export default class Player extends Entity {
             if (e.player_win) {
                 let damage = 'Victory!';
                 this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 3000, 'effect', true);    
-            };
+            };    
         });
     }; 
  
@@ -394,7 +394,8 @@ export default class Player extends Entity {
     playerActionSuccess = async () => {
         console.log("Player Action Success");
         if (this.scene.state.action === '') return;
-        await this.scene.sendStateActionListener();
+        // await this.scene.sendStateActionListener();
+        this.scene.combatMachine.add({ type: 'Weapon', data: this.scene.state });
         if (this.particleEffect) {
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();
@@ -444,7 +445,7 @@ export default class Player extends Entity {
         };
     }; 
     onAttackExit = () => {
-        this.scene.setState('action', '');
+        if (this.scene.state.action !== '') this.scene.setState('action', '');
     };
 
     onCounterEnter = () => {
@@ -453,7 +454,7 @@ export default class Player extends Entity {
         this.scene.checkStamina('counter');
     };
     onCounterUpdate = (dt) => {
-        if (this.frameCount === 5) {
+        if (this.frameCount === 5 && !this.isRanged) {
             this.scene.setState('action', 'counter');
             console.log("Counter LIVE");
         };
@@ -466,8 +467,8 @@ export default class Player extends Entity {
         };
     };
     onCounterExit = () => {
-        this.scene.setState('action', '');
-        this.scene.setState('counter_guess', '');
+        if (this.scene.state.action !== '') this.scene.setState('action', '');
+        if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
     };
 
     onPostureEnter = () => {
@@ -490,7 +491,7 @@ export default class Player extends Entity {
         };
     };
     onPostureExit = () => {
-        this.scene.setState('action', '');
+        if (this.scene.state.action !== '') this.scene.setState('action', '');
     };
 
     onRollEnter = () => {
@@ -499,7 +500,7 @@ export default class Player extends Entity {
         this.scene.checkStamina('roll');
     };
     onRollUpdate = (dt) => {
-        if (this.frameCount === 10) this.scene.setState('action', 'roll');
+        if (this.frameCount === 10 && !this.isRanged) this.scene.setState('action', 'roll');
         if (!this.isRolling) { 
             if (this.inCombat) {
                 this.stateMachine.setState(States.COMBAT); 
@@ -567,7 +568,8 @@ export default class Player extends Entity {
         };
     };
     onInvokeExit = () => {
-        this.scene.sendStateSpecialListener('invoke');
+        // this.scene.sendStateSpecialListener('invoke');
+        this.scene.combatMachine.add({ type: 'Instant', data: this.scene.state });
         screenShake(this.scene);
     };
 
@@ -606,7 +608,7 @@ export default class Player extends Entity {
 
     checkTouching = () => {
         this.touching = this.touching.filter(gameObject => {
-            if (gameObject.isDead || (gameObject.isEnemy && !gameObject.inCombat)) {
+            if (gameObject.isDead) { // || (gameObject.isEnemy && !gameObject.inCombat)
                 console.log("Removing from touching array", gameObject, gameObject.inCombat, gameObject.isEnemy, gameObject.isDead);
                 return false;    
             };
@@ -624,6 +626,10 @@ export default class Player extends Entity {
                 this.inCombat = true;
             };
         };
+        if (this.inCombat && this.touching.every((gameObject) => !gameObject.inCombat)) {
+            this.scene.combatEngaged(false);
+            this.inCombat = false;
+        };
     };
 
     zeroOutVelocity = (velocityDirection, deceleration) => {
@@ -636,7 +642,6 @@ export default class Player extends Entity {
         };
         return velocityDirection;
     };
-
 
     handleActions = () => {
         // =================== TARGETING ================== \\
@@ -726,9 +731,8 @@ export default class Player extends Entity {
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
                 if (this.scene.state.playerEffects.length === 0) return;
                 this.isConsuming = true;
-                // this.scene.setState('prayerSacrifice', this.scene.state.playerEffects[0].prayer);
-                // this.scene.setState('prayerSacrificeName', this.scene.state.playerEffects[0].name);
-                this.scene.sendStateSpecialListener('consume');
+                // this.scene.sendStateSpecialListener('consume');
+                this.scene.combatMachine.add({ type: 'Consume', data: this.scene.state });
                 screenShake(this.scene);
             };
         };
@@ -747,8 +751,6 @@ export default class Player extends Entity {
 
     };
     handleAnimations = () => {
-
-
         if (this.isStunned) {
             this.setVelocity(0);
         } else if (this.isHurt) {

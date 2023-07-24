@@ -45,7 +45,7 @@ export default class Play extends Phaser.Scene {
         this.navMesh = null;
         this.isPlayerOnGround = true;
         this.isPlayerHanging = false;
-
+        this.combatMachine = null;
         this.isEnemyHanging = false;
         this.isEnemyOnGround = true;
         this.minimap = null;
@@ -100,7 +100,7 @@ export default class Play extends Phaser.Scene {
         this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
 
         // ================= Combat Machine ================= \\
-        this.combatMachine = new CombatMachine(this, undefined, this.dispatch);
+        this.combatMachine = new CombatMachine(this, this.dispatch);
 
         this.player.inputKeys = {
             up: this.input.keyboard.addKeys('W,UP'),
@@ -151,7 +151,7 @@ export default class Play extends Phaser.Scene {
         });
         this.particleManager = new ParticleManager(this);
         this.createWelcome(); 
-        this.createStateListener(); 
+        this.stateListener(); 
         this.staminaListener();
         this.enemyLootDropListener();
         this.enemyStateListener();
@@ -167,83 +167,20 @@ export default class Play extends Phaser.Scene {
         });
     };
 
-    enemyLootDropListener = () => { 
-        EventEmitter.on('enemyLootDrop', (e) => {
-            console.log(e, "enemyLootDrop");
-            e.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID: e.enemyID, drop })));
-        });
-    };
-
-    startJoystick(pointer) {
-        if (pointer.leftButtonDown()) {
-            this.player.joystick.isActive = true;
-        };
-    };
-    
-    stopJoystick(pointer) {
-        if (!pointer.leftButtonDown()) {
-            this.player.joystick.isActive = false;
-        };
-    };
-
-    handleJoystickUpdate() {
-        const force = this.player.joystick.force;
-        const angle = this.player.joystick.angle;
-        if (force > 16) {
-            let speedX = 0;
-            let speedY = 0;
-            if (angle > -60 && angle < 60) {
-                if (this.player.flipX) this.player.flipX = false;
-                speedX = 3;
-            };
-            if (angle > 30 && angle < 150) {
-                speedY = 3;
-            };
-            if (angle > 120 || angle < -120) {
-                speedX = -3;
-                if (!this.player.flipX) this.player.flipX = true;
-            };
-            if (angle > -150 && angle < -30) {
-                speedY = -3;
-            };
-            this.player.setVelocity(speedX, speedY); 
-        };
-    };
-
+    enemyLootDropListener = () => EventEmitter.on('enemyLootDrop', (e) => { e.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID: e.enemyID, drop }))); });
     clearNonAggressiveEnemy = async () => this.dispatch(clearNonAggressiveEnemy()); 
-
-    clearNPC = async () => {
-        EventEmitter.emit('clear-npc');
-    };
-
+    clearNPC = async () => EventEmitter.emit('clear-npc');
     setupEnemy = async (data) => this.dispatch(getEnemySetupFetch(data)); 
-
     setupNPC = async (data) => this.dispatch(getNpcSetupFetch(data));
-
     combatEngaged = async (engagement) => {
         console.log('combatEngaged', engagement);
         if (engagement) { this.combat = true; } else { this.combat = false; };
         this.dispatch(getCombatFetch(engagement));
     };
-
+    stateListener = async () => EventEmitter.on('update-combat-data', (e) => this.state = e); 
     showDialog = async (dialog) => EventEmitter.emit('show-dialog', dialog);
     stalwart = async (update) => this.dispatch(setStalwart(update));
-
-    createStateListener = async () => { // Was window.addEventListener()
-        EventEmitter.on('update-combat-data', (e) => {
-            this.state = e;
-        });
-
-        EventEmitter.on('update-game-data', (e) => {
-            this.gameState = e;
-        });
-    };
-
-    staminaListener = async () => {
-        EventEmitter.on('updated-stamina', (e) => {
-            this.player.stamina = e;
-        });
-    };
+    staminaListener = async () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e);
 
     sendEnemyActionListener = async (enemyID, enemy, damageType, combatStats, weapons, health, actionData, currentTarget) => {
         console.log('sendEnemyActionListener');
@@ -252,15 +189,9 @@ export default class Play extends Phaser.Scene {
             await this.dispatch(getEnemyActionFetch(data));
         } else {
             if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
-                const playerAction = this.state.action;
-                const actionReset = async (action) => {
-                    this.setState('action', '').then(() => {
-                        this.sendStateActionListener();
-                    }).then(() => {
-                        this.setState('action', action); // Resetting Action in case it 'deserves' to exist
-                    });
-                };
-                await actionReset(playerAction);
+                const actionReset = async () => this.setState('action', '');
+                await actionReset();
+                this.sendStateActionListener();
             } else {
                 this.sendStateActionListener();
             };
@@ -393,10 +324,49 @@ export default class Play extends Phaser.Scene {
         EventEmitter.emit('update-combat-timer', this.combatTime);
     };
 
+    // ================= Joystick ================= \\
+    startJoystick(pointer) {
+        if (pointer.leftButtonDown()) {
+            this.player.joystick.isActive = true;
+        };
+    };
+    
+    stopJoystick(pointer) {
+        if (!pointer.leftButtonDown()) {
+            this.player.joystick.isActive = false;
+        };
+    };
+
+    handleJoystickUpdate() {
+        const force = this.player.joystick.force;
+        const angle = this.player.joystick.angle;
+        if (force > 16) {
+            let speedX = 0;
+            let speedY = 0;
+            if (angle > -60 && angle < 60) {
+                if (this.player.flipX) this.player.flipX = false;
+                speedX = 3;
+            };
+            if (angle > 30 && angle < 150) {
+                speedY = 3;
+            };
+            if (angle > 120 || angle < -120) {
+                speedX = -3;
+                if (!this.player.flipX) this.player.flipX = true;
+            };
+            if (angle > -150 && angle < -30) {
+                speedY = -3;
+            };
+            this.player.setVelocity(speedX, speedY); 
+        };
+    };
+
+    // ================== Update ================== \\
     update() {
         this.player.update(); 
         this.enemies.forEach((enemy) => enemy.update());
         this.npcs.forEach((npc) => npc.update());
+        this.combatMachine.processor();
     };
     pause() {
         this.scene.pause();

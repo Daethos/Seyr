@@ -276,21 +276,15 @@ const deities = {
 
 const checkDeificConcerns = async (statistics, worship, stat, innerStat) => {
     try {
-        console.log(statistics, stat, worship, "Statistics and stat");
         const deity = deities[worship];
-        console.log(deity, "Deity in question");
         const statConcerns = deity[stat];
-        console.log(statConcerns, "Stat Concerns");
         if (statConcerns) {
             const innerStatConcerns = statConcerns[innerStat];
-            console.log(innerStatConcerns, "Inner Stat Concerns");
             if (innerStatConcerns) {
                 statistics.relationships.deity.value += innerStatConcerns;
             };
         };
-
         return statistics;
-        
     } catch (err) {
         console.log(err, "Error Checking Deific stats");
     };

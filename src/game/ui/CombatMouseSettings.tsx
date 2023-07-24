@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useKeyEvent } from '../scenes/HostScene';
 import { useDispatch } from 'react-redux';
 import { getCombatSettingFetch } from '../reducers/combatState';
 import useGameSounds from '../../components/GameCompiler/Sounds';
+import { useKeyEvent } from '../../pages/Story/Story';
 
 interface CombatMouseSettingsProps {
     setPrayerBlessing: (prayer: any) => void;
@@ -21,10 +21,9 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, wea
     const [selectedHighlight, setSelectedHighlight] = useState<string>('');
     const [scrollEnabled, setScrollEnabled] = useState(false);
   
-    const handleWheelRotation = (event: WheelEvent) => {
+    const handleWheelRotation = (event: WheelEvent): void => {
         if (!scrollEnabled) return;
-        console.log(event.deltaY, "deltaY");
-        const direction = event.deltaY > 0 ? 1 : -1; // Check the deltaY value of the wheel event to determine the rotation direction
+        const direction = event.deltaY > 0 ? 1 : -1; 
     
         if (selectedHighlight === 'Prayer') {
             const newIndex = (selectedPrayerIndex + direction + prayers.length) % prayers.length;
@@ -48,7 +47,7 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, wea
         };
     };
 
-    const handleShiftKey = (event: KeyboardEvent) => {
+    const handleShiftKey = (event: KeyboardEvent): void => {
         event.preventDefault();
         if (event.shiftKey) {
             if (selectedHighlight === 'Weapon') {
@@ -61,11 +60,9 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, wea
         };
     };
 
-    const handleToggleScroll = () => {
-        setScrollEnabled((prevScrollEnabled) => !prevScrollEnabled);
-    };
+    const handleToggleScroll = (): void => setScrollEnabled((prevScrollEnabled) => !prevScrollEnabled);
     
-    const mapTypes = (types: any[]) => {
+    const mapTypes = (types: any[]): any[] => {
         let newTypes: any[] = []; 
         for (let i = 0; i < types.length; i++) {
             newTypes.push(

@@ -29,25 +29,7 @@ import { getAsceanLevelUpFetch, getGainExperienceFetch, getLootDropFetch, setSho
 import PhaserCombatText from '../ui/PhaserCombatText';
 import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
-
-export const usePhaserEvent = (event: string, callback: any) => {
-    useEffect(() => {
-        EventEmitter.on(event, callback);
-        return () => {
-            EventEmitter.off(event, callback);
-        };
-    }, [event, callback]);
-}; 
-
-export const useKeyEvent = (event: string, callback: any) => {
-    useEffect(() => { 
-        const eventListener = (event: Event) => callback(event);
-        window.addEventListener(event, eventListener);
-        return () => {
-            window.removeEventListener(event, eventListener);
-        };
-    }, [event, callback]);
-}; 
+import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
 
 interface Props {
     ascean: Player;
@@ -66,7 +48,6 @@ const HostScene = ({ assets, ascean }: Props) => {
     const [currentGame, setCurrentGame] = useState<any>(false);
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
-    const [muteState, setMuteState] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [dialogTag, setDialogTag] = useState<boolean>(false);
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
@@ -145,7 +126,6 @@ const HostScene = ({ assets, ascean }: Props) => {
                 const timerInterval = setTimeout(() => {
                     setGameTimer((timer: number) => (timer + 1));
                 }, 1000);
-                
                 return () => {
                     if (checkTraits("Kyn'gian", gameState.traits) && gameTimer % 10 === 0) {
                         setStaminaPercentage(staminaPercentage + (stamina / 100));
@@ -200,7 +180,7 @@ const HostScene = ({ assets, ascean }: Props) => {
     const updateCombatTimer = async (e: number) => dispatch(getCombatTimerFetch(e)); 
     const deleteEquipment = async (eqp: any): Promise<void> => await eqpAPI.deleteEquipment(eqp);
 
-    const clearNPC = async (e: any): Promise<void> => {
+    const clearNPC = async (): Promise<void> => {
         dispatch(clearNpc()); 
         if (gameState.merchantEquipment.length > 0) {
             await deleteEquipment(gameState.merchantEquipment);
@@ -267,11 +247,6 @@ const HostScene = ({ assets, ascean }: Props) => {
             if (sfx.counter_success === true || sfx.computer_counter_success === true) playCounter();
             if (sfx.player_win) playReligion();
             if (sfx.computer_win) playDeath();
-            // setTimeout(() => {
-            //     if (sfx.player_win !== true && sfx.computer_win !== true) {
-            //         playCombatRound();
-            //     };
-            // }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
         };
@@ -314,7 +289,6 @@ const HostScene = ({ assets, ascean }: Props) => {
     const updateStamina = async (e: number) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e <= 0 ? 0 : prevPercentage - e);
     const interactingLoot = async (e: boolean) => dispatch(setShowLoot(e)); 
     const showDialog = async (e: boolean) => setDialogTag(e);
-    // const handleSoundEffects = async (e: CombatData) => useSoundEffects(e);
 
     useKeyEvent('keydown', toggleCombatHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);

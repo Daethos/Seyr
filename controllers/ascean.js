@@ -86,7 +86,6 @@ const FIELDS = [
 async function recordSedyrist(req, res) {
     try {
         let { asceanID, successes, failures, total, totalValue } = req.body;
-        console.log(asceanID, successes, failures, total, totalValue, "destructured req.body")
         let ascean = await Ascean.findById(asceanID);
         ascean.statistics.sedyrist.successes += successes;
         ascean.statistics.sedyrist.failures += failures;
@@ -107,7 +106,6 @@ async function recordSedyrist(req, res) {
 async function recordThievery(req, res) {
     try {
         let { asceanID, successes, failures, total, totalValue } = req.body;
-        console.log(asceanID, successes, failures, total, totalValue, "destructured req.body")
         let ascean = await Ascean.findById(asceanID);
         ascean.statistics.thievery.successes += successes;
         ascean.statistics.thievery.failures += failures;
@@ -128,11 +126,9 @@ async function recordThievery(req, res) {
 async function recordNonCombatStatistic(req, res) {
     try {
         let { asceanID, name, type, successes, failures, total } = req.body;
-        console.log(asceanID, name, type, successes, failures, total, "destructured req.body");
         let ascean = await Ascean.findById(asceanID);
         let statistic = ascean.statistics[name];
         let newType = type.toLowerCase();
-        console.log(statistic[newType], newType, "Statistic and Type of");
         if (statistic) {
             statistic[newType].successes += successes;
             statistic[newType].failures += failures;
@@ -145,7 +141,6 @@ async function recordNonCombatStatistic(req, res) {
             const newStats = await checkDeificConcerns(ascean.statistics, ascean.statistics.relationships.deity.name, name, newType);
             ascean.statistics = newStats;
         };
-        console.log(ascean.statistics[newType], "in record non-combat statistic saved ?");
         await ascean.save();
         res.status(200).json(ascean.statistics);
     } catch (err) {
@@ -671,7 +666,6 @@ async function persistAscean(req, res) {
             default:
                 break;
         };
-        console.log(req.body.achre, nAch, pAch, "Achre - Pre, New, Bonus")
         let weapon = await imprintEquipment(previous.weapon_one);
         let shield = await imprintEquipment(previous.shield);
         let helmet = await imprintEquipment(previous.helmet);
@@ -819,7 +813,6 @@ async function drinkFirewater(req, res) {
                 "firewater.charges": -1,
             },
         }, { new: true });
-        console.log(ascean.firewater, ascean.health.current, ascean.health.total, "Drinking Firewater")
         const healing = ascean.health.total * 0.4;
         ascean.health.current += healing;
         ascean.health.current = ascean.health.current > ascean.health.total ? ascean.health.total : ascean.health.current;
@@ -840,7 +833,6 @@ async function replenishFirewater(req, res) {
         ascean.experience -= cost < 0 ? ascean.experience : cost;
         if (ascean.experience < 0) ascean.experience = 0;
         await ascean.save();
-        console.log(ascean.firewater, "Firewater After Saving Replenish")
         res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Replenish Firewater!')
@@ -851,9 +843,7 @@ async function replenishFirewater(req, res) {
 async function updateHealth(req, res) {
     try {
         let ascean = await Ascean.findById(req.params.id);
-        console.log(ascean.health, "Current Health Object");
         ascean.health.current = req.params.health;
-        console.log(ascean.health, "Updated Health Object");
         await ascean.save();
         res.status(201).json(ascean);
     } catch (err) {
@@ -890,22 +880,17 @@ async function restoreFirewater(req, res) {
     try {
         let ascean = await Ascean.findById(req.params.id);
         const cost = (5 - ascean.firewater.charges) * 10;
-        console.log(cost, "Cost of Restoring Firewater")
         ascean.firewater.charges = 5;
         if (ascean.currency.silver > cost) {
             ascean.currency.silver -= cost;
-            console.log("You had the silver for it")
         } else if (ascean.currency.gold > 0) {
             ascean.currency.gold -= 1;
             ascean.currency.silver += 100;
             ascean.currency.silver -= cost;
-            console.log("You had to pay gold for it")
         } else {
             ascean.experience -= (cost * 10) < 0 ? ascean.experience : (cost * 10);
-            console.log("You had to pay experience for it")
         };
         await ascean.save();
-        console.log(ascean.firewater, ascean.currency, "Firewater After Saving Restore");
         res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Restore Firewater!')
@@ -983,13 +968,11 @@ async function purchaseToInventory(req, res) {
 
 async function swapItems(req, res) {
     try {
-        console.log(req.body, 'req.body')
         const ascean = await Ascean.findById(req.params.id);
         const keyToUpdate = Object.keys(req.body).find(key => {
             return typeof req.body[key] === 'string' && req.body[key] !== '';
         });
         const itemType = keyToUpdate.replace('new_', '');
-        console.log(itemType, keyToUpdate, 'itemType, keyToUpdate')
         const currentItemId = ascean[itemType];
         ascean[itemType] = req.body[keyToUpdate];
         const currentItem = await determineItemType(currentItemId);
@@ -1008,7 +991,6 @@ async function swapItems(req, res) {
 
 const deleteEquipmentCheck = async (equipmentID) => {
     try {
-        console.log(equipmentID, 'Did We Make It Here?')
         const allEquipmentIds = await fs.promises.readFile('data/equipmentIds.json');
         const parsedIds = JSON.parse(allEquipmentIds);
         if (parsedIds.includes(equipmentID)) {
@@ -1052,10 +1034,8 @@ async function updateLevel(req, res) {
     let achre = Number(req.body.achre);
     let caeren = Number(req.body.caeren);
     let kyosir = Number(req.body.kyosir);
-    let mastery = req.body.ascean.mastery;
     let newMastery = req.body.mastery;
     let statMastery = newMastery.toLowerCase();
-    console.log(statMastery, req.body.ascean.statistics.mastery[statMastery], 'statMastery, req.body.ascean.statistics.mastery[statMastery]');
     try {
         const ascean = await Ascean.findByIdAndUpdate(req.body.ascean._id, {
             level: req.body.ascean.level + 1,
@@ -1076,7 +1056,6 @@ async function updateLevel(req, res) {
                 }
             } 
         }, { new: true });
-        console.log(ascean, '<- Ascean Leveled Up in the Controller');
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Updating the Level!')
@@ -1131,7 +1110,6 @@ async function saveExperience(req, res) {
         };
         
         if (ascean.firewater.charges < 5 && (ascean.level <= req.body.opponent)) {
-            console.log(ascean.level, req.body.opponent, '<- Level and Opponent Level. You should get a charge!');
             ascean.firewater.charges += 1;
         };
         
@@ -1153,7 +1131,6 @@ async function saveExperience(req, res) {
 
 async function updateHighScore(req, res) {
     const { asceanId, highScore } = req.body
-    console.log(asceanId, highScore, 'Are we updating in the Controller?')
     try {
         const ascean = await Ascean.findByIdAndUpdate(asceanId, {
             high_score: highScore }, { new: true})
@@ -1167,7 +1144,6 @@ async function deleteAscean(req, res) {
     try {
         const ascean = await Ascean.findById(req.params.id);
         await asceanEquipmentDeleteCheck(ascean);
-        console.log(req.params.id, '<- Ascean ID in Delete Ascean Function');
         await Ascean.findByIdAndDelete(req.params.id);
         res.status(201).json({});
     } catch (err) {
@@ -1197,7 +1173,6 @@ const asceanEquipmentDeleteCheck = async (ascean) => {
 };
 
 async function create(req, res) {
-    console.log(req.body, '<- Hopefully the Ascean!', req.user)
         if (req.body.preference === 'Plate-Mail') {
             req.body.helmet = '63f413a4acef90a6e298a3c4';
             req.body.chest = '63f413a5acef90a6e298a3cf';
@@ -1394,7 +1369,6 @@ async function getOneAsceanLight(req, res) {
         res.status(400).json({ err });
     };
 };
- 
 
 async function getAsceanAndInventory(req, res) {
     try {
@@ -1470,7 +1444,7 @@ async function getAsceanStats(req, res) {
         let ascean = await Ascean.findById({ _id: req.params.id })
                                  .populate('user')
                                  .exec();
-        console.log(ascean.name, "Ascean Name") 
+        console.log(ascean.name, "Ascean Getting Stats");
         const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(ascean[field]);
             return item ? item : null;
@@ -1511,13 +1485,11 @@ async function blessAscean(req, res) {
     try {
         let ascean = await Ascean.findById({ _id: req.params.id });
         const blessing = ascean.mastery.toLowerCase();
-        console.log(blessing, ascean[blessing], 'Blessing');
         ascean[blessing] += 1;
         ascean.statistics.relationships.deity.Faithful.occurrence += 1;
         ascean.statistics.relationships.deity.Faithful.value += 2;
         ascean.statistics.relationships.deity.value += 2;
         ascean.statistics.relationships.deity.behaviors.push('Blessed');
-        console.log(ascean[blessing], 'Blessed');
         await ascean.save();
         res.status(200).json(ascean);
     } catch (err) {

@@ -1,43 +1,49 @@
 import { CombatData } from "../../components/GameCompiler/CombatStore";
-import { getEnemyActionFetch, getInitiateFetch, setCombatInput } from "../reducers/combatState";
 import EventEmitter from "./EventEmitter";
-import StateMachine from "./StateMachine";
 import * as Dispatcher from "./Dispatcher";
-
+import Play from "../scenes/Play";
 
 interface Action {
     type: string;
     data: any;
 };
 
-export default class CombatMachine extends StateMachine {
-    private actionQueue: Action[];
+export default class CombatMachine {
+    private context: Play;
+    private queue: Action[];
     private dispatch?: any;
     private state: CombatData;
 
-    constructor(context?: object, id?: string, dispatch?: any) {
-        super(context, id);
-        this.actionQueue = [];
+    constructor(context: Play, dispatch?: any) {
+        this.context = context;
+        this.queue = [];
         this.dispatch = dispatch;
         this.state = {} as CombatData;
-
-        this.stateListener();
+        this.listener();
     };
-
+    
     actionHandlers = {
         Weapon: (data: CombatData) => Dispatcher.weaponAction(this.dispatch, data),
         Instant: (data: CombatData) => Dispatcher.instantAction(this.dispatch, data),
-        Prayer: (data: CombatData) => Dispatcher.prayerAction(this.dispatch, data),
-        Enemy: (data: any) => this.sendEnemyActionListener(data),
+        Consume: (data: CombatData) => Dispatcher.prayerAction(this.dispatch, data),
+        Enemy: async (data: any) => {
+            if (!this.context?.player?.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
+                const actionReset = async () => this.input('action', '');
+                await actionReset();
+                Dispatcher.enemyAction(this.dispatch, { ...data, state: this.state });
+            } else {
+                Dispatcher.enemyAction(this.dispatch, { ...data, state: this.state });
+            };
+        },
     };
 
-    stateListener = async () => EventEmitter.on('update-combat-data', (e: CombatData) => this.state = e);
-
-    addAction = (action: Action): number => this.actionQueue.push(action);
-
-    processActions = (): void => {
-        while (this.actionQueue.length > 0) {
-            const action = this.actionQueue.shift()!;
+    add = (action: Action): number => this.queue.push(action);
+    input = (key: string, value: string | number | boolean) => Dispatcher.actionInput(this.dispatch, { key, value });  
+    listener = async () => EventEmitter.on('update-combat-data', (e: CombatData) => this.state = e);
+    process = (): void => {
+        if (this.state.player_win || this.state.computer_win) this.queue = [];
+        while (this.queue.length > 0) {
+            const action = this.queue.shift()!;
             const handler = this.actionHandlers[action.type as keyof typeof this.actionHandlers];
             if (handler) {
                 handler(action.data);
@@ -45,27 +51,7 @@ export default class CombatMachine extends StateMachine {
                 console.warn(`Action ${action.type} not recognized`);
             }; 
         };
-        if (this.state.player_win || this.state.computer_win) this.actionQueue = [];
     };
 
-    setInput = (key: string, value: string | number | boolean) => Dispatcher.actionInput(this.dispatch, { key, value });
-
-    sendEnemyActionListener = (data: any): void => {
-        console.log('sendEnemyActionListener'); 
-        const newData = { ...data, state: this.state };
-        Dispatcher.enemyAction(this.dispatch, newData);
-    };
-
-    sendStateActionListener = (state: CombatData): void => { // Was Async
-        if ((state.action === 'counter' && state.computer_action === '') || (state.action === '' && state.computer_action === 'counter')) { 
-            console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
-            return; 
-        };
-        console.log("Sending State Action");
-        Dispatcher.weaponAction(this.dispatch, state);
-    }; 
-        
-    combatUpdate = (): void => {
-        this.processActions();
-    };
+    processor = (): void => this.process();
 };

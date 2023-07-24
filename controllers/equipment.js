@@ -517,31 +517,26 @@ const mutateEquipment = async (item, rarity) => {
             rarity = 'Common';
             if (eqpCheck > 75) {
                 equipment = await Weapon.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
-                console.log(equipment, 'equipment ?')
                 await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
             } else if (eqpCheck > 60) {
                 equipment = await Shield.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
-                console.log(equipment, 'equipment ?')
                 await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
             } else if (eqpCheck > 40) {
                 equipment = await Helmet.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
-                console.log(equipment, 'equipment ?')
                 await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
             } else if (eqpCheck > 20) {
                 equipment = await Chest.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
-                console.log(equipment, 'equipment ?')
                 await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
             } else {
                 equipment = await Legs.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec();
-                console.log(equipment, 'equipment ?')
                 await seedDB(equipment, rarity);
                 res.status(200).json({ data: equipment });
                 return;
@@ -565,7 +560,6 @@ const mutateEquipment = async (item, rarity) => {
         } else if (type === 'Trinket') {
             equipment = await Trinket.aggregate([{ $match: { rarity } }, { $sample: { size: 1 } }]).exec(); 
         }
-        console.log(equipment, 'equipment ?')
         await seedDB(equipment, rarity);
         res.status(200).json({ data: equipment });
     } catch (err) {
@@ -592,7 +586,6 @@ async function upgradeEquipment(req, res) {
             case 'trinket': realType = Trinket; break;
             default: realType = null; break;
         }
-        console.log(realType, 'The Real Type of Equipment');
         let ascean = await Ascean.findById(req.body.asceanID);
         let item = await getHigherRarity(req.body.upgradeName, realType, req.body.currentRarity);
         await seedDB([item], item.rarity);
@@ -645,12 +638,10 @@ async function getHigherRarity(name, type, rarity) {
         nextRarity = 'Legendary';
     };
     const nextItem = await type.findOne({ name, rarity: nextRarity }).exec();
-    console.log(nextItem, 'Is This The NExt Item ???')
     return nextItem || null;
 };  
 
 async function deleteEquipment(req, res) {
-    console.log(req.body, 'Item Ids to be Deleted');
     try {
         let result = null;
         for (const item of req.body) {
@@ -665,7 +656,6 @@ async function deleteEquipment(req, res) {
 };
 
 async function getAndWriteEquipmentIds(req, res) {
-    console.log('Pinged and starting function');
     const models = {
         Weapon: Weapon,
         Shield: Shield,
@@ -680,14 +670,10 @@ async function getAndWriteEquipmentIds(req, res) {
     let allEquipment = [];
     try {
         for (const itemType of itemTypes) {
-            console.log('Pinged and starting to find equipment', itemType);
             let equipment = await models[itemType].find({}).exec();
-            console.log(equipment, 'Pinged and found equipment');
             allEquipment.push(equipment);
         };
-        console.log(allEquipment, 'allEquipment');
         const allEquipmentIds = allEquipment.flat().map(item => item._id);
-        console.log(allEquipmentIds, 'allEquipmentIds');
         await fs.promises.writeFile('data/equipmentIds.json', JSON.stringify(allEquipmentIds));
         res.status(200).json({ success: true, allEquipmentIds });
     } catch (err) {
@@ -754,7 +740,6 @@ async function deleteEnemyDialogNodeOption(req, res) {
   
 
 const deleteEquipmentCheck = async (equipmentID) => {
-    console.log(equipmentID, 'Did this carry over?')
     try {
         const allEquipmentIds = await fs.promises.readFile('data/equipmentIds.json');
         const parsedIds = await JSON.parse(allEquipmentIds);

@@ -57,16 +57,24 @@ const statFiler = (data: CombatData, win: boolean): Object => {
     return stat;
 };
 export const decompress = (data: any) => {
+    // console.log(data, "Compressed Data");
     const decompressed = pako.inflate(data, { to: 'string' });
+    // console.log(decompressed, "Decompressed Data");
     return JSON.parse(decompressed);
 };
 export const compress = (data: any) => {
-    const preSize = new Blob([JSON.stringify(data)]).size;
-    console.log(preSize, "Size of Uncompressed Data");
+    // const preSize = new Blob([JSON.stringify(data)]).size;
+    // console.log(preSize, "Size of Uncompressed Data");
     const compressed = pako.deflate(JSON.stringify(data), { to: 'string' });
-    const size = new Blob([compressed]).size;
-    console.log(size, "Size of Compressed Data");
+    // const size = new Blob([compressed]).size;
+    // console.log(size, "Size of Compressed Data");
     return compressed;
+};
+
+function* juice(): SagaIterator {
+    const game = yield select((state) => state.game);
+    if ('vibrate' in navigator) navigator.vibrate(game.vibrationTime);
+    shakeScreen(game.shake);
 };
 
 // ==================== User ====================
@@ -228,13 +236,18 @@ function* workGetCombatSetting(action: any): SagaIterator {
 };
 function* workGetEffectTick(action: any): SagaIterator {
     console.log(action.payload, "Effect Tick");
-    const res = yield call(gameAPI.effectTick, action.payload);
-    console.log(res.data, "Effect Tick Response");
-    yield put(setEffectResponse(res.data));
+    const press = yield call(compress, action.payload);
+    const res = yield call(gameAPI.effectTick, press);
+    const dec = yield call(decompress, res.data);
+    console.log(dec, "Effect Tick Response");
+    yield put(setEffectResponse(dec));
+    EventEmitter.emit('update-combat', dec);
+    setTimeout(() => {
+        call(setToggleDamaged, false);
+    }, 1500);
 };
 function* workGetEnemyAction(action: any): SagaIterator {
     try {
-        const compressed = yield call(compress, action.payload);
         const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = action.payload;
         let enemyData: CombatData = {
             ...state,
@@ -254,13 +267,17 @@ function* workGetEnemyAction(action: any): SagaIterator {
             computer_effects: [], // TODO:FIXME: Retain effects of enemies, perhaps move logic into phaser rather than react
             enemyID: '',
         };
-        let res = yield call(gameAPI.phaserAction, enemyData);
-        yield put(setEnemyActions(res.data));
-        yield call(workResolveCombat, res.data);
-        EventEmitter.emit('update-sound', res.data);
-        res.data.enemyID = enemyID;
-        // EventEmitter.emit('update-combat', res.data);
-        EventEmitter.emit('update-combat-data', res.data);
+        const press = yield call(compress, enemyData);
+        let res = yield call(gameAPI.phaserAction, press);
+        const dec = yield call(decompress, res.data);
+        console.log(dec, "Enemy Action Response");
+        yield put(setEnemyActions(dec));
+        EventEmitter.emit('update-sound', dec);
+        dec.enemyID = enemyID;
+        EventEmitter.emit('update-combat-data', dec);
+        EventEmitter.emit('update-combat', dec);
+        yield call(juice);
+        yield call(workResolveCombat, dec);
         setTimeout(() => {
             call(setToggleDamaged, false);
         }, 1500);
@@ -272,31 +289,28 @@ function* workGetInitiate(action: any): SagaIterator {
     try {
         console.log(action.payload, "Action Initiated");
         const compressed = yield call(compress, action.payload.combatData);
-        const game = yield select((state) => state.game);
         let res: any;
         switch (action.payload.type) {
             case 'Weapon':
-                res = yield call(gameAPI.phaserAction, action.payload.combatData);
+                res = yield call(gameAPI.phaserAction, compressed);
                 break;
             case 'Instant':
-                res = yield call(gameAPI.instantAction, action.payload.combatData);
+                res = yield call(gameAPI.instantAction, compressed);
                 yield put(setInstantStatus(true));
                 break;
             case 'Prayer':
-                res = yield call(gameAPI.consumePrayer, action.payload.combatData);
+                res = yield call(gameAPI.consumePrayer, compressed);
                 break;
             default:
                 break;
             };
-        if ('vibrate' in navigator) navigator.vibrate(game.vibrationTime);
-        shakeScreen(game.shake);
-        console.log(res.data, "Initiate Response");
-        yield put(setCombatResolution(res.data));
-        yield call(workResolveCombat, res.data);
-        EventEmitter.emit('update-sound', res.data);
-        
-        // EventEmitter.emit('update-combat-data', res.data);
-        // EventEmitter.emit('update-combat', res.data);
+        const dec = yield call(decompress, res.data);
+        console.log(dec, "Initiate Response");
+        yield put(setCombatResolution(dec));
+        EventEmitter.emit('update-sound', dec);
+        EventEmitter.emit('update-combat', dec);
+        yield call(juice);
+        yield call(workResolveCombat, dec);
         setTimeout(() => {
             call(setToggleDamaged, false);
         }, 1500);

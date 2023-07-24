@@ -1,4 +1,6 @@
 const StatusEffect = require('./faithServices.js');
+const zlib = require('zlib');
+const pako = require('pako');
 
 const weatherEffectCheck = async (weapon, magDam, physDam, weather, critical) => {
     let magicalDamage = magDam;
@@ -1114,7 +1116,6 @@ const computerAttackCompiler = async (combatData, computer_action) => {
         player_physical_defense_multiplier = 1 - (combatData.player_defense.physicalPosture / 100);
         player_magical_defense_multiplier = 1 - (combatData.player_defense.magicalPosture / 100);
     };
-    console.log(combatData.computer.name, "Computer Attacking")
     if (combatData.computer_action === 'attack') {
         if (combatData.computer_weapons[0].grip === 'One Hand') {
             if (combatData.computer_weapons[0].attack_type === 'Physical') {
@@ -2840,9 +2841,11 @@ const phaserActionSplitter = async (combatData) => {
         console.log("Dual Actions");
         cleanData = await phaserDualActionSplitter(cleanData);
     } else if (playerActionLive && !computerActionLive) {
+        console.log(cleanData.player.name, "Player Attacking");
         await computerActionCompiler(cleanData, cleanData.action, cleanData.computer_action, cleanData.computer_counter_guess);
         await attackCompiler(cleanData, cleanData.action);
     } else if (!playerActionLive && computerActionLive) {
+        console.log(cleanData.computer.name, "Computer Attacking");
         await computerWeaponMaker(cleanData);
         await computerAttackCompiler(cleanData, cleanData.computer_action);
     };
@@ -2866,10 +2869,10 @@ const newDataCompiler = async (combatData) => {
         player_action: combatData.action,
         counter_guess: combatData.counter_guess, // The action chosen believed to be 
         player_health: combatData.player_health, // Current Player Health
-        weapon_one: combatData.weapon_one,
-        weapon_two: combatData.weapon_two,
-        weapon_three: combatData.weapon_three,
-        weapons: combatData.weapons, // All 3 Weapons
+        weapon_one: combatData.weapon_one, // Clean Slate of Weapon One
+        weapon_two: combatData.weapon_two, // Clean Slate of Weapon Two
+        weapon_three: combatData.weapon_three, // Clean Slate of Weapon Three
+        weapons: combatData.weapons, // Array of 3 Weapons in current affect and order
         player_damage_type: combatData.player_damage_type,
         player_defense: combatData.player_defense, // Posseses Base + Postured Defenses
         player_attributes: combatData.player_attributes, // Possesses compiled Attributes, Initiative
@@ -3387,6 +3390,21 @@ const phaserEffectTickSplitter = async (data) => {
     return combatData; 
 };
 
+// ================================= COMPRESSION / DECOMPRESSION ===================================== \\
+
+const decompress = (data) => {
+    const decompressed = pako.inflate(data, { to: 'string' });
+    return JSON.parse(decompressed);
+};
+const compress = (data) => {
+    // const preSize = new Blob([JSON.stringify(data)]).size;
+    // console.log(preSize, "Size of Uncompressed Data");
+    const compressed = pako.deflate(JSON.stringify(data), { to: 'string' });
+    // const size = new Blob([compressed]).size;
+    // console.log(size, "Size of Compressed Data");
+    return compressed;
+};
+
 // ================================= CONTROLLER - SERVICE ===================================== \\
 
 const actionCompiler = async (combatData) => {
@@ -3406,11 +3424,13 @@ const actionCompiler = async (combatData) => {
 
 const instantActionCompiler = async (combatData) => {
     try {
-        let result = await instantActionSplitter(combatData);
+        const dec = decompress(combatData);
+        let result = await instantActionSplitter(dec);
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
         };
-        return result;
+        const pre = compress(result);
+        return pre;
     } catch (err) {
         console.log(err, 'Error in the Instant Action Compiler of Game Services');
         res.status(400).json({ err })
@@ -3419,11 +3439,13 @@ const instantActionCompiler = async (combatData) => {
 
 const consumePrayer = async (combatData) => {
     try {
-        let result = await consumePrayerSplitter(combatData);
+        const dec = decompress(combatData);
+        let result = await consumePrayerSplitter(dec);
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
         };
-        return result;
+        const pre = compress(result);
+        return pre;
     } catch (err) {
         console.log(err, 'Error in the Consume Prayer of Game Services');
         res.status(400).json({ err })
@@ -3432,11 +3454,13 @@ const consumePrayer = async (combatData) => {
 
 const phaserActionCompiler = async (combatData) => {
     try {
-        let result = await phaserActionSplitter(combatData);
+        const dec = decompress(combatData);
+        let result = await phaserActionSplitter(dec);
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
         };
-        return result;
+        const pre = compress(result);
+        return pre;
     } catch (err) {
         console.log(err, 'Error in the Phaser Action Compiler of Game Services');
         res.status(400).json({ err });
@@ -3445,11 +3469,13 @@ const phaserActionCompiler = async (combatData) => {
 
 const phaserEffectTick = async (data) => {
     try {
-        let result = await phaserEffectTickSplitter(data);
+        const dec = decompress(data);
+        let result = await phaserEffectTickSplitter(dec);
         if (result.player_win === true || result.computer_win === true) {
             await statusEffectCheck(result);
         };
-        return result;
+        const pre = compress(result);
+        return pre;
     } catch (err) {
         console.log(err, 'Error in the Phaser Effect Tick of Game Services');
         res.status(400).json({ err });

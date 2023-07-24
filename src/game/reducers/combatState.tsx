@@ -311,7 +311,7 @@ const combatSlice = createSlice({
         clearCombat: (state) => {
             return {
                 ...state,
-                computer: null,
+                // computer: null,
                 player_win: false,
                 computer_win: false,
                 combatEngaged: false,
