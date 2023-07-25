@@ -2,30 +2,41 @@ import { CombatData } from "../../components/GameCompiler/CombatStore";
 import EventEmitter from "./EventEmitter";
 import * as Dispatcher from "./Dispatcher";
 import Play from "../scenes/Play";
+import { StatusEffect } from "../../components/GameCompiler/StatusEffects";
 
 interface Action {
     type: string;
     data: any;
 };
+type ActionHandler = (data: any) => void;
+export interface KV {
+    key: string;
+    value: string | number | boolean; 
+};
+
 
 export default class CombatMachine {
     private context: Play;
-    private queue: Action[];
+    private aQueue: Action[];
+    private iQueue: KV[];
     private dispatch?: any;
     private state: CombatData;
 
     constructor(context: Play, dispatch?: any) {
         this.context = context;
-        this.queue = [];
+        this.aQueue = [];
+        this.iQueue = [];
         this.dispatch = dispatch;
         this.state = {} as CombatData;
         this.listener();
     };
     
-    actionHandlers = {
-        Weapon: (data: CombatData) => Dispatcher.weaponAction(this.dispatch, data),
-        Instant: (data: CombatData) => Dispatcher.instantAction(this.dispatch, data),
-        Consume: (data: CombatData) => Dispatcher.prayerAction(this.dispatch, data),
+    private listener = async () => EventEmitter.on('update-combat-data', (e: CombatData) => this.state = e);
+
+    private actionHandlers: { [key: string]: ActionHandler } = {
+        Weapon: (data: KV) => Dispatcher.weaponAction(this.dispatch, data),
+        Instant: (data: string) => Dispatcher.instantAction(this.dispatch, data),
+        Consume: (data: StatusEffect[]) => Dispatcher.prayerAction(this.dispatch, data),
         Enemy: async (data: any) => {
             if (!this.context?.player?.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
                 const actionReset = async () => this.input('action', '');
@@ -37,13 +48,17 @@ export default class CombatMachine {
         },
     };
 
-    add = (action: Action): number => this.queue.push(action);
-    input = (key: string, value: string | number | boolean) => Dispatcher.actionInput(this.dispatch, { key, value });  
-    listener = async () => EventEmitter.on('update-combat-data', (e: CombatData) => this.state = e);
-    process = (): void => {
-        if (this.state.player_win || this.state.computer_win) this.queue = [];
-        while (this.queue.length > 0) {
-            const action = this.queue.shift()!;
+    private process = (): void => {
+        if (this.state.player_win || this.state.computer_win) {
+            this.iQueue = [];
+            this.aQueue = [];
+        };
+        while (this.iQueue.length > 0) {
+            const { key, value } = this.iQueue.shift()!;
+            Dispatcher.actionInput(this.dispatch, { key, value });
+        };
+        while (this.aQueue.length > 0) {
+            const action = this.aQueue.shift()!;
             const handler = this.actionHandlers[action.type as keyof typeof this.actionHandlers];
             if (handler) {
                 handler(action.data);
@@ -53,5 +68,7 @@ export default class CombatMachine {
         };
     };
 
-    processor = (): void => this.process();
+    public add = (action: Action): number => this.aQueue.push(action);
+    public input = (key: string, value: string | number | boolean): number => this.iQueue.push({key, value});  
+    public processor = (): void => this.process();
 };

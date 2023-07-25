@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initialCombatData } from '../../components/GameCompiler/CombatStore';
 import { compress } from '../sagas/rootSaga';
+import { getSocketInstance } from '../sagas/socketManager';
+import { SOCKET } from '../sagas/socketSaga';
 
 const combatSlice = createSlice({
     name: 'combat',
@@ -105,7 +107,6 @@ const combatSlice = createSlice({
             };
         },
         clearNonAggressiveEnemy: (state) => {
-            console.log('clearNonAggressiveEnemy');
             return {
                 ...state,
                 computer: null,
@@ -136,12 +137,15 @@ const combatSlice = createSlice({
             };
         },
         setPhaserAggression: (state, action) => {
+            const socket = getSocketInstance();
+            socket.emit(SOCKET.SET_PHASER_AGGRESSION, action.payload);
             return {
                 ...state,
                 isAggressive: action.payload,
                 combatEngaged: action.payload,
             };
         },
+        // TODO:FIXME: These need to also perform the socket.emit to update combatData, possible redress by creating a combat/getFetch generator
         setRest: (state, action) => {
             const healed = Math.floor(state.new_player_health + state.player_health * (action.payload / 100)) ;
             const newHealth = healed > state.player_health ? state.player_health : healed;
@@ -163,26 +167,6 @@ const combatSlice = createSlice({
             const { key, value } = action.payload;
             return { ...state, [key]: value };
         },
-        setClearCounter: (state) => {
-            return {
-                ...state,
-                counter_guess: '',
-            };
-        },
-        setAction: (state, action) => {
-            return {
-                ...state,
-                action: action.payload,
-                counter_guess: '',
-            };
-        },
-        setCounter: (state, action) => {
-            return {
-                ...state,
-                action: 'counter',
-                counter_guess: action.payload,
-            };
-        },
         setDamageType: (state, action) => {
             return {
                 ...state,
@@ -200,7 +184,7 @@ const combatSlice = createSlice({
             return {
                 ...state,
                 playerBlessing: action.payload,
-            }
+            };
         },
         setPrayerSacrifice: (state, action) => {
             return {
@@ -252,6 +236,7 @@ const combatSlice = createSlice({
                 playerEffects: action.payload.playerEffects,  
             };
         },
+        
         setRemoveEffect: (state, action) => {
             return {
                 ...state,
@@ -270,20 +255,20 @@ const combatSlice = createSlice({
                 ...state,
                 combatTimer: action.payload,
             };
-        },
-        setSoundEffects: (state) => {
-            return {
-                ...state,
-                soundEffects: true,
-            };
-        },
+        }, 
 
         // ===== Combat Resolution Concerns ===== \\
-        setCombatResolution: (_state, action) => {
-            return { ...action.payload };
+        setCombatResolution: (state, action) => {
+            return { 
+                ...state,
+                ...action.payload
+             };
         },
-        setEffectResponse: (_state, action) => {
-            return { ...action.payload };
+        setEffectResponse: (state, action) => {
+            return { 
+                ...state,
+                ...action.payload 
+            };
         },
         setPlayerWin: (state, _action) => {
             const weaps: any[] = state.weapons.map(weapon => [state.weapon_one, state.weapon_two, state.weapon_three].find(w => w._id === weapon._id));
@@ -349,7 +334,7 @@ const combatSlice = createSlice({
                 deityData: [],
                 playerEffects: [],
                 computerEffects: [],
-            }
+            };
         },
         
         // ===== Noncombat Resolution Concerns ===== \\
@@ -423,9 +408,6 @@ export const {
 
     setCombatTimer,
     setCombatInput,
-    setClearCounter,
-    setAction,
-    setCounter,
     setDamageType, 
     setEnemyActions,
     setToggleDamaged,
@@ -435,7 +417,6 @@ export const {
     setPlayerBlessing,
     setPrayerSacrifice,
     setRemoveEffect,
-    setSoundEffects,
 
     setEffectResponse,
     setPlayerWin,

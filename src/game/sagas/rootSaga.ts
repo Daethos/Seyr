@@ -1,49 +1,26 @@
-import { all, call, put, takeEvery, takeLatest, take, AllEffect, select, fork, actionChannel } from 'redux-saga/effects';
+import { all, call, put, takeEvery, take, AllEffect, select, actionChannel } from 'redux-saga/effects';
 import { SagaIterator } from 'redux-saga';
 import * as asceanAPI from '../../utils/asceanApi';
-import * as communityAPI from '../../utils/communityApi';
-import * as equipmentAPI from '../../utils/equipmentApi';
-import * as gameAPI from '../../utils/gameApi';
-import * as settingsAPI from '../../utils/settingsApi';
-import userService from "../../utils/userService";
-import { getUserLogout, getUserSuccess, getUserAsceanSuccess, getUserSocket } from '../reducers/userState'; 
-import { getCommunityAsceanSuccess, getFocusAsceanSuccess } from '../reducers/communityState';
-import { Player } from '../../components/GameCompiler/GameStore';
-import { setAsceanState, setCurrency, setDialog, setExperience, setFirewater, setInitialAsceanState, setInstantStatus, setInventory, setLootDrops, setPlayer, setPlayerLevelUp, setSettings, setShowDialog, setShowLoot, setStatistics, setTraits } from '../reducers/gameState';
-import { setCombatResolution, setCombatInput, setCombatPlayer, setDamageType, setEffectResponse, setEnemyActions, setPlayerBlessing, setRest, setToggleDamaged, setWeaponOrder, setCombat, clearCombat, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatTimer, setPhaser, setEnemyPersuaded, setPlayerLuckout, setPlayerWin, setEnemyWin } from '../reducers/combatState';
+import { setDialog, setInstantStatus, setShowDialog, setStatistics } from '../reducers/gameState';
+import { setCombatResolution, setCombatInput, setDamageType, setEffectResponse, setEnemyActions, setPlayerBlessing, setToggleDamaged, setWeaponOrder, setCombat, clearCombat, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatTimer, setEnemyPersuaded, setPlayerLuckout, setPlayerWin, setEnemyWin } from '../reducers/combatState';
 import { CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import EventEmitter from '../phaser/EventEmitter';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
 import { getNodesForNPC, npcIds } from '../../components/GameCompiler/DialogNode';
-import { getAsceanTraits } from '../../components/GameCompiler/PlayerTraits';
 import pako from 'pako';
-import * as io from 'socket.io-client';
-import rootSocketSaga, { SOCKET } from '../reducers/socketSaga';
-import { connectToSocket, getSocketInstance } from '../reducers/socketManager';
+import rootSocketSaga, { SOCKET } from './socketSaga';
+import { getSocketInstance } from './socketManager';
+import { userSaga } from './userSaga';
+import { communitySaga } from './communitySaga';
+import { gameSaga, workGetGainExperienceFetch, workGetLootDropFetch } from './gameSaga';
 
-const compareScores = (a: any, b: any) => {
-    if (a[0] === undefined) a[0] = { score: 0 };
-    if (b[0] === undefined) b[0] = { score: 0 };
-    return a[0].score - b[0].score;
-};
 export const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const getOpponentDialog = (enemy: string) => {
-    console.log(enemy, 'getOpponentDialog');
     const res = getNpcDialog(enemy);
-    console.log(res, 'getOpponentDialog');
     return res;
 }; 
-const checkStatisticalValue = (rarity: string) => {
-    switch (rarity) {
-        case 'Common': return 10;
-        case 'Uncommon': return 100;
-        case 'Rare': return 400;
-        case 'Epic': return 1200;
-        case 'Legendary': return 12000;
-        default: return 0;
-    };
-};
+
 const statFiler = (data: CombatData, win: boolean): Object => {
     const stat = {
         asceanID: data.player._id,
@@ -60,17 +37,11 @@ const statFiler = (data: CombatData, win: boolean): Object => {
     return stat;
 };
 export const decompress = (data: any) => {
-    console.log(data, "Compressed Data");
     const decompressed = pako.inflate(data, { to: 'string' });
-    console.log(decompressed, "Decompressed Data");
     return JSON.parse(decompressed);
 };
 export const compress = (data: any) => {
-    // const preSize = new Blob([JSON.stringify(data)]).size;
-    // console.log(preSize, "Size of Uncompressed Data");
     const compressed = pako.deflate(JSON.stringify(data), { to: 'string' });
-    // const size = new Blob([compressed]).size;
-    // console.log(size, "Size of Compressed Data");
     return compressed;
 };
 
@@ -79,62 +50,6 @@ function* juice(): SagaIterator {
     if ('vibrate' in navigator) navigator.vibrate(game.vibrationTime);
     shakeScreen(game.shake);
 };
-
-// ==================== User ====================
-
-function* userSaga(): SagaIterator {
-    yield takeEvery('user/getUserFetch', workGetUserFetch);
-    yield takeEvery('user/getLogoutSaga', workGetLogoutSaga);
-    yield takeEvery('user/getUserAsceanFetch', workGetUserAsceanFetch);
-};
-
-function* workGetUserFetch(): SagaIterator {
-    const user = yield call(userService.getUser);
-    yield put(getUserSuccess(user));
-};
-function* workGetLogoutSaga(): SagaIterator {
-    try {
-        yield call(userService.logout);
-        yield put(getUserLogout());
-    } catch (err: any) {
-        console.log(err, 'Error in workGetLogoutSaga');
-    };
-}; 
-function* workGetUserAsceanFetch(): SagaIterator {
-    const response = yield call(asceanAPI.getAllAscean);
-    const ascean = response.data.reverse();
-    yield put(getUserAsceanSuccess(ascean));
-};
-
-// ************************ Community ************************ \\
-
-function* communitySaga(): SagaIterator {
-    yield takeEvery('community/getCommunityAsceanFetch', workGetAsceanAllFetch);
-    yield takeEvery('community/getFocusAsceanFetch', workGetAsceanFocusFetch);
-};
-
-function* workGetAsceanAllFetch(): SagaIterator {
-    const response = yield call(communityAPI.getEveryone);
-    const ascean = response.data.reverse();
-    const scores = yield ascean.map((a: Player, i: number) => {
-        let arr: any = [];
-        if (a.hardcore) {
-            let scores = { ascean: a.name, score: a.high_score, key: i, _id: a._id, mastery: a.mastery, photoUrl: process.env.PUBLIC_URL + `/images/${a.origin}-${a.sex}.jpg` };
-            arr.push(scores);
-        };
-        return arr;
-    });
-    const sorted = yield scores.sort(compareScores).filter((a: any) => a[0].ascean).reverse();
-    yield put(getCommunityAsceanSuccess({ascean, scores: sorted}));
-};
-function* workGetAsceanFocusFetch(action: any): SagaIterator {
-    const focusID = action.payload;
-    const response = yield call(communityAPI.getOneAscean, focusID);
-    const ascean = response.data;
-    yield put(getFocusAsceanSuccess(ascean));
-};
-
-// ************************* Combat ************************* \\
 
 function* combatSaga(): SagaIterator {
     yield takeEvery('combat/getCombatStateUpdate', workGetCombatState);
@@ -154,33 +69,27 @@ function* combatSaga(): SagaIterator {
     yield takeEvery('combat/getLuckoutFetch', workGetLuckout);
 };
 
-function* watchResolution(): SagaIterator {
-    const req = yield actionChannel('resolution');
-    while (true) {
-        const { payload } = yield take(req);
-        yield call(workResolveCombat, payload);
-    };
-};
- 
 function* workResolveCombat(state: CombatData): SagaIterator {
     try {
         if (!state.player_win && !state.computer_win) return;
-        const stat = yield call(statFiler, state, state.player_win);
+        let combat = yield select((state) => state.combat);
+        combat = { ...combat, ...state };
+        const stat = yield call(statFiler, combat, combat.player_win);
         const res = yield call(asceanAPI.recordCombatStatistic, stat);
         yield put(setStatistics(res));
-        if (state.player_win) {
+        if (combat.player_win) {
             console.log("Player Won");
             const asceanState = yield select((state) => state.game.asceanState);
-            const exp = { payload: { asceanState, combatState: state } };
+            const exp = { payload: { asceanState, combatState: combat } };
             yield call(workGetGainExperienceFetch, exp);
-            const loot = { payload: { enemyID: state.enemyID, level: state.computer.level } };
+            const loot = { payload: { enemyID: combat.enemyID, level: combat.computer.level } };
             yield call(workGetLootDropFetch, loot);
-            yield put(setPlayerWin(state));
+            yield put(setPlayerWin(combat));
         } else {
             console.log("Enemy Won");
-            const health = { payload: { health: state.new_player_health, id: state.player._id } };
+            const health = { payload: { health: combat.new_player_health, id: combat.player._id } };
             yield call(workGetAsceanHealthUpdate, health);      
-            yield put(setEnemyWin(state));    
+            yield put(setEnemyWin(combat));    
         };
     } catch (err: any) {
         console.log(err, 'Error in workResolveCombat');
@@ -188,10 +97,13 @@ function* workResolveCombat(state: CombatData): SagaIterator {
 };
 
 function* workGetCombat(action: any): SagaIterator {
+    const socket = getSocketInstance();
     if (action.payload) {
         yield put(setCombat());
+        socket.emit(SOCKET.SET_COMBAT)
     } else {
         yield put(clearCombat());
+        socket.emit(SOCKET.CLEAR_COMBAT);
     };
 };
 function* workGetCombatTimer(action: any): SagaIterator {
@@ -201,9 +113,31 @@ function* workGetEnemySetup(action: any): SagaIterator {
     const dialog = yield call(getOpponentDialog, action.payload.enemy.name);
     if (dialog) yield put(setDialog(dialog));
     yield put(setEnemy({ enemy: action.payload.enemy, health: action.payload.health, enemyID: action.payload.id, isAggressive: action.payload.isAggressive, startedAggressive: action.payload.startedAggressive, isDefeated: action.payload.isDefeated, isTriumphant: action.payload.isTriumphant }));
+    const socket = getSocketInstance();
+    const inject = {
+        computer: action.payload.enemy.ascean,
+        computer_health: action.payload.enemy.attributes.healthTotal,
+        current_computer_health: action.payload.health,
+        new_computer_health: action.payload.health,
+        computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+        computer_weapon_one: action.payload.enemy.combat_weapon_one,
+        computer_weapon_two: action.payload.enemy.combat_weapon_two,
+        computer_weapon_three: action.payload.enemy.combat_weapon_three,
+        computer_defense: action.payload.enemy.defense,
+        computer_attributes: action.payload.enemy.attributes,
+        computer_damage_type: action.payload.enemy.combat_weapon_one.damage_type[0],
+        isEnemy: true,
+        npcType: '',
+        isAggressive: action.payload.isAggressive,
+        startedAggressive: action.payload.isAggressive,
+        player_win: action.payload.isDefeated,
+        computer_win: action.payload.isTriumphant,
+        enemyID: action.payload.enemyID, 
+    };
+    const press = yield call(compress, inject);
+    socket.emit(SOCKET.SETUP_ENEMY, press);
 };
 function* workGetNpcSetup(action: any): SagaIterator {
-    const compressed = yield call(compress, action.payload);
     const dialog = yield call(getNodesForNPC, npcIds[action.payload.type]);
     if (dialog) yield put(setDialog(dialog));
     yield put(setNpc({ enemy: action.payload.enemy, health: action.payload.health, enemyID: action.payload.id, npcType: action.payload.type }));
@@ -211,49 +145,43 @@ function* workGetNpcSetup(action: any): SagaIterator {
 function* workGetClearEnemy(): SagaIterator {
     yield put(clearNonAggressiveEnemy());
     yield put(setShowDialog(false));
+    const socket = getSocketInstance();
+    socket.emit(SOCKET.CLEAR_ENEMY);
 };
 function* workGetClearNpc(): SagaIterator {
     yield put(clearNpc());
     yield put(setShowDialog(false));
 }; 
 function* workGetCombatState(action: any): SagaIterator {
-    console.log(action.payload, "Combat Input");
+    const socket = getSocketInstance();
     yield put(setCombatInput(action.payload));
+    socket.emit(SOCKET.UPDATE_COMBAT_DATA, { [action.payload.key]: action.payload.value });
 };
 function* workGetCombatSetting(action: any): SagaIterator {
-    console.log(action.payload, "Combat Setting");
+    const socket = getSocketInstance();
     switch (action.payload.type) {
         case 'Damage':
             yield put(setDamageType(action.payload.loadout));
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { player_damage_type: action.payload.loadout });
             break;
         case 'Prayer':
             yield put(setPlayerBlessing(action.payload.loadout));
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { playerBlessing: action.payload.loadout });
             break;
         case 'Weapon':
             yield put(setWeaponOrder(action.payload.loadout));
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { weapons: action.payload.loadout, player_damage_type: action.payload.loadout[0].damage_type[0] });
             break;
         default:
             break;        
     };
 };
 function* workGetEffectTick(action: any): SagaIterator {
-    console.log(action.payload, "Effect Tick");
-    const press = yield call(compress, action.payload);
     const socket = getSocketInstance();
-    socket.emit(SOCKET.EFFECT_TICK, press);
-    // const res = yield call(gameAPI.effectTick, press);
-    // const dec = yield call(decompress, res.data);
-    // console.log(dec, "Effect Tick Response");
-    // yield put(setEffectResponse(dec));
-    // EventEmitter.emit('update-combat', dec);
-    // setTimeout(() => {
-    //     call(setToggleDamaged, false);
-    // }, 1500);
+    socket.emit(SOCKET.EFFECT_TICK, action.payload);
 };
-export function* workTickResopnse(load: any): SagaIterator {
-    console.log(load, "Load Getting Tick Response");
+export function* workTickResponse(load: any): SagaIterator {
     let dec = decompress(load);
-    console.log(dec, "Response");
     yield put(setEffectResponse(dec));
     EventEmitter.emit('update-combat', dec);
     setTimeout(() => {
@@ -263,8 +191,8 @@ export function* workTickResopnse(load: any): SagaIterator {
 function* workGetEnemyAction(action: any): SagaIterator {
     try {
         const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = action.payload;
-        let enemyData: CombatData = {
-            ...state,
+        let enemyData = {
+            // ...state,
             computer: enemy,
             computer_attributes: combatStats.attributes,
             computer_weapon_one: combatStats.combat_weapon_one,
@@ -278,79 +206,51 @@ function* workGetEnemyAction(action: any): SagaIterator {
             computer_action: actionData.action,
             computer_counter_guess: actionData.counter,
             computer_damage_type: damageType,
-            computer_effects: [], // TODO:FIXME: Retain effects of enemies, perhaps move logic into phaser rather than react
-            enemyID: '',
+            computerEffects: [], // TODO:FIXME: Retain effects of enemies, perhaps move logic into phaser rather than react
+            enemyID: enemyID, // Was ''
         };
         const press = yield call(compress, enemyData);
         const socket = getSocketInstance();
         socket.emit(SOCKET.ENEMY_ACTION, press);
-        // let res = yield call(gameAPI.phaserAction, press);
-        // const dec = yield call(decompress, res.data);
-        // console.log(dec, "Enemy Action Response");
-        // yield put(setEnemyActions(dec));
-        // EventEmitter.emit('update-sound', dec);
-        // dec.enemyID = enemyID;
-        // EventEmitter.emit('update-combat-data', dec);
-        // EventEmitter.emit('update-combat', dec);
-        // yield call(juice);
-        // yield call(workResolveCombat, dec);
-        // setTimeout(() => {
-        //     call(setToggleDamaged, false);
-        // }, 1500);
     } catch (err: any) {
         console.log(err, 'Error in workGetEnemyAction');
     };
 };
 function* workGetInitiate(action: any): SagaIterator {
     try {
-        console.log(action.payload, "Action Initiated");
-        const press = yield call(compress, action.payload.combatData);
-        // let res: any;
         const socket = getSocketInstance();
         switch (action.payload.type) {
             case 'Weapon':
-                // res = yield call(gameAPI.phaserAction, press);
-                socket.emit(SOCKET.PHASER_ACTION, press);
+                console.log(action.payload.combatData, "Weapon Action");
+                socket.emit(SOCKET.PHASER_ACTION, action.payload.combatData);
                 break;
             case 'Instant':
-                // res = yield call(gameAPI.instantAction, press);
-                socket.emit(SOCKET.INVOKE_PRAYER, press);
+                socket.emit(SOCKET.INVOKE_PRAYER, action.payload.combatData);
                 yield put(setInstantStatus(true));
                 break;
             case 'Prayer':
-                // res = yield call(gameAPI.consumePrayer, press);
-                socket.emit(SOCKET.CONSUME_PRAYER, press);
+                socket.emit(SOCKET.CONSUME_PRAYER, action.payload.combatData);
                 break;
             default:
                 break;
             };
-        // const dec = yield call(decompress, res); // was res.data
-        // console.log(dec, "Initiate Response");
-        // yield put(setCombatResolution(dec));
-        // EventEmitter.emit('update-sound', dec);
-        // EventEmitter.emit('update-combat', dec);
-        // yield call(juice);
-        // yield call(workResolveCombat, dec);
-        // setTimeout(() => {
-        //     call(setToggleDamaged, false);
-        // }, 1500);
     } catch (err: any) {
         console.log(err, 'Error in workGetInitiate');
     };
 };
 export function* workGetResponse(load: any, type?: string): SagaIterator {
     try {
-        console.log(load, "Load Getting Response")
         let dec = yield call(decompress, load);
-        console.log(dec, "Response");
         if (type === 'enemy') {
             yield put(setEnemyActions(dec));
         } else {
             yield put(setCombatResolution(dec));
-        }
+        };
+        let combat = yield select((state) => state.combat);
+        combat = { ...combat, ...dec };
+        yield call(juice);
         EventEmitter.emit('update-sound', dec);
         EventEmitter.emit('update-combat', dec);
-        yield call(juice);
         yield call(workResolveCombat, dec);
         setTimeout(() => {
             call(setToggleDamaged, false);
@@ -359,7 +259,7 @@ export function* workGetResponse(load: any, type?: string): SagaIterator {
         console.log(err, 'Error in workGetResponse');
     };
 };
-function* workGetCombatStatistic(action: any): SagaIterator {
+export function* workGetCombatStatistic(action: any): SagaIterator {
     const data = action.payload;
     const stats = {
         asceanID: data.player._id,
@@ -406,171 +306,7 @@ function* workGetLuckout(action: any): SagaIterator {
     const res = yield call(() => asceanAPI.recordNonCombatStatistic(stat));
     yield put(setStatistics(res));
     yield put(setPlayerLuckout({ playerLuckout: luckedOut, playerTrait: luck }));
-};
-
-// *********************** Game *********************** \\
-
-function* gameSaga(): SagaIterator {
-    yield takeEvery('game/getGameFetch', workGetGameFetch);
-    yield takeEvery('game/getAsceanLevelUpFetch', workGetAsceanLevelUpFetch);
-    yield takeEvery('game/getDrinkFirewaterFetch', workGetDrinkFirewaterFetch);
-    yield takeEvery('game/getReplenishFirewaterFetch', workGetReplenishFirewaterFetch);
-    yield takeEvery('game/getGainExperienceFetch', workGetGainExperienceFetch);
-    yield takeEvery('game/getAsceanAndInventoryFetch', workGetAsceanAndInventoryFetch);
-    yield takeEvery('game/getOnlyInventoryFetch', workGetOnlyInventoryFetch);
-    yield takeEvery('game/getLootDropFetch', workGetLootDropFetch);
-    yield takeEvery('game/getCombatStatisticFetch', workGetCombatStatistic);
-    yield takeEvery('game/getInteracingLootFetch', workGetInteracingLootFetch);
-    yield takeEvery('game/getPurchaseFetch', workGetPurchaseFetch);
-    yield takeEvery('game/getThieverySuccessFetch', workGetThieverySuccessFetch);
-};
-
-function* workGetGameFetch(action: any): SagaIterator {
-    const gameResponse = yield call(asceanAPI.getOneAscean, action.payload);
-    const combatResponse = yield call(asceanAPI.getAsceanStats, action.payload);
-    const settingsResponse = yield call(settingsAPI.getSettings);
-    const traitResponse = yield call(getAsceanTraits, gameResponse.data);
-    const asceanState = yield select((state) => state.game.asceanState);
-    const data = { 
-        user: yield select((state) => state.user.user),
-        ascean: gameResponse.data, 
-        stats: combatResponse.data.data, 
-        settings: settingsResponse,
-        temp: { 
-            ...asceanState, 
-            'ascean': gameResponse.data,
-            'currentHealth': gameResponse.data.health.current,
-            'level': gameResponse.data.level,
-            'experience': gameResponse.data.experience,
-            'experienceNeeded': gameResponse.data.level * 1000,
-            'mastery': gameResponse.data.mastery,
-            'faith': gameResponse.data.faith, 
-        },
-        traits: traitResponse, 
-    };
-    const press = yield call(compress, data);
-    const socket = getSocketInstance();
-    socket.emit(SOCKET.SETUP_PLAYER, press);
-
-    yield put(setPlayer(gameResponse.data));
-    yield put(setCombatPlayer(combatResponse.data.data));
-    yield put(setInitialAsceanState(combatResponse.data.data));
-    yield put(setSettings(settingsResponse));
-    yield put(setTraits(traitResponse));
-    yield put(setPhaser(true)); 
 }; 
-function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
-    console.log(action.payload, "Leveling Up");
-    const res = yield call(asceanAPI.levelUp, action.payload);
-    console.log(res, "Response Leveling Up");
-    let asceanState = yield select((state) => state.game.asceanState);
-    asceanState = {
-        ...asceanState,
-        ascean: res.data,
-        constitution: 0,
-        strength: 0,
-        agility: 0,
-        achre: 0,
-        caeren: 0,
-        kyosir: 0,
-        opponent: 0,
-        opponentExp: 0,
-        experience: res.data.experience,
-        level: res.data.level,
-        mastery: res.data.mastery,
-        faith: res.data.faith,
-        experienceNeeded: res.data.experience * 1000,
-    };
-    const resTwo = yield call(asceanAPI.getCleanAscean, res.data._id);
-    const resThree = yield call(asceanAPI.getAsceanStats, res.data._id);
-    console.log(resTwo, resThree, "Responses to Getting Clean Ascean and Stats");
-    yield put(setPlayerLevelUp(resTwo.data));
-    yield put(setCombatPlayer(resThree.data.data));
-    yield put(setAsceanState(asceanState));
-};
-function* workGetDrinkFirewaterFetch(action: any): SagaIterator {
-    const res = yield call(asceanAPI.drinkFirewater, action.payload);
-    yield put(setFirewater(res.firewater));
-    yield put(setRest(40));
-};
-function* workGetReplenishFirewaterFetch(action: any): SagaIterator {
-    const res = yield call(asceanAPI.replenishFirewater, action.payload);
-    yield put(setExperience(res.experience));
-    yield put(setFirewater(res.firewater));
-};
-function* workGetGainExperienceFetch(action: any): SagaIterator {
-    console.log(action, "Gain Experience");
-    let { asceanState, combatState } = action.payload;
-    let opponentExp = Math.round(combatState.computer.level * 100 * (combatState.computer.level / combatState.player.level) + combatState.player_attributes.rawKyosir);
-    const hasAvaricePrayer = combatState.prayerData.includes('Avarice');
-    const totalExp = asceanState.ascean.experience + opponentExp;
-    
-    asceanState = {
-      ...asceanState,
-      'opponentExp': opponentExp,
-      'currentHealth': combatState.new_player_health,
-      'experience': Math.min(totalExp, asceanState.experienceNeeded),
-      'avarice': hasAvaricePrayer ? true : false,
-    };
-
-    const res = yield call(asceanAPI.saveExperience, asceanState);
-    console.log(res, "Response Gain Experience");
-    yield put(setExperience(res.experience));
-    yield put(setCurrency(res.currency));
-    yield put(setFirewater(res.firewater));
-    yield put(setAsceanState({
-        ...asceanState,
-        'currentHealth': res.health.current,
-        'experience': res.experience,
-        'avarice': false,
-        'opponent': 0,
-        'opponentExp': 0
-    }));
-};
-function* workGetAsceanAndInventoryFetch(action: any): SagaIterator {
-    const ressponse = yield call(asceanAPI.getAsceanAndInventory, action.payload);
-    yield put (setPlayer(ressponse.data));
-
-    const res = yield call(asceanAPI.getAsceanStats, action.payload);
-    yield put(setCombatPlayer(res.data.data));
-};
-function* workGetOnlyInventoryFetch(action: any): SagaIterator {
-    const res = yield call(asceanAPI.getAsceanInventory, action.payload);
-    yield put(setInventory(res.inventory));
-};
-function* workGetLootDropFetch(action: any): SagaIterator {
-    const res = yield call(equipmentAPI.getLootDrop, action.payload.level);
-    yield put(setLootDrops(res.data[0]));
-    const roll = Math.floor(Math.random() * 101);
-    if (roll > 50) {
-        let sec = yield call(equipmentAPI.getLootDrop, action.payload.level);
-        yield put(setLootDrops(sec.data[0]));
-        EventEmitter.emit('enemyLootDrop', { enemyID: action.payload.enemyID, drops: [res.data[0], sec.data[0]] } );
-    } else {
-        EventEmitter.emit('enemyLootDrop', { enemyID: action.payload.enemyID, drops: res.data } );
-    };
-};
-function* workGetInteracingLootFetch(action: any): SagaIterator {
-    yield put(setShowLoot(action.payload));
-};
-function* workGetThieverySuccessFetch(action: any): SagaIterator {
-    const { item, id } = action.payload;
-    yield call(asceanAPI.purchaseToInventory, item);
-    const stat = {
-        asceanID: id, 
-        successes: 1,
-        failures: 0,
-        total: 1,
-        totalValue: checkStatisticalValue(item.item.rarity),
-    };
-    const res = yield call(asceanAPI.recordThievery, stat);
-    yield put(setStatistics(res));
-};
-function* workGetPurchaseFetch(action: any): SagaIterator {
-    const res = yield call(asceanAPI.purchaseToInventory, action.payload);
-    console.log(res, "Response Purchasing Item")
-    yield put(setCurrency(res.currency));
-};
 
 // ==================== Root ====================
 

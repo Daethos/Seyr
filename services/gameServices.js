@@ -2835,19 +2835,82 @@ const phaserSuccessConcerns = (counter_success, roll_success, computer_counter_s
 
 const phaserActionSplitter = async (combatData) => {
     let cleanData = await newDataCompiler(combatData);
+    let changes = {};
     const playerActionLive = cleanData.action !== '' ? true : false;
     const computerActionLive = cleanData.computer_action !== '' ? true : false;
     if (playerActionLive && computerActionLive) {
         console.log("Dual Actions");
         cleanData = await phaserDualActionSplitter(cleanData);
+        changes = {
+            ...changes,
+            'player_special_description': cleanData.player_special_description,
+            'player_start_description': cleanData.player_start_description,
+            'player_influence_description': cleanData.player_influence_description,
+            'player_influence_description_two': cleanData.player_influence_description_two,
+            'player_action_description': cleanData.player_action_description,
+            'realized_player_damage': cleanData.realized_player_damage,
+            'counter_success': cleanData.counter_success,
+            'roll_success': cleanData.roll_success,
+            'critical_success': cleanData.critical_success,
+            'religious_success': cleanData.religious_success,
+            'glancing_blow': cleanData.glancing_blow,
+            'dual_wielding': cleanData.dual_wielding,
+
+            'computer_special_description': cleanData.computer_special_description,
+            'computer_start_description': cleanData.computer_start_description,
+            'computer_influence_description': cleanData.computer_influence_description,
+            'computer_influence_description_two': cleanData.computer_influence_description_two,
+            'computer_action_description': cleanData.computer_action_description,
+            'realized_computer_damage': cleanData.realized_computer_damage,
+            'computer_damage_type': cleanData.computer_damage_type,
+            'computer_counter_success': cleanData.computer_counter_success,
+            'computer_roll_success': cleanData.computer_roll_success,
+            'computer_critical_success': cleanData.computer_critical_success,
+            'computer_religious_success': cleanData.computer_religious_success,
+            'computer_glancing_blow': cleanData.computer_glancing_blow,
+            'computer_dual_wielding': cleanData.computer_dual_wielding, 
+        };
     } else if (playerActionLive && !computerActionLive) {
         console.log(cleanData.player.name, "Player Attacking");
         await computerActionCompiler(cleanData, cleanData.action, cleanData.computer_action, cleanData.computer_counter_guess);
         await attackCompiler(cleanData, cleanData.action);
+        changes = {
+            ...changes,
+            'player_special_description': cleanData.player_special_description,
+            'player_start_description': cleanData.player_start_description,
+            'player_influence_description': cleanData.player_influence_description,
+            'player_influence_description_two': cleanData.player_influence_description_two,
+            'player_action_description': cleanData.player_action_description,
+            'realized_player_damage': cleanData.realized_player_damage,
+            'potential_player_damage': cleanData.potential_player_damage,
+            'counter_success': cleanData.counter_success,
+            'roll_success': cleanData.roll_success,
+            'critical_success': cleanData.critical_success,
+            'religious_success': cleanData.religious_success,
+            'glancing_blow': cleanData.glancing_blow,
+            'dual_wielding': cleanData.dual_wielding,
+        };
     } else if (!playerActionLive && computerActionLive) {
         console.log(cleanData.computer.name, "Computer Attacking");
         await computerWeaponMaker(cleanData);
         await computerAttackCompiler(cleanData, cleanData.computer_action);
+        changes = {
+            ...changes,
+            'computer_special_description': cleanData.computer_special_description,
+            'computer_start_description': cleanData.computer_start_description,
+            'computer_influence_description': cleanData.computer_influence_description,
+            'computer_influence_description_two': cleanData.computer_influence_description_two,
+            'computer_action_description': cleanData.computer_action_description,
+            'realized_computer_damage': cleanData.realized_computer_damage,
+            'potential_computer_damage': cleanData.potential_computer_damage,
+            'computer_damage_type': cleanData.computer_damage_type,
+            'computer_counter_success': cleanData.computer_counter_success,
+            'computer_roll_success': cleanData.computer_roll_success,
+            'computer_critical_success': cleanData.computer_critical_success,
+            'computer_religious_success': cleanData.computer_religious_success,
+            'computer_glancing_blow': cleanData.computer_glancing_blow,
+            'computer_dual_wielding': cleanData.computer_dual_wielding,    
+        };
     };
     await faithFinder(cleanData);
     
@@ -2858,8 +2921,54 @@ const phaserActionSplitter = async (combatData) => {
     cleanData.computer_action = '';
     cleanData.combatRound += 1;
     cleanData.sessionRound += 1;
-    cleanData.soundEffects = true;
-    return cleanData;
+
+    if (cleanData.player_win === true || cleanData.computer_win === true) await statusEffectCheck(cleanData);
+
+    changes = {
+        ...changes,
+        'action': cleanData.action,
+        'computer_action': cleanData.computer_action,
+        'combatRound': cleanData.combatRound,
+        'sessionRound': cleanData.sessionRound,
+        'playerDamaged': cleanData.realized_computer_damage > 0,
+        'computerDamaged': cleanData.realized_player_damage > 0,
+        
+        'new_player_health': cleanData.new_player_health,
+        'current_player_health': cleanData.current_player_health,
+        'player_defense': cleanData.player_defense,
+        'playerEffects': cleanData.playerEffects,
+        'weapons': cleanData.weapons,
+        
+        'new_computer_health': cleanData.new_computer_health,
+        'current_computer_health': cleanData.current_computer_health,
+        'computer_defense': cleanData.computer_defense,
+        'computerEffects': cleanData.computerEffects,
+        'computer_weapons': cleanData.computer_weapons,
+        
+        'actionData': cleanData.actionData,
+        'typeAttackData': cleanData.typeAttackData,
+        'typeDamageData': cleanData.typeDamageData,
+        'deityData': cleanData.deityData,
+        'prayerData': cleanData.prayerData,
+
+        'attack_weight': cleanData.attack_weight,
+        'counter_weight': cleanData.counter_weight,
+        'dodge_weight': cleanData.dodge_weight,
+        'posture_weight': cleanData.posture_weight,
+        'roll_weight': cleanData.roll_weight,
+        'counter_attack_weight': cleanData.counter_attack_weight,
+        'counter_counter_weight': cleanData.counter_counter_weight,
+        'counter_dodge_weight': cleanData.counter_dodge_weight,
+        'counter_posture_weight': cleanData.counter_posture_weight,
+        'counter_roll_weight': cleanData.counter_roll_weight,
+
+        'player_death_description': cleanData.player_death_description,
+        'computer_death_description': cleanData.computer_death_description,
+        'player_win': cleanData.player_win,
+        'computer_win': cleanData.computer_win,
+    };
+    return changes;
+    // return cleanData;
 };
 
 const newDataCompiler = async (combatData) => {
@@ -3139,7 +3248,33 @@ const instantActionSplitter = async (combatData) => {
         combatData.new_computer_health = 0;
         combatData.player_win = true;
     };
-    return combatData;
+    if (combatData.player_win === true) await statusEffectCheck(combatData);
+    // Maybe Initialize Changes and have it accumulate each change along the way ?? TODO:FIXME:
+    const changes = {
+        'actionData': combatData.actionData,
+        'deityData': combatData.deityData,
+        'prayerData': combatData.prayerData,
+
+        'weapons': combatData.weapons,
+        'computer_weapons': combatData.computer_weapons,
+        'playerEffects': combatData.playerEffects,
+        'computerEffects': combatData.computerEffects,
+        'player_defense': combatData.player_defense,
+        'computer_defense': combatData.computer_defense,
+
+        'new_player_health': combatData.new_player_health,
+        'new_computer_health': combatData.new_computer_health,
+        'current_player_health': combatData.current_player_health,
+        'current_computer_health': combatData.current_computer_health,
+        
+        'realized_player_damage': combatData.realized_player_damage,
+        'computerDamaged': combatData.computerDamaged,
+        'player_win': combatData.player_win,
+        'player_action_description': combatData.player_action_description,
+        'player_influence_description': combatData.player_influence_description,
+    };
+    return changes;
+    // return combatData;
 };
 
 const instantEffectCheck = async (combatData) => {
@@ -3320,7 +3455,38 @@ const consumePrayerSplitter = async (combatData) => {
     combatData.prayerSacrifice = '';
     combatData.prayerSacrificeName = '';
     combatData.action = '';
-    return combatData;
+
+    if (combatData.player_win === true) await statusEffectCheck(combatData);
+
+    const changes = {
+        'actionData': combatData.actionData,
+        'prayerData': combatData.prayerData,
+
+        'playerEffects': combatData.playerEffects,
+        'computerEffects': combatData.computerEffects,
+        'weapons': combatData.weapons,
+        'computer_weapons': combatData.computer_weapons,
+        'player_defense': combatData.player_defense,
+        'computer_defense': combatData.computer_defense,
+
+        'new_player_health': combatData.new_player_health,
+        'current_player_health': combatData.current_player_health,
+        'new_computer_health': combatData.new_computer_health,
+        'current_computer_health': combatData.current_computer_health,
+
+        'player_win': combatData.player_win,
+        'player_action_description': combatData.player_action_description,
+        'prayerSacrifice': combatData.prayerSacrifice,
+        'prayerSacrificeName': combatData.prayerSacrificeName,
+        
+        'computerDamaged': combatData.computerDamaged,
+        'realized_player_damage': combatData.realized_player_damage,
+        'action': combatData.action,
+        'player_action': combatData.player_action,
+    };
+
+    return changes;
+    // return combatData;
 };
 
 const phaserEffectTickSplitter = async (data) => { 
@@ -3387,7 +3553,30 @@ const phaserEffectTickSplitter = async (data) => {
             };
         };
     };
-    return combatData; 
+
+    if (combatData.player_win === true || combatData.computer_win === true) await statusEffectCheck(combatData);
+
+    const changes = {
+        'actionData': combatData.actionData,
+        'prayerData': combatData.prayerData,
+
+        'playerEffects': combatData.playerEffects,
+        'computerEffects': combatData.computerEffects,
+        'weapons': combatData.weapons,
+        'computer_weapons': combatData.computer_weapons,
+        'player_defense': combatData.player_defense,
+        'computer_defense': combatData.computer_defense,
+
+        'new_player_health': combatData.new_player_health,
+        'current_player_health': combatData.current_player_health,
+        'new_computer_health': combatData.new_computer_health,
+        'current_computer_health': combatData.current_computer_health,
+
+        'player_win': combatData.player_win,
+        'computer_win': combatData.computer_win,
+    };
+    return changes;
+    // return combatData; 
 };
 
 // ================================= COMPRESSION / DECOMPRESSION ===================================== \\
@@ -3424,13 +3613,8 @@ const actionCompiler = async (combatData) => {
 
 const instantActionCompiler = async (combatData) => {
     try {
-        const dec = decompress(combatData);
-        let result = await instantActionSplitter(dec);
-        if (result.player_win === true || result.computer_win === true) {
-            await statusEffectCheck(result);
-        };
-        const pre = compress(result);
-        return pre;
+        const res = await instantActionSplitter(combatData);
+        return res;
     } catch (err) {
         console.log(err, 'Error in the Instant Action Compiler of Game Services');
         res.status(400).json({ err })
@@ -3439,13 +3623,8 @@ const instantActionCompiler = async (combatData) => {
 
 const consumePrayer = async (combatData) => {
     try {
-        const dec = decompress(combatData);
-        let result = await consumePrayerSplitter(dec);
-        if (result.player_win === true || result.computer_win === true) {
-            await statusEffectCheck(result);
-        };
-        const pre = compress(result);
-        return pre;
+        const res = await consumePrayerSplitter(combatData);
+        return res;
     } catch (err) {
         console.log(err, 'Error in the Consume Prayer of Game Services');
         res.status(400).json({ err })
@@ -3454,13 +3633,8 @@ const consumePrayer = async (combatData) => {
 
 const phaserActionCompiler = async (combatData) => {
     try {
-        const dec = decompress(combatData);
-        let result = await phaserActionSplitter(dec);
-        if (result.player_win === true || result.computer_win === true) {
-            await statusEffectCheck(result);
-        };
-        const pre = compress(result);
-        return pre;
+        const res = await phaserActionSplitter(combatData);
+        return res;
     } catch (err) {
         console.log(err, 'Error in the Phaser Action Compiler of Game Services');
         res.status(400).json({ err });
@@ -3469,13 +3643,8 @@ const phaserActionCompiler = async (combatData) => {
 
 const phaserEffectTick = async (data) => {
     try {
-        const dec = decompress(data);
-        let result = await phaserEffectTickSplitter(dec);
-        if (result.player_win === true || result.computer_win === true) {
-            await statusEffectCheck(result);
-        };
-        const pre = compress(result);
-        return pre;
+        const res = await phaserEffectTickSplitter(data);
+        return res;
     } catch (err) {
         console.log(err, 'Error in the Phaser Effect Tick of Game Services');
         res.status(400).json({ err });

@@ -60,12 +60,14 @@ class Particle {
                     if (player.name === 'player') {
                         if (this.scene.state.action !== effect.action) {
                             console.log("Resetting Action To " + effect.action + " From " + this.scene.state.action + " Due to Collision Success For PLAYER");
-                            this.scene.setState('action', effect.action);
+                            // this.scene.setState('action', effect.action);
+                            this.scene.combatMachine.input('action', effect.action);
                         };
                     } else if (player.name === 'enemy') {
                         if (player.isCurrentTarget && this.scene.state.computer_action !== effect.action) {  
                             console.log("Resetting Action To " + effect.action + " From " + this.scene.state.computer_action + " Due to Collision Success For ENEMY");
-                            this.scene.setState('computer_action', effect.action);
+                            // this.scene.setState('computer_action', effect.action);
+                            this.scene.combatMachine.input('computer_action', effect.action);
                         } else if (!player.isCurrentTarget && player.currentAction !== effect.action) {
                             console.log("Resetting Action To " + effect.action + " From " + player.currentAction + " Due to Collision Success For ENEMY");
                             player.currentAction = effect.action;

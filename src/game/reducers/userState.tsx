@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { User } from "../../pages/App/App";
 import userService from "../../utils/userService";
-import * as io from 'socket.io-client';
 
 export const userSlice = createSlice({
     name: 'user',
@@ -38,12 +37,9 @@ export const userSlice = createSlice({
             console.log('getUserLogout');
             state.user = null;
             state.ascean = [];
-        },
-        getUserSocket: (state, action) => {
-            return { ...state, socket: action.payload }
-        },      
+        }, 
     },
 });
 
-export const { getUserFetch, getUserSuccess, getUserFailure, getUserLogout, getUserAsceanFetch, getUserAsceanSuccess, getUserSocket } = userSlice.actions;
+export const { getUserFetch, getUserSuccess, getUserFailure, getUserLogout, getUserAsceanFetch, getUserAsceanSuccess } = userSlice.actions;
 export default userSlice.reducer;

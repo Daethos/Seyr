@@ -39,8 +39,8 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
         };
         if (pauseState) clearInterval(intervalTimer);
         if (canTick(effect, effectTimer)) { 
-            console.log("Can Tick");
-            dispatch(getEffectTickFetch({ combatData: state, effect, effectTimer }));
+            console.log("Ticking");
+            dispatch(getEffectTickFetch({ effect, effectTimer })); // Used to have combatData: state as first arg/obj prop
         };
         
         return () => {
