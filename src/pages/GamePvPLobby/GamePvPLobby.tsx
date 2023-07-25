@@ -67,8 +67,9 @@ const GamePvPLobby = ({ user }: Props) => {
     });
 
     const handleSocketEvent = useCallback((event: string, callback: Function) => {
-        if (socket) {
-          socket.on(event, callback);
+        if (socket) socket.on(event, callback);
+        return () => {
+            if (socket) socket.off(event, callback);
         };
     }, [socket]);
 

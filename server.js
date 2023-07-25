@@ -35,6 +35,7 @@ app.get('/*', function(req, res) {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
+const gameService = require('./services/gameServices');
 const pvpService = require('./services/pvpServices');
 const asceanService = require('./services/asceanServices');
 const WorldMap = require('./services/worldServices');
@@ -61,7 +62,7 @@ const rooms = new Map();
 io.on("connection", (socket) => {
   // const clientIp = socket.handshake.address;
   // debug(`Client connected from ${clientIp}`);
-  socket.onAny((eventName, ...args) => {
+  socket.onAny((_eventName, ...args) => {
     const data = args[0];
     const size = data ? JSON.stringify(data).length : 0;
     console.log((size / 1000), "KBs");
@@ -69,6 +70,16 @@ io.on("connection", (socket) => {
   });
   console.log(`User Connected: ${socket.id}`);
   let connectedUsersCount;
+  let player = {
+    user: null, // User
+    ascean: null, // Player
+    stats: null, // Combat Stats
+    settings: null, // Game Settings
+    temp: null, // asceanState
+    traits: null, // Player Traits
+    room: null, // Room
+  };
+
   let personalUser = { user: null, ascean: null };
   let newUser = { user: null, room: null, ascean: null, player: null, ready: false };
   let combatData = {};
@@ -83,10 +94,104 @@ io.on("connection", (socket) => {
 
   async function onSetup(userData) {
     console.log("Setting Up");
-    personalUser.user = userData;
+    personalUser = {
+      ...personalUser,
+      user: userData,
+    };
     socket.join(userData._id);
     console.log(userData.username, userData._id);
     socket.emit("Connected");
+  };
+
+  const setupPlayer = async (data) => {
+    const newData = zlib.inflateSync(data).toString();
+    const parsedData = JSON.parse(newData); 
+    player = {
+      user: parsedData.user,
+      ascean: parsedData.ascean,
+      stats: parsedData.stats,
+      settings: parsedData.settings,
+      temp: parsedData.temp,
+      traits: parsedData.traits,
+      room: parsedData.user._id,
+    };
+    console.log(player.user._id, player.room, 'Ascean Setup');
+
+    rooms.set(parsedData.user._id);
+    socket.join(parsedData.user._id);
+    socket.emit('playerSetup', `${parsedData.user.username} has joined with ${parsedData.ascean.name}.`);
+    // io.to(parsedData.user._id);
+  };
+
+  const computerCombat = async (data) => {
+    // const newData = zlib.inflateSync(data).toString();
+    // const parsedData = JSON.parse(newData);
+    // combatData = {
+    //   ...combatData,
+    //   ...parsedData,
+    // };
+    const res = await gameService.phaserActionCompiler(data);
+    // combatData = res;
+    // const deflateResponse = zlib.deflateSync(JSON.stringify(res));
+    // socket.emit('computerCombatResponse', deflateResponse);
+    console.log(player.room, "Is the Player Still real ?")
+    io.to(player.room).emit('computerCombatResponse', res);
+  };
+
+  const enemyCombat = async (data) => {
+    // const newData = zlib.inflateSync(data).toString();
+    // const parsedData = JSON.parse(newData);
+    // combatData = {
+    //   ...combatData,
+    //   ...parsedData,
+    // };
+    const res = await gameService.phaserActionCompiler(data);
+    // combatData = res;
+    // const deflateResponse = zlib.deflateSync(JSON.stringify(res));
+    // socket.emit('enemyCombatResponse', deflateResponse);
+    socket.emit('enemyCombatResponse', res);
+  };
+
+  const invokePrayer = async (data) => {
+    // const newData = zlib.inflateSync(data).toString();
+    // const parsedData = JSON.parse(newData);
+    // combatData = {
+    //   ...combatData,
+    //   ...parsedData,
+    // };
+    const res = await gameService.instantActionCompiler(data);
+    // combatData = res;
+    // const deflateResponse = zlib.deflateSync(JSON.stringify(res));
+    // socket.emit('invokePrayerResponse', deflateResponse);
+    socket.emit('invokePrayerResponse', res);
+  };
+
+  const consumePrayer = async (data) => {
+    // const newData = zlib.inflateSync(data).toString();
+    // const parsedData = JSON.parse(newData);
+    // combatData = {
+    //   ...combatData,
+    //   ...parsedData,
+    // };
+    const res = await gameService.consumePrayer(data);
+    // combatData = res;
+    // const deflateResponse = zlib.deflateSync(JSON.stringify(res));
+    // socket.emit('consumePrayerResponse', deflateResponse);
+    socket.emit('consumePrayerResponse', res);
+  }; 
+
+  const effectTick = async (data) => {
+    // const newData = zlib.inflateSync(data).toString();
+    // const parsedData = JSON.parse(newData);
+    // combatData = {
+    //   ...combatData,
+    //   ...parsedData,
+    // };
+    const res = await gameService.phaserEffectTick(data);
+    // combatData = res;
+    // const deflateResponse = zlib.deflateSync(JSON.stringify(res));
+    // socket.emit('effectTickResponse', deflateResponse);
+    socket.emit('effectTickResponse', res);
   };
 
   async function joinRoom(preData, callback) {
@@ -298,6 +403,14 @@ io.on("connection", (socket) => {
   };
 
   socket.on("setup", onSetup);
+
+  socket.on('setupPlayer', setupPlayer);
+  socket.on('computerCombat', computerCombat);
+  socket.on('enemyAction', enemyCombat);
+  socket.on('invokePrayer', invokePrayer);
+  socket.on('consumePrayer', consumePrayer);
+  socket.on('effectTick', effectTick)
+
   socket.on("join_room", joinRoom);
   socket.on('typing', (room) => socket.in(room).emit('typing'));
   socket.on('stop_typing', (room) => socket.in(room).emit('stop_typing'));
