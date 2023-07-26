@@ -149,6 +149,8 @@ const combatSlice = createSlice({
         setRest: (state, action) => {
             const healed = Math.floor(state.new_player_health + state.player_health * (action.payload / 100)) ;
             const newHealth = healed > state.player_health ? state.player_health : healed;
+            const socket = getSocketInstance();
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['new_player_health']: newHealth });
             return {
                 ...state,
                 new_player_health: newHealth,
@@ -238,6 +240,8 @@ const combatSlice = createSlice({
         },
         
         setRemoveEffect: (state, action) => {
+            const socket = getSocketInstance();
+            socket.emit(SOCKET.REMOVE_EFFECT, action.payload);
             return {
                 ...state,
                 playerEffects: state.playerEffects.filter(effect => effect.id !== action.payload),
@@ -245,12 +249,16 @@ const combatSlice = createSlice({
             };
         },
         setStalwart: (state, action) => {
+            const socket = getSocketInstance();
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['isStalwart']: action.payload });
             return {
                 ...state,
                 isStalwart: action.payload,
             };
         },
         setCombatTimer: (state, action) => {
+            const socket = getSocketInstance();
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['combatTimer']: action.payload });
             return {
                 ...state,
                 combatTimer: action.payload,
@@ -271,7 +279,9 @@ const combatSlice = createSlice({
             };
         },
         setPlayerWin: (state, _action) => {
+            const socket = getSocketInstance();
             const weaps: any[] = state.weapons.map(weapon => [state.weapon_one, state.weapon_two, state.weapon_three].find(w => w._id === weapon._id));
+            socket.emit(SOCKET.PLAYER_WIN, weaps);
             return {
                 ...state,
                 weapons: weaps,
@@ -283,7 +293,9 @@ const combatSlice = createSlice({
             };
         },
         setEnemyWin: (state, _action) => {
+            const socket = getSocketInstance();
             const weaps = state.weapons.map(weapon => [state.weapon_one, state.weapon_two, state.weapon_three].find(w => w._id === weapon._id));
+            socket.emit(SOCKET.COMPUTER_WIN, weaps);
             return {
                 ...state,
                 weapons: weaps,

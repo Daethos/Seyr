@@ -106,6 +106,10 @@ io.on("connection", (socket) => {
       traits: parsedData.traits,
       room: parsedData.user._id,
     };
+    combatData = {
+      ...combatData,
+      phaser: true
+    };
     console.log(player.user._id, player.room, 'Ascean Setup');
 
     rooms.set(parsedData.user._id);
@@ -117,15 +121,12 @@ io.on("connection", (socket) => {
     // const newData = zlib.inflateSync(data).toString();
     // const parsedData = JSON.parse(newData);
     console.log(data, "Computer Combat Data");
-    combatData = {
-      ...combatData,
-      ...data,
-    };
+    combatData = { ...combatData, ...data };
     const res = await gameService.phaserActionCompiler(combatData); // data
     const deflateResponse = zlib.deflateSync(JSON.stringify(res));
-    io.to(player.room).emit('computerCombatResponse', deflateResponse);
-    console.log('Combat Response');
     combatData = { ...combatData, ...res };
+    console.log('Combat Response');
+    io.to(player.room).emit('computerCombatResponse', deflateResponse);
     // io.to(player.room).emit('computerCombatResponse', res);
   };
 
@@ -298,6 +299,35 @@ io.on("connection", (socket) => {
       'combatEngaged': data
     };
     console.log('Phaser Aggression Set');  
+  };
+
+  const removeEffect = async (data) => {
+    combatData = {
+      ...combatData,
+      'playerEffects': combatData.playerEffects.filter(effect => effect.id !== data),
+      'computerEffects': combatData.computerEffects.filter(effect => effect.id !== data),
+    };
+  };
+
+  const playerWin = async (data) => {
+    combatData = {
+      ...combatData,
+      weapons: data,
+      loseStreak: 0,
+      winStreak: combatData.winStreak + 1,
+      highScore: combatData.highScore < combatData.winStreak + 1 ? combatData.winStreak + 1 : combatData.highScore,
+      instantStatus: false,
+    }
+  };
+  const computerWin = async (data) => {
+    combatData = {
+      ...combatData,
+      weapons: data,
+      winStreak: 0,
+      loseStreak: combatData.loseStreak + 1,
+      combatEngaged: false,
+      instantStatus: false,
+    };  
   };
 
   async function joinRoom(preData, callback) {
@@ -523,6 +553,9 @@ io.on("connection", (socket) => {
   socket.on('invokePrayer', invokePrayer);
   socket.on('consumePrayer', consumePrayer);
   socket.on('effectTick', effectTick);
+  socket.on('removeEffect', removeEffect);
+  socket.on('playerWin', playerWin);
+  socket.on('computerWin', computerWin);
 
   socket.on("join_room", joinRoom);
   socket.on('typing', (room) => socket.in(room).emit('typing'));

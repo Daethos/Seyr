@@ -389,14 +389,14 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
             secondary: gameState?.traits?.secondary,
             tertiary: gameState?.traits?.tertiary,
         };
-        const persuasionTraits = ['Ilian', 'Lilosian', 'Arbituous', "Kyr'naic", 'Chiomic', 'Fyeran', 'Shaorahi', 'Tashaeral'];
-        const matchingTraits = Object.values(traits).filter(trait => persuasionTraits.includes(trait.name));
-        if (matchingTraits.length === 0) {
+        const pTraits = ['Ilian', 'Lilosian', 'Arbituous', "Kyr'naic", 'Chiomic', 'Fyeran', 'Shaorahi', 'Tashaeral'];
+        const mTraits = Object.values(traits).filter(trait => pTraits.includes(trait.name));
+        if (mTraits.length === 0) {
             setPersuasion(false);
             return;
         };
         setPersuasion(true);
-        setPersuasionTraits(matchingTraits);
+        setPersuasionTraits(mTraits);
     };
 
     const checkMiniGame = async () => {
@@ -416,16 +416,16 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
     };
 
     const canUpgrade = (inventory: any[]) => {
-        const itemGroups: Record<string, any[]> = {};
+        const groups: Record<string, any[]> = {};
         inventory.forEach(item => {
             const key = `${item?.name}-${item?.rarity}`;
-            itemGroups[key] = itemGroups[key] || [];
-            itemGroups[key].push(item);
+            groups[key] = groups[key] || [];
+            groups[key].push(item);
         });
         const matches = [];
-        for (const key in itemGroups) {
-            if (itemGroups.hasOwnProperty(key)) {
-                const items = itemGroups[key];
+        for (const key in groups) {
+            if (groups.hasOwnProperty(key)) {
+                const items = groups[key];
                 if (items.length >= 3) { 
                     matches.push(items[0]);
                 };
@@ -442,25 +442,25 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
     };
 
     const handleIntent = (intent: string): void => {
-        let cleanIntent: string = '';
+        let clean: string = '';
         switch (intent) {
             case 'Local Lore':
-                cleanIntent = 'localLore';
+                clean = 'localLore';
                 break;
             case 'Provincial Whispers':
-                cleanIntent = 'provincialWhispers';
+                clean = 'provincialWhispers';
                 break;
             case 'World Lore':
-                cleanIntent = 'worldLore ';
+                clean = 'worldLore ';
                 break;
             case 'Local Whispers':
-                cleanIntent = 'localWhispers';
+                clean = 'localWhispers';
                 break;
             default:
-                cleanIntent = intent;
+                clean = intent;
                 break;
         };
-        dispatch(setCurrentIntent(cleanIntent));
+        dispatch(setCurrentIntent(clean));
     };
     const handleRegion = (region: keyof Region): void => setProvince(region);
 
@@ -478,22 +478,22 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
     const getLoot = async (type: string) => {
         if (gameState?.merchantEquipment.length > 0) await deleteEquipment(gameState?.merchantEquipment);
         try {
-            let response: any;
+            let res: any;
             if (type === 'physical-weapon') {
-                response = await eqpAPI.getPhysicalWeaponEquipment(state.player.level);
+                res = await eqpAPI.getPhysicalWeaponEquipment(state.player.level);
             } else if (type === 'magical-weapon') {
-                response = await eqpAPI.getMagicalWeaponEquipment(state.player.level);
+                res = await eqpAPI.getMagicalWeaponEquipment(state.player.level);
             } else if (type === 'armor') {
-                response = await eqpAPI.getArmorEquipment(state.player.level);
+                res = await eqpAPI.getArmorEquipment(state.player.level);
             } else if (type === 'jewelry') {
-                response = await eqpAPI.getJewelryEquipment(state.player.level);
+                res = await eqpAPI.getJewelryEquipment(state.player.level);
             } else if (type === 'general') {
-                response = await eqpAPI.getMerchantEquipment(state.player.level);
+                res = await eqpAPI.getMerchantEquipment(state.player.level);
             } else if (type === 'cloth') {
-                response = await eqpAPI.getClothEquipment(state.player.level);
+                res = await eqpAPI.getClothEquipment(state.player.level);
             };
-            console.log(response.data, 'Response!');
-            dispatch(setMerchantEquipment(response.data));
+            console.log(res.data, 'Res!');
+            dispatch(setMerchantEquipment(res.data));
         } catch (err) {
             console.log(err, 'Error Getting Loot!');
         };

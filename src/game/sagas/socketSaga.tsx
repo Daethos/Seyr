@@ -1,6 +1,6 @@
 import { NotUndefined, END } from '@redux-saga/types';
 import { SagaIterator, eventChannel } from 'redux-saga';
-import { call, take, put, fork, cancel, apply, all, takeEvery, cps, select, takeLatest } from 'redux-saga/effects';
+import { call, take, fork, cancel, takeEvery, select, takeLatest } from 'redux-saga/effects';
 import * as io from 'socket.io-client';
 import { connectToSocket, closeSocketConnection, getSocketInstance } from './socketManager';
 import { compress, workGetResponse, workTickResponse } from './rootSaga';
@@ -25,6 +25,9 @@ export const SOCKET = {
     EFFECT_TICK: 'effectTick',
     ENEMY_ACTION: 'enemyAction',
     PHASER_ACTION: 'computerCombat',
+    REMOVE_EFFECT: 'removeEffect',
+    PLAYER_WIN: 'playerWin',
+    COMPUTER_WIN: 'computerWin',
 
     // Listeners
     PLAYER_SETUP: 'playerSetup',
