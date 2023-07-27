@@ -1454,8 +1454,9 @@ async function getAsceanStats(req, res) {
         });
         let data = await asceanService.asceanCompiler(ascean);
         if (ascean.health.current === -10) ascean.health.current = data.data.attributes.healthTotal;
-        if (data.data.attributes.healthTotal > ascean.health.total) {
+        if (data.data.attributes.healthTotal > ascean.health.total) { // If the Ascean's health has increased, update the Ascean's health
             ascean.health.total = data.data.attributes.healthTotal;
+            ascean.health.current = data.data.attributes.healthTotal;
             data.data.ascean.health.total = data.data.attributes.healthTotal;
             if (typeof ascean.currency.gold !== 'number') {
                 const currency = { gold: 0, silver: 0 };

@@ -59,6 +59,8 @@ export const gameSlice = createSlice({
         getReplenishFirewaterFetch: (state, _action) => {
             state.loadedAscean = false;
         },
+        getRestoreFirewaterFetch: (state, _action) => {
+        },
         getGainExperienceFetch: (state, _action) => {
             state.loadedAscean = false;
         },
@@ -230,6 +232,7 @@ export const {
     getOnlyInventoryFetch, 
     getPurchaseFetch, 
     getReplenishFirewaterFetch, 
+    getRestoreFirewaterFetch,
     getThieverySuccessFetch, 
     
     setPlayer, 

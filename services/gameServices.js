@@ -1,6 +1,4 @@
 const StatusEffect = require('./faithServices.js');
-const zlib = require('zlib');
-const pako = require('pako');
 
 const weatherEffectCheck = async (weapon, magDam, physDam, weather, critical) => {
     let magicalDamage = magDam;
@@ -1082,7 +1080,9 @@ const computerDualWieldCompiler = async (combatData, player_physical_defense_mul
     if (combatData.isStalwart) {
         combatData.realized_computer_damage *= 0.85;
     };
-
+    if (combatData.isCaerenic) {
+        combatData.realized_computer_damage *= 1.15;
+    }
 
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
     combatData.current_player_health = combatData.new_player_health; // Added to persist health totals?
@@ -1279,6 +1279,9 @@ const computerAttackCompiler = async (combatData, computer_action) => {
     // =============== PHASER EFFECTS ================ \\
     if (combatData.isStalwart) {
         combatData.realized_computer_damage *= 0.85;
+    };
+    if (combatData.isCaerenic) {
+        combatData.realized_computer_damage *= 1.15;
     };
 
     combatData.new_player_health = combatData.current_player_health - combatData.realized_computer_damage;
@@ -1770,6 +1773,9 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     if (combatData.computer_action === 'posture') {
         combatData.realized_player_damage *= 0.95;
     };
+    if (combatData.isCaerenic) {
+        combatData.realized_player_damage *= 1.15;
+    };
 
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
@@ -1965,6 +1971,9 @@ const attackCompiler = async (combatData, player_action) => {
     if (combatData.computer_action === 'attack') {
         combatData.realized_player_damage *= 1.1;
     };
+    if (combatData.isCaerenic) {
+        combatData.realized_player_damage *= 1.15;
+    }
 
     combatData.new_computer_health = combatData.current_computer_health - combatData.realized_player_damage;
     combatData.current_computer_health = combatData.new_computer_health; // Added to persist health totals?
@@ -3072,6 +3081,7 @@ const newDataCompiler = async (combatData) => {
         phaser: combatData.phaser,
         enemyID: combatData.enemyID,
         combatTimer: combatData.combatTimer,
+        isCaerenic: combatData.isCaerenic,
         isStalwart: combatData.isStalwart,
         npcType: combatData.npcType,
         persuasionScenario: combatData.persuasionScenario,
@@ -3577,21 +3587,6 @@ const phaserEffectTickSplitter = async (data) => {
     };
     return changes;
     // return combatData; 
-};
-
-// ================================= COMPRESSION / DECOMPRESSION ===================================== \\
-
-const decompress = (data) => {
-    const decompressed = pako.inflate(data, { to: 'string' });
-    return JSON.parse(decompressed);
-};
-const compress = (data) => {
-    // const preSize = new Blob([JSON.stringify(data)]).size;
-    // console.log(preSize, "Size of Uncompressed Data");
-    const compressed = pako.deflate(JSON.stringify(data), { to: 'string' });
-    // const size = new Blob([compressed]).size;
-    // console.log(size, "Size of Compressed Data");
-    return compressed;
 };
 
 // ================================= CONTROLLER - SERVICE ===================================== \\

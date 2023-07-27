@@ -6,8 +6,7 @@ import playerPortrait from '../images/player-portrait.png';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { useDispatch, useSelector } from 'react-redux';
-// import { setInstantStatus } from '../reducers/gameState';
+import { useDispatch } from 'react-redux';
 import PhaserEffects from './PhaserEffects';
 import ItemPopover, { getBorderStyle, itemPopover } from './ItemPopover';
 import { setInstantStatus } from '../reducers/combatState';
@@ -19,7 +18,6 @@ interface CombatUIProps {
 };
 
 const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
-    // const gameState = useSelector((state: any) => state.game);
     const dispatch = useDispatch();
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
@@ -31,9 +29,13 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
 
     useEffect(() => {
         let instantTimer: ReturnType<typeof setTimeout>;
-        if (state.instantStatus) instantTimer = setTimeout(() => dispatch(setInstantStatus(false)), 30000);
+        if (state.instantStatus) {
+            instantTimer = setTimeout(() => dispatch(setInstantStatus(false)), 30000);
+        } else if (!state.combatEngaged) {
+            dispatch(setInstantStatus(false));
+        };
         return () => clearTimeout(instantTimer);
-    }, [state.instantStatus, dispatch]);
+    }, [state.instantStatus, dispatch, state.combatEngaged]);
 
     const updatePlayerHealthPercentage = async () => {
         try {
@@ -74,7 +76,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
     const getInvokeStyle = {
         textShadow: '0 0 1em ' + borderColor(state?.player?.mastery),
         color: borderColor(state?.player?.mastery),
-        fontSize: "10px",
+        fontSize: "11.5px",
         fontFamily: "Cinzel",
     };
 
@@ -108,35 +110,35 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                 </button> 
                 </>
             ) : ( '' ) } 
-        {state.playerEffects.length > 0 ?
-            <div className='story-prayers' style={{ position: "absolute" }}>
-                <Modal show={prayerModal} onHide={() => setPrayerModal(false)} centered id="modal-weapon">
-                <Modal.Header closeButton closeVariant='white' style={{ color: "gold" }}>Consume Prayer</Modal.Header>
-                <Modal.Body style={{ textAlign: "center", fontSize: "14px" }}>
-                    <p style={{ color: "#fdf6d8" }}>
-                    Those who lived during the Age of the Ancients were said to have more intimate methods of contacting and corresponding with their creators. As the Ancients used humans as a form
-                    {' '} to enhance themself, those favored to the Ancients were granted strength in the glow of their adherence. Some believe this was nothing more than a boost to one's disposition.
-                    {' '} Perhaps they were right, willing themselves inert and ineffectual.
-                    {' '} Others sought to channel it through their caer into a single burst.<br /><br />
-                    Consume a prayer to experience a burst of caerenic beauty.
-                    </p><br />
-                    <p style={{ color: "gold" }}>
-                    <b>Damage</b> - Burst Tick for <b>50%</b> Round Damage<br />
-                    </p>
-                    <p style={{ color: "gold" }}>
-                    <b>Debuff</b> - Damage Opponent With <b>50%</b> of <b>Opponent's</b> Last Attack<br />
-                    </p>
-                    <p style={{ color: "gold" }}>
-                    <b>Buff</b> - Damage Opponent With <b>50%</b> of <b>Your</b> Last Attack<br />
-                    </p>
-                    <p style={{ color: "gold" }}>
-                    <b>Heal</b> - Burst Tick for <b>50%</b> Round Heal
-                    </p>
-                </Modal.Body>
-                </Modal>
-                <Button variant='' onClick={() => setPrayerModal(true)} style={getInvokeStyle}>Consume </Button><br />
-            </div>
-        : ( '' )}
+            { state.playerEffects.length > 0 ? (
+                <div className='story-prayers' style={{ position: "absolute" }}>
+                    <Modal show={prayerModal} onHide={() => setPrayerModal(false)} centered id="modal-weapon">
+                    <Modal.Header closeButton closeVariant='white' style={{ color: "gold" }}>Consume Prayer</Modal.Header>
+                    <Modal.Body style={{ textAlign: "center", fontSize: "14px" }}>
+                        <p style={{ color: "#fdf6d8" }}>
+                        Those who lived during the Age of the Ancients were said to have more intimate methods of contacting and corresponding with their creators. As the Ancients used humans as a form
+                        {' '} to enhance themself, those favored to the Ancients were granted strength in the glow of their adherence. Some believe this was nothing more than a boost to one's disposition.
+                        {' '} Perhaps they were right, willing themselves inert and ineffectual.
+                        {' '} Others sought to channel it through their caer into a single burst.<br /><br />
+                        Consume a prayer to experience a burst of caerenic beauty.
+                        </p><br />
+                        <p style={{ color: "gold" }}>
+                        <b>Damage</b> - Burst Tick for <b>50%</b> Round Damage<br />
+                        </p>
+                        <p style={{ color: "gold" }}>
+                        <b>Debuff</b> - Damage Opponent With <b>50%</b> of <b>Opponent's</b> Last Attack<br />
+                        </p>
+                        <p style={{ color: "gold" }}>
+                        <b>Buff</b> - Damage Opponent With <b>50%</b> of <b>Your</b> Last Attack<br />
+                        </p>
+                        <p style={{ color: "gold" }}>
+                        <b>Heal</b> - Burst Tick for <b>50%</b> Round Heal
+                        </p>
+                    </Modal.Body>
+                    </Modal>
+                    <Button variant='' onClick={() => setPrayerModal(true)} style={getInvokeStyle}>Consume </Button><br />
+                </div>
+            ) : ( '' )}
             <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '150px', height: '40px' }} />
             <p style={{ position: "absolute", color: "gold", fontSize: "12px", width: "150px", top: "-9px", left: "27px", fontFamily: "Cinzel", fontWeight: 600 }}>
                 {state.player.name}
@@ -176,7 +178,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                 fontFamily: "Cinzel", 
                 fontWeight: 700 
             }}>{Math.round((staminaPercentage / 100) * state.player_attributes.stamina)}</p>
-            <div style={{ position: "absolute", left: "185px", top: "0px", transform: "scale(0.75)" }}> 
+            <div style={{ position: "absolute", left: "187.5px", top: "0px", transform: "scale(0.75)" }}> 
                 <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} caerenic={state.isCaerenic} />
             </div>
             <div style={{ position: "absolute", left: "230px", top: "-10px" }}>

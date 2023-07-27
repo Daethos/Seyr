@@ -150,7 +150,7 @@ io.on("connection", (socket) => {
     console.time('Invoke Prayer');
     combatData = {
       ...combatData,
-      'playerBlessing': data,
+      'playerBlessing': data
     };
     const res = await gameService.instantActionCompiler(combatData); // data
     combatData = {

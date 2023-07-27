@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initialCombatData } from '../../components/GameCompiler/CombatStore';
-import { compress } from '../sagas/rootSaga';
+import { compress } from '../sagas/combatSaga';
 import { getSocketInstance } from '../sagas/socketManager';
 import { SOCKET } from '../sagas/socketSaga';
 
@@ -173,13 +173,6 @@ const combatSlice = createSlice({
                 ...state,
                 player_damage_type: action.payload,
             };
-        },
-        setInstantCombat: (state, action) => {
-            return {
-                ...action.payload,
-                instantStatus: true,
-                action: '',
-            };
         }, 
         setPlayerBlessing: (state, action) => {
             return {
@@ -248,6 +241,8 @@ const combatSlice = createSlice({
             };
         },
         setCaerenic: (state, action) => {
+            const socket = getSocketInstance();
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['isCaerenic']: action.payload });
             return {
                 ...state,
                 isCaerenic: action.payload,
@@ -311,6 +306,8 @@ const combatSlice = createSlice({
             };
         },
         setInstantStatus: (state, action) => {
+            const socket = getSocketInstance();
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['instantStatus']: action.payload });
             return {
                 ...state,
                 instantStatus: action.payload,
@@ -359,15 +356,7 @@ const combatSlice = createSlice({
                 computerEffects: [],
                 enemyID: '',
             };
-        },
-        clearSfx: (state) => {
-            return {
-                ...state,
-                playerDamaged: false,
-                computerDamaged: false,
-                soundEffects: false,
-            };
-        },
+        }, 
         // ===== Noncombat Resolution Concerns ===== \\
         setPlayerLuckout: (state, action) => {
             return {
@@ -444,12 +433,10 @@ export const {
     setToggleDamaged,
     setWeaponOrder,
     setCombatResolution,
-    setInstantCombat,
     setPlayerBlessing,
     setPrayerSacrifice,
     setRemoveEffect,
 
-    clearSfx,
     setInstantStatus,
     setEffectResponse,
     setPlayerWin,

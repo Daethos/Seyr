@@ -5,13 +5,11 @@ import useGameSounds from '../../components/GameCompiler/Sounds';
 import { useKeyEvent } from '../../pages/Story/Story';
 
 interface CombatMouseSettingsProps {
-    setPrayerBlessing: (prayer: any) => void;
-    setDamageType: (damageType: any) => void;
     damageType: any[];
     weapons: any[];
 };
 
-const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, weapons }: CombatMouseSettingsProps) => {
+const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) => {
     const dispatch = useDispatch();
     const { playWO } = useGameSounds(0.25);
     const [prayers, setPrayers] = useState([ 'Buff', 'Heal', 'Debuff', 'Damage', 'Avarice', 'Denial', 'Dispel', 'Silence']);
@@ -28,13 +26,15 @@ const CombatMouseSettings = ({ setPrayerBlessing, setDamageType, damageType, wea
         if (selectedHighlight === 'Prayer') {
             const newIndex = (selectedPrayerIndex + direction + prayers.length) % prayers.length;
             setSelectedPrayerIndex(newIndex);
-            setPrayerBlessing( { target: { value: prayers[newIndex] } } );
+            dispatch(getCombatSettingFetch({ loadout: prayers[newIndex], type: 'Prayer' }));
             setSelectedHighlight('Prayer');
+            playWO();
         } else if (selectedHighlight === 'Damage') {
             const newIndex = (selectedDamageTypeIndex + direction + damageType.length) % damageType.length;
             setSelectedDamageTypeIndex(newIndex);
-            setDamageType( { target: { value: damageType[newIndex] } } );
+            dispatch(getCombatSettingFetch({ loadout: damageType[newIndex], type: 'Damage' }));
             setSelectedHighlight('Damage');
+            playWO();
         } else if (selectedHighlight === 'Weapon') {
             let newIndex = (selectedWeaponIndex + direction + weapons.length) % weapons.length;
             newIndex = direction === 1 ? 2 : 1;

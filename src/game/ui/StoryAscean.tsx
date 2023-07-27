@@ -38,11 +38,10 @@ const SETTINGS = {
 interface Props {
     ascean: Player;
     loading: boolean;
-    levelUpAscean: any;
     asceanViews: string;
 };
 
-const StoryAscean = ({ ascean, loading, levelUpAscean, asceanViews }: Props) => {
+const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
     const dispatch = useDispatch();
     const gameState = useSelector((state: any) => state.game);
     const state = useSelector((state: any) => state.combat);
@@ -365,8 +364,8 @@ const StoryAscean = ({ ascean, loading, levelUpAscean, asceanViews }: Props) => 
         ) : ( '' ) }
         <div className="story-block" style={{ zIndex: 9999, fontFamily: "Cinzel", }}>
             <div className='story-ascean'> 
-                { ascean.experience === asceanState.experienceNeeded ? (
-                    <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} story={true} />
+                { ascean.experience === ascean.level * 1000 ? (
+                    <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} story={true} />
                 ) : ( '' ) } 
                 <div style={{ textAlign: 'center', color: "#fdf6d8", width: '96%' }}>
                     {state.player.name}

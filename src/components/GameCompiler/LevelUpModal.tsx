@@ -4,6 +4,8 @@ import Button from 'react-bootstrap/Button';
 import Mastery from '../AsceanBuilder/Mastery';
 import Attributes from './Attributes';
 import Faith from '../AsceanBuilder/Faith';
+import { useDispatch } from 'react-redux';
+import { getAsceanLevelUpFetch } from '../../game/reducers/gameState';
 
 interface Props {
     asceanState?: any;
@@ -14,10 +16,20 @@ interface Props {
 
 const LevelUpModal = ({ asceanState, setAsceanState, levelUpAscean, story }: Props) => {
     const [levelUpModalShow, setLevelUpModalShow] = useState<boolean>(false);
-
-    const finishLevelUp = () => {
+    const dispatch = useDispatch();
+    const finishLevelUp = async (): Promise<void> => {
         setLevelUpModalShow(false);
-        levelUpAscean(asceanState);
+        if (!story) await levelUpAscean(asceanState);
+        if (story) await levelUp(asceanState);
+    };
+
+    const levelUp = async (vaEsai: any): Promise<void> => {
+        try {
+            console.log(vaEsai, 'Leveling Up');
+            dispatch(getAsceanLevelUpFetch(vaEsai)); 
+        } catch (err: any) {
+            console.log(err.message, 'Error Leveling Up');
+        };
     };
 
     return (

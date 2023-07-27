@@ -11,10 +11,8 @@ import Table from 'react-bootstrap/Table';
 import { GAME_ACTIONS, GameData, Player } from './GameStore';
 import { useLocation } from 'react-router-dom';
 import { Draggable } from 'react-beautiful-dnd'
-import equipSlot from '../../game/images/equip_slot.png';
-import equipSlotSelected from '../../game/images/equip_slot_selected.png';
 import { useDispatch } from 'react-redux';
-import { getAsceanAndInventoryFetch, getOnlyInventoryFetch } from '../../game/reducers/gameState';
+import { getAsceanAndInventoryFetch, getOnlyInventoryFetch, setCurrency } from '../../game/reducers/gameState';
 import { checkPlayerTrait, checkTraits } from './PlayerTraits';
 
 interface Props {
@@ -229,7 +227,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 inventoryType: inventoryType,
                 upgradeMatches: matches,
             };
-            await eqpAPI.upgradeEquipment(data);
+            const res = await eqpAPI.upgradeEquipment(data);
             setInventoryModalShow(false);
             setForgeModalShow(false);
             setLoadingContent('');
@@ -238,6 +236,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
             } else { // Phaser
                 dispatch(getOnlyInventoryFetch(ascean._id));
+                dispatch(setCurrency(res.currency));
             };
         } catch (err: any) {
             console.log(err.message, '<- Error upgrading item');
@@ -340,12 +339,12 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
         <Popover className="text-info" id="popover-inv">
             <Popover.Header id="popover-header-inv" className="" as="h2">{inventory?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + inventory?.imgURL} /></span></Popover.Header>
             <Popover.Body id="popover-body-inv" className="">
-                { inventory?.grip && inventory?.type ?
+                { inventory?.grip && inventory?.type ? (
                     <>
                     {inventory?.type} [{inventory?.grip}] <br />
                     {inventory?.attack_type} [{inventory?.damage_type?.[0]}{inventory?.damage_type?.[1] ? ' / ' + inventory?.damage_type[1] : ( '' ) }{inventory?.damage_type?.[2] ? ' / ' + inventory?.damage_type[2] : ( '' ) }]  <br />
                     </>
-                : inventory?.type ? <>{inventory?.type} <br /></> : '' }
+                ) : inventory?.type ? ( <>{inventory?.type} <br /></> ) : ( '' ) }
                 {inventory?.constitution > 0 ? 'Con: +' + inventory?.constitution + ' ' : ''}
                 {inventory?.strength > 0 ? 'Str: +' + inventory?.strength + ' ' : ''}
                 {inventory?.agility > 0 ? 'Agi: +' + inventory?.agility + ' ' : ''}
@@ -353,32 +352,32 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 {inventory?.caeren > 0 ? 'Caer: +' + inventory?.caeren + ' ' : ''}
                 {inventory?.kyosir > 0 ? 'Kyo: +' + inventory?.kyosir + ' ' : ''}<br />
                 Damage: {inventory?.physical_damage} Phys | {inventory?.magical_damage} Magi <br />
-                { inventory?.physical_resistance || inventory?.magical_resistance ?
+                { inventory?.physical_resistance || inventory?.magical_resistance ? (
                     <>
                     Defense: {inventory?.physical_resistance} Phys | {inventory?.magical_resistance} Magi <br />
                     </>
-                : ( '' ) }
-                { inventory?.physical_penetration || inventory?.magical_penetration ?
+                ) : ( '' ) }
+                { inventory?.physical_penetration || inventory?.magical_penetration ? (
                     <>
                     Penetration: {inventory?.physical_penetration} Phys | {inventory?.magical_penetration} Magi <br />
                     </>
-                : ( '' ) }
+                ) : ( '' ) }
                 Critical Chance: {inventory?.critical_chance}% <br />
                 Critical Damage: {inventory?.critical_damage}x <br />
                 Dodge Timer: {inventory?.dodge}s <br />
                 Roll Chance: {inventory?.roll}% <br />
-                { inventory?.influences?.length > 0 ?
+                { inventory?.influences?.length > 0 ? (
                     <>
                     Influence: {inventory?.influences} <br />
                     </>
-                : ( '' ) }
+                ) : ( '' ) }
                 <br />
                 <p style={{ color: getRarityColor(inventory?.rarity), fontSize: "16px", float: 'left', textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }}>
                 {inventory?.rarity}
                 </p>
-                { blacksmith ? ( '' ) :
+                { blacksmith ? ( '' ) : (
                     <Button variant='outline' style={{ float: 'right', color: 'blue', marginTop: '-3%', marginRight: -8 + '%', textShadow: "0.5px 0.5px 0.5px black", fontWeight: 700 }} onClick={() => setInventoryModalShow(!inventoryModalShow)}>Inspect</Button>
-                }
+                ) }
                 <br />
             </Popover.Body>
         </Popover>
@@ -389,29 +388,17 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             case 'Common':
                 return true;
             case 'Uncommon':
-                if (level > 3) {
-                    return true;
-                } else {
-                    return false;
-                };
+                if (level > 3) return true;
+                return false;
             case 'Rare':
-                if (level > 5) {
-                    return true;
-                } else {
-                    return false;
-                };
+                if (level > 5) return true;
+                return false;
             case 'Epic':
-                if (level > 11) {
-                    return true;
-                } else {
-                    return false;
-                };
+                if (level > 11) return true;
+                return false;
             case 'Legendary':
-                if (level > 19) {
-                    return true;
-                } else {
-                    return false;
-                };
+                if (level > 19) return true;
+                return false;
             default:
                 return false;
         };
@@ -876,57 +863,55 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                     </tbody>
                 </Table>
             <br />
-        { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
-            <>
-            <Form.Select value={
-                inventoryType === 'weapon_one' ? editState.weapon_one?._id : inventoryType === 'shield' ? editState.shield._id : inventoryType === 'helmet' ? 
-                editState.helmet._id : inventoryType === 'chest' ? editState.chest._id : inventoryType === 'legs' ? 
-                editState.legs._id : inventoryType === 'amulet' ? editState.amulet._id : inventoryType === 'ring_one' ? 
-                editState.ring_one._id : inventoryType === 'trinket' ? editState.trinket._id : ''} onChange={handleInventory}>
-                    <option value={(editState as { [key: string]: any })[inventoryType as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryType as keyof typeof editState]?.name} [Selected]</option>
-                    <option value={ascean[inventoryType as keyof typeof editState]?._id}>{ascean[inventoryType as keyof typeof editState]?.name} [Equipped]</option>
-                    <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
-            </Form.Select>
-            { inventory?.grip && inventory?.type ?
-                <><br />
-                <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2}>
-                    <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
-                    <option value={ascean[inventoryTypeTwo as keyof typeof editState]?._id}>{ascean[inventoryTypeTwo as keyof typeof editState]?.name} [Equipped]</option>
-                    <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
-                </Form.Select><br />
-                <Form.Select value={editState.weapon_three._id} onChange={handleInventoryW3}>
-                    <option value={(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?.name} [Selected]</option>
-                    <option value={ascean[inventoryTypeThree as keyof typeof editState]?._id}>{ascean[inventoryTypeThree as keyof typeof editState]?.name} [Equipped]</option>
-                    <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
-                </Form.Select>
-                </>
-            : '' }
-            { inventoryType === 'ring_one' ?
+            { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ? (
                 <>
-                <br />
-                 <Form.Select value={editState.ring_two._id} onChange={handleInventoryR2}>
-                    <option value={(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?.name} [Selected]</option>
-                    <option value={ascean[inventoryRingType]?._id}>{ascean[inventoryRingType]?.name} [Equipped]</option>
-                    <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
+                <Form.Select value={ inventoryType === 'weapon_one' ? editState.weapon_one?._id : inventoryType === 'shield' ? editState.shield._id : inventoryType === 'helmet' ? 
+                    editState.helmet._id : inventoryType === 'chest' ? editState.chest._id : inventoryType === 'legs' ? editState.legs._id : inventoryType === 'amulet' ? editState.amulet._id : inventoryType === 'ring_one' ? 
+                    editState.ring_one._id : inventoryType === 'trinket' ? editState.trinket._id : ( '' ) } onChange={handleInventory}>
+                        <option value={(editState as { [key: string]: any })[inventoryType as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryType as keyof typeof editState]?.name} [Selected]</option>
+                        <option value={ascean[inventoryType as keyof typeof editState]?._id}>{ascean[inventoryType as keyof typeof editState]?.name} [Equipped]</option>
+                        <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                 </Form.Select>
+                { inventory?.grip && inventory?.type ? (
+                    <><br />
+                    <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2}>
+                        <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
+                        <option value={ascean[inventoryTypeTwo as keyof typeof editState]?._id}>{ascean[inventoryTypeTwo as keyof typeof editState]?.name} [Equipped]</option>
+                        <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
+                    </Form.Select><br />
+                    <Form.Select value={editState.weapon_three._id} onChange={handleInventoryW3}>
+                        <option value={(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeThree as keyof typeof editState]?.name} [Selected]</option>
+                        <option value={ascean[inventoryTypeThree as keyof typeof editState]?._id}>{ascean[inventoryTypeThree as keyof typeof editState]?.name} [Equipped]</option>
+                        <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
+                    </Form.Select>
+                    </>
+                ) : ( '' ) }
+                { inventoryType === 'ring_one' ? (
+                    <>
+                    <br />
+                    <Form.Select value={editState.ring_two._id} onChange={handleInventoryR2}>
+                        <option value={(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryRingType as keyof typeof editState]?.name} [Selected]</option>
+                        <option value={ascean[inventoryRingType]?._id}>{ascean[inventoryRingType]?.name} [Equipped]</option>
+                        <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
+                    </Form.Select>
+                    </>
+                ) : ( '' ) }
+                <br />
                 </>
-            : '' }
-            <br />
-            </>
-        : 
-            <div style={{ color: "gold", fontSize: "20px" }}>
-                Unforuntaely, {inventory?.name} requires you to be level {equipLevel(inventory?.rarity)} to equip.
-                <br /><br />    
-            </div>
-        }
-            { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
+            ) : ( 
+                <div style={{ color: "gold", fontSize: "20px" }}>
+                    Unforuntaely, {inventory?.name} requires you to be level {equipLevel(inventory?.rarity)} to equip.
+                    <br /><br />    
+                </div>
+            ) }
+            { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ? (
                 <> 
                 <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button> 
                 <Button variant='outline' style={{ color: 'red', fontWeight: 600 }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
                 </>
-                : 
+            ) : ( 
                 <Button variant='outline' style={{ color: 'red', fontWeight: 600, marginLeft: "16.5%" }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
-            }
+            ) }
             { !ascean?.hardcore && location.pathname.startsWith(`/Hardcore`) ? (
                 <>
                 { canUpgrade(bag, inventory?.name, inventory?.rarity) ? <Button variant='outline' ref={targetRef} className='' style={{ color: 'gold', fontWeight: 600 }} onClick={() => handleUpgradeItem()}>Upgrade</Button> : '' }
@@ -961,7 +946,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 </>
             ) : createTable(inventoryType) } 
                 <div style={{ width: "100%", textAlign: "center" }} className='mt-3'>
-                { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
+                { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ? (
                     <>
                     <Form.Select className='story-dropdown' value={
                         inventoryType === 'weapon_one' ? editState.weapon_one?._id : inventoryType === 'shield' ? editState.shield._id : inventoryType === 'helmet' ? 
@@ -972,7 +957,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                             <option value={ascean[inventoryType as keyof typeof editState]?._id}>{ascean[inventoryType as keyof typeof editState]?.name} [Equipped]</option>
                             <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                     </Form.Select>
-                    { inventory?.grip && inventory?.type ?
+                    { inventory?.grip && inventory?.type ? (
                         <><br />
                         <Form.Select value={editState.weapon_two._id} onChange={handleInventoryW2} className='story-dropdown'>
                             <option value={(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?._id}>{(editState as { [key: string]: any })[inventoryTypeTwo as keyof typeof editState]?.name} [Selected]</option>
@@ -985,8 +970,8 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                             <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                         </Form.Select>
                         </>
-                    : ( '' ) }
-                    { inventoryType === 'ring_one' ?
+                    ) : ( '' ) }
+                    { inventoryType === 'ring_one' ? (
                         <>
                         <br />
                         <Form.Select value={editState.ring_two._id} onChange={handleInventoryR2} className='story-dropdown'>
@@ -995,38 +980,37 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                             <option value={inventory?._id}>{inventory?.name} [Viewing]</option>
                         </Form.Select>
                         </>
-                    : ( '' ) }
+                    ) : ( '' ) }
                     <br />
                     </>
-                : 
+                ) : ( 
                     <div style={{ color: "gold", fontSize: "16px" }}>
                         Unforuntaely, {inventory?.name} requires you to be level {equipLevel(inventory?.rarity)} to equip.
                         <br /><br />    
                     </div>
-                }
-                { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ?
+                ) }
+                { canEquip(ascean?.level, inventory?.rarity) || location.pathname.startsWith(`/GameAdmin`) ? (
                     <> 
                     <Button variant='outline' className='' style={{ float: 'left', color: 'green', fontWeight: 600 }} onClick={() => handleEquipmentSwap(editState)}>Equip</Button> 
                     <Button variant='outline' style={{ color: 'red', fontWeight: 600, float: "right" }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
                     </>
-                : 
+                ) : ( 
                     <Button variant='outline' style={{ color: 'red', fontWeight: 600, textAlign: "center" }} onClick={() => setRemoveModalShow(true)}>Remove</Button>
-                }
+                ) }
                 </div>
                 </>
-        ) : blacksmith ?
+        ) : blacksmith ? (
             <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={inventoryPopover}>
                 <Button variant="" className={story ? 'story-inventory' : 'inventory-icon'} style={getItemStyle(inventory?.rarity)} >
                     <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name} />
                 </Button>
             </OverlayTrigger>   
-        :
+        ) : (
             <Draggable draggableId={inventory?._id} index={index} key={inventory?._id}>
             {(provided, snapshot) => (
                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                     { setHighlighted ? (
                         <div onClick={() => setHighlighted({ item: inventory, comparing: true })}>
-                            {/* <img src={equipSlot} alt='equip-slot' style={{ width: "72px", height: "72px", left: "109px", display: "inline-block" }} /> */}
                             <img src={process.env.PUBLIC_URL + inventory?.imgURL} alt={inventory?.name}  className={story ? 'story-inventory' : 'inventory-icon'} style={snapshot.isDragging ? getDraggingStyle : getItemStyle(inventory?.rarity)} />
                         </div>
                     ) : (
@@ -1037,10 +1021,10 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 </div>
             )}
             </Draggable>
-        } 
-        { blacksmith ?  
+        ) } 
+        { blacksmith ? ( 
             <Button variant='outline' className='blacksmith-forge' onClick={() => setForgeModalShow(true)}>Forge</Button>
-        : ( '' ) }
+        ) : ( '' ) }
         <Overlay target={targetRef} show={isLoading}>
             <div className='d-flex align-items-center justify-content-center' style={{ position: 'fixed', top: story ? '-25%' : '0', left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.65)', zIndex: 99999 }}>
                 <h1 style={{ color: 'gold', fontVariant: 'small-caps', textAlign: 'center', fontSize: 36 + 'px', textShadow: '1px 1px 1px goldenrod', fontWeight: 600 }}>

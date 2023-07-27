@@ -24,7 +24,7 @@ import { LootDropUI } from '../ui/LootDropUI';
 import { StoryDialog } from '../ui/StoryDialog';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearNpc, clearSfx, getCombatSettingFetch, getCombatTimerFetch, setRest, setToggleDamaged } from '../reducers/combatState';
+import { clearNpc, getCombatSettingFetch, getCombatTimerFetch, setRest, setToggleDamaged } from '../reducers/combatState';
 import { getAsceanLevelUpFetch, getGainExperienceFetch, getLootDropFetch, setShowDialog, setMerchantEquipment, setShowLoot } from '../reducers/gameState';
 import PhaserCombatText from '../ui/PhaserCombatText';
 import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
@@ -39,7 +39,6 @@ interface Props {
 const HostScene = ({ assets, ascean }: Props) => {
     const { asceanID } = useParams();
     const dispatch = useDispatch();
-    const user = useSelector((state: any) => state.user.user);
     const combatState = useSelector((state: any) => state.combat);
     const asceanState = useSelector((state: any) => state.game.asceanState);
     const gameState = useSelector((state: any) => state.game);
@@ -160,16 +159,8 @@ const HostScene = ({ assets, ascean }: Props) => {
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game');
         };
-    }, [asceanID]); 
-    
-    const levelUpAscean = async (vaEsai: any): Promise<void> => {
-        try {
-            console.log(vaEsai, 'Leveling Up');
-            dispatch(getAsceanLevelUpFetch(vaEsai)); 
-        } catch (err: any) {
-            console.log(err.message, 'Error Leveling Up');
-        };
-    };
+    }, [asceanID]);  
+
     const updateCombatListener = (data: CombatData) => EventEmitter.emit('update-combat-data', data); // Was Async
     const retrieveAssets = async () => EventEmitter.emit('send-assets', assets);
     const sendEnemyData = async () => EventEmitter.emit('get-enemy', combatState.computer);
@@ -194,24 +185,6 @@ const HostScene = ({ assets, ascean }: Props) => {
             dispatch(getLootDropFetch({ enemyID: combatState.enemyID, level: combatState.computer.level }));  
         } catch (err: any) {
             console.log("Error Handling Player Win");
-        };
-    };
-
-   const setDamageType = async (e: any): Promise<void> => {
-        try {    
-            playWO();
-            dispatch(getCombatSettingFetch({ loadout: e.target.value, type: 'Damage' }));
-        } catch (err: any) {
-            console.log(err.message, 'Error Setting Damage Type');
-        };
-    };
-
-   const setPrayerBlessing = async (e: any): Promise<void> => {
-        try {
-            playWO();
-            dispatch(getCombatSettingFetch({ loadout: e.target.value, type: 'Prayer' }));
-        } catch (err: any) {
-            console.log(err.message, 'Error Setting Prayer');
         };
     }; 
 
@@ -314,18 +287,18 @@ const HostScene = ({ assets, ascean }: Props) => {
                     <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
                         <h3 style={{ fontSize: '12px', textAlign: 'center' }}>{combatState.player.name}</h3>
                     </Button>
-                    { ascean?.journal.entries.length > 0 ?
+                    { ascean?.journal.entries.length > 0 ? (
                         <StoryJournal ascean={ascean} />
-                    : '' }
+                    ) : ( '' ) }
                     { dialogTag ? (
                         <Button variant='' className='ascean-ui' onClick={() => dispatch(setShowDialog(!gameState.showDialog))}>
                             <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>
                         </Button>
                     ) : ( '' ) }
                 </div>
-                <CombatMouseSettings damageType={combatState.weapons[0].damage_type} setDamageType={setDamageType} setPrayerBlessing={setPrayerBlessing} weapons={combatState.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
+                <CombatMouseSettings damageType={combatState.weapons[0].damage_type} weapons={combatState.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
                 { showPlayer ? (  
-                    <StoryAscean ascean={ascean} asceanViews={asceanViews} loading={loading} levelUpAscean={levelUpAscean} />
+                    <StoryAscean ascean={ascean} asceanViews={asceanViews} loading={loading} />
                 ) : ( 
                     <div style={{ position: "absolute", zIndex: 1 }}>
                         <CombatUI state={combatState} staminaPercentage={staminaPercentage} pauseState={pauseState} />

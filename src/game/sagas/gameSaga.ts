@@ -4,7 +4,7 @@ import { getAsceanTraits } from "../../components/GameCompiler/PlayerTraits";
 import EventEmitter from "../phaser/EventEmitter";
 import { setCombatPlayer, setPhaser, setRest } from "../reducers/combatState";
 import { setPlayer, setInitialAsceanState, setSettings, setTraits, setPlayerLevelUp, setAsceanState, setFirewater, setExperience, setCurrency, setInventory, setLootDrops, setShowLoot, setStatistics } from "../reducers/gameState";
-import { compress, workGetCombatStatistic } from "./rootSaga";
+import { compress, workGetCombatStatistic } from "./combatSaga";
 import { getSocketInstance } from "./socketManager";
 import { SOCKET } from "./socketSaga";
 import * as asceanAPI from '../../utils/asceanApi';
@@ -27,6 +27,7 @@ export function* gameSaga(): SagaIterator {
     yield takeEvery('game/getAsceanLevelUpFetch', workGetAsceanLevelUpFetch);
     yield takeEvery('game/getDrinkFirewaterFetch', workGetDrinkFirewaterFetch);
     yield takeEvery('game/getReplenishFirewaterFetch', workGetReplenishFirewaterFetch);
+    yield takeEvery('game/getRestoreFirewaterFetch', workGetRestoreFirewaterFetch);
     yield takeEvery('game/getGainExperienceFetch', workGetGainExperienceFetch);
     yield takeEvery('game/getAsceanAndInventoryFetch', workGetAsceanAndInventoryFetch);
     yield takeEvery('game/getOnlyInventoryFetch', workGetOnlyInventoryFetch);
@@ -99,6 +100,7 @@ function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
     yield put(setPlayerLevelUp(resTwo.data));
     yield put(setCombatPlayer(resThree.data.data));
     yield put(setAsceanState(asceanState));
+    // TODO:FIXME: Socket Concern ??
 };
 function* workGetDrinkFirewaterFetch(action: any): SagaIterator {
     const firewater = yield select((state) => state.game.player.firewater);
@@ -109,6 +111,12 @@ function* workGetDrinkFirewaterFetch(action: any): SagaIterator {
 };
 function* workGetReplenishFirewaterFetch(action: any): SagaIterator {
     const res = yield call(asceanAPI.replenishFirewater, action.payload);
+    yield put(setExperience(res.experience));
+    yield put(setFirewater(res.firewater));
+};
+function* workGetRestoreFirewaterFetch(action: any): SagaIterator {
+    const res = yield call(asceanAPI.restoreFirewater, action.payload);
+    yield put(setCurrency(res.currency));
     yield put(setExperience(res.experience));
     yield put(setFirewater(res.firewater));
 };

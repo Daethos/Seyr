@@ -57,7 +57,7 @@ export default class Player extends Entity {
         this.spriteShield.setDepth(this + 1);
         this.spriteShield.setVisible(false);
         this.playerVelocity = new Phaser.Math.Vector2();
-        this.speed = this.setSpeed(scene?.state?.player);
+        this.speed = this.startingSpeed(scene?.state?.player);
         this.acceleration = 0.1;
         this.deceleration = 0.05;
         this.dt = this.scene.sys.game.loop.delta;
@@ -190,7 +190,7 @@ export default class Player extends Entity {
         });
     };
 
-    setSpeed = (player) => {
+    startingSpeed = (player) => {
         let speed = 1.75;
         const helmet = player.helmet.type;
         const chest = player.chest.type;
@@ -218,6 +218,10 @@ export default class Player extends Entity {
         addModifier(legs);
         speed += modifier;
         return speed;
+    };
+
+    adjustSpeed = (speed) => {
+        return this.speed += speed;
     };
 
     highlightTarget(sprite) {
@@ -547,7 +551,7 @@ export default class Player extends Entity {
 
     onInvokeEnter = () => {
         this.isPraying = true;
-        this.glow = this.setGlow(this, true);
+        if (!this.isCaerenic) this.glow = this.setGlow(this, true);
         this.invokeCooldown = 30;
         if (this.playerBlessing === '' || this.playerBlessing !== this.scene.state.playerBlessing) {
             this.playerBlessing = this.scene.state.playerBlessing;
@@ -563,7 +567,7 @@ export default class Player extends Entity {
         };
     };
     onInvokeExit = () => {
-        this.glow = this.setGlow(this, false);
+        if (!this.isCaerenic) this.glow = this.setGlow(this, false);
         this.scene.combatMachine.add({ type: 'Instant', data: this.scene.state.playerBlessing });
         screenShake(this.scene);
     };
@@ -687,9 +691,11 @@ export default class Player extends Entity {
             if (this.isCaerenic) {
                 this.scene.caerenic(true);
                 this.setGlow(this, true);
+                this.adjustSpeed(0.5);
             } else {
                 this.scene.caerenic(false);
                 this.setGlow(this, false);
+                this.adjustSpeed(-0.5);
             };
         };
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {

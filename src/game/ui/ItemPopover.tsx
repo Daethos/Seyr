@@ -49,7 +49,7 @@ export const itemPopover = (item: Equipment, stalwart?: boolean, caerenic?: bool
                 ) : ( '' ) } 
                 {caerenic ? (
                     <p style={{ color: "gold" }}>
-                        Caerenic - You attempt to harnass your Caer, increasing your damage by 15%. You receive 15% more damage.
+                        Caerenic - You attempt to harnass your Caer, increasing your damage by 15%. You receive 15% more damage. You move 15% faster.
                     </p>
                 ) : ( '' ) }
             </> }
@@ -124,9 +124,9 @@ interface Props {
 
 const ItemPopover = ({ item, prayer, caerenic }: Props) => { 
     const getItemStyle = {
-        border: '0.15em solid ' + getShadowStyle(prayer),
+        border: '0.15em solid ' + borderColor(prayer),
         background: 'black',
-        boxShadow: '0 0 1.5em ' + getShadowStyle(prayer),
+        boxShadow: '0 0 1.5em ' + borderColor(prayer),
         borderRadius: '50%',
     };
     return (

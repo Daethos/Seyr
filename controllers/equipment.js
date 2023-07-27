@@ -619,7 +619,7 @@ async function upgradeEquipment(req, res) {
         ascean.currency.gold -= gold;
 
         await ascean.save();
-        res.status(201).json({ ascean });
+        res.status(201).json(ascean);
     } catch (err) {
         console.log(err, 'err')
         res.status(400).json(err);

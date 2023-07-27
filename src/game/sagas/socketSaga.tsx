@@ -3,7 +3,7 @@ import { SagaIterator, eventChannel } from 'redux-saga';
 import { call, take, fork, cancel, takeEvery, select, takeLatest } from 'redux-saga/effects';
 import * as io from 'socket.io-client';
 import { connectToSocket, closeSocketConnection, getSocketInstance } from './socketManager';
-import { compress, workGetResponse, workTickResponse } from './rootSaga';
+import { compress, workGetResponse, workTickResponse } from './combatSaga';
 
 export const SOCKET = {
     // Emitters

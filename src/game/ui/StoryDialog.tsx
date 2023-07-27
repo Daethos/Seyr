@@ -13,7 +13,7 @@ import Typewriter from '../../components/GameCompiler/Typewriter';
 import dialogWindow from '../images/dialog_window.png';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
-import { getReplenishFirewaterFetch, setCurrentDialogNode, setCurrentIntent, setMerchantEquipment, setRendering, setShowDialog } from '../reducers/gameState';
+import { getRestoreFirewaterFetch, setCurrentDialogNode, setCurrentIntent, setMerchantEquipment, setRendering, setShowDialog } from '../reducers/gameState';
 import { getLuckoutFetch, getPersuasionFetch, setPhaserAggression } from '../reducers/combatState';
 import { ProvincialWhispersButtons, Region, regionInformation } from '../../components/GameCompiler/Regions';
 import { LuckoutModal, PersuasionModal, checkTraits, traitStyle } from '../../components/GameCompiler/PlayerTraits';
@@ -473,7 +473,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
     };
 
     const clearDuel = async () => dispatch(setShowDialog(false));
-    const refillFlask = async () => dispatch(getReplenishFirewaterFetch(state.player._id));
+    const refillFlask = async () => dispatch(getRestoreFirewaterFetch(state.player._id));
 
     const getLoot = async (type: string) => {
         if (gameState?.merchantEquipment.length > 0) await deleteEquipment(gameState?.merchantEquipment);
