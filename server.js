@@ -175,8 +175,6 @@ io.on("connection", (socket) => {
   }; 
 
   const effectTick = async (data) => {
-    // const newData = zlib.inflateSync(data).toString();
-    // const parsedData = JSON.parse(newData); 
     let { effect, effectTimer } = data;
     const res = await gameService.phaserEffectTick({combatData, effect, effectTimer}); // data
     combatData = {
@@ -185,15 +183,16 @@ io.on("connection", (socket) => {
     };
     const deflateResponse = zlib.deflateSync(JSON.stringify(res));
     io.to(player.room).emit('effectTickResponse', deflateResponse);
-    // socket.emit('effectTickResponse', deflateResponse);
-    // io.to(player.room).emit('effectTickResponse', res);
   };
 
   const updateCombatData = async (data) => {  
+    console.time('Update Combat Data');
+    console.log(data, "Data Being Updated");
     combatData = {
       ...combatData,
       ...data,
     };
+    console.timeEnd('Update Combat Data');
   };
 
   const setupEnemy = async (data) => {

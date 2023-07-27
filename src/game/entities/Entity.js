@@ -425,7 +425,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.frameCount += 1;
         } else if (this.isCountering) { 
             if (entity === 'player' && this.hasMagic && this.frameCount === 5) {
-                this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.player_damage_type.toLowerCase());
+                this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.scene.state.playerDamageType.toLowerCase());
                 if (this.flipX) {
                     this.particleEffect.effect.setOrigin(2, 0.5);
                 } else {
@@ -468,7 +468,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
         } else if (this.isRolling) {
             if (entity === 'player' && this.frameCount === 10 && this.inCombat && this.hasMagic) {
-                this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.scene.state.player_damage_type.toLowerCase());
+                this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.scene.state.playerDamageType.toLowerCase());
             } else if (entity === 'player' && this.frameCount === 10 && this.inCombat && this.hasBow) {
                 this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
             };
@@ -484,7 +484,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.frameCount += 1;
         } else if (this.isAttacking) {
             if (entity === 'player' && this.hasMagic && this.frameCount === 16) {
-                this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.scene.state.player_damage_type.toLowerCase());
+                this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.scene.state.playerDamageType.toLowerCase());
             } else if (entity === 'player' && this.hasBow && this.frameCount === 16) {
                 this.particleEffect = this.scene.particleManager.addEffect('attack', this, 'arrow');
             };
@@ -754,7 +754,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.frameCount += 1;
         } else if (this.isPosturing) {
             if (entity === 'player' && this.hasMagic && this.frameCount === 11) {
-                this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.scene.state.player_damage_type.toLowerCase());
+                this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.scene.state.playerDamageType.toLowerCase());
             } else if (entity === 'player' && this.checkBow(this.scene.state.weapons[0]) && this.frameCount === 11) {
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
             };

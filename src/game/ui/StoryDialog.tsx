@@ -607,7 +607,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                         <div style={{ color: "gold" }}>
                             <Typewriter stringText={luckoutString} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                             <br />
-                            { state.player_luckout ? (
+                            { state.playerLuckout ? (
                                 <>
                                     <p style={{ color: '#fdf6d8' }}>
                                     You lucked out against {namedEnemy ? '' : ` the`} {state.computer?.name} to forego hostilities. You may now travel freely through this area.
@@ -616,7 +616,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                                 </>
                             ) : ( '' ) }    
                         </div>   
-                    ) : state.player_win ? (
+                    ) : state.playerWin ? (
                         <div>
                             { namedEnemy ? (
                                 <Typewriter stringText={`"Congratulations ${state.player.name}, you were fated this win. This is all I have to offer, if it pleases you."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
@@ -624,7 +624,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                                 <Typewriter stringText={`"Appears I were wrong to treat with you in such a way, ${state.player.name}. Take this if it suits you, I've no need."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                             ) } 
                         </div> 
-                    ) : state.computer_win ? (
+                    ) : state.computerWin ? (
                         <div>
                             { namedEnemy ? (
                                 <Typewriter stringText={`"${state.player.name}, surely this was a jest? Come now, you disrespect me with such play. What was it that possessed you to even attempt this failure?"`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
@@ -691,7 +691,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                             <div style={{ color: "gold" }}>
                                 <Typewriter stringText={luckoutString} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                                 <br />
-                                { state.player_luckout ? (
+                                { state.playerLuckout ? (
                                     <>
                                         <p style={{ color: '#fdf6d8' }}>
                                         You lucked out against {namedEnemy ? '' : ` the`} {state?.computer?.name} to forego hostilities. You may now travel freely through this area.
@@ -700,7 +700,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                                     </>
                                 ) : ( '' ) }    
                             </div>   
-                        ) : state.player_win ? (
+                        ) : state.playerWin ? (
                             <>
                                 { namedEnemy ? (
                                     <Typewriter stringText={`"${state.player.name}, you are truly unique in someone's design. Before you travel further, if you wish to have it, its yours."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
@@ -710,7 +710,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                                 <br />
                                 <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>Seek those pastures and leave your lesser to their pitious nature.</Button>
                             </>
-                        ) : state.computer_win ? (
+                        ) : state.computerWin ? (
                             <>
                                 <Typewriter stringText={`"If you weren't entertaining in defeat I'd have a mind to simply snuff you out here and now. Seek refuge, ${state.player.name}, your frailty wears on my caer."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                                 <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Feign scamperping away to hide your shame and wounds. There's always another chance, perhaps.</Button>
@@ -726,7 +726,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                                 <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Keep moving.</Button>
                             </>
                         ) }
-                        { checkTraits("Kyn'gian", gameState.traits) && !state.player_win && !state.computer_win ? (
+                        { checkTraits("Kyn'gian", gameState.traits) && !state.playerWin && !state.computerWin ? (
                             <Button variant='' className='dialog-buttons inner' onClick={() => clearDuel()}>You remain at the edges of sight and sound, and before {state?.computer?.name} can react, you attempt to flee.</Button>
                         ) : ( '' ) }
                     </>
@@ -736,9 +736,9 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                     <Typewriter stringText={`Local Whispers will provide localized intrigue to the region you're inhabiting and the actual details of the map itself.`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                 ) : gameState.currentIntent === 'persuasion' ? (
                     <>
-                        { state.player_win ? (
+                        { state.playerWin ? (
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'teal' }} onClick={() => clearDuel()}>Continue moving along your path, perhaps words will work next time.</Button>
-                        ) : state.computer_win ? (
+                        ) : state.computerWin ? (
                             <Button variant='' className='dialog-buttons inner' style={{ color: 'red' }} onClick={() => clearDuel()}>Continue moving along your path, there's nothing left to say now.</Button>
                         ) : persuasion && !state.persuasionScenario ? ( 
                             <PersuasionModal traits={persuasionTraits} callback={attemptPersuasion} name={state.computer.name} influence={influence} /> 
@@ -760,7 +760,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                     </>
                 ) : gameState.currentIntent === 'provincialWhispers' ? (
                     <>
-                        { state.player_win || state.enemyPersuaded ? (
+                        { state.playerWin || state.enemyPersuaded ? (
                             <>
                                 <Typewriter stringText={`"There's concern in places all over, despite what has been said about steadying tides of war amongst the more civilized. Of where are you inquiring?"`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                                 <br />
@@ -769,7 +769,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                                 </div><br />
                                 <ProvincialWhispersButtons options={regionInformation} handleRegion={handleRegion}  />
                             </>
-                        ) : state.computer_win ? (
+                        ) : state.computerWin ? (
                             <Typewriter stringText={`"I guess those whipspers must wait another day."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                         ) : ( 
                             <Typewriter stringText={`"What is it you wish to hear? If you can best me I will tell you what I know in earnest."`} styling={{ overflow: 'auto' }} performAction={hollowClick} />                            

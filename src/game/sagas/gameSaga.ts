@@ -123,14 +123,14 @@ function* workGetRestoreFirewaterFetch(action: any): SagaIterator {
 export function* workGetGainExperienceFetch(action: any): SagaIterator {
     console.log(action, "Gain Experience");
     let { asceanState, combatState } = action.payload;
-    let opponentExp = Math.round(combatState.computer.level * 100 * (combatState.computer.level / combatState.player.level) + combatState.player_attributes.rawKyosir);
+    let opponentExp = Math.round(combatState.computer.level * 100 * (combatState.computer.level / combatState.player.level) + combatState.playerAttributes.rawKyosir);
     const hasAvaricePrayer = combatState.prayerData.includes('Avarice');
     const totalExp = asceanState.ascean.experience + opponentExp;
     
     asceanState = {
       ...asceanState,
       'opponentExp': opponentExp,
-      'currentHealth': combatState.new_player_health,
+      'currentHealth': combatState.newPlayerHealth,
       'experience': Math.min(totalExp, asceanState.experienceNeeded),
       'avarice': hasAvaricePrayer ? true : false,
     };

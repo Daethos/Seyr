@@ -1,93 +1,93 @@
 export interface CombatData {
     player: any;
     action: string;
-    player_action: string;
-    counter_guess: string;
+    playerAction: string;
+    counterGuess: string;
     playerBlessing: string;
     prayerSacrifice: string;
     prayerSacrificeName: string,
-    player_health: number;
-    current_player_health: number;
-    new_player_health: number;
+    playerHealth: number;
+    currentPlayerHealth: number;
+    newPlayerHealth: number;
     weapons: any[];
-    weapon_one: any;
-    weapon_two: any;
-    weapon_three: any;
+    weaponOne: any;
+    weaponTwo: any;
+    weaponThree: any;
     playerEffects: any[];
-    player_damage_type: string;
-    player_defense: object;
-    player_attributes: any;
-    player_defense_default: object;
-    realized_player_damage: number;
+    playerDamageType: string;
+    playerDefense: any;
+    playerAttributes: any;
+    playerDefenseDefault: any;
+    realizedPlayerDamage: number;
     playerDamaged: boolean;
     enemyPersuaded: boolean;
     enemyPrayerConsumed: boolean;
     persuasionScenario: boolean;
     luckoutScenario: boolean;
 
-    player_start_description: string;
-    player_special_description: string;
-    player_action_description: string;
-    player_influence_description: string;
-    player_influence_description_two: string;
-    player_death_description: string;
+    playerStartDescription: string;
+    playerSpecialDescription: string;
+    playerActionDescription: string;
+    playerInfluenceDescription: string;
+    playerInfluenceDescriptionTwo: string;
+    playerDeathDescription: string;
 
-    critical_success: boolean;
-    counter_success: boolean;
-    dual_wielding: boolean;
-    glancing_blow: boolean;
-    religious_success: boolean;
-    roll_success: boolean;
-    player_win: boolean;
-    player_luckout: boolean;
+    criticalSuccess: boolean;
+    counterSuccess: boolean;
+    dualWielding: boolean;
+    glancingBlow: boolean;
+    religiousSuccess: boolean;
+    rollSuccess: boolean;
+    playerWin: boolean;
+    playerLuckout: boolean;
     playerTrait: string;
     playerGrapplingWin: boolean;
 
     computer: any;
-    computer_action: string;
-    computer_counter_guess: string;
+    computerAction: string;
+    computerCounterGuess: string;
     computerBlessing: string;
-    computer_health: number;
-    current_computer_health: number;
-    new_computer_health: number;
-    computer_weapons: any[];
-    computer_weapon_one: object;
-    computer_weapon_two: object;
-    computer_weapon_three: object;
+    computerHealth: number;
+    currentComputerHealth: number;
+    newComputerHealth: number;
+    computerWeapons: any[];
+    computerWeaponOne: object;
+    computerWeaponTwo: object;
+    computerWeaponThree: object;
     computerEffects: any[];
-    computer_damage_type: string;
-    computer_defense: object;
-    computer_attributes: object;
-    computer_defense_default: object;
-    potential_computer_damage: number;
-    realized_computer_damage: number;
+    computerDamageType: string;
+    computerDefense: object;
+    computerAttributes: object;
+    computerDefenseDefault: object;
+    potentialComputerDamage: number;
+    realizedComputerDamage: number;
     computerDamaged: boolean;
 
-    attack_weight: number;
-    counter_weight: number;
-    dodge_weight: number;
-    posture_weight: number;
-    roll_weight: number;
-    counter_attack_weight: number;
-    counter_counter_weight: number;
-    counter_dodge_weight: number;
-    counter_posture_weight: number;
-    counter_roll_weight: number;
+    attackWeight: number;
+    counterWeight: number;
+    dodgeWeight: number;
+    postureWeight: number;
+    rollWeight: number;
+    counterAttackWeight: number;
+    counterCounterWeight: number;
+    counterDodgeWeight: number;
+    counterPostureWeight: number;
+    counterRollWeight: number;
 
-    computer_start_description: string;
-    computer_special_description: string;
-    computer_action_description: string;
-    computer_influence_description: string;
-    computer_influence_description_two: string;
-    computer_death_description: string;
+    computerStartDescription: string;
+    computerSpecialDescription: string;
+    computerActionDescription: string;
+    computerInfluenceDescription: string;
+    computerInfluenceDescriptionTwo: string;
+    computerDeathDescription: string;
 
-    computer_critical_success: boolean;
-    computer_counter_success: boolean;
-    computer_dual_wielding: boolean;
-    computer_glancing_blow: boolean;
-    computer_religious_success: boolean;
-    computer_roll_success: boolean;
-    computer_win: boolean;
+    computerCriticalSuccess: boolean;
+    computerCounterSuccess: boolean;
+    computerDualWielding: boolean;
+    computerGlancingBlow: boolean;
+    computerReligiousSuccess: boolean;
+    computerRollSuccess: boolean;
+    computerWin: boolean;
 
     combatInitiated: boolean;
     actionStatus: boolean;
@@ -188,87 +188,87 @@ export const ACTIONS = {
 export const initialCombatData: CombatData = {
     player: {},
     action: '',
-    player_action: '',
-    counter_guess: '',
+    playerAction: '',
+    counterGuess: '',
     playerBlessing: 'Buff',
     prayerSacrifice: '',
     prayerSacrificeName: '',
-    player_health: 0,
-    current_player_health: 0,
-    new_player_health: 0,
+    playerHealth: 0,
+    currentPlayerHealth: 0,
+    newPlayerHealth: 0,
     weapons: [],
-    weapon_one: {},
-    weapon_two: {},
-    weapon_three: {},
+    weaponOne: {},
+    weaponTwo: {},
+    weaponThree: {},
     playerEffects: [],
-    player_damage_type: '',
-    player_defense: {},
-    player_attributes: {},
-    player_defense_default: {},
-    realized_player_damage: 0,
+    playerDamageType: '',
+    playerDefense: {},
+    playerAttributes: {},
+    playerDefenseDefault: {},
+    realizedPlayerDamage: 0,
     playerDamaged: false,
     enemyPersuaded: false,
     enemyPrayerConsumed: false,
     persuasionScenario: false,
     luckoutScenario: false,
-    player_start_description: '',
-    player_special_description: '',
-    player_action_description: '',
-    player_influence_description: '',
-    player_influence_description_two: '',
-    player_death_description: '',
-    critical_success: false,
-    counter_success: false,
-    dual_wielding: false,
-    glancing_blow: false,
-    religious_success: false,
-    roll_success: false,
-    player_win: false,
-    player_luckout: false,
+    playerStartDescription: '',
+    playerSpecialDescription: '',
+    playerActionDescription: '',
+    playerInfluenceDescription: '',
+    playerInfluenceDescriptionTwo: '',
+    playerDeathDescription: '',
+    criticalSuccess: false,
+    counterSuccess: false,
+    dualWielding: false,
+    glancingBlow: false,
+    religiousSuccess: false,
+    rollSuccess: false,
+    playerWin: false,
+    playerLuckout: false,
     playerGrapplingWin: false,
     playerTrait: '',
     computer: null,
-    computer_action: '',
-    computer_counter_guess: '',
+    computerAction: '',
+    computerCounterGuess: '',
     computerBlessing: 'Buff',
-    computer_health: 0,
-    current_computer_health: 0,
-    new_computer_health: 0,
-    computer_weapons: [],
-    computer_weapon_one: {},
-    computer_weapon_two: {},
-    computer_weapon_three: {},
+    computerHealth: 0,
+    currentComputerHealth: 0,
+    newComputerHealth: 0,
+    computerWeapons: [],
+    computerWeaponOne: {},
+    computerWeaponTwo: {},
+    computerWeaponThree: {},
     computerEffects: [],
-    computer_damage_type: '',
-    computer_defense: {},
-    computer_attributes: {},
-    computer_defense_default: {},
-    potential_computer_damage: 0,
-    realized_computer_damage: 0,
+    computerDamageType: '',
+    computerDefense: {},
+    computerAttributes: {},
+    computerDefenseDefault: {},
+    potentialComputerDamage: 0,
+    realizedComputerDamage: 0,
     computerDamaged: false,
-    attack_weight: 0,
-    counter_weight: 0,
-    dodge_weight: 0,
-    posture_weight: 0,
-    roll_weight: 0,
-    counter_attack_weight: 0,
-    counter_counter_weight: 0,
-    counter_dodge_weight: 0,
-    counter_posture_weight: 0,
-    counter_roll_weight: 0,
-    computer_start_description: '',
-    computer_special_description: '',
-    computer_action_description: '',
-    computer_influence_description: '',
-    computer_influence_description_two: '',
-    computer_death_description: '',
-    computer_critical_success: false,
-    computer_counter_success: false,
-    computer_dual_wielding: false,
-    computer_glancing_blow: false,
-    computer_religious_success: false,
-    computer_roll_success: false,
-    computer_win: false,
+    attackWeight: 0,
+    counterWeight: 0,
+    dodgeWeight: 0,
+    postureWeight: 0,
+    rollWeight: 0,
+    counterAttackWeight: 0,
+    counterCounterWeight: 0,
+    counterDodgeWeight: 0,
+    counterPostureWeight: 0,
+    counterRollWeight: 0,
+    computerStartDescription: '',
+    computerSpecialDescription: '',
+    computerActionDescription: '',
+    computerInfluenceDescription: '',
+    computerInfluenceDescriptionTwo: '',
+    computerDeathDescription: '',
+    computerCriticalSuccess: false,
+    computerCounterSuccess: false,
+    computerDualWielding: false,
+    computerGlancingBlow: false,
+    computerReligiousSuccess: false,
+    computerRollSuccess: false,
+    computerWin: false,
     combatInitiated: false,
     actionStatus: false,
     gameIsLive: false,
@@ -332,32 +332,32 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 player: action.payload.ascean,
-                player_health: action.payload.ascean.health.total,
-                current_player_health: action.payload.ascean.health.total,
-                new_player_health: action.payload.ascean.health.total,
+                playerHealth: action.payload.ascean.health.total,
+                currentPlayerHealth: action.payload.ascean.health.total,
+                newPlayerHealth: action.payload.ascean.health.total,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                weapon_one: action.payload.combat_weapon_one,
-                weapon_two: action.payload.combat_weapon_two,
-                weapon_three: action.payload.combat_weapon_three,
-                player_defense: action.payload.defense,
-                player_attributes: action.payload.attributes,
-                player_damage_type: action.payload.combat_weapon_one.damage_type[0],
+                weaponOne: action.payload.combat_weapon_one,
+                weaponTwo: action.payload.combat_weapon_two,
+                weaponThree: action.payload.combat_weapon_three,
+                playerDefense: action.payload.defense,
+                playerAttributes: action.payload.attributes,
+                playerDamageType: action.payload.combat_weapon_one.damage_type[0],
                 highScore: action.payload.ascean.high_score,
             };
         case 'SET_PLAYER':
             return {
                 ...state,
                 player: action.payload.ascean,
-                player_health: action.payload.ascean.health.total,
-                current_player_health: action.payload.ascean.health.current === -10 ? action.payload.ascean.health.total : action.payload.ascean.health.current,
-                new_player_health: action.payload.ascean.health.current === -10 ? action.payload.ascean.health.total : action.payload.ascean.health.current,
+                playerHealth: action.payload.ascean.health.total,
+                currentPlayerHealth: action.payload.ascean.health.current === -10 ? action.payload.ascean.health.total : action.payload.ascean.health.current,
+                newPlayerHealth: action.payload.ascean.health.current === -10 ? action.payload.ascean.health.total : action.payload.ascean.health.current,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                weapon_one: action.payload.combat_weapon_one,
-                weapon_two: action.payload.combat_weapon_two,
-                weapon_three: action.payload.combat_weapon_three,
-                player_defense: action.payload.defense,
-                player_attributes: action.payload.attributes,
-                player_damage_type: action.payload.combat_weapon_one.damage_type[0],
+                weaponOne: action.payload.combat_weapon_one,
+                weaponTwo: action.payload.combat_weapon_two,
+                weaponThree: action.payload.combat_weapon_three,
+                playerDefense: action.payload.defense,
+                playerAttributes: action.payload.attributes,
+                playerDamageType: action.payload.combat_weapon_one.damage_type[0],
                 highScore: action.payload.ascean.high_score,
             };
         case 'SET_EXPERIENCE':
@@ -382,18 +382,18 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 computer: action.payload.ascean,
-                computer_health: action.payload.attributes.healthTotal,
-                current_computer_health: action.payload.attributes.healthTotal,
-                new_computer_health: action.payload.attributes.healthTotal,
-                computer_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                computer_weapon_one: action.payload.combat_weapon_one,
-                computer_weapon_two: action.payload.combat_weapon_two,
-                computer_weapon_three: action.payload.combat_weapon_three,
-                computer_defense: action.payload.defense,
-                computer_attributes: action.payload.attributes,
-                computer_damage_type: action.payload.combat_weapon_one.damage_type[0],
-                current_player_health: action.payload.ascean.health.current === 0 ? action.payload.ascean.health.total * 0.05 : action.payload.ascean.health.current,
-                new_player_health: action.payload.ascean.health.current === 0 ? action.payload.ascean.health.total * 0.05 : action.payload.ascean.health.current,
+                computerHealth: action.payload.attributes.healthTotal,
+                currentComputerHealth: action.payload.attributes.healthTotal,
+                newComputerHealth: action.payload.attributes.healthTotal,
+                computerWeapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                computerWeaponOne: action.payload.combat_weapon_one,
+                computerWeaponTwo: action.payload.combat_weapon_two,
+                computerWeaponThree: action.payload.combat_weapon_three,
+                computerDefense: action.payload.defense,
+                computerAttributes: action.payload.attributes,
+                computerDamageType: action.payload.combat_weapon_one.damage_type[0],
+                currentPlayerHealth: action.payload.ascean.health.current === 0 ? action.payload.ascean.health.total * 0.05 : action.payload.ascean.health.current,
+                newPlayerHealth: action.payload.ascean.health.current === 0 ? action.payload.ascean.health.total * 0.05 : action.payload.ascean.health.current,
             };
         case 'SET_DUEL':
             return {
@@ -412,14 +412,14 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'RESET_PLAYER':
             return {
                 ...state,
-                current_player_health: state.player_health,
-                new_player_health: state.player_health,
-                current_computer_health: state.computer_health,
-                new_computer_health: state.computer_health,
+                currentPlayerHealth: state.playerHealth,
+                newPlayerHealth: state.playerHealth,
+                currentComputerHealth: state.computerHealth,
+                newComputerHealth: state.computerHealth,
                 combatEngaged: true,
                 gameIsLive: false,
-                player_win: false,
-                computer_win: false,
+                playerWin: false,
+                computerWin: false,
                 combatRound: 1,
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
                 winStreak: 0,
@@ -427,54 +427,54 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'RESET_COMPUTER':
             return {
                 ...state,
-                current_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
-                new_player_health: state.current_player_health > state.player_health ? state.player_health : state.current_player_health,
-                current_computer_health: state.computer_health,
-                new_computer_health: state.computer_health,
+                currentPlayerHealth: state.currentPlayerHealth > state.playerHealth ? state.playerHealth : state.currentPlayerHealth,
+                newPlayerHealth: state.currentPlayerHealth > state.playerHealth ? state.playerHealth : state.currentPlayerHealth,
+                currentComputerHealth: state.computerHealth,
+                newComputerHealth: state.computerHealth,
                 combatEngaged: true,
                 gameIsLive: false,
-                player_win: false,
-                computer_win: false,
+                playerWin: false,
+                computerWin: false,
                 combatRound: 1,
                 sessionRound: state.sessionRound === 0 ? 1 : state.sessionRound + 1,
                 winStreak: state.player.level > state.computer.level ? 0: state.winStreak,
             };
         case 'SET_NEW_COMPUTER':
-            const newHealth = state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health;
+            const newHealth = state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth;
             return {
                 ...state,
-                current_player_health: newHealth,
-                new_player_health: newHealth,
+                currentPlayerHealth: newHealth,
+                newPlayerHealth: newHealth,
                 computer: action.payload.ascean,
-                computer_health: action.payload.attributes.healthTotal,
-                current_computer_health: action.payload.attributes.healthTotal,
-                new_computer_health: action.payload.attributes.healthTotal,
-                computer_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                computer_weapon_one: action.payload.combat_weapon_one,
-                computer_weapon_two: action.payload.combat_weapon_two,
-                computer_weapon_three: action.payload.combat_weapon_three,
-                computer_defense: action.payload.defense,
-                computer_attributes: action.payload.attributes,
-                player_win: false,
-                computer_win: false,
+                computerHealth: action.payload.attributes.healthTotal,
+                currentComputerHealth: action.payload.attributes.healthTotal,
+                newComputerHealth: action.payload.attributes.healthTotal,
+                computerWeapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                computerWeaponOne: action.payload.combat_weapon_one,
+                computerWeaponTwo: action.payload.combat_weapon_two,
+                computerWeaponThree: action.payload.combat_weapon_three,
+                computerDefense: action.payload.defense,
+                computerAttributes: action.payload.attributes,
+                playerWin: false,
+                computerWin: false,
                 combatRound: 1,
             };
         case 'SET_PHASER_COMPUTER_ENEMY':
             return {
                 ...state, 
                 computer: action.payload.enemy.ascean,
-                computer_health: action.payload.enemy.attributes.healthTotal,
-                current_computer_health: action.payload.health,
-                new_computer_health: action.payload.health,
-                computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
-                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
-                computer_weapon_one: action.payload.enemy.combat_weapon_one,
-                computer_weapon_two: action.payload.enemy.combat_weapon_two,
-                computer_weapon_three: action.payload.enemy.combat_weapon_three,
-                computer_defense: action.payload.enemy.defense,
-                computer_attributes: action.payload.enemy.attributes,
-                player_win: action.payload.isDefeated, // In Order To Denote Whether That Enemy Has Been Defeated So The Proper Settings Are Loaded In Dialog Etc...
-                computer_win: action.payload.isTriumphant, // In Order to Discern whether the Player has been Defeated so the proper settings are loaded in dialog etc...
+                computerHealth: action.payload.enemy.attributes.healthTotal,
+                currentComputerHealth: action.payload.health,
+                newComputerHealth: action.payload.health,
+                computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+                newPlayerHealth: state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth,
+                computerWeaponOne: action.payload.enemy.combat_weapon_one,
+                computerWeaponTwo: action.payload.enemy.combat_weapon_two,
+                computerWeaponThree: action.payload.enemy.combat_weapon_three,
+                computerDefense: action.payload.enemy.defense,
+                computerAttributes: action.payload.enemy.attributes,
+                playerWin: action.payload.isDefeated, // In Order To Denote Whether That Enemy Has Been Defeated So The Proper Settings Are Loaded In Dialog Etc...
+                computerWin: action.payload.isTriumphant, // In Order to Discern whether the Player has been Defeated so the proper settings are loaded in dialog etc...
                 enemyID: action.payload.enemyID,
                 npcType: '',
                 isEnemy: true,
@@ -486,18 +486,18 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 computer: action.payload.enemy.ascean,
-                computer_health: action.payload.enemy.attributes.healthTotal,
-                current_computer_health: action.payload.health,
-                new_computer_health: action.payload.health,
-                computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
-                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
-                computer_weapon_one: action.payload.enemy.combat_weapon_one,
-                computer_weapon_two: action.payload.enemy.combat_weapon_two,
-                computer_weapon_three: action.payload.enemy.combat_weapon_three,
-                computer_defense: action.payload.enemy.defense,
-                computer_attributes: action.payload.enemy.attributes,
-                player_win: false,
-                computer_win: false,
+                computerHealth: action.payload.enemy.attributes.healthTotal,
+                currentComputerHealth: action.payload.health,
+                newComputerHealth: action.payload.health,
+                computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+                newPlayerHealth: state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth,
+                computerWeaponOne: action.payload.enemy.combat_weapon_one,
+                computerWeaponTwo: action.payload.enemy.combat_weapon_two,
+                computerWeaponThree: action.payload.enemy.combat_weapon_three,
+                computerDefense: action.payload.enemy.defense,
+                computerAttributes: action.payload.enemy.attributes,
+                playerWin: false,
+                computerWin: false,
                 enemyID: action.payload.enemyID,
                 npcType: action.payload.npcType,
                 isEnemy: false,
@@ -512,10 +512,9 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 luckoutScenario: false,
                 enemyPersuaded: false,
                 playerLuckout: false,
-                player_win: false,
-                player_luckout: false,
+                playerWin: false,
                 playerGrapplingWin: false,
-                computer_win: false,
+                computerWin: false,
                 combatEngaged: false,
                 playerTrait: '',
                 isEnemy: false,
@@ -530,18 +529,18 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 computer: action.payload.ascean,
-                computer_health: action.payload.attributes.healthTotal,
-                current_computer_health: action.payload.attributes.healthTotal,
-                new_computer_health: action.payload.attributes.healthTotal,
-                computer_weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
-                computer_weapon_one: action.payload.combat_weapon_one,
-                computer_weapon_two: action.payload.combat_weapon_two,
-                computer_weapon_three: action.payload.combat_weapon_three,
-                computer_defense: action.payload.defense,
-                computer_attributes: action.payload.attributes,
-                player_win: false,
-                computer_win: false,
+                computerHealth: action.payload.attributes.healthTotal,
+                currentComputerHealth: action.payload.attributes.healthTotal,
+                newComputerHealth: action.payload.attributes.healthTotal,
+                computerWeapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
+                newPlayerHealth: state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth,
+                computerWeaponOne: action.payload.combat_weapon_one,
+                computerWeaponTwo: action.payload.combat_weapon_two,
+                computerWeaponThree: action.payload.combat_weapon_three,
+                computerDefense: action.payload.defense,
+                computerAttributes: action.payload.attributes,
+                playerWin: false,
+                computerWin: false,
                 combatRound: 1,
             };
         case 'AUTO_ENGAGE':
@@ -552,7 +551,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'CLEAR_COUNTER':
             return {
                 ...state,
-                counter_guess: ''
+                counterGuess: ''
             };
         case 'SET_ACTION_STATUS':
             return {
@@ -563,7 +562,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 action: action.payload,
-                counter_guess: '',
+                counterGuess: '',
             };
         case 'SET_COMBAT_INITIATED':
             return {
@@ -574,12 +573,12 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 action: 'counter',
-                counter_guess: action.payload,
+                counterGuess: action.payload,
             };
         case 'SET_DAMAGE_TYPE':
             return {
                 ...state,
-                player_damage_type: action.payload,
+                playerDamageType: action.payload,
             };
         case 'SET_DODGE_STATUS':
             return {
@@ -606,7 +605,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 weapons: action.payload,
-                player_damage_type: action.payload[0].damage_type[0],
+                playerDamageType: action.payload[0].damage_type[0],
             };
         case 'INITIATE_COMBAT':
             return {
@@ -645,7 +644,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computerDamaged: action.payload,
             };
         case 'PLAYER_WIN':
-            let resetWeapons = [state.weapon_one, state.weapon_two, state.weapon_three];
+            let resetWeapons = [state.weaponOne, state.weaponTwo, state.weaponThree];
             let weapy: any[] = state.weapons.map(weapon => resetWeapons.find(w => w._id === weapon._id));;
             return {
                 ...state,
@@ -664,18 +663,18 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 winStreak: state.winStreak + 1,
                 highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
                 loseStreak: 0,
-                new_computer_health: 0,
-                current_computer_health: 0,
-                player_luckout: action.payload.playerLuckout,
+                newComputerHealth: 0,
+                currentComputerHealth: 0,
+                playerLuckout: action.payload.playerLuckout,
                 playerTrait: action.payload.playerTrait,
-                player_win: true,
+                playerWin: true,
                 luckoutScenario: true,
             };
         case 'LUCKOUT_FAILURE':
             return {
                 ...state,
                 winStreak: 0,
-                player_luckout: action.payload.playerLuckout,
+                playerLuckout: action.payload.playerLuckout,
                 playerTrait: action.payload.playerTrait,
                 luckoutScenario: true,
             };
@@ -686,9 +685,9 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 winStrea: state.winStreak + 1,
                 highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
                 loseStreak: 0,
-                new_computer_health: 0,
-                current_computer_health: 0,
-                player_win: action.payload,
+                newComputerHealth: 0,
+                currentComputerHealth: 0,
+                playerWin: action.payload,
                 playerGrapplingWin: action.payload,
             };
         case 'ENEMY_PERSUADED':
@@ -701,7 +700,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'RESET_LUCKOUT':
             return {
                 ...state,
-                player_luckout: action.payload,
+                playerLuckout: action.payload,
             };
         case 'RESET_GRAPPLING_WIN':
             return {
@@ -709,7 +708,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 playerGrapplingWin: action.payload,
             };
         case 'COMPUTER_WIN':
-            const weaponReset = [state.weapon_one, state.weapon_two, state.weapon_three];
+            const weaponReset = [state.weaponOne, state.weaponTwo, state.weaponThree];
             const resetty = state.weapons.map(weapon => weaponReset.find(w => w._id === weapon._id));
             return {
                 ...state,
@@ -725,8 +724,8 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 computer: null,
-                player_win: false,
-                computer_win: false,
+                playerWin: false,
+                computerWin: false,
                 enemyPersuaded: false,
                 combatEngaged: false,
                 gameIsLive: false,
@@ -734,24 +733,24 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 instantStatus: false,
                 playerTrait: '',
                 action: '',
-                player_action: '',
-                computer_action: '',
-                counter_guess: '',
-                computer_counter_guess: '',
-                player_action_description: '',
-                computer_action_description: '',
-                player_start_description: '',
-                computer_start_description: '',
-                player_death_description: '',
-                computer_death_description: '',
-                player_special_description: '',
-                computer_special_description: '',
-                player_influence_description: '',
-                computer_influence_description: '',
-                player_influence_description_two: '',
-                computer_influence_description_two: '',
-                realized_player_damage: 0,
-                realized_computer_damage: 0,
+                playerAction: '',
+                computerAction: '',
+                counterGuess: '',
+                computerCounterGuess: '',
+                playerActionDescription: '',
+                computerActionDescription: '',
+                playerStartDescription: '',
+                computerStartDescription: '',
+                playerDeathDescription: '',
+                computerDeathDescription: '',
+                playerSpecialDescription: '',
+                computerSpecialDescription: '',
+                playerInfluenceDescription: '',
+                computerInfluenceDescription: '',
+                playerInfluenceDescriptionTwo: '',
+                computerInfluenceDescriptionTwo: '',
+                realizedPlayerDamage: 0,
+                realizedComputerDamage: 0,
                 combatRound: 0,
                 actionData: [],
                 typeAttackData: [],
@@ -765,29 +764,29 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'REGISTER_ENEMY_ACTIONS':
             return {
                 ...state,
-                player_win: action.payload.player_win,
-                computer_win: action.payload.computer_win,
-                player_action_description: action.payload.player_action_description,
-                computer_action_description: action.payload.computer_action_description,
-                player_start_description: action.payload.player_start_description,
-                computer_start_description: action.payload.computer_start_description,
-                player_death_description: action.payload.player_death_description,
-                computer_death_description: action.payload.computer_death_description,
-                player_special_description: action.payload.player_special_description,
-                computer_special_description: action.payload.computer_special_description,
-                player_influence_description: action.payload.player_influence_description,
-                computer_influence_description: action.payload.computer_influence_description,
-                player_influence_description_two: action.payload.player_influence_description_two,
-                computer_influence_description_two: action.payload.computer_influence_description_two,
-                potential_computer_damage: action.payload.potential_computer_damage,
-                realized_computer_damage: action.payload.realized_computer_damage,
+                playerWin: action.payload.playerWin,
+                computerWin: action.payload.computerWin,
+                playerActionDescription: action.payload.playerActionDescription,
+                computerActionDescription: action.payload.computerActionDescription,
+                playerStartDescription: action.payload.playerStartDescription,
+                computerStartDescription: action.payload.computerStartDescription,
+                playerDeathDescription: action.payload.playerDeathDescription,
+                computerDeathDescription: action.payload.computerDeathDescription,
+                playerSpecialDescription: action.payload.playerSpecialDescription,
+                computerSpecialDescription: action.payload.computerSpecialDescription,
+                playerInfluenceDescription: action.payload.playerInfluenceDescription,
+                computerInfluenceDescription: action.payload.computerInfluenceDescription,
+                playerInfluenceDescriptionTwo: action.payload.playerInfluenceDescriptionTwo,
+                computerInfluenceDescriptionTwo: action.payload.computerInfluenceDescriptionTwo,
+                potentialComputerDamage: action.payload.potentialComputerDamage,
+                realizedComputerDamage: action.payload.realizedComputerDamage,
                 playerDamaged: action.payload.playerDamaged,
                 computerDamaged: action.payload.computerDamaged,
-                new_player_health: action.payload.new_player_health,
-                current_player_health: action.payload.current_player_health,
-                computer_roll_success: action.payload.computer_roll_success,
-                computer_counter_success: action.payload.computer_counter_success,
-                computer_glancing_blow: action.payload.computer_glancing_blow,
+                newPlayerHealth: action.payload.newPlayerHealth,
+                currentPlayerHealth: action.payload.currentPlayerHealth,
+                computerRollSuccess: action.payload.computerRollSuccess,
+                computerCounterSuccess: action.payload.computerCounterSuccess,
+                computerGlancingBlow: action.payload.computerGlancingBlow,
                 playerEffects: action.payload.playerEffects,    
             };
         case 'SET_PLAYER_QUICK':
@@ -799,29 +798,29 @@ export const CombatStore = (state: CombatData, action: Action) => {
             return {
                 ...state,
                 player: action.payload.ascean,
-                player_health: action.payload.attributes.healthTotal,
+                playerHealth: action.payload.attributes.healthTotal,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                weapon_one: action.payload.combat_weapon_one,
-                weapon_two: action.payload.combat_weapon_two,
-                weapon_three: action.payload.combat_weapon_three,
-                player_defense: action.payload.defense,
-                player_attributes: action.payload.attributes,
-                player_damage_type: action.payload.combat_weapon_one.damage_type[0],
+                weaponOne: action.payload.combat_weapon_one,
+                weaponTwo: action.payload.combat_weapon_two,
+                weaponThree: action.payload.combat_weapon_three,
+                playerDefense: action.payload.defense,
+                playerAttributes: action.payload.attributes,
+                playerDamageType: action.payload.combat_weapon_one.damage_type[0],
             };
         case 'SET_PLAYER_LEVEL_UP':
             return {
                 ...state,
                 player: action.payload.ascean,
-                player_health: action.payload.attributes.healthTotal,
-                current_player_health: action.payload.attributes.healthTotal,
-                new_player_health: action.payload.attributes.healthTotal,
+                playerHealth: action.payload.attributes.healthTotal,
+                currentPlayerHealth: action.payload.attributes.healthTotal,
+                newPlayerHealth: action.payload.attributes.healthTotal,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                weapon_one: action.payload.combat_weapon_one,
-                weapon_two: action.payload.combat_weapon_two,
-                weapon_three: action.payload.combat_weapon_three,
-                player_defense: action.payload.defense,
-                player_attributes: action.payload.attributes,
-                player_damage_type: action.payload.combat_weapon_one.damage_type[0],
+                weaponOne: action.payload.combat_weapon_one,
+                weaponTwo: action.payload.combat_weapon_two,
+                weaponThree: action.payload.combat_weapon_three,
+                playerDefense: action.payload.defense,
+                playerAttributes: action.payload.attributes,
+                playerDamageType: action.payload.combat_weapon_one.damage_type[0],
             };
         case 'SAVE_EXPERIENCE':
             return {
@@ -835,14 +834,14 @@ export const CombatStore = (state: CombatData, action: Action) => {
             };
         case 'PLAYER_REST':
             const percentage = action.payload;
-            let currentHealth = state.new_player_health < 0 ? 0 : state.new_player_health;
-            const playerHealthHealed = Math.floor(currentHealth + (state.player_health * (percentage / 100)));
-            const playerHealth = playerHealthHealed > state.player_health ? state.player_health : playerHealthHealed;
+            let currentHealth = state.newPlayerHealth < 0 ? 0 : state.newPlayerHealth;
+            const playerHealthHealed = Math.floor(currentHealth + (state.playerHealth * (percentage / 100)));
+            const playerHealth = playerHealthHealed > state.playerHealth ? state.playerHealth : playerHealthHealed;
             console.log('Player Health: ', currentHealth, 'Player Health Healed: ', playerHealthHealed, 'Player Health: ', playerHealth);
             return {
                 ...state,
-                current_player_health: playerHealth,
-                new_player_health: playerHealth,
+                currentPlayerHealth: playerHealth,
+                newPlayerHealth: playerHealth,
             };
         default: 
             return state;

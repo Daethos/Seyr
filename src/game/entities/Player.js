@@ -31,7 +31,7 @@ export default class Player extends Entity {
     constructor(data) {
         let { scene } = data;
         console.log(scene.state, "Scene State in Player.js");
-        super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.new_player_health }); 
+        super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.newPlayerHealth }); 
         const spriteName = scene?.state?.player?.weapon_one.imgURL.split('/')[2].split('.')[0];
         this.ascean = scene.state.player;
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteName);
@@ -48,7 +48,7 @@ export default class Player extends Entity {
         this.currentWeaponSprite = spriteName;
         this.targetIndex = 0;
         this.currentTarget = null;
-        this.stamina = scene?.state?.player_attributes?.stamina;
+        this.stamina = scene?.state?.playerAttributes?.stamina;
         this.isMoving = false;
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
@@ -159,7 +159,7 @@ export default class Player extends Entity {
             intensity: 0.02,
         });
         this.highlight.setVisible(false);
-        this.healthbar = new HealthBar(this.scene, this.x, this.y, scene.state.player_health, 'player');
+        this.healthbar = new HealthBar(this.scene, this.x, this.y, scene.state.playerHealth, 'player');
         this.setFixedRotation();   
         this.checkEnemyAttackCollision(playerSensor);
         this.playerStateListener();
@@ -240,22 +240,22 @@ export default class Player extends Entity {
 
     playerStateListener() {
         EventEmitter.on('update-combat-data', (e) => {
-            if (this.health > e.new_player_health) {
+            if (this.health > e.newPlayerHealth) {
                 this.isHurt = true;
-                let damage = Math.round(this.health - e.new_player_health);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.computer_critical_success);
+                let damage = Math.round(this.health - e.newPlayerHealth);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.computerCriticalSuccess);
             };
-            if (this.health < e.new_player_health) {
-                let heal = Math.round(e.new_player_health - this.health);
+            if (this.health < e.newPlayerHealth) {
+                let heal = Math.round(e.newPlayerHealth - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
             };
             if (this.currentRound !== e.combatRound) {
                 this.currentRound = e.combatRound;
             }; 
-            this.health = e.new_player_health;
+            this.health = e.newPlayerHealth;
             this.healthbar.setValue(this.health);
-            if (this.healthbar.getTotal() < e.player_health) this.healthbar.setTotal(e.player_health);
-            if (e.new_player_health <= 0) {
+            if (this.healthbar.getTotal() < e.playerHealth) this.healthbar.setTotal(e.playerHealth);
+            if (e.newPlayerHealth <= 0) {
                 // this.isDead = true;
                 this.inCombat = false;
                 this.attacking = null;
@@ -263,20 +263,20 @@ export default class Player extends Entity {
                     this.anims.play('player_idle', true);
                 });
             };
-            if (e.new_computer_health <= 0) {
+            if (e.newComputerHealth <= 0) {
                 this.inCombat = false;
                 this.attacking = null;
                 this.touching = this.touching.filter(obj => obj.enemyID !== e.enemyID);
             };
-            this.checkWeapons(e.weapons[0], e.player_damage_type.toLowerCase());
+            this.checkWeapons(e.weapons[0], e.playerDamageType.toLowerCase());
         });
 
         EventEmitter.on('update-combat', (e) => {
-            if (e.computer_counter_success) {
+            if (e.computerCounterSuccess) {
                 this.stateMachine.setState(States.STUN);
-                this.scene.combatMachine.input('computer_counter_success', false);
+                this.scene.combatMachine.input('computerCounterSuccess', false);
             };
-            if (e.player_win) {
+            if (e.playerWin) {
                 let damage = 'Victory!';
                 this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 3000, 'effect', true);    
             };    
@@ -468,7 +468,7 @@ export default class Player extends Entity {
     };
     onCounterExit = () => {
         if (this.scene.state.action !== '') this.scene.combatMachine.input('action', '');
-        if (this.scene.state.counter_guess !== '') this.scene.combatMachine.input('counter_guess', '');
+        if (this.scene.state.counterGuess !== '') this.scene.combatMachine.input('counterGuess', '');
     };
 
     onPostureEnter = () => {
@@ -709,15 +709,15 @@ export default class Player extends Entity {
         }; 
         if (this.inCombat) {
             if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
-                this.scene.combatMachine.input('counter_guess', 'attack');
+                this.scene.combatMachine.input('counterGuess', 'attack');
                 this.stateMachine.setState(States.COUNTER);           
             };
             if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
-                this.scene.combatMachine.input('counter_guess', 'posture');
+                this.scene.combatMachine.input('counterGuess', 'posture');
                 this.stateMachine.setState(States.COUNTER);
             };
             if (this.stamina >= 15 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
-                this.scene.combatMachine.input('counter_guess', 'roll');
+                this.scene.combatMachine.input('counterGuess', 'roll');
                 this.stateMachine.setState(States.COUNTER);
             };
         
@@ -730,7 +730,7 @@ export default class Player extends Entity {
             };
 
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 15 && this.canSwing) {
-                this.scene.combatMachine.input('counter_guess', 'counter');
+                this.scene.combatMachine.input('counterGuess', 'counter');
                 this.stateMachine.setState(States.COUNTER);
             };
 
@@ -886,7 +886,7 @@ export default class Player extends Entity {
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING
             console.log("Pinging CONSUMING")
-            this.anims.play('player_health', true).on('animationcomplete', () => {
+            this.anims.play('playerHealth', true).on('animationcomplete', () => {
                 this.isConsuming = false;
             });
         } else if (this.isHealing) { // HEALING

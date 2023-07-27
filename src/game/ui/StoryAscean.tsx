@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getOnlyInventoryFetch, setAsceanState, setVolume } from '../reducers/gameState';
 import { Player } from '../../components/GameCompiler/GameStore';
 import {CombatSettings, GeneralSettings, InventorySettings, TacticSettings} from '../../components/GameCompiler/SettingConcerns';
+import { CombatData } from '../../components/GameCompiler/CombatStore';
 
 const CHARACTERS = {
     STATISTICS: 'Statistics',
@@ -44,7 +45,7 @@ interface Props {
 const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
     const dispatch = useDispatch();
     const gameState = useSelector((state: any) => state.game);
-    const state = useSelector((state: any) => state.combat);
+    const state = useSelector((state: any) => state.combat) as CombatData;
     const asceanState = useSelector((state: any) => state.game.asceanState);
 
     const [savingInventory, setSavingInventory] = useState(false);
@@ -371,7 +372,7 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
                     {state.player.name}
                 </div>
                 <div style={{ textAlign: "center", marginBottom: "15%" }}>
-                    <StoryHealthBar totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} />
+                    <StoryHealthBar totalPlayerHealth={state.playerHealth} currentPlayerHealth={state.newPlayerHealth} />
                 </div>
                 <AsceanImageCard
                     weapon_one={state.weapons[0]}
@@ -405,9 +406,9 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
                         Level: <p style={{ color: "gold" }}>{state.player.level}</p><br />
                         {state.player?.currency?.silver ? <>Silver: <p style={{ color: "gold" }}>{state.player.currency.silver}</p> Gold: <p style={{ color: "gold" }}>{state.player.currency.gold} <br /></p></> : '' }
                         Mastery: <p style={{ color: "gold" }}>{state.player.mastery}</p><br />
-                        Magical Defense: <p style={{ color: "gold" }}>{state.player_defense.magicalDefenseModifier}% / [{state.player_defense.magicalPosture}%]</p><br />
-                        Physical Defense: <p style={{ color: "gold" }}>{state.player_defense.physicalDefenseModifier}% / [{state.player_defense.physicalPosture}%]</p><br />
-                        Initiative: <p style={{ color: "gold" }}>{state.player_attributes.initiative}</p>
+                        Magical Defense: <p style={{ color: "gold" }}>{state.playerDefense.magicalDefenseModifier}% / [{state.playerDefense.magicalPosture}%]</p><br />
+                        Physical Defense: <p style={{ color: "gold" }}>{state.playerDefense.physicalDefenseModifier}% / [{state.playerDefense.physicalPosture}%]</p><br />
+                        Initiative: <p style={{ color: "gold" }}>{state.playerAttributes.initiative}</p>
                     </div>
                     <AsceanAttributeCompiler ascean={state.player} story={true} />
                 </div>

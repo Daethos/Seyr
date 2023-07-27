@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import arrowPNG from '../images/arrow_effect.png';
+// import arrowPNG from '../images/arrow_effect.png';
 import arrowJSON from '../images/arrow_effect_atlas.json';
 import arrowAnim from '../images/arrow_anim.json';
 import earthPNG from '../images/earth_effect.png';
@@ -63,11 +63,11 @@ class Particle {
                             this.scene.combatMachine.input('action', effect.action);
                         };
                     } else if (player.name === 'enemy') {
-                        if (player.isCurrentTarget && this.scene.state.computer_action !== effect.action) {
-                            console.log("Resetting Action To " + effect.action + " From " + this.scene.state.computer_action + " Due to Collision Success For ENEMY");
-                            this.scene.combatMachine.input('computer_action', effect.action);
+                        if (player.isCurrentTarget && this.scene.state.computerAction !== effect.action) {
+                            console.log("Resetting Action To " + effect.action + " From " + this.scene.state.computerAction + " Due to Collision Success For TARGETED ENEMY");
+                            this.scene.combatMachine.input('computerAction', effect.action);
                         } else if (!player.isCurrentTarget && player.currentAction !== effect.action) {
-                            console.log("Resetting Action To " + effect.action + " From " + player.currentAction + " Due to Collision Success For ENEMY");
+                            console.log("Resetting Action To " + effect.action + " From " + player.currentAction + " Due to Collision Success For NON TARGETED ENEMY");
                             player.currentAction = effect.action;
                         };
                     };

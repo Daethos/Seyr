@@ -22,10 +22,19 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
     const [prayerModal, setPrayerModal] = useState<boolean>(false);
+    // const updatePlayerHealthPercentage = async () => {
+    //     try {
+    //         const newHealthPercentage = Math.round((state.newPlayerHealth/state.playerHealth) * 100);
+    //         setPlayerHealthPercentage(newHealthPercentage);
+    //     } catch (err: any) {
+    //         console.log(err.message, 'Error updating Health Percentage');
+    //     };
+    // };
 
     useEffect(() => {
-        updatePlayerHealthPercentage();
-    }, [state.new_player_health]); 
+        // updatePlayerHealthPercentage();
+        setPlayerHealthPercentage(Math.round((state.newPlayerHealth/state.playerHealth) * 100));
+    }, [state.newPlayerHealth, state.playerHealth]); 
 
     useEffect(() => {
         let instantTimer: ReturnType<typeof setTimeout>;
@@ -37,14 +46,6 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
         return () => clearTimeout(instantTimer);
     }, [state.instantStatus, dispatch, state.combatEngaged]);
 
-    const updatePlayerHealthPercentage = async () => {
-        try {
-            const newHealthPercentage = Math.round((state.new_player_health/state.player_health) * 100);
-            setPlayerHealthPercentage(newHealthPercentage);
-        } catch (err: any) {
-            console.log(err.message, 'Error updating Health Percentage');
-        };
-    };
 
     const getItemRarityStyle = (rarity: string) => {
         return {
@@ -159,7 +160,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                 textAlign: "center", 
                 fontFamily: "Cinzel", 
                 fontWeight: 700 
-            }}>{`${Math.round(state.new_player_health)} / ${state.player_health} [${playerHealthPercentage}%]`}</p>
+            }}>{`${Math.round(state.newPlayerHealth)} / ${state.playerHealth} [${playerHealthPercentage}%]`}</p>
             <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '40px', height: '40px', top: "-4px", left: "149px", borderRadius: "50%"  }} />
             <ProgressBar 
                 variant="success"
@@ -177,7 +178,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                 textAlign: "center", 
                 fontFamily: "Cinzel", 
                 fontWeight: 700 
-            }}>{Math.round((staminaPercentage / 100) * state.player_attributes.stamina)}</p>
+            }}>{Math.round((staminaPercentage / 100) * state.playerAttributes.stamina)}</p>
             <div style={{ position: "absolute", left: "187.5px", top: "0px", transform: "scale(0.75)" }}> 
                 <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} caerenic={state.isCaerenic} />
             </div>

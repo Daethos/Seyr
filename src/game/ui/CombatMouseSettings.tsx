@@ -28,13 +28,11 @@ const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) 
             setSelectedPrayerIndex(newIndex);
             dispatch(getCombatSettingFetch({ loadout: prayers[newIndex], type: 'Prayer' }));
             setSelectedHighlight('Prayer');
-            playWO();
         } else if (selectedHighlight === 'Damage') {
             const newIndex = (selectedDamageTypeIndex + direction + damageType.length) % damageType.length;
             setSelectedDamageTypeIndex(newIndex);
             dispatch(getCombatSettingFetch({ loadout: damageType[newIndex], type: 'Damage' }));
             setSelectedHighlight('Damage');
-            playWO();
         } else if (selectedHighlight === 'Weapon') {
             let newIndex = (selectedWeaponIndex + direction + weapons.length) % weapons.length;
             newIndex = direction === 1 ? 2 : 1;
@@ -43,8 +41,9 @@ const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) 
             const one = [weapons[newIndex], weapons[0], weapons[2]._id === weapons[newIndex]._id ? weapons[1] : weapons[2]];
             dispatch(getCombatSettingFetch({ loadout: one, type: 'Weapon' }));
             setSelectedHighlight('Weapon');
-            playWO();
         };
+        
+        playWO();
     };
 
     const handleShiftKey = (event: KeyboardEvent): void => {

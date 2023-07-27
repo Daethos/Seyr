@@ -33,7 +33,7 @@ export default class NPC extends Entity {
 
     constructor(data) {
         let { scene } = data;
-        super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.new_computer_health }); 
+        super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.newComputerHealth }); 
         this.scene = scene;
         this.id = idCount++;
         this.scene.add.existing(this);

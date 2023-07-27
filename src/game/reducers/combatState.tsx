@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initialCombatData } from '../../components/GameCompiler/CombatStore';
-import { compress } from '../sagas/combatSaga';
 import { getSocketInstance } from '../sagas/socketManager';
 import { SOCKET } from '../sagas/socketSaga';
 
@@ -28,16 +27,16 @@ const combatSlice = createSlice({
             return {
                 ...state,
                 player: action.payload.ascean,
-                player_health: action.payload.ascean.health.total,
-                current_player_health: action.payload.ascean.health.current,
-                new_player_health: action.payload.ascean.health.current,
+                playerHealth: action.payload.ascean.health.total,
+                currentPlayerHealth: action.payload.ascean.health.current,
+                newPlayerHealth: action.payload.ascean.health.current,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
-                weapon_one: action.payload.combat_weapon_one,
-                weapon_two: action.payload.combat_weapon_two,
-                weapon_three: action.payload.combat_weapon_three,
-                player_defense: action.payload.defense,
-                player_attributes: action.payload.attributes,
-                player_damage_type: action.payload.combat_weapon_one.damage_type[0],
+                weaponOne: action.payload.combat_weapon_one,
+                weaponTwo: action.payload.combat_weapon_two,
+                weaponThree: action.payload.combat_weapon_three,
+                playerDefense: action.payload.defense,
+                playerAttributes: action.payload.attributes,
+                playerDamageType: action.payload.combat_weapon_one.damage_type[0],
                 highScore: action.payload.ascean.high_score,
             };
         },
@@ -45,48 +44,48 @@ const combatSlice = createSlice({
             return {
                 ...state,
                 computer: action.payload.enemy.ascean,
-                computer_health: action.payload.enemy.attributes.healthTotal,
-                current_computer_health: action.payload.health,
-                new_computer_health: action.payload.health,
-                computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
-                computer_weapon_one: action.payload.enemy.combat_weapon_one,
-                computer_weapon_two: action.payload.enemy.combat_weapon_two,
-                computer_weapon_three: action.payload.enemy.combat_weapon_three,
-                computer_defense: action.payload.enemy.defense,
-                computer_attributes: action.payload.enemy.attributes,
-                computer_damage_type: action.payload.enemy.combat_weapon_one.damage_type[0],
-                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
+                computerHealth: action.payload.enemy.attributes.healthTotal,
+                currentComputerHealth: action.payload.health,
+                newComputerHealth: action.payload.health,
+                computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+                computerWeaponOne: action.payload.enemy.combat_weapon_one,
+                computerWeaponTwo: action.payload.enemy.combat_weapon_two,
+                computerWeaponThree: action.payload.enemy.combat_weapon_three,
+                computerDefense: action.payload.enemy.defense,
+                computerAttributes: action.payload.enemy.attributes,
+                computerDamageType: action.payload.enemy.combat_weapon_one.damage_type[0],
+                newPlayerHealth: state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth,
                 // Phaser Enemy Pieces
                 isEnemy: true,
                 npcType: '',
                 isAggressive: action.payload.isAggressive,
                 startedAggressive: action.payload.isAggressive,
-                player_win: action.payload.isDefeated,
-                computer_win: action.payload.isTriumphant,
+                playerWin: action.payload.isDefeated,
+                computerWin: action.payload.isTriumphant,
                 enemyID: action.payload.enemyID,   
-            }
+            };
         },
         setNpc: (state, action) => {
             return {
                 ...state,
                 computer: action.payload.enemy.ascean,
-                computer_health: action.payload.enemy.attributes.healthTotal,
-                current_computer_health: action.payload.health,
-                new_computer_health: action.payload.health,
-                computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
-                computer_weapon_one: action.payload.enemy.combat_weapon_one,
-                computer_weapon_two: action.payload.enemy.combat_weapon_two,
-                computer_weapon_three: action.payload.enemy.combat_weapon_three,
-                computer_defense: action.payload.enemy.defense,
-                computer_attributes: action.payload.enemy.attributes,
-                computer_damage_type: action.payload.enemy.combat_weapon_one.damage_type[0],
-                new_player_health: state.new_player_health > state.player_health ? state.player_health : state.new_player_health === 0 ? state.player_health * 0.05 : state.new_player_health,
+                computerHealth: action.payload.enemy.attributes.healthTotal,
+                currentComputerHealth: action.payload.health,
+                newComputerHealth: action.payload.health,
+                computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+                computerWeaponOne: action.payload.enemy.combat_weapon_one,
+                computerWeaponTwo: action.payload.enemy.combat_weapon_two,
+                computerWeaponThree: action.payload.enemy.combat_weapon_three,
+                computerDefense: action.payload.enemy.defense,
+                computerAttributes: action.payload.enemy.attributes,
+                computerDamageType: action.payload.enemy.combat_weapon_one.damage_type[0],
+                newPlayerHealth: state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth,
                 // Phaser Enemy Pieces
                 isEnemy: false,
                 isAggressive: false,
                 startedAggressive: false,
-                player_win: false,
-                computer_win: false,
+                playerWin: false,
+                computerWin: false,
                 enemyID: action.payload.enemyID,
                 npcType: action.payload.npcType,
             };
@@ -113,10 +112,10 @@ const combatSlice = createSlice({
                 persuasionScenario: false,
                 luckoutScenario: false,
                 enemyPersuaded: false,
-                player_luckout: false,
-                player_win: false,
+                playerLuckout: false,
+                playerWin: false,
                 playerGrapplingWin: false,
-                computer_win: false,
+                computerWin: false,
                 combatEngaged: false,
                 playerTrait: '',
                 enemyID: '',
@@ -147,14 +146,14 @@ const combatSlice = createSlice({
             };
         },
         setRest: (state, action) => {
-            const healed = Math.floor(state.new_player_health + state.player_health * (action.payload / 100)) ;
-            const newHealth = healed > state.player_health ? state.player_health : healed;
+            const healed = Math.floor(state.newPlayerHealth + state.playerHealth * (action.payload / 100)) ;
+            const newHealth = healed > state.playerHealth ? state.playerHealth : healed;
             const socket = getSocketInstance();
-            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['new_player_health']: newHealth });
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['newPlayerHealth']: newHealth });
             return {
                 ...state,
-                new_player_health: newHealth,
-                current_player_health: newHealth,
+                newPlayerHealth: newHealth,
+                currentPlayerHealth: newHealth,
             };
         },
         setWeather: (state, action) => {
@@ -171,7 +170,7 @@ const combatSlice = createSlice({
         setDamageType: (state, action) => {
             return {
                 ...state,
-                player_damage_type: action.payload,
+                playerDamageType: action.payload,
             };
         }, 
         setPlayerBlessing: (state, action) => {
@@ -191,7 +190,7 @@ const combatSlice = createSlice({
             return {
                 ...state,
                 weapons: action.payload,
-                player_damage_type: action.payload[0].damage_type[0],
+                playerDamageType: action.payload[0].damage_type[0],
             };
         },
         setToggleDamaged: (state, action) => {
@@ -204,29 +203,32 @@ const combatSlice = createSlice({
         setEnemyActions: (state, action) => {
             return {
                 ...state,
-                player_win: action.payload.player_win,
-                computer_win: action.payload.computer_win,
-                player_action_description: action.payload.player_action_description,
-                computer_action_description: action.payload.computer_action_description,
-                player_start_description: action.payload.player_start_description,
-                computer_start_description: action.payload.computer_start_description,
-                player_death_description: action.payload.player_death_description,
-                computer_death_description: action.payload.computer_death_description,
-                player_special_description: action.payload.player_special_description,
-                computer_special_description: action.payload.computer_special_description,
-                player_influence_description: action.payload.player_influence_description,
-                computer_influence_description: action.payload.computer_influence_description,
-                player_influence_description_two: action.payload.player_influence_description_two,
-                computer_influence_description_two: action.payload.computer_influence_description_two,
-                potential_computer_damage: action.payload.potential_computer_damage,
-                realized_computer_damage: action.payload.realized_computer_damage,
+                playerWin: action.payload.playerWin,
+                computerWin: action.payload.computerWin,
+                playerActionDescription: action.payload.playerActionDescription,
+                computerActionDescription: action.payload.computerActionDescription,
+                playerStartDescription: action.payload.playerStartDescription,
+                computerStartDescription: action.payload.computerStartDescription,
+                playerDeathDescription: action.payload.playerDeathDescription,
+                computerDeathDescription: action.payload.computerDeathDescription,
+                playerSpecialDescription: action.payload.playerSpecialDescription,
+                computerSpecialDescription: action.payload.computerSpecialDescription,
+                playerInfluenceDescription: action.payload.playerInfluenceDescription,
+                computerInfluenceDescription: action.payload.computerInfluenceDescription,
+                playerInfluenceDescriptionTwo: action.payload.playerInfluenceDescriptionTwo,
+                computerInfluenceDescriptionTwo: action.payload.computerInfluenceDescriptionTwo,
+                potentialComputerDamage: action.payload.potentialComputerDamage,
+                realizedComputerDamage: action.payload.realizedComputerDamage,
                 playerDamaged: action.payload.playerDamaged,
                 computerDamaged: action.payload.computerDamaged,
-                new_player_health: action.payload.new_player_health,
-                current_player_health: action.payload.current_player_health,
-                computer_roll_success: action.payload.computer_roll_success,
-                computer_counter_success: action.payload.computer_counter_success,
-                computer_glancing_blow: action.payload.computer_glancing_blow,
+                newPlayerHealth: action.payload.newPlayerHealth,
+                currentPlayerHealth: action.payload.currentPlayerHealth,
+                computerCriticalSuccess: action.payload.computerCriticalSuccess,
+                computerReligiousSuccess: action.payload.computerReligiousSuccess,
+                computerRollSuccess: action.payload.computerRollSuccess,
+                computerCounterSuccess: action.payload.computerCounterSuccess,
+                computerGlancingBlow: action.payload.computerGlancingBlow,
+                computerDualWielding: action.payload.computerDualWielding,
                 playerEffects: action.payload.playerEffects,  
             };
         },
@@ -280,7 +282,7 @@ const combatSlice = createSlice({
         },
         setPlayerWin: (state, _action) => {
             const socket = getSocketInstance();
-            const weaps: any[] = state.weapons.map(weapon => [state.weapon_one, state.weapon_two, state.weapon_three].find(w => w._id === weapon._id));
+            const weaps: any[] = state.weapons.map(weapon => [state.weaponOne, state.weaponTwo, state.weaponThree].find(w => w._id === weapon._id));
             socket.emit(SOCKET.PLAYER_WIN, weaps);
             return {
                 ...state,
@@ -288,13 +290,12 @@ const combatSlice = createSlice({
                 winStreak: state.winStreak + 1,
                 highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
                 loseStreak: 0,
-                // combatEngaged: false,
                 instantStatus: false
             };
         },
         setEnemyWin: (state, _action) => {
             const socket = getSocketInstance();
-            const weaps = state.weapons.map(weapon => [state.weapon_one, state.weapon_two, state.weapon_three].find(w => w._id === weapon._id));
+            const weaps = state.weapons.map(weapon => [state.weaponOne, state.weaponTwo, state.weaponThree].find(w => w._id === weapon._id));
             socket.emit(SOCKET.COMPUTER_WIN, weaps);
             return {
                 ...state,
@@ -317,32 +318,32 @@ const combatSlice = createSlice({
             return {
                 ...state,
                 // computer: null,
-                player_win: false,
-                computer_win: false,
+                playerWin: false,
+                computerWin: false,
                 combatEngaged: false,
                 enemyPersuaded: false,
                 instantStatus: false,
                 action: '',
-                counter_guess: '',
-                computer_action: '',
-                computer_counter_guess: '',
+                counterGuess: '',
+                computerAction: '',
+                computerCounterGuess: '',
                 playerTrait: '',
-                player_action_description: '',
-                computer_action_description: '',
-                player_start_description: '',
-                computer_start_description: '',
-                player_death_description: '',
-                computer_death_description: '',
-                player_special_description: '',
-                computer_special_description: '',
-                player_influence_description: '',
-                computer_influence_description: '',
-                player_influence_description_two: '',
-                computer_influence_description_two: '',
-                potential_player_damage: 0,
-                potential_computer_damage: 0,
-                realized_player_damage: 0,
-                realized_computer_damage: 0,
+                playerActionDescription: '',
+                computerActionDescription: '',
+                playerStartDescription: '',
+                computerStartDescription: '',
+                playerDeathDescription: '',
+                computerDeathDescription: '',
+                playerSpecialDescription: '',
+                computerSpecialDescription: '',
+                playerInfluenceDescription: '',
+                computerInfluenceDescription: '',
+                playerInfluenceDescriptionTwo: '',
+                computerInfluenceDescriptionTwo: '',
+                potentialPlayerDamage: 0,
+                potentialComputerDamage: 0,
+                realizedPlayerDamage: 0,
+                realizedComputerDamage: 0,
                 playerDamaged: false,
                 computerDamaged: false,
                 combatRound: 0,
@@ -364,11 +365,11 @@ const combatSlice = createSlice({
                 winStreak: state.winStreak + 1,
                 highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
                 loseStreak: 0,
-                new_computer_health: 0,
-                current_computer_health: 0,
-                player_luckout: action.payload.playerLuckout,
+                newComputerHealth: 0,
+                currentComputerHealth: 0,
+                playerLuckout: action.payload.playerLuckout,
                 playerTrait: action.payload.playerTrait,
-                player_win: true,
+                playerWin: true,
                 luckoutScenario: true
             };
         },
@@ -376,7 +377,7 @@ const combatSlice = createSlice({
             return {
                 ...state,
                 winStreak: 0,
-                player_luckout: action.payload.playerLuckout,
+                playerLuckout: action.payload.playerLuckout,
                 playerTrait: action.payload.playerTrait,
                 luckoutScenario: true
             };
@@ -392,7 +393,7 @@ const combatSlice = createSlice({
         resetLuckout: (state, action) => {
             return {
                 ...state,
-                player_luckout: action.payload,
+                playerLuckout: action.payload,
             };
         },
     }

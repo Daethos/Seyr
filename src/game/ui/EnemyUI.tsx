@@ -7,22 +7,23 @@ import Modal from 'react-bootstrap/Modal';
 import PhaserEffects from './PhaserEffects';
 import { useSelector } from 'react-redux';
 import ItemPopover from './ItemPopover';
+import { CombatData } from '../../components/GameCompiler/CombatStore';
 
 interface EnemyUIProps {
     pauseState: boolean;  
 };
 
 const EnemyUI = ({ pauseState }: EnemyUIProps) => {
-    const state = useSelector((state: any) => state.combat);
+    const state = useSelector((state: any) => state.combat) as CombatData;
     const [playerEnemyPercentage, setEnemyHealthPercentage] = useState<number>(0); 
     const [playModalShow, setPlayModalShow] = useState<boolean>(false);
     useEffect(() => {
         updateEnemyHealthPercentage();
-    }, [state.new_computer_health]);
+    }, [state.newComputerHealth]);
 
     const updateEnemyHealthPercentage = async () => {
         try {
-            const newHealthPercentage = Math.round((state.new_computer_health/state.computer_health) * 100);
+            const newHealthPercentage = Math.round((state.newComputerHealth/state.computerHealth) * 100);
             setEnemyHealthPercentage(newHealthPercentage);
         } catch (err: any) {
             console.log(err.message, 'Error updating Health Percentage');
@@ -103,10 +104,10 @@ const EnemyUI = ({ pauseState }: EnemyUIProps) => {
                 fontFamily: "Cinzel", 
                 fontWeight: 700
             }}>
-                {`${Math.round(state.new_computer_health)} / ${state.computer_health} [${playerEnemyPercentage}%]`}
+                {`${Math.round(state.newComputerHealth)} / ${state.computerHealth} [${playerEnemyPercentage}%]`}
             </p>
             <div style={{ position: "absolute", left: "-40px", top: "-10px", transform: "scale(0.75)" }}>
-                <ItemPopover item={state.computer_weapons[0]} prayer={state.computerBlessing} />
+                <ItemPopover item={state.computerWeapons[0]} prayer={state.computerBlessing} />
             </div>
         </div>
         </>

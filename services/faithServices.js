@@ -77,8 +77,8 @@ class StatusEffect {
         let potentialModifiers = {};
         let realizedModifiers = {};
 
-        let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realized_computer_damage;
-        let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : enemyDamage;
+        let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realizedComputerDamage;
+        let playerDamage = combatData.player.name === player.name ? combatData.realizedPlayerDamage : enemyDamage;
         playerDamage = effectModifiers.damage;
         switch(weapon.influences[0]) {
             case "Daethos": {
@@ -351,7 +351,7 @@ class StatusEffect {
     }; 
     setDebuffTarget(data, player, prayer) {
         if (prayer !== 'Debuff') return null;
-        let enemyWeapon = data.computer_weapons === undefined ? data.enemy_weapons[0].name : data.computer_weapons[0].name;
+        let enemyWeapon = data.computerWeapons === undefined ? data.enemy_weapons[0].name : data.computerWeapons[0].name;
         if (player.name === data.player.name) {
             return this.debuffTarget = enemyWeapon;
         } else {
@@ -477,8 +477,8 @@ class StatusEffect {
         let realizedModifiers = {};
 
         // TODO:FIXME: Another Computer/Enemy Check
-        let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realized_computer_damage;
-        let playerDamage = combatData.player.name === player.name ? combatData.realized_player_damage : enemyDamage;
+        let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realizedComputerDamage;
+        let playerDamage = combatData.player.name === player.name ? combatData.realizedPlayerDamage : enemyDamage;
         // if (playerDamage < effectModifiers.damage) {
             // };
         playerDamage = effectModifiers.damage;

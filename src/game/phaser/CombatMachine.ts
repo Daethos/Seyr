@@ -48,7 +48,7 @@ export default class CombatMachine {
     };
 
     private process = (): void => {
-        if (this.state.player_win || this.state.computer_win) {
+        if (this.state.playerWin || this.state.computerWin) {
             this.iQueue = [];
             this.aQueue = [];
         };

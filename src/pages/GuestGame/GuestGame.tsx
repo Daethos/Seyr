@@ -219,7 +219,7 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
 
     async function soundEffects(effects: CombatData) {
         try {
-            if (effects.critical_success === true) {
+            if (effects.criticalSuccess === true) {
                 const soundEffectMap = {
                     Spooky: playDaethic,
                     Righteous: playDaethic,
@@ -235,15 +235,15 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                     Slash: playSlash,
                     Blunt: playBlunt,
                 };
-                const { player_damage_type, weapons } = effects;
-                const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
+                const { playerDamageType, weapons } = effects;
+                const soundEffectFn = soundEffectMap[playerDamageType as keyof typeof soundEffectMap];
                 if (soundEffectFn) soundEffectFn(weapons);
             };
-            if (effects.religious_success === true) playReligion();
-            if (effects.roll_success === true || effects.computer_roll_success === true) playRoll();
-            if (effects.counter_success === true || effects.computer_counter_success === true) playCounter();
+            if (effects.religiousSuccess === true) playReligion();
+            if (effects.rollSuccess === true || effects.computerRollSuccess === true) playRoll();
+            if (effects.counterSuccess === true || effects.computerCounterSuccess === true) playCounter();
             setTimeout(() => {
-                if (effects.player_win !== true && effects.computer_win !== true) playCombatRound();
+                if (effects.playerWin !== true && effects.computerWin !== true) playCombatRound();
             }, 500);
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects')
@@ -292,8 +292,8 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             console.log(response.data, 'Response Initiating Combat');
             dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             await soundEffects(response.data);
-            if (response.data.player_win === true) await handlePlayerWin(response.data);
-            if (response.data.computer_win === true) await handleComputerWin(response.data);
+            if (response.data.playerWin === true) await handlePlayerWin(response.data);
+            if (response.data.computerWin === true) await handleComputerWin(response.data);
             setTimeout(() => {
                 dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false });
             }, 1500);
@@ -313,8 +313,8 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             shakeScreen({ duration: 200, intensity: 1 });
             playReligion();
-            if (response.data.player_win === true) await handlePlayerWin(response.data);
-            if (response.data.computer_win === true) await handleComputerWin(response.data);
+            if (response.data.playerWin === true) await handlePlayerWin(response.data);
+            if (response.data.computerWin === true) await handleComputerWin(response.data);
             setTimeout(() => {
                 dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false });
             }, 1500);
@@ -333,8 +333,8 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
             shakeScreen({ duration: 200, intensity: 1 });
             playReligion();
-            if (response.data.player_win === true) await handlePlayerWin(response.data);
-            if (response.data.computer_win === true) await handleComputerWin(response.data);
+            if (response.data.playerWin === true) await handlePlayerWin(response.data);
+            if (response.data.computerWin === true) await handleComputerWin(response.data);
             setTimeout(() => {
                 dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false });
             }, 1500);
@@ -425,17 +425,17 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
     return (
         <Container fluid id="game-container" style={ background }>
             <GameAnimations 
-                playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
-                playerAction={state.player_action} computerAction={state.computer_action} 
-                playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
-                rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} combatRound={state.combatRound}
-                counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success} combatEngaged={state.combat_engaged}
+                playerCritical={state.criticalSuccess} computerCritical={state.computerCriticalSuccess}
+                playerAction={state.playerAction} computerAction={state.computerAction} 
+                playerDamageTotal={state.realizedPlayerDamage} computerDamageTotal={state.realizedComputerDamage} 
+                rollSuccess={state.rollSuccess} computerRollSuccess={state.computerRollSuccess} combatRound={state.combatRound}
+                counterSuccess={state.counterSuccess} computerCounterSuccess={state.computerCounterSuccess} combatEngaged={state.combatEngaged}
             />
-            <GameAscean dispatch={dispatch} state={state} ascean={opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
+            <GameAscean dispatch={dispatch} state={state} ascean={opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={loadingOpponent} player={false} currentPlayerHealth={state.newComputerHealth} />
             <CombatOverlay 
-                ascean={state.player} enemy={state.computer} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
-                playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
-                rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success}
+                ascean={state.player} enemy={state.computer} playerWin={state.playerWin} computerWin={state.computerWin} playerCritical={state.criticalSuccess} computerCritical={state.computerCriticalSuccess}
+                playerAction={state.playerAction} computerAction={state.computerAction} playerDamageTotal={state.realizedPlayerDamage} computerDamageTotal={state.realizedComputerDamage} 
+                rollSuccess={state.rollSuccess} computerRollSuccess={state.computerRollSuccess} counterSuccess={state.counterSuccess} computerCounterSuccess={state.computerCounterSuccess}
                 loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
                 playerLuckout={state.player_luckout}
             />
@@ -449,13 +449,13 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
             </svg> Signup</Button>
             <FirstCombatModal />
             { !state.combatEngaged ?
-                state.player_win ?
+                state.playerWin ?
                 <>
                 <Button variant='' className='dialog-button' onClick={() => resetAscean()}>Duel</Button>
                 <Button  variant='' className='inventory-button' onClick={() => getNewAscean()}>Re-Roll</Button>
                 <Button variant='' className='combat-settings' style={{ gridColumnStart: 4, gridRowStart: 7}} onClick={() => getOpponent()}>New Opp</Button>
                 </>
-            : state.computer_win ?
+            : state.computerWin ?
                 <>
                 <Button variant='' className='dialog-button' onClick={() => resetAscean()}>Duel</Button>
                 <Button variant='' className='inventory-button' onClick={() => getNewAscean()}>Re-Roll</Button>
@@ -468,24 +468,24 @@ const GuestGame = ({ guest, handleLogout }: Props) => {
                 <Button variant='' className='inventory-button' onClick={() => getNewAscean()}>Re-Roll</Button>   
                 </>
             : '' }
-            <GameAscean dispatch={dispatch} state={state} ascean={ascean} damage={state.playerDamaged} player={true} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={loadingAscean} />
+            <GameAscean dispatch={dispatch} state={state} ascean={ascean} damage={state.playerDamaged} player={true} totalPlayerHealth={state.playerHealth} currentPlayerHealth={state.newPlayerHealth} loading={loadingAscean} />
             
-            { state.player_win || state.computer_win || !state.combatEngaged ? '' : state?.weapons ?
+            { state.playerWin || state.computerWin || !state.combatEngaged ? '' : state?.weapons ?
             <GameActions 
                 setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
                 setPrayerBlessing={setPrayerBlessing} weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
                 handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} gameState={gameState} gameDispatch={gameDispatch}
-                currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess} 
+                currentWeapon={state.weapons[0]} currentDamageType={state.playerDamageType} currentAction={state.action} currentCounter={state.counterGuess} 
             /> : <Loading Combat={true} />
             }
             <GameCombatText 
                emergencyText={emergencyText} combatRoundText={state.combatRound}
-                playerCombatText={state.player_action_description} computerCombatText={state.computer_action_description} 
-                playerActionText={state.player_start_description} computerActionText={state.computer_start_description}
-                playerDeathText={state.player_death_description} computerDeathText={state.computer_death_description}
-                playerSpecialText={state.player_special_description} computerSpecialText={state.computer_special_description}
-                playerReligiousText={state.player_influence_description} computerReligiousText={state.computer_influence_description}
-                playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
+                playerCombatText={state.playerActionDescription} computerCombatText={state.computerActionDescription} 
+                playerActionText={state.playerStartDescription} computerActionText={state.computerStartDescription}
+                playerDeathText={state.playerDeathDescription} computerDeathText={state.computerDeathDescription}
+                playerSpecialText={state.playerSpecialDescription} computerSpecialText={state.computerSpecialDescription}
+                playerReligiousText={state.playerInfluenceDescription} computerReligiousText={state.computerInfluenceDescription}
+                playerReligiousTextTwo={state.playerInfluenceDescriptionTwo} computerReligiousTextTwo={state.computerInfluenceDescriptionTwo}
             />
         </Container>
     );

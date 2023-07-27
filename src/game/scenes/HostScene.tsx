@@ -42,8 +42,8 @@ const HostScene = ({ assets, ascean }: Props) => {
     const combatState = useSelector((state: any) => state.combat);
     const asceanState = useSelector((state: any) => state.game.asceanState);
     const gameState = useSelector((state: any) => state.game);
-    const stamina = useSelector((state: any) => state.combat.player_attributes.stamina);
-    const { playWO, playDeath, playReligion, playCounter, playRoll, playPierce, playSlash, playBlunt, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind } = useGameSounds(gameState.soundEffectVolume);
+    const stamina = useSelector((state: any) => state.combat.playerAttributes.stamina);
+    const { playDeath, playReligion, playCounter, playRoll, playPierce, playSlash, playBlunt, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind } = useGameSounds(gameState.soundEffectVolume);
     const [currentGame, setCurrentGame] = useState<any>(false);
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
@@ -54,8 +54,6 @@ const HostScene = ({ assets, ascean }: Props) => {
     const [gameTimer, setGameTimer] = useState<number>(0);
     const gameRef = useRef<any>({});
     let scenes: any[] = [];
-    // let boot = new Boot({ dispatch });
-    // let play = new Play({ dispatch });
     scenes.push(Boot);
     scenes.push(Preload);
     scenes.push(Menu);
@@ -208,20 +206,20 @@ const HostScene = ({ assets, ascean }: Props) => {
                 Blunt: playBlunt,
             };
             if (sfx.computerDamaged) {
-                const { player_damage_type } = sfx;
-                const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
+                const { playerDamageType } = sfx;
+                const soundEffectFn = soundEffectMap[playerDamageType as keyof typeof soundEffectMap];
                 if (soundEffectFn) soundEffectFn(sfx.weapons[0]);
             };
             if (sfx.playerDamaged) {
-                const { computer_damage_type } = sfx;
-                const soundEffectFn = soundEffectMap[computer_damage_type as keyof typeof soundEffectMap];
-                if (soundEffectFn) soundEffectFn(sfx.computer_weapons[0]);
+                const { computerDamageType } = sfx;
+                const soundEffectFn = soundEffectMap[computerDamageType as keyof typeof soundEffectMap];
+                if (soundEffectFn) soundEffectFn(sfx.computerWeapons[0]);
             };
-            if (sfx.religious_success === true) playReligion();
-            if (sfx.roll_success === true || sfx.computer_roll_success === true) playRoll();
-            if (sfx.counter_success === true || sfx.computer_counter_success === true) playCounter();
-            if (sfx.player_win) playReligion();
-            if (sfx.computer_win) playDeath();
+            if (sfx.religiousSuccess === true) playReligion();
+            if (sfx.rollSuccess === true || sfx.computerRollSuccess === true) playRoll();
+            if (sfx.counterSuccess === true || sfx.computerCounterSuccess === true) playCounter();
+            if (sfx.playerWin) playReligion();
+            if (sfx.computerWin) playDeath();
 
             dispatch(setToggleDamaged(false));
         } catch (err: any) {

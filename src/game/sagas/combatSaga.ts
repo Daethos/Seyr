@@ -67,13 +67,13 @@ export function* combatSaga(): SagaIterator {
 
 function* workResolveCombat(state: CombatData): SagaIterator {
     try {
-        if (!state.player_win && !state.computer_win) return;
+        if (!state.playerWin && !state.computerWin) return;
         let combat = yield select((state) => state.combat);
         combat = { ...combat, ...state };
-        const stat = yield call(statFiler, combat, combat.player_win);
+        const stat = yield call(statFiler, combat, combat.playerWin);
         const res = yield call(asceanAPI.recordCombatStatistic, stat);
         yield put(setStatistics(res));
-        if (combat.player_win) {
+        if (combat.playerWin) {
             console.log("Player Won");
             const asceanState = yield select((state) => state.game.asceanState);
             const exp = { payload: { asceanState, combatState: combat } };
@@ -83,7 +83,7 @@ function* workResolveCombat(state: CombatData): SagaIterator {
             yield put(setPlayerWin(combat));
         } else {
             console.log("Enemy Won");
-            const health = { payload: { health: combat.new_player_health, id: combat.player._id } };
+            const health = { payload: { health: combat.newPlayerHealth, id: combat.player._id } };
             yield call(workGetAsceanHealthUpdate, health);      
             yield put(setEnemyWin(combat));    
         };
@@ -112,22 +112,22 @@ function* workGetEnemySetup(action: any): SagaIterator {
     const socket = getSocketInstance();
     const inject = {
         computer: action.payload.enemy.ascean,
-        computer_health: action.payload.enemy.attributes.healthTotal,
-        current_computer_health: action.payload.health,
-        new_computer_health: action.payload.health,
-        computer_weapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
-        computer_weapon_one: action.payload.enemy.combat_weapon_one,
-        computer_weapon_two: action.payload.enemy.combat_weapon_two,
-        computer_weapon_three: action.payload.enemy.combat_weapon_three,
-        computer_defense: action.payload.enemy.defense,
-        computer_attributes: action.payload.enemy.attributes,
-        computer_damage_type: action.payload.enemy.combat_weapon_one.damage_type[0],
+        computerHealth: action.payload.enemy.attributes.healthTotal,
+        currentComputerHealth: action.payload.health,
+        newComputerHealth: action.payload.health,
+        computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
+        computerWeaponOne: action.payload.enemy.combat_weapon_one,
+        computerWeaponTwo: action.payload.enemy.combat_weapon_two,
+        computerWeaponThree: action.payload.enemy.combat_weapon_three,
+        computerDefense: action.payload.enemy.defense,
+        computerAttributes: action.payload.enemy.attributes,
+        computerDamageType: action.payload.enemy.combat_weapon_one.damage_type[0],
         isEnemy: true,
         npcType: '',
         isAggressive: action.payload.isAggressive,
         startedAggressive: action.payload.isAggressive,
-        player_win: action.payload.isDefeated,
-        computer_win: action.payload.isTriumphant,
+        playerWin: action.payload.isDefeated,
+        computerWin: action.payload.isTriumphant,
         enemyID: action.payload.enemyID, 
     };
     const press = yield call(compress, inject);
@@ -158,7 +158,7 @@ function* workGetCombatSetting(action: any): SagaIterator {
     switch (action.payload.type) {
         case 'Damage':
             yield put(setDamageType(action.payload.loadout));
-            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { player_damage_type: action.payload.loadout });
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { playerDamageType: action.payload.loadout });
             break;
         case 'Prayer':
             yield put(setPlayerBlessing(action.payload.loadout));
@@ -166,13 +166,13 @@ function* workGetCombatSetting(action: any): SagaIterator {
             break;
         case 'Weapon':
             yield put(setWeaponOrder(action.payload.loadout));
-            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { weapons: action.payload.loadout, player_damage_type: action.payload.loadout[0].damage_type[0] });
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { weapons: action.payload.loadout, playerDamageType: action.payload.loadout[0].damage_type[0] });
             break;
         default:
             break;        
     };
 };
-function* workGetEffectTick(action: any): SagaIterator {
+function workGetEffectTick(action: any): void {
     const socket = getSocketInstance();
     socket.emit(SOCKET.EFFECT_TICK, action.payload);
 };
@@ -187,18 +187,18 @@ function* workGetEnemyAction(action: any): SagaIterator {
         let enemyData = {
             // ...state,
             computer: enemy,
-            computer_attributes: combatStats.attributes,
-            computer_weapon_one: combatStats.combat_weapon_one,
-            computer_weapon_two: combatStats.combat_weapon_two,
-            computer_weapon_three: combatStats.combat_weapon_three,
-            current_computer_health: health,
-            new_computer_health: health,
-            computer_health: combatStats.healthTotal,
-            computer_defense: combatStats.defense,
-            computer_weapons: weapons,
-            computer_action: actionData.action,
-            computer_counter_guess: actionData.counter,
-            computer_damage_type: damageType,
+            computerAttributes: combatStats.attributes,
+            computerWeaponOne: combatStats.combat_weapon_one,
+            computerWeaponTwo: combatStats.combat_weapon_two,
+            computerWeaponThree: combatStats.combat_weapon_three,
+            currentComputerHealth: health,
+            newComputerHealth: health,
+            computerHealth: combatStats.healthTotal,
+            computerDefense: combatStats.defense,
+            computerWeapons: weapons,
+            computerAction: actionData.action,
+            computerCounterGuess: actionData.counter,
+            computerDamageType: damageType,
             computerEffects: [], // TODO:FIXME: Retain effects of enemies, perhaps move logic into phaser rather than react
             enemyID: enemyID, // Was ''
         };

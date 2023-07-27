@@ -648,7 +648,7 @@ const GameSolo = ({ user }: GameProps) => {
     }, [asceanState, gameState.saveExp]);
 
     const saveExperience = async () => {
-        if (!gameState.saveExp || !state.player_win) return;
+        if (!gameState.saveExp || !state.playerWin) return;
         try {
             gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You reflect on the moments of your duel with ${gameState.opponent.name} as you count your pouch of winnings.` });
             const response = await asceanAPI.saveExperience(asceanState);
@@ -702,7 +702,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setAsceanState({
                     ...asceanState,
                     'opponentExp': opponentExp,
-                    'currentHealth': state.new_player_health,
+                    'currentHealth': state.newPlayerHealth,
                     'experience': asceanState.experienceNeeded,
                 });
                 gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
@@ -711,7 +711,7 @@ const GameSolo = ({ user }: GameProps) => {
                 setAsceanState({
                     ...asceanState,
                     'opponentExp': opponentExp,
-                    'currentHealth': state.new_player_health,
+                    'currentHealth': state.newPlayerHealth,
                     'experience': Math.round(asceanState.experience + opponentExp),
                 });
                 gameDispatch({ type: GAME_ACTIONS.SAVE_EXP, payload: true });
@@ -732,14 +732,14 @@ const GameSolo = ({ user }: GameProps) => {
     }, [state.playerGrapplingWin]);
 
     useEffect(() => {
-        if (!state.player_luckout) return;
+        if (!state.playerLuckout) return;
         handlePlayerLuckout();
         setTimeout(() => {
             gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: true });
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: false });
             dispatch({ type: ACTIONS.RESET_LUCKOUT, payload: false });
         }, 6000);
-    }, [state.player_luckout]);   
+    }, [state.playerLuckout]);   
 
     useEffect(() => {
         if (!gameState.playerBlessed) return;
@@ -865,7 +865,7 @@ const GameSolo = ({ user }: GameProps) => {
     const clearOpponent = async (data: CombatData) => {
         try {
             if (gameState.showDialog) gameDispatch({ type: GAME_ACTIONS.SET_SHOW_DIALOG, payload: false });
-            if (mapState.currentTile.content === 'enemy' && data.new_computer_health <= 0) mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
+            if (mapState.currentTile.content === 'enemy' && data.newComputerHealth <= 0) mapDispatch({ type: MAP_ACTIONS.SET_NEW_ENVIRONMENT, payload: mapState });
             if (mapState.currentTile.content !== 'city') gameDispatch({ type: GAME_ACTIONS.SET_SHOW_MAP, payload: true });
             setMoveTimer(gameState.moveTimer);
             setTimeout(() => {
@@ -1402,12 +1402,12 @@ const GameSolo = ({ user }: GameProps) => {
     };
 
     useEffect(() => {
-        if (gameState.lootRoll === false || state.player_win === false) return;
+        if (gameState.lootRoll === false || state.playerWin === false) return;
         getOneLootDrop(state.computer.level);
         return () => {
             gameDispatch({ type: GAME_ACTIONS.LOOT_ROLL, payload: false });
         };
-    }, [gameState.lootRoll, state.player_win]);
+    }, [gameState.lootRoll, state.playerWin]);
     
     const getOneLootDrop = async (level: number) => {
         try {
@@ -1491,7 +1491,7 @@ const GameSolo = ({ user }: GameProps) => {
       
     async function soundEffects(effects: CombatData) {
         try {
-            if (effects.critical_success === true) {
+            if (effects.criticalSuccess === true) {
                 const soundEffectMap = {
                     Spooky: playDaethic,
                     Righteous: playDaethic,
@@ -1508,23 +1508,23 @@ const GameSolo = ({ user }: GameProps) => {
                     Blunt: playBlunt,
                 };
             
-                const { player_damage_type, weapons } = effects;
-                const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
+                const { playerDamageType, weapons } = effects;
+                const soundEffectFn = soundEffectMap[playerDamageType as keyof typeof soundEffectMap];
                 if (soundEffectFn) {
                     soundEffectFn(weapons);
                 };
             };
-            if (effects.religious_success === true) {
+            if (effects.religiousSuccess === true) {
                 playReligion();
             };
-            if (effects.roll_success === true || effects.computer_roll_success === true) {
+            if (effects.rollSuccess === true || effects.computerRollSuccess === true) {
                 playRoll();
             };
-            if (effects.counter_success === true || effects.computer_counter_success === true) {
+            if (effects.counterSuccess === true || effects.computerCounterSuccess === true) {
                 playCounter();
             };
             setTimeout(() => {
-                if (effects.player_win !== true && effects.computer_win !== true) {
+                if (effects.playerWin !== true && effects.computerWin !== true) {
                     playCombatRound();
                 };
             }, 500);
@@ -1646,7 +1646,7 @@ const GameSolo = ({ user }: GameProps) => {
             const response = await asceanAPI.recordCombatStatistic(statistic);
             console.log(response, "Player Loss Response Recorded");
             gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
-            await asceanAPI.asceanHealth({ health: combatData.new_player_health, id: asceanID });
+            await asceanAPI.asceanHealth({ health: combatData.newPlayerHealth, id: asceanID });
             playDeath();
             gameDispatch({ type: GAME_ACTIONS.LOADING_COMBAT_OVERLAY, payload: true });
             gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_OVERLAY_TEXT, payload: `You have lost the battle to ${gameState?.opponent?.name}, yet still there is always Achre for you to gain.` })
@@ -1677,8 +1677,8 @@ const GameSolo = ({ user }: GameProps) => {
             dispatch({ type: ACTIONS.INITIATE_COMBAT, payload: response.data });
             await soundEffects(response.data);
             shakeScreen(gameState.shake);
-            if (response.data.player_win === true) await handlePlayerWin(response.data);
-            if (response.data.computer_win === true) await handleComputerWin(response.data);
+            if (response.data.playerWin === true) await handlePlayerWin(response.data);
+            if (response.data.computerWin === true) await handleComputerWin(response.data);
             setTimeout(() => {
                 dispatch({ type: ACTIONS.TOGGLED_DAMAGED, payload: false  });
             }, 1500);
@@ -1697,7 +1697,7 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(response.data, "Instant Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({ type: ACTIONS.INSTANT_COMBAT, payload: response.data });
-            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            if (response.data.playerWin === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
             playReligion();
             setTimeout(() => {
@@ -1721,7 +1721,7 @@ const GameSolo = ({ user }: GameProps) => {
             console.log(response.data, "Prayer Response");
             if ('vibrate' in navigator) navigator.vibrate(gameState.vibrationTime);
             dispatch({ type: ACTIONS.CONSUME_PRAYER, payload: response.data });
-            if (response.data.player_win === true) await handlePlayerWin(response.data);
+            if (response.data.playerWin === true) await handlePlayerWin(response.data);
             shakeScreen(gameState.shake);
             playReligion();
             setTimeout(() => {
@@ -1735,7 +1735,7 @@ const GameSolo = ({ user }: GameProps) => {
     const resetAscean = async () => {
         try {
             gameDispatch({ type: GAME_ACTIONS.CHECK_LOOT, payload: true });
-            if (state.current_player_health <= 0 || state.new_player_health <= 0) {
+            if (state.current_player_health <= 0 || state.newPlayerHealth <= 0) {
                 dispatch({
                     type: ACTIONS.RESET_COMPUTER,
                     payload: state
@@ -1799,22 +1799,22 @@ const GameSolo = ({ user }: GameProps) => {
         <Container fluid id="game-container" style={background}>
             { gameState.opponent ?
                 <>
-                <GameAscean state={state} dispatch={dispatch} ascean={gameState.opponent} damage={state.computerDamaged} totalPlayerHealth={state.computer_health} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.new_computer_health} />
+                <GameAscean state={state} dispatch={dispatch} ascean={gameState.opponent} damage={state.computerDamaged} totalPlayerHealth={state.computerHealth} loading={gameState.loadingOpponent} player={false} currentPlayerHealth={state.newComputerHealth} />
                 <CombatOverlay 
-                    ascean={gameState.player} enemy={gameState.opponent} playerWin={state.player_win} computerWin={state.computer_win} playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
-                    playerAction={state.player_action} computerAction={state.computer_action} playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
-                    rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success}
+                    ascean={gameState.player} enemy={gameState.opponent} playerWin={state.playerWin} computerWin={state.computerWin} playerCritical={state.criticalSuccess} computerCritical={state.computerCriticalSuccess}
+                    playerAction={state.playerAction} computerAction={state.computerAction} playerDamageTotal={state.realizedPlayerDamage} computerDamageTotal={state.realizedComputerDamage} 
+                    rollSuccess={state.rollSuccess} computerRollSuccess={state.computerRollSuccess} counterSuccess={state.counterSuccess} computerCounterSuccess={state.computerCounterSuccess}
                     loadingCombatOverlay={gameState.loadingCombatOverlay} combatResolved={gameState.combatResolved} combatOverlayText={gameState.combatOverlayText} gameDispatch={gameDispatch} combatEngaged={state.combatEngaged}
-                    playerLuckout={state.player_luckout}
+                    playerLuckout={state.playerLuckout}
                 />
                 <GameCombatText 
                     emergencyText={emergencyText} combatRoundText={state.combatRound}
-                    playerCombatText={state.player_action_description} computerCombatText={state.computer_action_description} 
-                    playerActionText={state.player_start_description} computerActionText={state.computer_start_description}
-                    playerDeathText={state.player_death_description} computerDeathText={state.computer_death_description}
-                    playerSpecialText={state.player_special_description} computerSpecialText={state.computer_special_description}
-                    playerReligiousText={state.player_influence_description} computerReligiousText={state.computer_influence_description}
-                    playerReligiousTextTwo={state.player_influence_description_two} computerReligiousTextTwo={state.computer_influence_description_two}
+                    playerCombatText={state.playerActionDescription} computerCombatText={state.computerActionDescription} 
+                    playerActionText={state.playerStartDescription} computerActionText={state.computerStartDescription}
+                    playerDeathText={state.playerDeathDescription} computerDeathText={state.computerDeathDescription}
+                    playerSpecialText={state.playerSpecialDescription} computerSpecialText={state.computerSpecialDescription}
+                    playerReligiousText={state.playerInfluenceDescription} computerReligiousText={state.computerInfluenceDescription}
+                    playerReligiousTextTwo={state.playerInfluenceDescriptionTwo} computerReligiousTextTwo={state.computerInfluenceDescriptionTwo}
                 />
                 </>
             : ( '' ) }
@@ -1829,21 +1829,21 @@ const GameSolo = ({ user }: GameProps) => {
             { asceanState.ascean.experience >= asceanState.experienceNeeded ?
                 <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
             : ( '' ) }
-            <GameAscean state={state} dispatch={dispatch} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.new_player_health} loading={gameState.loadingAscean} />
+            <GameAscean state={state} dispatch={dispatch} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.newPlayerHealth} loading={gameState.loadingAscean} />
             { state.combatEngaged ? 
                 <>
                     <GameAnimations 
-                        playerCritical={state.critical_success} computerCritical={state.computer_critical_success}
-                        playerAction={state.player_action} computerAction={state.computer_action} 
-                        playerDamageTotal={state.realized_player_damage} computerDamageTotal={state.realized_computer_damage} 
-                        rollSuccess={state.roll_success} computerRollSuccess={state.computer_roll_success} combatRound={state.combatRound}
-                        counterSuccess={state.counter_success} computerCounterSuccess={state.computer_counter_success} combatEngaged={state.combatEngaged}
+                        playerCritical={state.criticalSuccess} computerCritical={state.computerCriticalSuccess}
+                        playerAction={state.playerAction} computerAction={state.computerAction} 
+                        playerDamageTotal={state.realizedPlayerDamage} computerDamageTotal={state.realizedComputerDamage} 
+                        rollSuccess={state.rollSuccess} computerRollSuccess={state.computerRollSuccess} combatRound={state.combatRound}
+                        counterSuccess={state.counterSuccess} computerCounterSuccess={state.computerCounterSuccess} combatEngaged={state.combatEngaged}
                     />
                     <GameActions 
                         setDamageType={setDamageType} dispatch={dispatch} state={state} handleInstant={handleInstant} handlePrayer={handlePrayer}
                         setPrayerBlessing={setPrayerBlessing} weapons={state.weapons} damageType={state.weapons[0].damage_type} setWeaponOrder={setWeaponOrder}
                         handleAction={handleAction} handleCounter={handleCounter} handleInitiate={handleInitiate} gameState={gameState} gameDispatch={gameDispatch}
-                        currentWeapon={state.weapons[0]} currentDamageType={state.player_damage_type} currentAction={state.action} currentCounter={state.counter_guess} 
+                        currentWeapon={state.weapons[0]} currentDamageType={state.playerDamageType} currentAction={state.action} currentCounter={state.counterGuess} 
                     /> 
 
                 </>
@@ -1856,7 +1856,7 @@ const GameSolo = ({ user }: GameProps) => {
                     { gameState.showDialog && gameState.opponent ?    
                         <DialogBox 
                             npc={gameState?.opponent?.name} dialog={gameState.dialog} dispatch={dispatch} state={state} deleteEquipment={deleteEquipment} currentIntent={gameState.currentIntent}
-                            playerWin={state.player_win} computerWin={state.computer_win} ascean={gameState.player} enemy={gameState.opponent} itemSaved={gameState.itemSaved}
+                            playerWin={state.playerWin} computerWin={state.computerWin} ascean={gameState.player} enemy={gameState.opponent} itemSaved={gameState.itemSaved}
                             winStreak={state.winStreak} loseStreak={state.loseStreak} highScore={state.highScore} lootDropTwo={gameState.lootDropTwo}
                             lootDrop={gameState.lootDrop} merchantEquipment={gameState.merchantEquipment} clearOpponent={clearOpponent}
                             gameDispatch={gameDispatch} gameState={gameState}

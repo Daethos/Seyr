@@ -218,7 +218,7 @@ export default class Play extends Phaser.Scene {
     };
 
     sendStateActionListener = () => { // Was Async
-        if ((this.state.action === 'counter' && this.state.computer_action === '') || (this.state.action === '' && this.state.computer_action === 'counter')) { 
+        if ((this.state.action === 'counter' && this.state.computerAction === '') || (this.state.action === '' && this.state.computerAction === 'counter')) { 
             console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
             return; 
         };
