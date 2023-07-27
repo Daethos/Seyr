@@ -135,7 +135,7 @@ export default class Play extends Phaser.Scene {
         }; 
           
         let camera = this.cameras.main;
-        camera.zoom = 1.5;
+        camera.zoom = 2;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 4096, 4096);  

@@ -18,17 +18,8 @@ const EnemyUI = ({ pauseState }: EnemyUIProps) => {
     const [playerEnemyPercentage, setEnemyHealthPercentage] = useState<number>(0); 
     const [playModalShow, setPlayModalShow] = useState<boolean>(false);
     useEffect(() => {
-        updateEnemyHealthPercentage();
-    }, [state.newComputerHealth]);
-
-    const updateEnemyHealthPercentage = async () => {
-        try {
-            const newHealthPercentage = Math.round((state.newComputerHealth/state.computerHealth) * 100);
-            setEnemyHealthPercentage(newHealthPercentage);
-        } catch (err: any) {
-            console.log(err.message, 'Error updating Health Percentage');
-        };
-    };
+        setEnemyHealthPercentage(Math.round((state.newComputerHealth/state.computerHealth) * 100));
+    }, [state.newComputerHealth, state.computerHealth]);
 
     return (
         <>

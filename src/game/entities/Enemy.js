@@ -263,7 +263,6 @@ export default class Enemy extends Entity {
 
     enemyFetchedOn = (e) => {
         if (this.enemyID !== e.enemyID) return;
-        console.log("Enemy Fetched");
         this.ascean = e.game;
         this.health = e.game.health.total;
         this.combatStats = e.combat; 
@@ -319,8 +318,7 @@ export default class Enemy extends Entity {
     };
 
     combatDataUpdate = (e) => {
-        if (this.enemyID !== e.enemyID ) return; // || this.currentRound === e.combatRound
-        console.log(`New Combat Round (${e.combatRound}) for Enemy ${e.computer.name}`);
+        if (this.enemyID !== e.enemyID ) return;
         if (this.health > e.newComputerHealth) { // ENEMY DAMAGED
             console.log(`${e.player.name} Dealt ${Math.round(e.realizedPlayerDamage)} Damage To ${this.ascean.name}`);
             const damage = Math.round(this.health - e.newComputerHealth);
@@ -329,7 +327,6 @@ export default class Enemy extends Entity {
             if (this.isStunned) this.isStunned = false;
             this.setHealth(e.newComputerHealth);
             if (e.newComputerHealth <= 0) {
-                // this.stateMachine.setState(States.DEATH);
                 this.stateMachine.setState(States.DEFEATED);
             };
         };
@@ -360,7 +357,6 @@ export default class Enemy extends Entity {
     checkDamage = (damage) => {
         this.currentDamageType = damage;
         this.hasMagic = this.checkDamageType(damage, 'magic');
-        console.log("Enemy Has Magic: ", this.hasMagic);
     };
     setHealth = (health) => {
         return this.health = health;

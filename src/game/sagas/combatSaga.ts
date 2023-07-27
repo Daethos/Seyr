@@ -183,9 +183,8 @@ export function* workTickResponse(load: any): SagaIterator {
 };
 function* workGetEnemyAction(action: any): SagaIterator {
     try {
-        const { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state } = action.payload;
+        const { enemyID, enemy, damageType, combatStats, weapons, health, actionData } = action.payload;
         let enemyData = {
-            // ...state,
             computer: enemy,
             computerAttributes: combatStats.attributes,
             computerWeaponOne: combatStats.combat_weapon_one,

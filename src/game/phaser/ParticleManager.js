@@ -103,13 +103,13 @@ class Particle {
     setVelocity(action) {
         switch (action) {
             case 'attack':
-                return 6;
+                return 7.5;
             case 'counter':
-                return 7;
+                return 9;
             case 'posture':
-                return 5;
+                return 6;
             case 'roll':
-                return 5;
+                return 6;
             default:
                 return 6;
         };

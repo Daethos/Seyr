@@ -40,9 +40,9 @@ export default class CombatMachine {
             if (!this.context?.player?.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
                 const actionReset = async () => this.input('action', '');
                 await actionReset();
-                Dispatcher.enemyAction(this.dispatch, { ...data, state: this.state });
+                Dispatcher.enemyAction(this.dispatch, data);
             } else {
-                Dispatcher.enemyAction(this.dispatch, { ...data, state: this.state });
+                Dispatcher.enemyAction(this.dispatch, data);
             };
         },
     };

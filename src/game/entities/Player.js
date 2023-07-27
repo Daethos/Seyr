@@ -886,7 +886,7 @@ export default class Player extends Entity {
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING
             console.log("Pinging CONSUMING")
-            this.anims.play('playerHealth', true).on('animationcomplete', () => {
+            this.anims.play('player_health', true).on('animationcomplete', () => {
                 this.isConsuming = false;
             });
         } else if (this.isHealing) { // HEALING

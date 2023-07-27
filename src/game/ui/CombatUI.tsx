@@ -22,17 +22,8 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
     const [prayerModal, setPrayerModal] = useState<boolean>(false);
-    // const updatePlayerHealthPercentage = async () => {
-    //     try {
-    //         const newHealthPercentage = Math.round((state.newPlayerHealth/state.playerHealth) * 100);
-    //         setPlayerHealthPercentage(newHealthPercentage);
-    //     } catch (err: any) {
-    //         console.log(err.message, 'Error updating Health Percentage');
-    //     };
-    // };
 
     useEffect(() => {
-        // updatePlayerHealthPercentage();
         setPlayerHealthPercentage(Math.round((state.newPlayerHealth/state.playerHealth) * 100));
     }, [state.newPlayerHealth, state.playerHealth]); 
 
