@@ -1905,3 +1905,9 @@
   text-align: center;
   padding-right: 0.75rem;
 }
+.story-div {
+  position: relative;
+  max-width: 960px;
+  max-height: 643px;
+  margin: 0 auto;
+}

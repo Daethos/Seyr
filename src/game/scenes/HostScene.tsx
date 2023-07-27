@@ -30,6 +30,7 @@ import PhaserCombatText from '../ui/PhaserCombatText';
 import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
 import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
+import SmallHud from '../ui/SmallHud';
 
 interface Props {
     ascean: Player;
@@ -283,21 +284,10 @@ const HostScene = ({ assets, ascean }: Props) => {
     usePhaserEvent('update-sound', soundEffects);
  
     return (
-        <div style={{ position: "relative", maxWidth: '960px', maxHeight: '643px', margin: '0 auto', border: currentGame ? "" : "3px solid #fdf6d8" }}>
-            { currentGame ? ( <>
-                <div id='ui-hud'>
-                    <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => setShowPlayer(!showPlayer)}>
-                        <h3 style={{ fontSize: '12px', textAlign: 'center' }}>{combatState.player.name}</h3>
-                    </Button>
-                    { ascean?.journal.entries.length > 0 ? (
-                        <StoryJournal ascean={ascean} />
-                    ) : ( '' ) }
-                    { dialogTag ? (
-                        <Button variant='' className='ascean-ui' onClick={() => dispatch(setShowDialog(!gameState.showDialog))}>
-                            <h3 style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center' }}>Dialog!</h3>
-                        </Button>
-                    ) : ( '' ) }
-                </div>
+        <div className='story-div' style={{ border: currentGame ? '' : '3px solid #fdf6d8' }}>
+            { currentGame ? ( 
+                <> 
+                <SmallHud ascean={ascean} setShowPlayer={setShowPlayer} dialogTag={dialogTag} />
                 <CombatMouseSettings damageType={combatState.weapons[0].damage_type} weapons={combatState.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
                 { showPlayer ? (  
                     <StoryAscean ascean={ascean} asceanViews={asceanViews} loading={loading} />
@@ -320,7 +310,8 @@ const HostScene = ({ assets, ascean }: Props) => {
                 { gameState?.lootDrops.length > 0 && gameState?.showLoot ? (
                     <LootDropUI gameState={gameState} />   
                 ) : ( '' ) }
-            </> ) : ( '' ) }
+                </> 
+            ) : ( '' ) }
             <div id='story-game' style={{ textAlign: 'center' }} ref={gameRef}></div>
         </div>
     );
