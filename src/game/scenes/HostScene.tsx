@@ -24,8 +24,8 @@ import { LootDropUI } from '../ui/LootDropUI';
 import { StoryDialog } from '../ui/StoryDialog';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearNpc, getCombatSettingFetch, getCombatTimerFetch, setRest, setToggleDamaged } from '../reducers/combatState';
-import { getAsceanLevelUpFetch, getGainExperienceFetch, getLootDropFetch, setShowDialog, setMerchantEquipment, setShowLoot } from '../reducers/gameState';
+import { clearNpc, getCombatTimerFetch, setRest, setToggleDamaged } from '../reducers/combatState';
+import { getGainExperienceFetch, getLootDropFetch, setShowDialog, setMerchantEquipment, setShowLoot } from '../reducers/gameState';
 import PhaserCombatText from '../ui/PhaserCombatText';
 import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
@@ -54,12 +54,14 @@ const HostScene = ({ assets, ascean }: Props) => {
     const [gameTimer, setGameTimer] = useState<number>(0);
     const gameRef = useRef<any>({});
     let scenes: any[] = [];
-    const boot = new Boot({ dispatch });
-    scenes.push(boot);
+    // let boot = new Boot({ dispatch });
+    // let play = new Play({ dispatch });
+    scenes.push(Boot);
     scenes.push(Preload);
     scenes.push(Menu);
     scenes.push(Play);
-    const config = {
+    
+    const [config, setConfig] = useState({
         type: Phaser.AUTO,
         parent: 'story-game',
         fullscreenTarget: 'story-game',
@@ -107,7 +109,7 @@ const HostScene = ({ assets, ascean }: Props) => {
                 'VirtualJoysticks/plugin/src/DPad.js',
             ],
         }, 
-    };
+    });
  
     useEffect(() => { 
         startGame();
@@ -165,6 +167,7 @@ const HostScene = ({ assets, ascean }: Props) => {
     const retrieveAssets = async () => EventEmitter.emit('send-assets', assets);
     const sendEnemyData = async () => EventEmitter.emit('get-enemy', combatState.computer);
     const sendAscean = async () => EventEmitter.emit('get-ascean', combatState.player);
+    const sendDispatch = async () => EventEmitter.emit('get-dispatch', dispatch);
     const sendCombatData = async () => EventEmitter.emit('get-combat-data', combatState);
     const sendGameData = async () => EventEmitter.emit('get-game-data', gameState);
     const updateCombatTimer = async (e: number) => dispatch(getCombatTimerFetch(e)); 
@@ -269,6 +272,7 @@ const HostScene = ({ assets, ascean }: Props) => {
     usePhaserEvent('clear-npc', clearNPC);
     usePhaserEvent('fetch-enemy', fetchEnemy);
     usePhaserEvent('fetch-npc', fetchNpc);
+    usePhaserEvent('request-dispatch', sendDispatch);
     usePhaserEvent('request-ascean', sendAscean);
     usePhaserEvent('request-enemy', sendEnemyData);
     usePhaserEvent('request-combat-data', sendCombatData);

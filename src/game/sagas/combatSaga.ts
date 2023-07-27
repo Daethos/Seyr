@@ -6,8 +6,8 @@ import { CombatData, shakeScreen } from "../../components/GameCompiler/CombatSto
 import { getNpcDialog } from "../../components/GameCompiler/Dialog";
 import { getNodesForNPC, npcIds } from "../../components/GameCompiler/DialogNode";
 import EventEmitter from "../phaser/EventEmitter";
-import { setPlayerWin, setEnemyWin, setCombat, clearCombat, setCombatTimer, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatInput, setDamageType, setPlayerBlessing, setWeaponOrder, setEffectResponse, setEnemyActions, setCombatResolution, setEnemyPersuaded, setPlayerLuckout } from "../reducers/combatState";
-import { setStatistics, setDialog, setShowDialog, setInstantStatus } from "../reducers/gameState";
+import { setPlayerWin, setEnemyWin, setCombat, clearCombat, setCombatTimer, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatInput, setDamageType, setPlayerBlessing, setWeaponOrder, setEffectResponse, setEnemyActions, setCombatResolution, setEnemyPersuaded, setPlayerLuckout, setInstantStatus } from "../reducers/combatState";
+import { setStatistics, setDialog, setShowDialog } from "../reducers/gameState";
 import { workGetGainExperienceFetch, workGetLootDropFetch } from "./gameSaga";
 import { getSocketInstance } from "./socketManager";
 import { SOCKET } from "./socketSaga";
@@ -217,8 +217,8 @@ function* workGetInitiate(action: any): SagaIterator {
                 socket.emit(SOCKET.PHASER_ACTION, action.payload.combatData);
                 break;
             case 'Instant':
-                socket.emit(SOCKET.INVOKE_PRAYER, action.payload.combatData);
                 yield put(setInstantStatus(true));
+                socket.emit(SOCKET.INVOKE_PRAYER, action.payload.combatData);
                 break;
             case 'Prayer':
                 socket.emit(SOCKET.CONSUME_PRAYER, action.payload.combatData);

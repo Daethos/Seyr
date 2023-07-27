@@ -16,23 +16,29 @@ import CombatMachine from '../phaser/CombatMachine';
 export default class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play', active: false });
-        this.ascean = null;
         this.centerX = 480;
         this.centerY = 320;
     };
     
-    init(data) {
-        this.data = data;
-        this.ascean = this.data.gameData.gameData.ascean;
-        this.dispatch = this.data.gameData.gameData.dispatch.dispatch;
+    init() {
+        this.state = {};
+        this.gameState = {};
+        this.dispatch = null;
+
+        EventEmitter.once('get-ascean', this.asceanOn);
+        EventEmitter.once('get-combat-data', this.stateOn);
+        EventEmitter.once('get-game-data', this.gameStateOn);
+        EventEmitter.once('get-dispatch', this.dispatchOn);
+        EventEmitter.emit('request-dispatch');
+        EventEmitter.emit('request-ascean');
+        EventEmitter.emit('request-combat-data');
+        EventEmitter.emit('request-game-data');
         this.enemy = {};
         this.npcs = [];
         this.combat = false;
         this.focus = {}; 
         this.enemies = [];
         this.particleManager = {};
-        this.state = this.data.gameData.gameData.state;
-        this.gameState = this.data.gameData.gameData.gameState;
         this.CONFIG = this.sys.game.config;
         this.isFullScren = this.scale.isFullscreen;
         this.DEPTH = { floor: 0 }; 
@@ -53,6 +59,11 @@ export default class Play extends Phaser.Scene {
         this.combatTimer = null;
         this.lootDrops = [];
     }; 
+
+    asceanOn = (e) => this.ascean = e;
+    dispatchOn = (e) => this.dispatch = e;
+    gameStateOn = (e) => this.gameState = e;
+    stateOn = (e) => this.state = e;
     
     create() { 
         this.input.setDefaultCursor('url(' + process.env.PUBLIC_URL + '/images/cursor.png), pointer'); 
@@ -170,7 +181,6 @@ export default class Play extends Phaser.Scene {
     enemyLootDropListener = () => EventEmitter.on('enemyLootDrop', (e) => { e.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID: e.enemyID, drop }))); });
 
     checkPlayerSuccess = (ranged) => {
-        // Checking if the player has a successful action, if not, checks if the action is a counter, and if the enemy itself is ranged, if met, the enemy will be allowed an unmitigated attack
         if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '') && ranged) {
             this.combatMachine.input('action', '');
         };

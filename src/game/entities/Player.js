@@ -30,6 +30,7 @@ export default class Player extends Entity {
     };
     constructor(data) {
         let { scene } = data;
+        console.log(scene.state, "Scene State in Player.js");
         super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.new_player_health }); 
         const spriteName = scene?.state?.player?.weapon_one.imgURL.split('/')[2].split('.')[0];
         this.ascean = scene.state.player;
@@ -57,7 +58,7 @@ export default class Player extends Entity {
         this.spriteShield.setDepth(this + 1);
         this.spriteShield.setVisible(false);
         this.playerVelocity = new Phaser.Math.Vector2();
-        this.speed = this.startingSpeed(scene?.state?.player);
+        this.speed = this.startingSpeed(scene?.ascean);
         this.acceleration = 0.1;
         this.deceleration = 0.05;
         this.dt = this.scene.sys.game.loop.delta;

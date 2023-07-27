@@ -15,9 +15,7 @@ export default class Menu extends Phaser.Scene {
         return { centerX , centerY };
     };
 
-    init(data) {
-        this.gameData = data;
-    };
+    init() {};
 
     create() {
         this.createBackground();
@@ -81,7 +79,7 @@ export default class Menu extends Phaser.Scene {
     };
 
     goPlay() {
-        this.scene.start('Play', { gameData: this.gameData }); 
+        this.scene.start('Play', {}); 
         EventEmitter.emit('launch-game', true);
     };
 };

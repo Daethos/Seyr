@@ -7,7 +7,6 @@ import ParticleManager from "../phaser/ParticleManager";
 import ascean_test from '../images/ascean_test.json';
 import AncientForestDecorative from '../images/AncientForestDecorative.png';
 import AncientForestMain from '../images/AncientForestMainLev.png';
-import EventEmitter from "../phaser/EventEmitter";
 
 export default class Preload extends Phaser.Scene {
     constructor() {
@@ -53,15 +52,7 @@ export default class Preload extends Phaser.Scene {
         this.time.addEvent({
             delay: 500,
             callback: () => { 
-                this.scene.start('Menu', {
-                    gameData: {
-                        ascean: this.ascean,
-                        dispatch: this.gameData.dispatch,
-                        enemy: this.enemy,
-                        state: this.state,
-                        gameState: this.gameState
-                    }
-                }); 
+                this.scene.start('Menu', {}); 
                 this.progress.destroy();
                 this.border.destroy();
                 this.title.destroy();
@@ -70,24 +61,6 @@ export default class Preload extends Phaser.Scene {
             },
             callbackScope: this
         }); 
-        EventEmitter.once('get-ascean', this.asceanOnce);
-        EventEmitter.once('get-combat-data', this.stateOnce);    
-        EventEmitter.once('get-game-data', this.gameStateOnce);
-        EventEmitter.emit('request-ascean');
-        EventEmitter.emit('request-combat-data');
-        EventEmitter.emit('request-game-data');
-    };
-    
-    asceanOnce = (e) => {
-        this.ascean = e;
-    };
-
-    stateOnce = (e) => {
-        this.state = e;
-    };
-
-    gameStateOnce = (e) => {
-        this.gameState = e;
     };
 
     createLoadingBar() {

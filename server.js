@@ -46,7 +46,7 @@ const io = require('socket.io')(server, {
   transports: ['websocket'],
   maxHttpBufferSize: 1e8,
   cors:  {
-    origin: "*",
+    origin: ["http://localhost:3000", "https://ascea.herokuapp.com"],
     methods: ["GET", "POST"],
   },
 });
@@ -194,7 +194,6 @@ io.on("connection", (socket) => {
       ...combatData,
       ...data,
     };
-    // console.log('Combat Data Updated: ', data);
   };
 
   const setupEnemy = async (data) => {
@@ -304,6 +303,7 @@ io.on("connection", (socket) => {
   };
 
   const playerWin = async (data) => {
+    console.time('Player Win');
     combatData = {
       ...combatData,
       weapons: data,
@@ -311,9 +311,12 @@ io.on("connection", (socket) => {
       winStreak: combatData.winStreak + 1,
       highScore: combatData.highScore < combatData.winStreak + 1 ? combatData.winStreak + 1 : combatData.highScore,
       instantStatus: false,
-    }
+    };
+    console.timeEnd('Player Win');
   };
+
   const computerWin = async (data) => {
+    console.time('Computer Win');
     combatData = {
       ...combatData,
       weapons: data,
@@ -322,6 +325,7 @@ io.on("connection", (socket) => {
       combatEngaged: false,
       instantStatus: false,
     };  
+    console.timeEnd('Computer Win');
   };
 
   async function joinRoom(preData, callback) {
