@@ -118,16 +118,13 @@ io.on("connection", (socket) => {
   };
 
   const computerCombat = async (data) => {
-    // const newData = zlib.inflateSync(data).toString();
-    // const parsedData = JSON.parse(newData);
-    console.log(data, "Computer Combat Data");
+    console.time('Weapon Combat');
     combatData = { ...combatData, ...data };
     const res = await gameService.phaserActionCompiler(combatData); // data
     const deflateResponse = zlib.deflateSync(JSON.stringify(res));
     combatData = { ...combatData, ...res };
-    console.log('Combat Response');
     io.to(player.room).emit('computerCombatResponse', deflateResponse);
-    // io.to(player.room).emit('computerCombatResponse', res);
+    console.timeEnd('Weapon Combat');  
   };
 
   const enemyCombat = async (data) => {
@@ -150,6 +147,7 @@ io.on("connection", (socket) => {
   };
 
   const invokePrayer = async (data) => {
+    console.time('Invoke Prayer');
     combatData = {
       ...combatData,
       'playerBlessing': data,
@@ -161,12 +159,11 @@ io.on("connection", (socket) => {
     };
     const deflateResponse = zlib.deflateSync(JSON.stringify(res));
     io.to(player.room).emit('invokePrayerResponse', deflateResponse);
-    console.log('Invoke Response');
-    // io.to(player.room).emit('invokePrayerResponse', res);
+    console.timeEnd('Invoke Prayer');
   };
 
   const consumePrayer = async (data) => {
-    console.log(data, "Consume Prayer Data")
+    console.time("Consume Prayer")
     combatData = {
       ...combatData,
       'playerEffects': data,
@@ -174,9 +171,7 @@ io.on("connection", (socket) => {
     const res = await gameService.consumePrayer(combatData); // data
     const deflateResponse = zlib.deflateSync(JSON.stringify(res));
     io.to(player.room).emit('consumePrayerResponse', deflateResponse);
-    // socket.emit('consumePrayerResponse', deflateResponse);
-    console.log('Consume Response');
-    // io.to(player.room).emit('consumePrayerResponse', res);
+    console.timeEnd('Consume Prayer');
   }; 
 
   const effectTick = async (data) => {
@@ -194,13 +189,12 @@ io.on("connection", (socket) => {
     // io.to(player.room).emit('effectTickResponse', res);
   };
 
-  const updateCombatData = async (data) => {
+  const updateCombatData = async (data) => {  
     combatData = {
       ...combatData,
       ...data,
     };
-    console.log('Combat Data Updated: ', data);
-    // io.to(player.room).emit('combatDataUpdated', 'Combat Data Updated');
+    // console.log('Combat Data Updated: ', data);
   };
 
   const setupEnemy = async (data) => {

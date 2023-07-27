@@ -101,6 +101,8 @@ function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
     yield put(setAsceanState(asceanState));
 };
 function* workGetDrinkFirewaterFetch(action: any): SagaIterator {
+    const firewater = yield select((state) => state.game.player.firewater);
+    if (firewater.charges === 0) return;
     const res = yield call(asceanAPI.drinkFirewater, action.payload);
     yield put(setFirewater(res.firewater));
     yield put(setRest(40));
@@ -126,7 +128,6 @@ export function* workGetGainExperienceFetch(action: any): SagaIterator {
     };
 
     const res = yield call(asceanAPI.saveExperience, asceanState);
-    console.log(res, "Response Gain Experience");
     yield put(setExperience(res.experience));
     yield put(setCurrency(res.currency));
     yield put(setFirewater(res.firewater));
@@ -140,8 +141,8 @@ export function* workGetGainExperienceFetch(action: any): SagaIterator {
     }));
 };
 function* workGetAsceanAndInventoryFetch(action: any): SagaIterator {
-    const ressponse = yield call(asceanAPI.getAsceanAndInventory, action.payload);
-    yield put (setPlayer(ressponse.data));
+    const re = yield call(asceanAPI.getAsceanAndInventory, action.payload);
+    yield put (setPlayer(re.data));
 
     const res = yield call(asceanAPI.getAsceanStats, action.payload);
     yield put(setCombatPlayer(res.data.data));

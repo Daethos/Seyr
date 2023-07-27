@@ -119,15 +119,16 @@ const combatSlice = createSlice({
                 computer_win: false,
                 combatEngaged: false,
                 playerTrait: '',
+                enemyID: '',
                 isEnemy: false,
             };
         },
         clearNpc: (state) => {
-            console.log('clearNpc');
             return {
                 ...state,
                 computer: null,
                 npcType: '',
+                enemyID: '',
             };
         },
         setPhaser: (state, action) => {
@@ -145,7 +146,6 @@ const combatSlice = createSlice({
                 combatEngaged: action.payload,
             };
         },
-        // TODO:FIXME: These need to also perform the socket.emit to update combatData, possible redress by creating a combat/getFetch generator
         setRest: (state, action) => {
             const healed = Math.floor(state.new_player_health + state.player_health * (action.payload / 100)) ;
             const newHealth = healed > state.player_health ? state.player_health : healed;
@@ -165,7 +165,6 @@ const combatSlice = createSlice({
         },
         // ===== Combat Input Concerns ===== \\
         setCombatInput: (state, action) => {
-            console.log(action.payload, "Combat Input");
             const { key, value } = action.payload;
             return { ...state, [key]: value };
         },
@@ -248,6 +247,12 @@ const combatSlice = createSlice({
                 computerEffects: state.computerEffects.filter(effect => effect.id !== action.payload),
             };
         },
+        setCaerenic: (state, action) => {
+            return {
+                ...state,
+                isCaerenic: action.payload,
+            };
+        },
         setStalwart: (state, action) => {
             const socket = getSocketInstance();
             socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['isStalwart']: action.payload });
@@ -305,6 +310,12 @@ const combatSlice = createSlice({
                 instantStatus: false
             };
         },
+        setInstantStatus: (state, action) => {
+            return {
+                ...state,
+                instantStatus: action.payload,
+            };
+        },
         clearCombat: (state) => {
             return {
                 ...state,
@@ -346,9 +357,17 @@ const combatSlice = createSlice({
                 deityData: [],
                 playerEffects: [],
                 computerEffects: [],
+                enemyID: '',
             };
         },
-        
+        clearSfx: (state) => {
+            return {
+                ...state,
+                playerDamaged: false,
+                computerDamaged: false,
+                soundEffects: false,
+            };
+        },
         // ===== Noncombat Resolution Concerns ===== \\
         setPlayerLuckout: (state, action) => {
             return {
@@ -430,6 +449,8 @@ export const {
     setPrayerSacrifice,
     setRemoveEffect,
 
+    clearSfx,
+    setInstantStatus,
     setEffectResponse,
     setPlayerWin,
     setEnemyWin,
@@ -438,6 +459,7 @@ export const {
     setLuckoutFailure,
     setEnemyPersuaded,
     resetLuckout,
+    setCaerenic,
     setStalwart
 } = combatSlice.actions;
 

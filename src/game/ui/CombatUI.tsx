@@ -7,9 +7,10 @@ import { CombatData } from '../../components/GameCompiler/CombatStore';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { setInstantStatus } from '../reducers/gameState';
+// import { setInstantStatus } from '../reducers/gameState';
 import PhaserEffects from './PhaserEffects';
 import ItemPopover, { getBorderStyle, itemPopover } from './ItemPopover';
+import { setInstantStatus } from '../reducers/combatState';
 
 interface CombatUIProps {
     state: CombatData;
@@ -18,7 +19,7 @@ interface CombatUIProps {
 };
 
 const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
-    const gameState = useSelector((state: any) => state.game);
+    // const gameState = useSelector((state: any) => state.game);
     const dispatch = useDispatch();
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
@@ -30,15 +31,9 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
 
     useEffect(() => {
         let instantTimer: ReturnType<typeof setTimeout>;
-        if (gameState.instantStatus) {
-            instantTimer = setTimeout(() => {
-                dispatch(setInstantStatus(false));
-            }, 30000);
-        };
-        return () => {
-            clearTimeout(instantTimer);
-        };
-    }, [gameState.instantStatus, dispatch]);
+        if (state.instantStatus) instantTimer = setTimeout(() => dispatch(setInstantStatus(false)), 30000);
+        return () => clearTimeout(instantTimer);
+    }, [state.instantStatus, dispatch]);
 
     const updatePlayerHealthPercentage = async () => {
         try {
@@ -85,7 +80,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
 
     return (
         <div style={{ position: "absolute", transform: "scale(1.25)", top: "15px", left: "10px" }} id={state.playerDamaged ? 'flicker' : ''}> 
-            { !gameState.instantStatus ? (
+            { !state.instantStatus ? (
                 <>
                 <Modal show={invokeModal} onHide={() => setInvokeModal(false)} centered id="modal-weapon" style={{ top: "-25%" }}>
                 <Modal.Header closeButton closeVariant='white' style={{ color: "gold", fontSize: "24px", fontWeight: 600 }}>Invoke Prayer</Modal.Header>
@@ -182,11 +177,11 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                 fontWeight: 700 
             }}>{Math.round((staminaPercentage / 100) * state.player_attributes.stamina)}</p>
             <div style={{ position: "absolute", left: "185px", top: "0px", transform: "scale(0.75)" }}> 
-            <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} />
+                <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} caerenic={state.isCaerenic} />
             </div>
             <div style={{ position: "absolute", left: "230px", top: "-10px" }}>
             { state.isStalwart ? (
-                <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.player.shield)}>
+                <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.player.shield, true)}>
                     <img src={state.player.shield.imgURL} className="m-1 eqp-popover spec" alt={state.player.shield.name} style={getItemRarityStyle(state.player.shield.rarity)} />
                 </OverlayTrigger>
             ) : ( '' )}

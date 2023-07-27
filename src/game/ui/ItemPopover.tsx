@@ -2,7 +2,7 @@ import Popover from 'react-bootstrap/Popover';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import { Equipment } from '../../components/GameCompiler/GameStore';
 
-export const itemPopover = (item: Equipment) => {
+export const itemPopover = (item: Equipment, stalwart?: boolean, caerenic?: boolean) => {
     return (
         <Popover className="text-info" id="popover">
         <Popover.Header id="popover-header" className="" as="h2">{item?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></span></Popover.Header>
@@ -41,6 +41,17 @@ export const itemPopover = (item: Equipment) => {
                 <p style={{ color: getBorderStyle(item?.rarity) }}>
                 {item?.rarity}
                 </p>
+                { stalwart ? (
+                    <p style={{ color: "gold" }}>
+                        Stalwart - You are engaged in combat with your shield raised, adding it to your passive defense. You receive 50% less poise damage. You receive 10% less damage. You cannot dodge or roll.
+                        {/*  Perhaps you cannot dodge or roll in the future This slows your movement by 15%. */}
+                    </p>
+                ) : ( '' ) } 
+                {caerenic ? (
+                    <p style={{ color: "gold" }}>
+                        Caerenic - You attempt to harnass your Caer, increasing your damage by 15%. You receive 15% more damage.
+                    </p>
+                ) : ( '' ) }
             </> }
         </Popover.Body>
     </Popover>
@@ -108,9 +119,10 @@ export const getInnerWidth = () => {
 interface Props {
     item: Equipment;
     prayer: string;
+    caerenic?: boolean;
 };
 
-const ItemPopover = ({ item, prayer }: Props) => { 
+const ItemPopover = ({ item, prayer, caerenic }: Props) => { 
     const getItemStyle = {
         border: '0.15em solid ' + getShadowStyle(prayer),
         background: 'black',
@@ -118,7 +130,7 @@ const ItemPopover = ({ item, prayer }: Props) => {
         borderRadius: '50%',
     };
     return (
-        <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(item)}>
+        <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(item, false, caerenic)}>
             <img src={item?.imgURL} className="m-1 eqp-popover spec" alt={item?.name} style={getItemStyle} />
         </OverlayTrigger>
     );

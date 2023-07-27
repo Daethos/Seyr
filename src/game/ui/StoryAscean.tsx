@@ -60,7 +60,6 @@ const StoryAscean = ({ ascean, loading, levelUpAscean, asceanViews }: Props) => 
     });
 
     useEffect(() => {
-        console.log(ascean.statistics, "Stats");
         playerTraits();
     }, [ascean]);
 

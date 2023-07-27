@@ -4,16 +4,15 @@ import * as Dispatcher from "./Dispatcher";
 import Play from "../scenes/Play";
 import { StatusEffect } from "../../components/GameCompiler/StatusEffects";
 
+type ActionHandler = (data: any) => void;
 interface Action {
     type: string;
     data: any;
 };
-type ActionHandler = (data: any) => void;
 export interface KV {
     key: string;
     value: string | number | boolean; 
 };
-
 
 export default class CombatMachine {
     private context: Play;

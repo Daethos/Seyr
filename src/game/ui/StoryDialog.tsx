@@ -239,7 +239,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
         let playerPersuasion: number = 0;
         let enemyPersuasion: number = 0;
         switch (persuasion) {
-            case 'Arbituous': // Ethos (Law)
+            case 'Arbituous': // Ethos
                 playerPersuasion = state.player.constitution + state.player.achre;
                 enemyPersuasion = state.computer.constitution + state.computer.achre;
                 break;

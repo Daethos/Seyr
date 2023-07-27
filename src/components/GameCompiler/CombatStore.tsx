@@ -110,7 +110,8 @@ export interface CombatData {
 
     weather: string;
     phaser: boolean;
-    isStalwart: boolean; // +10% Defense, -5% Movement
+    isStalwart: boolean; // +15% Defense, Cannot Dodge, Roll
+    isCaerenic: boolean; // +15% Attack, -15% Defense
     enemyID: string;
     combatTimer: number;
     soundEffects: boolean;
@@ -288,6 +289,7 @@ export const initialCombatData: CombatData = {
     weather: '',
     phaser: false,
     isStalwart: false,
+    isCaerenic: false,
     enemyID: '',
     combatTimer: 0,
     isEnemy: false,

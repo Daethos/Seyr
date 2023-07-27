@@ -220,7 +220,6 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             setIsLoading(true);
             setLoadingContent(`Forging A Greater ${inventory?.name}`);
             const matches = bag.filter((item: { name: string; rarity: string; }) => item.name === inventory?.name && item?.rarity === inventory?.rarity);
-            console.log(matches, '<- What are the matches?');
             const data = {
                 asceanID: ascean._id,
                 upgradeID: inventory._id,
@@ -230,8 +229,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 inventoryType: inventoryType,
                 upgradeMatches: matches,
             };
-            const response = await eqpAPI.upgradeEquipment(data);
-            console.log(response, '<- This is the response from handleUpgradeItem');
+            await eqpAPI.upgradeEquipment(data);
             setInventoryModalShow(false);
             setForgeModalShow(false);
             setLoadingContent('');
@@ -254,8 +252,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 id: ascean._id,
                 inventory: inventory,
             };
-            const response = await asceanAPI.removeItem(data);
-            console.log(response, '<- Response in handleRemoveItem');
+            await asceanAPI.removeItem(data);
             setInventoryModalShow(false);
             setRemoveModalShow(false);
             setLoadingContent('');
@@ -274,9 +271,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
         try {
             setIsLoading(true);
             setLoadingContent(`Equipping ${inventory?.name} of ${inventory?.rarity} quality.`);
-            console.log(newAscean, '<- newAscean in Swapping Equipment start');
-            const response = await asceanAPI.equipmentSwap(newAscean);
-            console.log(response, '<- Response in Swapping Equipment');
+            await asceanAPI.equipmentSwap(newAscean);
             setEditState({
                 ...editState,
                 new_weapon_one: '',

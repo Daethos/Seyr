@@ -1,8 +1,8 @@
-import { all, call, put, takeEvery, take, AllEffect, select, actionChannel } from 'redux-saga/effects';
+import { all, call, put, takeEvery, AllEffect, select } from 'redux-saga/effects';
 import { SagaIterator } from 'redux-saga';
 import * as asceanAPI from '../../utils/asceanApi';
-import { setDialog, setInstantStatus, setShowDialog, setStatistics } from '../reducers/gameState';
-import { setCombatResolution, setCombatInput, setDamageType, setEffectResponse, setEnemyActions, setPlayerBlessing, setToggleDamaged, setWeaponOrder, setCombat, clearCombat, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatTimer, setEnemyPersuaded, setPlayerLuckout, setPlayerWin, setEnemyWin } from '../reducers/combatState';
+import { setDialog, setShowDialog, setStatistics } from '../reducers/gameState';
+import { setCombatResolution, setCombatInput, setDamageType, setEffectResponse, setEnemyActions, setPlayerBlessing, setWeaponOrder, setCombat, clearCombat, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatTimer, setEnemyPersuaded, setPlayerLuckout, setPlayerWin, setEnemyWin, setInstantStatus } from '../reducers/combatState';
 import { CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import EventEmitter from '../phaser/EventEmitter';
 import { getNpcDialog } from '../../components/GameCompiler/Dialog';
@@ -183,10 +183,7 @@ function* workGetEffectTick(action: any): SagaIterator {
 export function* workTickResponse(load: any): SagaIterator {
     let dec = decompress(load);
     yield put(setEffectResponse(dec));
-    EventEmitter.emit('update-combat', dec);
-    setTimeout(() => {
-        call(setToggleDamaged, false);
-    }, 1500);
+    EventEmitter.emit('update-combat', dec); 
 };
 function* workGetEnemyAction(action: any): SagaIterator {
     try {
@@ -221,7 +218,6 @@ function* workGetInitiate(action: any): SagaIterator {
         const socket = getSocketInstance();
         switch (action.payload.type) {
             case 'Weapon':
-                console.log(action.payload.combatData, "Weapon Action");
                 socket.emit(SOCKET.PHASER_ACTION, action.payload.combatData);
                 break;
             case 'Instant':
@@ -246,15 +242,12 @@ export function* workGetResponse(load: any, type?: string): SagaIterator {
         } else {
             yield put(setCombatResolution(dec));
         };
-        let combat = yield select((state) => state.combat);
+        let combat: CombatData = yield select((state) => state.combat);
         combat = { ...combat, ...dec };
         yield call(juice);
-        EventEmitter.emit('update-sound', dec);
-        EventEmitter.emit('update-combat', dec);
-        yield call(workResolveCombat, dec);
-        setTimeout(() => {
-            call(setToggleDamaged, false);
-        }, 1500);
+        if (type === 'enemy' || type === 'combat') EventEmitter.emit('update-sound', combat);
+        EventEmitter.emit('update-combat', combat);
+        yield call(workResolveCombat, dec); 
     } catch (err: any) {
         console.log(err, 'Error in workGetResponse');
     };

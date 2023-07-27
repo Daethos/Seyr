@@ -53,6 +53,9 @@ function* playerResEvent(payload: Uint8Array): SagaIterator {
     socket.emit(SOCKET.SETUP_COMBAT_DATA, press);
 };
 function* combatResEvent(payload: Uint8Array): SagaIterator {
+    yield call(workGetResponse, payload, 'combat');
+};
+function* prayerResEvent(payload: Uint8Array): SagaIterator {
     yield call(workGetResponse, payload);
 };
 function* enemyResEvent(payload: Uint8Array): SagaIterator {
@@ -76,8 +79,8 @@ function* socketSaga(): SagaIterator {
             yield takeLatest(playerChan, playerResEvent);
             yield takeEvery(combatChan, combatResEvent);
             yield takeEvery(enemyChan, enemyResEvent);
-            yield takeEvery(invokeChan, combatResEvent);
-            yield takeEvery(prayerChan, combatResEvent);
+            yield takeEvery(invokeChan, prayerResEvent);
+            yield takeEvery(prayerChan, prayerResEvent);
             yield takeEvery(effectChan, effectResEvent);
         } catch (error) {
             console.error('Socket error:', error);

@@ -24,7 +24,7 @@ import { LootDropUI } from '../ui/LootDropUI';
 import { StoryDialog } from '../ui/StoryDialog';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearNpc, getCombatSettingFetch, getCombatTimerFetch, setRest } from '../reducers/combatState';
+import { clearNpc, clearSfx, getCombatSettingFetch, getCombatTimerFetch, setRest, setToggleDamaged } from '../reducers/combatState';
 import { getAsceanLevelUpFetch, getGainExperienceFetch, getLootDropFetch, setShowDialog, setMerchantEquipment, setShowLoot } from '../reducers/gameState';
 import PhaserCombatText from '../ui/PhaserCombatText';
 import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
@@ -68,7 +68,6 @@ const HostScene = ({ assets, ascean }: Props) => {
         height: 640,
         scene: scenes,
         scale: { zoom: 1 },
-        data: { ascean, user, dispatch },
         physics: {
             default: 'matter',
             matter: {
@@ -228,16 +227,16 @@ const HostScene = ({ assets, ascean }: Props) => {
                 Lightning: playLightning,
                 Sorcery: playSorcery,
                 Wind: playWind,
-                Pierce: ((weapon: Equipment) => (weapon.type === "Bow" || weapon.type === "Greatbow")) ? playBow() : playPierce(),
+                Pierce: (weapon: Equipment) => (weapon.type === "Bow" || weapon.type === "Greatbow") ? playBow() : playPierce(),
                 Slash: playSlash,
                 Blunt: playBlunt,
             };
-            if (sfx.realized_player_damage > 0) {
+            if (sfx.computerDamaged) {
                 const { player_damage_type } = sfx;
                 const soundEffectFn = soundEffectMap[player_damage_type as keyof typeof soundEffectMap];
                 if (soundEffectFn) soundEffectFn(sfx.weapons[0]);
             };
-            if (sfx.realized_computer_damage > 0) {
+            if (sfx.playerDamaged) {
                 const { computer_damage_type } = sfx;
                 const soundEffectFn = soundEffectMap[computer_damage_type as keyof typeof soundEffectMap];
                 if (soundEffectFn) soundEffectFn(sfx.computer_weapons[0]);
@@ -247,8 +246,10 @@ const HostScene = ({ assets, ascean }: Props) => {
             if (sfx.counter_success === true || sfx.computer_counter_success === true) playCounter();
             if (sfx.player_win) playReligion();
             if (sfx.computer_win) playDeath();
+
+            dispatch(setToggleDamaged(false));
         } catch (err: any) {
-            console.log(err.message, 'Error Setting Sound Effects')
+            console.log(err.message, 'Error Setting Sound Effects');
         };
     };
 

@@ -5,7 +5,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import { GAME_ACTIONS } from './GameStore';
 import Loading from '../Loading/Loading';
 import EventEmitter from '../../game/phaser/EventEmitter';
-import { setClearLootDrop } from '../../game/reducers/gameState';
+import { setClearLootDrop, getOnlyInventoryFetch } from '../../game/reducers/gameState';
 import { useDispatch } from 'react-redux';
 import { getBorderStyle } from '../../game/ui/ItemPopover';
 
@@ -31,6 +31,7 @@ const LootDrop = ({ lootDrop, ascean, itemSaved, gameDispatch, story }: Props) =
             };
             if (story) {
                 dispatch(setClearLootDrop(lootDrop._id));
+                dispatch(getOnlyInventoryFetch(ascean._id));
             };
             EventEmitter.emit('destroy-lootdrop', lootDrop._id);
         } catch (err: any) {

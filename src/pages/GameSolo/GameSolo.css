@@ -184,12 +184,12 @@
   padding-left: 5%;
 }
 .status-effects.enemy img {
-  transform: scale(1.75);
+  transform: scale(1.5);
   padding-top: 25%;
 }
 .status-effects.enemy {
   grid-row-start: 5;
-  height: 75%;
+  height: 100%;
   width: 20%;
   margin-top: 5%;
 }

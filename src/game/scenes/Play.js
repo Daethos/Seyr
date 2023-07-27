@@ -9,7 +9,7 @@ import base from '../images/base.png';
 import ParticleManager from '../phaser/ParticleManager';
 import LootDrop from '../matter/LootDrop';
 import EventEmitter from '../phaser/EventEmitter';
-import { getInitiateFetch, getCombatStateUpdate, getEnemyActionFetch, getCombatFetch, setStalwart, getNpcSetupFetch, getEnemySetupFetch, clearNonAggressiveEnemy, setCombatInput } from '../reducers/combatState';
+import { getInitiateFetch, getCombatStateUpdate, getEnemyActionFetch, getCombatFetch, setStalwart, getNpcSetupFetch, getEnemySetupFetch, clearNonAggressiveEnemy, setCombatInput, setCaerenic } from '../reducers/combatState';
 import { getDrinkFirewaterFetch } from '../reducers/gameState';
 import CombatMachine from '../phaser/CombatMachine';
  
@@ -168,6 +168,14 @@ export default class Play extends Phaser.Scene {
     };
 
     enemyLootDropListener = () => EventEmitter.on('enemyLootDrop', (e) => { e.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID: e.enemyID, drop }))); });
+
+    checkPlayerSuccess = (ranged) => {
+        // Checking if the player has a successful action, if not, checks if the action is a counter, and if the enemy itself is ranged, if met, the enemy will be allowed an unmitigated attack
+        if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '') && ranged) {
+            this.combatMachine.input('action', '');
+        };
+    };
+
     clearNonAggressiveEnemy = async () => this.dispatch(clearNonAggressiveEnemy()); 
     clearNPC = async () => EventEmitter.emit('clear-npc');
     setupEnemy = async (data) => this.dispatch(getEnemySetupFetch(data)); 
@@ -180,6 +188,7 @@ export default class Play extends Phaser.Scene {
     stateListener = async () => EventEmitter.on('update-combat-data', (e) => this.state = e); 
     showDialog = async (dialog) => EventEmitter.emit('show-dialog', dialog);
     stalwart = async (update) => this.dispatch(setStalwart(update));
+    caerenic = async (update) => this.dispatch(setCaerenic(update));
     staminaListener = async () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e);
 
     sendEnemyActionListener = async (enemyID, enemy, damageType, combatStats, weapons, health, actionData, currentTarget) => {

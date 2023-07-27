@@ -1,7 +1,6 @@
 import * as io from 'socket.io-client';
 let socketInstance: io.Socket | null = null;
 
-// Function to establish the socket connection
 export const connectToSocket = (url: string): io.Socket => {
     if (!socketInstance) {
         socketInstance = io.connect(url, { transports: ['websocket'] });

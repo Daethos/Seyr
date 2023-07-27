@@ -148,8 +148,8 @@ export default class Player extends Entity {
         this.setExistingBody(compoundBody);                                    
         this.sensor = playerSensor;
         this.knocking = false;
-        
-        this.glow = this.setGlow(this, true);
+        this.isCaerenic = false;
+        // this.glow = this.setGlow(this, true);
         // this.setGlow(this.spriteWeapon);
         this.highlight = this.scene.add.graphics()
             .lineStyle(1, 0xFFD700)
@@ -179,11 +179,13 @@ export default class Player extends Entity {
             };
         };
 
+        if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
+
         return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
-            outerStrength: 1,
-            innerStrength: 1,
+            outerStrength: 3,
+            innerStrength: 3,
             glowColor: setColor(this.ascean.mastery),
-            intensity: glow ? 0.2 : 0,
+            intensity: 0.25,
             knockout: true
         });
     };
@@ -249,24 +251,24 @@ export default class Player extends Entity {
             this.healthbar.setValue(this.health);
             if (this.healthbar.getTotal() < e.player_health) this.healthbar.setTotal(e.player_health);
             if (e.new_player_health <= 0) {
-                this.isDead = true;
-                this.anims.play('player_death', true);
+                // this.isDead = true;
                 this.inCombat = false;
                 this.attacking = null;
+                this.anims.play('player_pray', true).on('animationcomplete', () => {
+                    this.anims.play('player_idle', true);
+                });
             };
             if (e.new_computer_health <= 0) {
                 this.inCombat = false;
                 this.attacking = null;
                 this.touching = this.touching.filter(obj => obj.enemyID !== e.enemyID);
             };
-
-            this.checkMeleeOrRanged(e.weapons[0]); 
+            this.checkWeapons(e.weapons[0], e.player_damage_type.toLowerCase());
         });
 
         EventEmitter.on('update-combat', (e) => {
             if (e.computer_counter_success) {
                 this.stateMachine.setState(States.STUN);
-                // this.scene.setState('computer_counter_success', false);
                 this.scene.combatMachine.input('computer_counter_success', false);
             };
             if (e.player_win) {
@@ -275,6 +277,11 @@ export default class Player extends Entity {
             };    
         });
     }; 
+
+    checkWeapons = (weapon, damage) => {
+        this.hasMagic = this.checkDamageType(damage, 'magic');
+        this.checkMeleeOrRanged(weapon);
+    };
  
     checkEnemyAttackCollision(playerSensor) {
         this.scene.matterCollision.addOnCollideStart({
@@ -291,6 +298,7 @@ export default class Player extends Entity {
                         this.currentTarget = other.gameObjectB; 
                         if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id) && !other.gameObjectB.isDead) this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated, isTriumphant: other.gameObjectB.isTriumphant });
                         if (!this.scene.state.combatEngaged && !other.gameObjectB.isDead) {
+                            console.log("Engaging Combat", this.scene.state.combatEngaged, other.gameObjectB.isDead);
                             this.scene.combatEngaged(true);
                             this.inCombat = true;
                         };
@@ -396,6 +404,7 @@ export default class Player extends Entity {
         console.log("Entering Non Combat");
         this.anims.play('player_idle', true);
         if (this.scene.combatTimer) this.scene.stopCombatTimer();
+        if (this.currentRound !== 0) this.currentRound = 0;
     };
     onNonCombatUpdate = (dt) => {
         if (this.isMoving) this.isMoving = false;
@@ -413,15 +422,12 @@ export default class Player extends Entity {
     }; 
 
     onAttackEnter = () => {
-        // if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
-        if (this.scene.state.counter_guess !== '') this.scene.combatMachine.input('counter_guess', '');
         this.isAttacking = true;
         this.swingReset();
         this.scene.checkStamina('attack');
     }; 
     onAttackUpdate = (dt) => {
         if (this.frameCount === 16 && !this.isRanged) {
-            // this.scene.setState('action', 'attack');
             this.scene.combatMachine.input('action', 'attack');
             console.log("Attack LIVE");
         };
@@ -434,8 +440,7 @@ export default class Player extends Entity {
         };
     }; 
     onAttackExit = () => {
-        // if (this.scene.state.action !== '') this.scene.setState('action', '');
-        if (this.scene.state.counter_guess !== '') this.scene.combatMachine.input('counter_guess', '');
+        if (this.scene.state.action !== '') this.scene.combatMachine.input('action', '');
     };
 
     onCounterEnter = () => {
@@ -445,7 +450,6 @@ export default class Player extends Entity {
     };
     onCounterUpdate = (dt) => {
         if (this.frameCount === 5 && !this.isRanged) {
-            // this.scene.setState('action', 'counter');
             this.scene.combatMachine.input('action', 'counter');
             console.log("Counter LIVE");
         };
@@ -460,20 +464,15 @@ export default class Player extends Entity {
     onCounterExit = () => {
         if (this.scene.state.action !== '') this.scene.combatMachine.input('action', '');
         if (this.scene.state.counter_guess !== '') this.scene.combatMachine.input('counter_guess', '');
-        // if (this.scene.state.action !== '') this.scene.setState('action', '');
-        // if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
     };
 
     onPostureEnter = () => {
-        // if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
-        if (this.scene.state.counter_guess !== '') this.scene.combatMachine.input('counter_guess', '');
         this.isPosturing = true;
         this.swingReset();
         this.scene.checkStamina('posture');
     };
     onPostureUpdate = (dt) => {
         if (this.frameCount === 11 && !this.isRanged) {
-            // this.scene.setState('action', 'posture');
             this.scene.combatMachine.input('action', 'posture');
             console.log("Posture LIVE");
         };
@@ -486,8 +485,7 @@ export default class Player extends Entity {
         };
     };
     onPostureExit = () => {
-        // if (this.scene.state.action !== '') this.scene.setState('action', '');
-        if (this.scene.state.counter_guess !== '') this.scene.combatMachine.input('counter_guess', '');
+        if (this.scene.state.action !== '') this.scene.combatMachine.input('action', '');
     };
 
     onRollEnter = () => {
@@ -509,10 +507,7 @@ export default class Player extends Entity {
     onRollExit = () => {
         this.spriteWeapon.setVisible(true);
         this.rollCooldown = 0; 
-        // if (this.scene.state.action !== '') this.scene.setState('action', '');
-        // if (this.scene.state.counter_guess !== '') this.scene.setState('counter_guess', '');
         if (this.scene.state.action !== '') this.scene.combatMachine.input('action', '');
-        if (this.scene.state.counter_guess !== '') this.scene.combatMachine.input('counter_guess', '');
     };
 
     onDodgeEnter = () => {
@@ -552,6 +547,7 @@ export default class Player extends Entity {
 
     onInvokeEnter = () => {
         this.isPraying = true;
+        this.glow = this.setGlow(this, true);
         this.invokeCooldown = 30;
         if (this.playerBlessing === '' || this.playerBlessing !== this.scene.state.playerBlessing) {
             this.playerBlessing = this.scene.state.playerBlessing;
@@ -567,7 +563,7 @@ export default class Player extends Entity {
         };
     };
     onInvokeExit = () => {
-        // this.scene.sendStateSpecialListener('invoke');
+        this.glow = this.setGlow(this, false);
         this.scene.combatMachine.add({ type: 'Instant', data: this.scene.state.playerBlessing });
         screenShake(this.scene);
     };
@@ -594,8 +590,7 @@ export default class Player extends Entity {
     onStunExit = () => {
         this.stunDuration = 1500;
         this.scene.input.keyboard.enabled = true;
-        this.clearTint();
-        
+        this.clearTint(); 
     };
 
     swingReset = () => {
@@ -621,6 +616,7 @@ export default class Player extends Entity {
         };
         if (this.touching.some((gameObject) => gameObject.inCombat)) {
             if (!this.inCombat || !this.scene.combat) {
+                console.log("Engaging Combat", this.inCombat, this.scene.combat)
                 this.scene.combatEngaged(true);
                 this.inCombat = true;
             };
@@ -645,7 +641,6 @@ export default class Player extends Entity {
     playerActionSuccess = async () => {
         console.log("Player Action Success");
         if (this.scene.state.action === '') return;
-        // await this.scene.sendStateActionListener();
         this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'action', value: this.scene.state.action} });
         if (this.particleEffect) {
             this.scene.particleManager.removeEffect(this.particleEffect.id);
@@ -657,7 +652,6 @@ export default class Player extends Entity {
     };
 
     handleActions = () => {
-        // =================== TARGETING ================== \\
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.touching.length > 0) {
             if (this.currentTarget) {
                 this.currentTarget.clearTint();
@@ -688,8 +682,16 @@ export default class Player extends Entity {
             };
         };
 
-        // =================== STALWART ================== \\
-
+        if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {
+            this.isCaerenic = this.isCaerenic ? false : true;
+            if (this.isCaerenic) {
+                this.scene.caerenic(true);
+                this.setGlow(this, true);
+            } else {
+                this.scene.caerenic(false);
+                this.setGlow(this, false);
+            };
+        };
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {
             this.isStalwart = this.isStalwart ? false : true;
             if (this.isStalwart) {
@@ -700,17 +702,14 @@ export default class Player extends Entity {
         }; 
         if (this.inCombat) {
             if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
-                // this.scene.setState('counter_guess', 'attack');
                 this.scene.combatMachine.input('counter_guess', 'attack');
                 this.stateMachine.setState(States.COUNTER);           
             };
             if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
-                // this.scene.setState('counter_guess', 'posture');
                 this.scene.combatMachine.input('counter_guess', 'posture');
                 this.stateMachine.setState(States.COUNTER);
             };
             if (this.stamina >= 15 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
-                // this.scene.setState('counter_guess', 'roll');
                 this.scene.combatMachine.input('counter_guess', 'roll');
                 this.stateMachine.setState(States.COUNTER);
             };
@@ -724,7 +723,6 @@ export default class Player extends Entity {
             };
 
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 15 && this.canSwing) {
-                // this.scene.setState('counter_guess', 'counter');
                 this.scene.combatMachine.input('counter_guess', 'counter');
                 this.stateMachine.setState(States.COUNTER);
             };
@@ -748,7 +746,6 @@ export default class Player extends Entity {
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
                 if (this.scene.state.playerEffects.length === 0) return;
                 this.isConsuming = true;
-                // this.scene.sendStateSpecialListener('consume');
                 this.scene.combatMachine.add({ type: 'Consume', data: this.scene.state.playerEffects });
                 screenShake(this.scene);
             };
@@ -768,6 +765,7 @@ export default class Player extends Entity {
 
     };
     handleAnimations = () => {
+        
         if (this.isStunned) {
             this.setVelocity(0);
         } else if (this.isHurt) {

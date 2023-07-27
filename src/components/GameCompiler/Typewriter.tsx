@@ -196,8 +196,8 @@ const Typewriter = ({ stringText, styling, performAction }: TypewriterProps) => 
     const clean = styleHTML(stringText);
     const typedContent = {
       strings: [clean],
-      typeSpeed: 20,
-      backSpeed: 20,
+      typeSpeed: 15,
+      backSpeed: 15,
       showCursor: false,
     };
     const typed = new Typed(el.current, typedContent);
