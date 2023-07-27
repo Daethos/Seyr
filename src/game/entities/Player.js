@@ -183,8 +183,8 @@ export default class Player extends Entity {
         if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
 
         return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
-            outerStrength: 3,
-            innerStrength: 3,
+            outerStrength: 2,
+            innerStrength: 2,
             glowColor: setColor(this.ascean.mastery),
             intensity: 0.25,
             knockout: true

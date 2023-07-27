@@ -9,7 +9,7 @@ export const SOCKET = {
     // Emitters
     SETUP: 'setup',
     DISCONNECT: 'disconnect',
-    URL: 'http://localhost:3000', // 'https://ascea.herokuapp.com'
+    URL: 'https://ascea.herokuapp.com', // 'https://ascea.herokuapp.com' || 'http://localhost:3000'
     SETUP_PLAYER: 'setupPlayer',
 
     SET_PHASER_AGGRESSION: 'setPhaserAggression',
