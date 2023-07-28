@@ -43,13 +43,18 @@ export const itemPopover = (item: Equipment, stalwart?: boolean, caerenic?: bool
                 </p>
                 { stalwart ? (
                     <p style={{ color: "gold" }}>
-                        Stalwart - You are engaged in combat with your shield raised, adding it to your passive defense. You receive 50% less poise damage. You receive 10% less damage. You cannot dodge or roll.
+                        Stalwart - You are engaged in combat with your shield raised, adding it to your passive defense. 
+                        You receive 50% less poise damage. 
+                        You receive 10% less damage. 
+                        You cannot dodge or roll.
                         {/*  Perhaps you cannot dodge or roll in the future This slows your movement by 15%. */}
                     </p>
                 ) : ( '' ) } 
-                {caerenic ? (
+                { caerenic ? (
                     <p style={{ color: "gold" }}>
-                        Caerenic - You attempt to harnass your Caer, increasing your damage by 15%. You receive 15% more damage. You move 15% faster.
+                        Caerenic - You attempt to harnass your caer with your achre, increasing your damage by 15%. 
+                        You move 15% faster. 
+                        You receive 25% more damage. 
                     </p>
                 ) : ( '' ) }
             </> }

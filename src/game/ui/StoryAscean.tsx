@@ -395,7 +395,7 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
                 <ExperienceBar totalExperience={ascean.level * 1000} currentExperience={ascean.experience} story={true} />
             </div>
         </div>
-        <div style={{ position: "absolute", color: "#fdf6d8", textAlign: "center", width: "27%", height: "55%", left: "350px", top: "22.5%", fontSize: "12px", padding: "0.5%", overflow: "scroll", scrollbarWidth: "none", zIndex: 9999 }}>
+        <div className='story-window-two'>
             { asceanViews === VIEWS.CHARACTER ? (
                 <div style={{ display: "inline" }}>
                     <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + '/images/' + state.player.origin + '-' + state.player.sex + '.jpg'} alt="Origin Culture Here" id="origin-pic" /></span>
@@ -404,7 +404,7 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
                     </div>
                     <div className='property-line' style={{ fontSize: '12px' }}>
                         Level: <p style={{ color: "gold" }}>{state.player.level}</p><br />
-                        {state.player?.currency?.silver ? <>Silver: <p style={{ color: "gold" }}>{state.player.currency.silver}</p> Gold: <p style={{ color: "gold" }}>{state.player.currency.gold} <br /></p></> : '' }
+                        {ascean.currency?.silver ? <>Silver: <p style={{ color: "gold" }}>{ascean.currency.silver}</p> Gold: <p style={{ color: "gold" }}>{ascean.currency.gold} <br /></p></> : '' }
                         Mastery: <p style={{ color: "gold" }}>{state.player.mastery}</p><br />
                         Magical Defense: <p style={{ color: "gold" }}>{state.playerDefense.magicalDefenseModifier}% / [{state.playerDefense.magicalPosture}%]</p><br />
                         Physical Defense: <p style={{ color: "gold" }}>{state.playerDefense.physicalDefenseModifier}% / [{state.playerDefense.physicalPosture}%]</p><br />
@@ -441,7 +441,7 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
                 </div>
             ) : ( '' ) }
         </div>
-        <div style={{ position: "absolute", color: "#fdf6d8", textAlign: "center", width: "27%", height: "54.5%", left: "635px", top: "22.5%", fontSize: "12px", overflow: 'auto', scrollbarWidth: 'none' }}>
+        <div className='story-window-three'>
             { asceanViews === VIEWS.CHARACTER ? (
                 <div style={{ height: "100%", padding: '0.25rem' }}> 
                     {createCharacterInfo(currentCharacter)}

@@ -180,10 +180,9 @@ export default class Play extends Phaser.Scene {
 
     enemyLootDropListener = () => EventEmitter.on('enemyLootDrop', (e) => { e.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID: e.enemyID, drop }))); });
 
-    checkPlayerSuccess = (ranged) => {
-        if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '') && ranged) {
-            this.combatMachine.input('action', '');
-        };
+    checkPlayerSuccess = () => {
+        if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) this.combatMachine.input('action', '');
+        
     };
 
     clearNonAggressiveEnemy = async () => this.dispatch(clearNonAggressiveEnemy()); 
@@ -204,7 +203,7 @@ export default class Play extends Phaser.Scene {
     sendEnemyActionListener = async (enemyID, enemy, damageType, combatStats, weapons, health, actionData, currentTarget) => {
         console.log('sendEnemyActionListener');
         if (!currentTarget) {
-            const data = { enemyID, enemy, damageType, combatStats, weapons, health, actionData, state: this.state };
+            const data = { enemyID, enemy, damageType, combatStats, weapons, health, actionData }; // state: this.state
             await this.dispatch(getEnemyActionFetch(data));
         } else {
             if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {

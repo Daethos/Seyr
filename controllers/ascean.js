@@ -1100,7 +1100,7 @@ async function saveExperience(req, res) {
                 };
             };
         };
-       
+        console.log(`Silver: ${silver}, Gold: ${gold} Gained From Opponent`);
         ascean.currency.silver += silver;
         ascean.currency.gold += gold;
 
@@ -1132,9 +1132,8 @@ async function saveExperience(req, res) {
 async function updateHighScore(req, res) {
     const { asceanId, highScore } = req.body
     try {
-        const ascean = await Ascean.findByIdAndUpdate(asceanId, {
-            high_score: highScore }, { new: true})
-        res.status(200).json({ data: ascean });
+        const ascean = await Ascean.findByIdAndUpdate(asceanId, { high_score: highScore }, { new: true})
+        res.status(200).json(ascean);
     } catch (err) {
         res.status(400).json({ err });
     }
@@ -1413,7 +1412,7 @@ async function getAsceanInventory(req, res) {
         const inventory = await Promise.all(inventoryPopulated);
         ascean.inventory = inventory;
     
-        res.status(200).json({inventory:  ascean.inventory, currency: ascean.currency });
+        res.status(200).json({inventory: ascean.inventory, currency: ascean.currency });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');
         res.status(400).json({ err });

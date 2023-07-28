@@ -129,6 +129,7 @@ export function* workGetGainExperienceFetch(action: any): SagaIterator {
     
     asceanState = {
       ...asceanState,
+      'opponent': combatState.computer.level,
       'opponentExp': opponentExp,
       'currentHealth': combatState.newPlayerHealth,
       'experience': Math.min(totalExp, asceanState.experienceNeeded),

@@ -146,7 +146,6 @@ export default class Enemy extends Entity {
         this.isDefeated = false;
         this.isTriumphant = false;
         this.currentWeapon = null;
-        this.currentDamageType = null;
         this.isCurrentTarget = false;
         this.counterAction = '';
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
@@ -726,7 +725,7 @@ export default class Enemy extends Entity {
     enemyActionSuccess = () => {
         if (this.scene.state.computerAction === '') return;
         console.log("Enemy Action Success");
-        this.scene.checkPlayerSuccess(this.isRanged);
+        if (this.isRanged) this.scene.checkPlayerSuccess();
         if (this.isCurrentTarget) {
             this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'computerAction', value: this.scene.state.computerAction } });
         } else {

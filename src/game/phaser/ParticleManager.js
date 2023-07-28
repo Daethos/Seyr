@@ -206,7 +206,7 @@ export default class ParticleManager extends Phaser.Scene {
         if (!player.flipX && !player.particleEffect.effect.flipX) player.particleEffect.effect.flipX = true;
         if (player.particleEffect && player.particleEffect.effect && this.particles.find((particle) => particle.id === player.particleEffect.id)) {
             if (player.name === 'player' && player.particleEffect.action === 'roll') return;
-             player.particleEffect.effect.play(player.particleEffect.key, true);
+            player.particleEffect.effect.play(player.particleEffect.key, true);
             const target = player.particleEffect.target;
             target.normalize();
             player.particleEffect.effect.setVelocity(player.particleEffect.velocity * target.x, target.y * player.particleEffect.velocity);

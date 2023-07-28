@@ -46,6 +46,7 @@ export default class Player extends Entity {
         // this.spriteWeapon.setDepth(this + 1);
         this.spriteWeapon.setAngle(-195);
         this.currentWeaponSprite = spriteName;
+        this.currentDamageType = scene?.state?.player?.weapon_one?.damage_type[0].toLowerCase();
         this.targetIndex = 0;
         this.currentTarget = null;
         this.stamina = scene?.state?.playerAttributes?.stamina;
@@ -284,6 +285,7 @@ export default class Player extends Entity {
     }; 
 
     checkWeapons = (weapon, damage) => {
+        this.currentDamageType = damage;
         this.hasMagic = this.checkDamageType(damage, 'magic');
         this.checkMeleeOrRanged(weapon);
     };
@@ -646,7 +648,7 @@ export default class Player extends Entity {
     playerActionSuccess = async () => {
         console.log("Player Action Success");
         if (this.scene.state.action === '') return;
-        this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'action', value: this.scene.state.action} });
+        this.scene.combatMachine.add({ type: 'Player', data: { key: 'action', value: this.scene.state.action} });
         if (this.particleEffect) {
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();

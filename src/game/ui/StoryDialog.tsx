@@ -562,7 +562,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                         upgradeItems.map((item: any, index: number) => {
                             return (
                                 <div key={index} style={{ display: 'inline-block', marginRight: '5%', marginBottom: '10%' }}>
-                                    <Inventory inventory={item} bag={gameState.player.inventory} ascean={state.player} blacksmith={true} index={index} />
+                                    <Inventory inventory={item} bag={gameState.player.inventory} ascean={gameState.player} blacksmith={true} index={index} />
                                 </div>
                             )
                         })
@@ -781,7 +781,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
                 </>
             ) : state.npcType !== 'Merchant-Alchemy' && state.npcType !== 'Merchant-Smith' ? (
                 <DialogTree 
-                    gameState={gameState} state={state} ascean={state.player} enemy={state.computer} dialogNodes={getNodesForNPC(npcIds[state.npcType])} 
+                    gameState={gameState} state={state} ascean={gameState.player} enemy={state.computer} dialogNodes={getNodesForNPC(npcIds[state.npcType])} 
                     setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} actions={actions} dispatch={dispatch}
                 />
             ) : ( '' ) } 

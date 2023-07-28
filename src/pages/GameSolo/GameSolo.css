@@ -1911,3 +1911,31 @@
   max-height: 643px;
   margin: 0 auto;
 }
+.story-window-two {
+  position: absolute;
+  color: #fdf6d8;
+  text-align: center;
+  width: 27%;
+  height: 55%;
+  left: 350px;
+  top: 22.5%;
+  font-size: 12px;
+  padding: 0.5%;
+  overflow: scroll;
+  scrollbar-width: none;
+  z-index: 9999;
+} 
+.story-window-three {
+  position: absolute;
+  color: #fdf6d8;
+  text-align: center;
+  width: 27%;
+  height: 55%;
+  left: 635px;
+  top: 22.5%;
+  font-size: 12px;
+  padding: 0.5%;
+  overflow: scroll;
+  scrollbar-width: none;
+  z-index: 9999;
+} 

@@ -30,7 +30,6 @@ const PhaserInventoryBag = ({ setHighlighted, highlighted, dragAndDropInventory,
         display: "inline-block",
         transform: 'scale(0.9)',
     }; 
-    const relaxedStyle = {};
     
     return (
         <DragDropContext onDragEnd={onDragEnd}> 
@@ -40,7 +39,7 @@ const PhaserInventoryBag = ({ setHighlighted, highlighted, dragAndDropInventory,
                         return (
                             <Droppable key={index} droppableId={item._id}>
                             {(provided, snapshot) => (
-                            <div ref={provided.innerRef} {...provided.droppableProps} style={snapshot.isDraggingOver ? getDroppingStyle : relaxedStyle}>
+                            <div ref={provided.innerRef} {...provided.droppableProps} style={snapshot.isDraggingOver ? getDroppingStyle : {}}>
                                 <Inventory ascean={ascean} highlighted={highlighted} setHighlighted={setHighlighted} bag={dragAndDropInventory} inventory={item} index={index} story={true} />
                                 {provided.placeholder}
                             </div>

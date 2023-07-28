@@ -36,11 +36,22 @@ export default class CombatMachine {
         Weapon: (data: KV) => Dispatcher.weaponAction(this.dispatch, data),
         Instant: (data: string) => Dispatcher.instantAction(this.dispatch, data),
         Consume: (data: StatusEffect[]) => Dispatcher.prayerAction(this.dispatch, data),
+        Player: async (data: any) => {
+            if (this.state.action === 'counter' && this.state.computerAction === '') {
+                // TODO:FIXME: This may need to self-terminate this action and then call the next action in the queue
+                return;
+            } else {
+                Dispatcher.weaponAction(this.dispatch, data);
+            };
+        },
         Enemy: async (data: any) => {
             if (!this.context?.player?.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
                 const actionReset = async () => this.input('action', '');
                 await actionReset();
                 Dispatcher.enemyAction(this.dispatch, data);
+            } else if (this.state.action === '' && this.state.computerAction === 'counter') {
+                // TODO:FIXME: This may need to self-terminate this action and then call the next action in the queue
+                return;
             } else {
                 Dispatcher.enemyAction(this.dispatch, data);
             };
