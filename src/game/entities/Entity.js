@@ -1017,25 +1017,28 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
  
 let totalTrauma = 0;
  
-export function screenShake(scene) {
+export const screenShake = (scene) => {
     totalTrauma += 1.05;
-    const duration = 100;
+    const duration = 80;
     const intensity = 0.01 * Math.pow(totalTrauma, 2);
     
     if ("vibrate" in navigator) navigator.vibrate(duration);
     scene.cameras.main.shake(duration, intensity);
+    pauseGame(scene, 40).then(() => {
+        scene.resume();
+    });
     
     const decayInterval = setInterval(() => {
         totalTrauma -= 1.05 / duration;
         if (totalTrauma <= 0) {
             totalTrauma = 0;
             clearInterval(decayInterval);
-            pauseGame(duration);
         };
     }, 1);
 };
  
-export function pauseGame(duration) {
+export const pauseGame = (scene, duration) => {
+    scene.pause();
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve();

@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { useParams } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react'
 import Phaser from "phaser";
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
@@ -36,7 +35,6 @@ interface Props {
 };
 
 const HostScene = ({ assets, ascean }: Props) => {
-    const { asceanID } = useParams();
     const dispatch = useDispatch();
     const combatState = useSelector((state: any) => state.combat);
     const asceanState = useSelector((state: any) => state.game.asceanState);
@@ -58,7 +56,7 @@ const HostScene = ({ assets, ascean }: Props) => {
     scenes.push(Menu);
     scenes.push(Play);
     
-    const [config, setConfig] = useState({
+    const config = {
         type: Phaser.AUTO,
         parent: 'story-game',
         fullscreenTarget: 'story-game',
@@ -106,11 +104,11 @@ const HostScene = ({ assets, ascean }: Props) => {
                 'VirtualJoysticks/plugin/src/DPad.js',
             ],
         }, 
-    });
+    };
  
     useEffect(() => { 
         startGame();
-    }, [asceanID]);
+    }, []);
 
     useEffect(() => {
         updateCombatListener(combatState);
@@ -133,7 +131,7 @@ const HostScene = ({ assets, ascean }: Props) => {
                 };
             };
         };
-    }, [currentGame, pauseState, gameTimer]); 
+    }, [currentGame, pauseState, gameTimer, dispatch, stamina, staminaPercentage, gameState.traits]); 
 
     useEffect(() => {
         if (staminaPercentage < 100) {
@@ -146,9 +144,9 @@ const HostScene = ({ assets, ascean }: Props) => {
                 clearTimeout(timer);
             };
         }; 
-    }, [staminaPercentage]);
+    }, [stamina, staminaPercentage]);
 
-    const startGame = useCallback(async () => {
+    const startGame = async () => {
         try {
             setLoading(true); 
             gameRef.current = new Phaser.Game(config); 
@@ -158,7 +156,7 @@ const HostScene = ({ assets, ascean }: Props) => {
         } catch (err: any) {
             console.log(err.message, 'Error Starting Game');
         };
-    }, [asceanID]);  
+    };
 
     const updateCombatListener = (data: CombatData) => EventEmitter.emit('update-combat-data', data); // Was Async
     const retrieveAssets = async () => EventEmitter.emit('send-assets', assets);
@@ -247,7 +245,7 @@ const HostScene = ({ assets, ascean }: Props) => {
         if (e.key === ' ' || e.keyCode === 32) togglePause();
     };
 
-    const togglePause = () => {
+    const togglePause = (): void => {
         const pause = () => gameRef.current.scene.getScene('Play').pause();
         const resume = () => gameRef.current.scene.getScene('Play').resume();
         if (!pauseState) {
@@ -259,10 +257,10 @@ const HostScene = ({ assets, ascean }: Props) => {
         };
     }; 
 
-    const launchGame = async (e: boolean) => setCurrentGame(e);
-    const updateStamina = async (e: number) => setStaminaPercentage((prevPercentage: number) => prevPercentage - e <= 0 ? 0 : prevPercentage - e);
-    const interactingLoot = async (e: boolean) => dispatch(setShowLoot(e)); 
-    const showDialog = async (e: boolean) => setDialogTag(e);
+    const launchGame = async (e: boolean): Promise<void> => setCurrentGame(e);
+    const updateStamina = async (e: number): Promise<void> => setStaminaPercentage((prevPercentage: number) => prevPercentage - e <= 0 ? 0 : prevPercentage - e);
+    const interactingLoot = async (e: boolean): Promise<{payload: any; type: "game/setShowLoot";}> => dispatch(setShowLoot(e)); 
+    const showDialog = async (e: boolean): Promise<void> => setDialogTag(e);
 
     useKeyEvent('keydown', toggleCombatHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);
