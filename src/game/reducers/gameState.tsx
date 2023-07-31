@@ -177,7 +177,6 @@ export const gameSlice = createSlice({
             return { ...state, lootDrops: [] };
         },
         setShowLoot: (state, action) => {
-            console.log(action.payload, "Showing Loot ?");
             if (action.payload.interacting) {
                 return {
                     ...state,
@@ -186,7 +185,6 @@ export const gameSlice = createSlice({
                 };
             } else {
                 const updatedShowLootIds = state.showLootIds.filter((id) => id !== action.payload.loot);
-                console.log(updatedShowLootIds, "Updated Show Loot Ids");
                 return {
                     ...state,
                     showLootIds: updatedShowLootIds.length > 0 ? updatedShowLootIds : [],

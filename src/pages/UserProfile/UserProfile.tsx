@@ -27,7 +27,7 @@ const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
   useEffect(() => {
     dispatch(getUserAsceanFetch());
     if (!hasAscean) navigate('/Ascean');
-  }, [dispatch]);
+  }, [dispatch, hasAscean, navigate]);
 
   async function saveAsceanMiddleware(saveAscean: any) {
     try {

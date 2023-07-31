@@ -9,10 +9,9 @@ async function getProfile(username: any){
     }
   });
   // This function happens when the browser recieves a response from the express server
-  if (res.ok)
-    return res.json();
+  if (res.ok) return res.json();
   throw new Error('Error from getProfile Request, check the server terminal!');
-}
+};
 
 async function getRandomEnemy(data: object) {
   const res = await fetch(BASE_URL + 'enemy', {
@@ -53,10 +52,9 @@ async function signup(user: any) {
       console.log(response)
       throw new Error(response.err)
     })
-  })
-  .then(({token}) => tokenService.setToken(token));
+  }).then(({token}) => tokenService.setToken(token));
   // The above could have been written as .then((token) => token.token);
-}
+};
 
 async function updateUser(user: object) {
   return fetch (BASE_URL + 'update', {
@@ -66,12 +64,11 @@ async function updateUser(user: object) {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + tokenService.getToken()
     }
-  })
-  .then((res) => {
+  }).then((res) => {
     if (res.ok) return res.json()
     throw new Error('Error Updating User')
-  })
-}
+  });
+};
 
 async function updateBio(user: object) {
   return fetch (BASE_URL + 'updateBio', {
@@ -81,20 +78,19 @@ async function updateBio(user: object) {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + tokenService.getToken()
     }
-  })
-  .then((res) => {
+  }).then((res) => {
     if (res.ok) return res.json()
     throw new Error('Error Updating User')
-  })
-}
+  });
+};
 
 function getUser() {
   return tokenService.getUserFromToken();
-}
+};
 
 function logout() {
   tokenService.removeToken();
-}
+};
 
 async function login(creds: any) {
   return fetch(BASE_URL + 'login', {
@@ -102,16 +98,14 @@ async function login(creds: any) {
     headers: new Headers({'Content-Type': 'application/json'}),
     body: JSON.stringify(creds)
   })
-  .then(res => {
+  .then(async res => {
     // Valid login if we have a status of 2xx (res.ok)
     if (res.ok) return res.json();
-    return res.json().then(response => {
-      console.log(response)
-      throw new Error(response.err)
-    })
-  })
-  .then(({token}) => tokenService.setToken(token));
-}
+    const response = await res.json();
+    console.log(response);
+    throw new Error(response.err);
+  }).then(({token}) => tokenService.setToken(token));
+};
 
 async function searchUser(search: string) {
   return fetch(`/api/users?search=` + search, {
@@ -120,20 +114,18 @@ async function searchUser(search: string) {
     } 
   }).then(res => {
     if (res.ok) return res.json();
-    throw new Error('Error Searching Users in UserService')
-  })
-}
+    throw new Error('Error Searching Users in UserService');
+  });
+};
 
 async function createGuestToken() {
   return fetch(BASE_URL + 'guest-token')
-    .then(res => {
+    .then(async res => {
       if (res.ok) return res.json();
-      return res.json().then(response => {
-        throw new Error(response.err);
-      });
-    })
-    .then(({ token }) => tokenService.setToken(token));
-}
+      const response = await res.json();
+      throw new Error(response.err);
+    }).then(({ token }) => tokenService.setToken(token));
+};
 
 
 export default {

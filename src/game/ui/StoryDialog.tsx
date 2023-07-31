@@ -13,10 +13,11 @@ import Typewriter from '../../components/GameCompiler/Typewriter';
 import dialogWindow from '../images/dialog_window.png';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
-import { getRestoreFirewaterFetch, setCurrentDialogNode, setCurrentIntent, setMerchantEquipment, setRendering, setShowDialog } from '../reducers/gameState';
+import { getGainExperienceFetch, getLootDropFetch, getRestoreFirewaterFetch, setCurrentDialogNode, setCurrentIntent, setMerchantEquipment, setRendering, setShowDialog } from '../reducers/gameState';
 import { getLuckoutFetch, getPersuasionFetch, setPhaserAggression } from '../reducers/combatState';
 import { ProvincialWhispersButtons, Region, regionInformation } from '../../components/GameCompiler/Regions';
 import { LuckoutModal, PersuasionModal, checkTraits, traitStyle } from '../../components/GameCompiler/PlayerTraits';
+import useGameSounds from '../../components/GameCompiler/Sounds';
 
 interface DialogOptionProps {
     option: DialogNodeOption;
@@ -196,11 +197,10 @@ const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any })
 
 interface StoryDialogProps {
     deleteEquipment: (equipment: any[]) => Promise<void>;
-    handlePlayerLuckout: () => Promise<void>;
     state: CombatData;
 };
 
-export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: StoryDialogProps) => {
+export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
     const dispatch = useDispatch();
     const gameState = useSelector((state: any) => state.game);
     const influence = useSelector((state: any) => state.combat.weapons[0].influences[0]);
@@ -211,7 +211,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
     const [namedEnemy, setNamedEnemy] = useState<boolean>(false);
     const [playerResponses, setPlayerResponses] = useState<string[]>([]);
     const [keywordResponses, setKeywordResponses] = useState<string[]>([]);
-
+    const { playReligion } = useGameSounds(gameState.soundEffectVolume);
     const [province, setProvince] = useState<keyof typeof regionInformation>('Astralands');
     const [luckoutModalShow, setLuckoutModalShow] = useState<boolean>(false);
     const [persuasionModalShow, setPersuasionModalShow] = useState<boolean>(false);
@@ -235,7 +235,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
 
     const hollowClick = () => console.log('Hollow Click');
 
-    const attemptPersuasion = async (persuasion: string) => {
+    const attemptPersuasion = async (persuasion: string): Promise<void> => {
         let playerPersuasion: number = 0;
         let enemyPersuasion: number = 0;
         switch (persuasion) {
@@ -291,7 +291,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
         };
     };
 
-    const attemptLuckout = async (luck: string) => {
+    const attemptLuckout = async (luck: string): Promise<void> => {
         let playerLuck: number = 0;
         let enemyLuck: number = 0;
         const ascean = state.player;
@@ -327,10 +327,13 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
         };
         console.log(playerLuck, enemyLuck, "Luckout");
         if (playerLuck >= enemyLuck) {
+            playReligion();
             dispatch(getLuckoutFetch({ luck, id: state.player._id, luckedOut: true }));
+            dispatch(getGainExperienceFetch({ asceanState: gameState.asceanState, combatState: state })); 
+            dispatch(getLootDropFetch({ enemyID: state.enemyID, level: state.computer.level }));
             const num = Math.floor(Math.random() * 2);
             setLuckoutString(`${luckoutTrait?.luckout?.success[num].replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', influence).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)}`);
-            await handlePlayerLuckout();
+            // await handlePlayerLuckout();
             shakeScreen({ duration: 1000, intensity: 1.5 });
             if ('vibrate' in navigator) navigator.vibrate(1000);
         } else {
@@ -340,7 +343,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
         };
     };
 
-    const checkLuckout = async () => {
+    const checkLuckout = async (): Promise<void> => {
         const traits = {
             primary: gameState?.traits?.primary,
             secondary: gameState?.traits?.secondary,
@@ -378,12 +381,12 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
         };
     }, [gameState.player.inventory]);
 
-    const engageGrappling = async () => {
+    const engageGrappling = async (): Promise<void> => {
         await checkingLoot();
         // dispatch TODO:FIXME: getGrapplingFetch({ id: state.player._id, grappling: true });
     }; 
 
-    const checkPersuasion = async () => {
+    const checkPersuasion = async (): Promise<void> => {
         const traits = {
             primary: gameState?.traits?.primary,
             secondary: gameState?.traits?.secondary,
@@ -415,7 +418,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
         setMiniGameTraits(matchingTraits);
     };
 
-    const canUpgrade = (inventory: any[]) => {
+    const canUpgrade = (inventory: any[]): any[] | null => {
         const groups: Record<string, any[]> = {};
         inventory.forEach(item => {
             const key = `${item?.name}-${item?.rarity}`;
@@ -475,7 +478,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
     const clearDuel = async () => dispatch(setShowDialog(false));
     const refillFlask = async () => dispatch(getRestoreFirewaterFetch(state.player._id));
 
-    const getLoot = async (type: string) => {
+    const getLoot = async (type: string): Promise<void> => {
         if (gameState?.merchantEquipment.length > 0) await deleteEquipment(gameState?.merchantEquipment);
         try {
             let res: any;
@@ -499,7 +502,7 @@ export const StoryDialog = ({ deleteEquipment, handlePlayerLuckout, state }: Sto
         };
     };
 
-    const capitalize = (word: string) => word === 'a' ? word?.charAt(0).toUpperCase() : word?.charAt(0).toUpperCase() + word?.slice(1);
+    const capitalize = (word: string): string => word === 'a' ? word?.charAt(0).toUpperCase() : word?.charAt(0).toUpperCase() + word?.slice(1);
 
     return (
         <>

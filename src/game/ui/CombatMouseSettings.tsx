@@ -81,10 +81,10 @@ const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) 
             { scrollEnabled ? (
                 selectedHighlight === 'Weapon' ? (
                     <>
-                    <p style={{ color: 'gold', fontSize: "22px", fontWeight: 700, fontFamily: "Cinzel" }}>Main Weapon: {weapons[0]?.name}</p>
-                    <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Up{' ->> '} {weapons[1]?.name} {' <<- '}Up</p>
-                    { weapons[2] ? (
-                        <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Down{' ->> '} {weapons[2]?.name} {' <<- '}Down</p>
+                    <p style={{ color: 'gold', fontSize: "22px", fontWeight: 700, fontFamily: "Cinzel" }}>Main Weapon: {weapons?.[0]?.name}</p>
+                    <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Up{' ->> '} {weapons?.[1]?.name} {' <<- '}Up</p>
+                    { weapons?.[2] ? (
+                        <p style={{ color: '#fdf6d8', fontSize: "14px", fontWeight: 700, fontFamily: "Cinzel" }}>Down{' ->> '} {weapons?.[2]?.name} {' <<- '}Down</p>
                     ) : ( '' )} 
                     </>
                 ) : selectedHighlight === 'Damage' ? (

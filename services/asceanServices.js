@@ -2,9 +2,7 @@
 const attributeStats = {}
 
 const attributeCompiler = async (ascean, rarities) => {
-
     const newAttributes = await Object.create(attributeStats);
-
     let itemRarity = {
         helmCon: ascean.helmet.constitution * rarities.helmet,
         helmStr: ascean.helmet.strength * rarities.helmet,
@@ -99,9 +97,7 @@ const attributeCompiler = async (ascean, rarities) => {
     newAttributes.stamina = 100 + (newAttributes.constitutionMod + newAttributes.agilityMod + newAttributes.caerenMod) / 2;
     newAttributes.posture = 100 + (newAttributes.strengthMod + newAttributes.achreMod + newAttributes.kyosirMod) / 2; // Future Idea Maybe
 
-    return (
-        newAttributes
-    );
+    return newAttributes;
 };
   
 async function originCompiler(weapon, ascean) {
@@ -355,7 +351,6 @@ const rarityCompiler = async (ascean) => {
         const weaponOneCoefficient = await coefficientCompiler(ascean, ascean.weapon_one);
         const weaponTwoCoefficient = await coefficientCompiler(ascean, ascean.weapon_two);
         const WeaponThreeCoefficient = await coefficientCompiler(ascean, ascean.weapon_three);
-        
         rarities = {
             helmet: helmetCoefficient,
             chest: chestCoefficient,
@@ -376,7 +371,6 @@ const rarityCompiler = async (ascean) => {
 };
 
 // ================================== CONTROLLER - SERVICE ================================= \\
-
 
 const asceanCompiler = async (ascean) => {
     try {
@@ -425,16 +419,7 @@ const asceanCompiler = async (ascean) => {
         const combat_weapon_two = await weaponCompiler(ascean.weapon_two, ascean, attributes, combatStats, rarities.weapon_two);
         const combat_weapon_three = await weaponCompiler(ascean.weapon_three, ascean, attributes, combatStats, rarities.weapon_three);
         const defense = await defenseCompiler(ascean, attributes, combatStats, rarities);
-        return {
-            data: {
-                ascean,
-                attributes,
-                combat_weapon_one,
-                combat_weapon_two,
-                combat_weapon_three,
-                defense,
-            }
-        };
+        return { data: { ascean, attributes, combat_weapon_one, combat_weapon_two, combat_weapon_three, defense, } };
     } catch (err) {
         res.status(400).json({ err });
     };

@@ -1,32 +1,33 @@
 import Phaser from "phaser"; 
+import ScreenShaker from "../phaser/ScreenShake";
 
-const LEFT = 'left';
-const RIGHT = 'right';
+// const LEFT = 'left';
+// const RIGHT = 'right';
 
-const ATTACK_FRAME_COUNT = 16;
-const COUNTER_FRAME_COUNT = 5;
-const POSTURE_FRAME_COUNT = 11;
-const ROLL_FRAME_COUNT = 10;
+// const ATTACK_FRAME_COUNT = 16;
+// const COUNTER_FRAME_COUNT = 5;
+// const POSTURE_FRAME_COUNT = 11;
+// const ROLL_FRAME_COUNT = 10;
 
-// Define weapon angles for different actions
-const actionAngles = {
-    attack: {
-        left: -250,
-        right: 30,
-    },
-    counter: {
-        left: -90,
-        right: -90,
-    },
-    posture: {
-        left: -250,
-        right: 55,
-    },
-    roll: {
-        left: -220,
-        right: -205,
-    },
-};
+// // Define weapon angles for different actions
+// const actionAngles = {
+//     attack: {
+//         left: -250,
+//         right: 30,
+//     },
+//     counter: {
+//         left: -90,
+//         right: -90,
+//     },
+//     posture: {
+//         left: -250,
+//         right: 55,
+//     },
+//     roll: {
+//         left: -220,
+//         right: -205,
+//     },
+// };
 
 export default class Entity extends Phaser.Physics.Matter.Sprite {
     constructor (data) {
@@ -110,7 +111,9 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.chaseTimer = null;
         this.leashTimer = null;
         this.canSwing = true;
-        this.swingTimer = 0;
+        this.swingTimer = 0; 
+        this.glowing = false;
+
     };
 
     get position() {
@@ -136,84 +139,12 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         });
     };
 
-    dodge = () => {
-        this.anims.play('player_slide', true);
-        if (this.dodgeCooldown === 0) {
-            this.dodgeCooldown = 1; 
-            const dodgeDistance = 126;  
-            const dodgeDuration = 18; 
-            const dodgeInterval = 1; 
-            let elapsedTime = 0;
-            let currentDistance = 0; 
-            const dodgeLoop = () => {
-                if (elapsedTime >= dodgeDuration || currentDistance >= dodgeDistance) {
-                    clearInterval(dodgeIntervalId);
-                    this.dodgeCooldown = 0;
-                    this.isDodging = false;
-                    this.currentAction = '';
-                    return;
-                };
-                const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
-                this.setVelocityX(direction);
-                if (this.body.velocity.y > 0) this.setVelocityY(direction);
-                if (this.body.velocity.y < 0) this.setVelocityY(-direction);
-                currentDistance += Math.abs(dodgeDistance / dodgeDuration);
-                elapsedTime++;
-            }; 
-            const dodgeIntervalId = setInterval(dodgeLoop, dodgeInterval);  
-        };
-    };
-
     posture = () => {
         this.anims.play('player_attack_3', true).on('animationcomplete', () => {
             this.isPosturing = false;
             this.currentAction = '';
         }); 
-    };
-
-    roll = () => {
-        this.anims.play('player_roll', true);
-        if (this.rollCooldown === 0) {
-            const sensorDisp = 12;
-            const colliderDisp = 16;
-            if (this.isRolling) {
-                this.body.parts[2].position.y += sensorDisp;
-                this.body.parts[2].circleRadius = 21;
-                this.body.parts[1].vertices[0].y += colliderDisp;
-                this.body.parts[1].vertices[1].y += colliderDisp; 
-            };
-            this.rollCooldown = 50; 
-            const rollDistance = 140; 
-            
-            const rollDuration = 20;  
-            const rollInterval = 1;  
-            
-            let elapsedTime = 0;
-            let currentDistance = 0;
-            
-            const rollLoop = () => {
-                if (elapsedTime >= rollDuration || currentDistance >= rollDistance) {
-                    clearInterval(rollIntervalId);
-                    this.rollCooldown = 0;
-                    this.spriteWeapon.setVisible(true);
-                    this.isRolling = false;
-                    this.currentAction = '';
-                    this.body.parts[2].position.y -= sensorDisp;
-                    this.body.parts[2].circleRadius = 48;
-                    this.body.parts[1].vertices[0].y -= colliderDisp;
-                    this.body.parts[1].vertices[1].y -= colliderDisp; 
-                    return;
-                };
-                const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
-                if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
-                if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
-                if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
-                currentDistance += Math.abs(rollDistance / rollDuration);
-                elapsedTime += rollInterval;
-            };
-            const rollIntervalId = setInterval(rollLoop, rollInterval);  
-        };
-    };
+    }; 
 
     hurt = () => {
         this.anims.play('player_hurt', true).on('animationcomplete', () => {
@@ -337,6 +268,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         });
         
         screenShake(this.scene);
+        // this.scene.screenShaker.shake(); 
     };
     
     knockbackPlayer(other) { 
@@ -383,7 +315,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         if ("vibrate" in navigator) {
             navigator.vibrate(40);
         };
-        screenShake(this.scene); 
+        screenShake(this.scene);
+        // this.scene.screenShaker.shake(); 
     };
 
     checkDamageType = (type, concern) => {
@@ -393,7 +326,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     checkBow = (weapon) => {
-        if (!weapon) return false;
         if (weapon.type === 'Bow' || weapon.type === 'Greatbow') return true;
         return false;
     };
@@ -403,6 +335,30 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         const gripToSwingTimer = { 'One Hand': 750, 'Two Hand': 1250 };
         this.swingTimer = gripToSwingTimer[weapon?.grip] || 0;
         this.hasBow = this.checkBow(weapon);
+    };
+
+    setGlow = (object, glow) => {
+        const setColor = (mastery) => {
+            switch (mastery) {
+                case 'Constitution': return 0xFDF6D8;
+                case 'Strength': return 0xFF0000;
+                case 'Agility': return 0x00FF00;
+                case 'Achre': return 0x0000FF;
+                case 'Caeren': return 0x800080;
+                case 'Kyosir': return 0xFFD700;
+                default: return 0xFFFFFF;
+            };
+        };
+
+        if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
+
+        return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
+            outerStrength: 2,
+            innerStrength: 2,
+            glowColor: setColor(this.ascean.mastery),
+            intensity: 0.25,
+            knockout: true
+        });
     };
  
     // setFrame = (spriteWeapon, action, direction, frameCount) => {
@@ -513,7 +469,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.particleEffect = this.scene.particleManager.addEffect('counter', this, 'arrow');
             };
             
-            if ((entity === 'player' && this.hasBow || entity === 'enemy' && this.hasBow)) {
+            if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
                 if (this.flipX) {
                     this.spriteWeapon.setOrigin(0.1, 0.2);
                     this.spriteWeapon.setAngle(-225);
@@ -575,7 +531,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
 
-            if ((entity === 'player' && this.hasBow) || entity === 'enemy' && this.hasBow) {
+            if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
                 this.spriteWeapon.setDepth(this.depth + 1);
                 if (this.flipX) {
                     if (this.frameCount === 0) { 
@@ -845,7 +801,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
             this.spriteShield.setVisible(true);
-            if ((entity === 'player' && this.hasBow) || entity === 'enemy' && this.hasBow) {
+            if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
                 this.spriteWeapon.setDepth(3);
                 this.spriteShield.setVisible(false);
                 if (this.flipX) {
@@ -959,7 +915,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             if (this.isStrafing || this.isStalwart) {
                 this.spriteShield.setOrigin(-0.2, 0.25);
             };
-            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(this.currentWeapon)) {
+            if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
                 this.spriteWeapon.setDepth(1);
                 this.spriteWeapon.setOrigin(0.5, 0.25);
                 this.spriteWeapon.setAngle(107.5);
@@ -974,7 +930,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             if (this.isStrafing || this.isStalwart) {
                 this.spriteShield.setOrigin(1.2, 0.25);
             };
-            if ((entity === 'player' && this.checkBow(this.scene.state.weapons[0])) || entity === 'enemy' && this.checkBow(this.currentWeapon)) {
+            if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
                 this.spriteWeapon.setDepth(1);
                 this.spriteWeapon.setOrigin(0.25, 0.5);
                 this.spriteWeapon.setAngle(-7.5);
@@ -986,7 +942,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             if (this.actionCountered) this.actionCountered = false;
             if (this.frameCount > 0) this.frameCount = 0;
         } else if (this.flipX) { // X Origin More Right
-            if ((entity === 'player' && this.hasBow) || entity === 'enemy' && this.hasBow) {
+            if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
                 this.spriteWeapon.setDepth(this.depth + 1);
                 // this.spriteWeapon.setOrigin(0.5, 1.2); // Works as a back hand hold
                 // this.spriteWeapon.setAngle(-150);
@@ -1000,7 +956,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             if (this.actionCountered) this.actionCountered = false;
             if (this.frameCount > 0) this.frameCount = 0;
         } else {
-            if ((entity === 'player' && this.hasBow) || entity === 'enemy' && this.hasBow) {
+            if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
                 this.spriteWeapon.setDepth(this.depth + 1);
                 this.spriteWeapon.setOrigin(0.85, 0.1);
                 this.spriteWeapon.setAngle(0);
@@ -1017,14 +973,13 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
  
 let totalTrauma = 0;
  
-export const screenShake = (scene) => {
+export const screenShake = (scene, duration = 80, intensity = 0.01) => {
     totalTrauma += 1.05;
-    const duration = 80;
-    const intensity = 0.01 * Math.pow(totalTrauma, 2);
+    intensity = 0.01 * Math.pow(totalTrauma, 2);
     
     if ("vibrate" in navigator) navigator.vibrate(duration);
     scene.cameras.main.shake(duration, intensity);
-    pauseGame(scene, 40).then(() => {
+    pauseGame(scene, 20).then(() => {
         scene.resume();
     });
     
@@ -1046,8 +1001,6 @@ export const pauseGame = (scene, duration) => {
     });
 };
   
-export function walk(scene) {
-    const duration = 32;
-    const intensity = 0.0003;
+export function walk(scene, duration = 32, intensity = 0.0003) {
     scene.cameras.main.shake(duration, intensity);
 };

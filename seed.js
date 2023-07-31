@@ -9,7 +9,7 @@ const Amulets = require('./models/amulet');
 const Trinkets = require('./models/trinket');
 require('dotenv').config();
 const URL = process.env.DATABASE_URL;
-console.log('Are we feeding or are we seeding?')
+console.log('Are we feeding or are we seeding?');
 
 mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {

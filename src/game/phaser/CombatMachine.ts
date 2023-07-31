@@ -36,6 +36,7 @@ export default class CombatMachine {
         Weapon: (data: KV) => Dispatcher.weaponAction(this.dispatch, data),
         Instant: (data: string) => Dispatcher.instantAction(this.dispatch, data),
         Consume: (data: StatusEffect[]) => Dispatcher.prayerAction(this.dispatch, data),
+        Tshaeral: (data: KV) => Dispatcher.tshaeralAction(this.dispatch),
         Player: async (data: any) => {
             if (this.state.action === 'counter' && this.state.computerAction === '') {
                 // TODO:FIXME: This may need to self-terminate this action and then call the next action in the queue

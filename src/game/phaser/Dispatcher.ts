@@ -22,3 +22,7 @@ export const enemyAction = (dispatch: React.Dispatch<any>, data: any): void => {
 export const actionInput = (dispatch: React.Dispatch<any>, { key, value }: { key: string, value: string | number | boolean }): void => {
     dispatch(getCombatStateUpdate({ key, value })); //workGetCombatState
 };
+
+export const tshaeralAction = (dispatch: React.Dispatch<any>): void => {
+    dispatch(getInitiateFetch({ combatData: '', type: 'Tshaeral' }));
+};

@@ -145,6 +145,20 @@ const combatSlice = createSlice({
                 combatEngaged: action.payload,
             };
         },
+        setDrain: (state, action) => {
+            const drained = Math.floor(state.playerHealth * (action.payload / 100));
+            const newHealth = state.newPlayerHealth + drained > state.playerHealth ? state.playerHealth : state.newPlayerHealth + drained;
+            const socket = getSocketInstance();
+            socket.emit(SOCKET.TSHAERAL_ACTION, { drained, newHealth });
+            console.log('Drain', drained, newHealth);
+            return {
+                ...state,
+                newPlayerHealth: newHealth,
+                currentPlayerHealth: newHealth,
+                newComputerHealth: state.newComputerHealth - drained,
+                currentComputerHealth: state.newComputerHealth - drained,
+            };
+        },
         setRest: (state, action) => {
             const healed = Math.floor(state.newPlayerHealth + state.playerHealth * (action.payload / 100)) ;
             const newHealth = healed > state.playerHealth ? state.playerHealth : healed;
@@ -423,6 +437,7 @@ export const {
     clearNonAggressiveEnemy,
     clearNpc,
     setPhaser,
+    setDrain,
     setRest,
     setWeather,
     setPhaserAggression,

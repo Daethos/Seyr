@@ -67,6 +67,7 @@ export default class Enemy extends Entity {
             .addState(States.EVADE, {
                 onEnter: this.onEvasionEnter.bind(this),
                 onUpdate: this.onEvasionUpdate.bind(this),
+                onExit: this.onEvasionExit.bind(this),
             })
             .addState(States.LEASH, {
                 onEnter: this.onLeashEnter.bind(this),
@@ -86,6 +87,7 @@ export default class Enemy extends Entity {
             .addState(States.DODGE, {
                 onEnter: this.onDodgeEnter.bind(this),
                 onUpdate: this.onDodgeUpdate.bind(this),
+                onExit: this.onDodgeExit.bind(this),
             })
             .addState(States.POSTURE, {
                 onEnter: this.onPostureEnter.bind(this),
@@ -101,6 +103,11 @@ export default class Enemy extends Entity {
                 onEnter: this.onStunEnter.bind(this),
                 onUpdate: this.onStunUpdate.bind(this),
                 onExit: this.onStunExit.bind(this),
+            })
+            .addState(States.CONSUMED, {
+                onEnter: this.onConsumedEnter.bind(this),
+                onUpdate: this.onConsumedUpdate.bind(this),
+                onExit: this.onConsumedExit.bind(this),
             })
             .addState(States.HURT, {
                 onEnter: this.onHurtEnter.bind(this),
@@ -150,6 +157,7 @@ export default class Enemy extends Entity {
         this.counterAction = '';
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
         this.originPoint = {}; // For Leashing
+        this.isConsumed = false;
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         const colliderWidth = 20; 
         const colliderHeight = 36; 
@@ -305,7 +313,7 @@ export default class Enemy extends Entity {
  
     enemyStateListener() {
         EventEmitter.on('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
-
+        EventEmitter.on('update-combat', this.combatDataUpdate);
         // EventEmitter.on('update-combat', (e) => {
         //     if (this.enemyID !== e.enemyID) return; 
         //     this.health = e.newComputerHealth;
@@ -567,16 +575,14 @@ export default class Enemy extends Entity {
         this.attackTimer = null;
     };
 
-    onEvasionEnter = () => {
-        const chance = Phaser.Math.Between(1, 100);
+    onEvasionEnter = () => { 
+        const chance = Phaser.Math.Between(1, 100); 
         if (chance > 50) {
             console.log("Dodging to Evade");
-            this.isDodging = true;
-            this.dodge();
+            this.isDodging = true; 
         } else {
             console.log("Rolling to Evade");
-            this.isRolling = true;
-            this.roll();    
+            this.isRolling = true; 
         }; 
     };
     onEvasionUpdate = (dt) => {
@@ -585,8 +591,12 @@ export default class Enemy extends Entity {
         } else {
             this.setVelocityY(-3); // Was 5
         };
+        this.handleAnimations();
         if (!this.isDodging && !this.isRolling) this.evaluateCombatDistance();
     }; 
+    onEvasionExit = () => {
+        console.log('Evasion Exit'); 
+    };
 
     onAttackEnter = () => {
         this.isAttacking = true;
@@ -616,11 +626,15 @@ export default class Enemy extends Entity {
     };
 
     onDodgeEnter = () => {
-        this.isDodging = true;
-        this.dodge();
+        console.log('Dodging');
+        this.isDodging = true; 
     };
     onDodgeUpdate = (dt) => {
+        this.handleAnimations();
         if (!this.isDodging) this.evaluateCombatDistance();
+    };
+    onDodgeExit = () => {
+        console.log('Dodge Exit'); 
     };
 
     onPostureEnter = () => {
@@ -637,15 +651,17 @@ export default class Enemy extends Entity {
     };
 
     onRollEnter = () => {
-        this.isRolling = true;
-        this.roll();
+        console.log('Rolling');
+        this.isRolling = true; 
     };
-    onRollUpdate = (dt) => {
+    onRollUpdate = (dt) => { 
+        this.handleAnimations();
         if (this.frameCount === 10 && !this.isRanged) this.scene.combatMachine.input('computerAction', 'roll');
         if (!this.isRolling) this.evaluateCombatDistance();
     };
     onRollExit = () => { 
-        if (this.scene.state.computerAction !== '') this.scene.combatMachine.input('computerAction', '');
+        console.log('Roll Exit');
+        if (this.scene.state.computerAction !== '') this.scene.combatMachine.input('computerAction', '');   
     };
 
     onLeashEnter = () => {
@@ -706,6 +722,35 @@ export default class Enemy extends Entity {
         this.scene.navMesh.debugDrawClear(); 
     };
 
+    onConsumedEnter = () => {
+        // this.setTint(0xff0000);
+        this.consumedTimer = this.scene.time.addEvent({
+            delay: 250,
+            callback: () => {
+                if (this.attacking) {
+                    if (this.x > this.attacking.x) {
+                        this.setVelocityX(-1);
+                    } else {
+                        this.setVelocityX(1);
+                    };
+                };
+                this.glowing = !this.glowing;
+                this.setGlow(this, this.glowing);
+            },
+            callbackScope: this,
+            repeat: 8,
+        });
+    };
+    onConsumedUpdate = (dt) => {
+        if (!this.isConsumed) this.evaluateCombatDistance();
+    };
+    onConsumedExit = () => {
+        this.consumedTimer.destroy();
+        this.consumedTimer = null;
+        this.setGlow(this, false);
+        // this.clearTint();
+    };
+
     onStunEnter = () => {
         this.stunDuration = 1500;
         this.setTint(0x888888); 
@@ -738,6 +783,107 @@ export default class Enemy extends Entity {
         };
         // if (!this.isRanged) this.knockback(this.actionTarget)
         screenShake(this.scene);
+        // this.scene.screenShaker.shake(); 
+    };
+
+    handleAnimations = () => {
+        if (this.isDodging) { // DODGING AKA SLIDING OUTSIDE COMBAT
+            this.anims.play('player_slide', true);
+            this.spriteWeapon.setVisible(false);
+            if (this.dodgeCooldown === 0) {
+                const sensorDisp = 12;
+                const colliderDisp = 16;
+                if (this.isDodging) {
+                    this.body.parts[2].position.y += sensorDisp;
+                    this.body.parts[2].circleRadius = 21;
+                    this.body.parts[1].vertices[0].y += colliderDisp;
+                    this.body.parts[1].vertices[1].y += colliderDisp; 
+                    this.body.parts[0].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
+                    this.body.parts[1].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
+                    this.body.parts[0].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
+                    this.body.parts[1].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
+                };
+                this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
+                const dodgeDistance = 2304; // 126
+                const dodgeDuration = 288; // 18  
+                let currentDistance = 0;
+
+                const dodgeLoop = (timestamp) => {
+                    if (!startTime) startTime = timestamp;
+                    const progress = timestamp - startTime;
+                
+                    if (progress >= dodgeDuration || currentDistance >= dodgeDistance) {
+                        this.spriteWeapon.setVisible(true);
+                        this.dodgeCooldown = 0;
+                        this.isDodging = false;
+                        this.body.parts[2].position.y -= sensorDisp;
+                        this.body.parts[2].circleRadius = 48;
+                        this.body.parts[1].vertices[0].y -= colliderDisp;
+                        this.body.parts[1].vertices[1].y -= colliderDisp; 
+                        this.body.parts[0].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        this.body.parts[1].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        this.body.parts[0].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        this.body.parts[1].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        this.currentAction = '';
+                        return;
+                    };
+                
+                    const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
+                    if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+                    if (this.velocity.y > 0.1) this.setVelocityY(dodgeDistance / dodgeDuration);
+                    if (this.velocity.y < -0.1) this.setVelocityY(-dodgeDistance / dodgeDuration);
+                    currentDistance += Math.abs(dodgeDistance / dodgeDuration);
+                    requestAnimationFrame(dodgeLoop);
+                };
+                let startTime = null;
+                requestAnimationFrame(dodgeLoop);
+            };
+        };
+        if (this.isRolling) { // ROLLING OUTSIDE COMBAT
+            this.anims.play('player_roll', true);
+            this.spriteWeapon.setVisible(false);
+            if (this.rollCooldown === 0) {
+                const sensorDisp = 12;
+                const colliderDisp = 16;
+                if (this.isRolling) {
+                    this.body.parts[2].position.y += sensorDisp;
+                    this.body.parts[2].circleRadius = 21;
+                    this.body.parts[1].vertices[0].y += colliderDisp;
+                    this.body.parts[1].vertices[1].y += colliderDisp; 
+                };
+                this.rollCooldown = 50; // Was a x7 Mult for Roll Prev aka 2240
+                const rollDistance = 1920; // 140
+                
+                const rollDuration = 320; // 20
+                let currentDistance = 0;
+                
+                const rollLoop = (timestamp) => {
+                    if (!startTime) startTime = timestamp;
+                    const progress = timestamp - startTime;
+                
+                    if (progress >= rollDuration || currentDistance >= rollDistance) {
+                        this.spriteWeapon.setVisible(true);
+                        this.rollCooldown = 0;
+                        this.isRolling = false;
+                        this.body.parts[2].position.y -= sensorDisp;
+                        this.body.parts[2].circleRadius = 48;
+                        this.body.parts[1].vertices[0].y -= colliderDisp;
+                        this.body.parts[1].vertices[1].y -= colliderDisp;
+                        this.currentAction = '';
+                        return;
+                    };
+
+                    const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
+                    if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+                    if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
+                    if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
+                    currentDistance += Math.abs(rollDistance / rollDuration);
+                    requestAnimationFrame(rollLoop);
+                };
+                let startTime = null;
+                requestAnimationFrame(rollLoop);
+            };
+        }; 
     };
 
     swingMomentum = (target) => {
@@ -780,7 +926,7 @@ export default class Enemy extends Entity {
                 this.setVelocityX(0);
                 this.setVelocityY(0);
                 this.anims.play('player_idle', true);
-            } else { // Between 75 and 225 and outside y-istance
+            } else { // Between 75 and 225 and outside y-distance
                 direction.normalize();
                 this.setVelocityY(direction.y * 2.5);
             };
@@ -812,6 +958,10 @@ export default class Enemy extends Entity {
     evaluateEnemyState = () => {
         if (this.isStunned && !this.stateMachine.isCurrentState(States.STUN)) {
             this.stateMachine.setState(States.STUN);
+            return; // Exit early to avoid other state changes
+        };
+        if (this.isConsumed && !this.stateMachine.isCurrentState(States.CONSUMED)) {
+            this.stateMachine.setState(States.CONSUMED);
             return; // Exit early to avoid other state changes
         };
         if (this.actionSuccess) {

@@ -95,7 +95,8 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <Popover.Header id='popover-header'>Kyosir</Popover.Header>
             <Popover.Body id='popover-body'>
             <p style={{ fontStyle: 'italic', color: 'gold' }}>
-            Compulsion concocted through the golden veins of Kyrisos mixed with bile and phlegm of Chiomyr.
+            Of Ancients Otherwise.<br /><br />
+            Compulsion concocted through the golden veins of Kyrisos with bile and phlegm of Chiomyr.<br /><br />
             A charisma that warps those regardless of their caer, shearing their shields while capable of quelling their most quality strikes.
             </p>
             <br />

@@ -11,7 +11,6 @@ const roundToTwoDecimals = (num) => {
 };
 
 const damageTypeCompiler = async (damageType, enemy, weapon, physicalDamage, magicalDamage) => {
-    // console.log('Damage Type Compiler Firing', physicalDamage, magicalDamage);
     if (damageType === 'Blunt' || damageType === 'Fire' || damageType === 'Earth' || damageType === 'Spooky') {
         if (weapon.attack_type === 'Physical') {
             if (enemy.helmet.type === 'Plate-Mail') {
@@ -248,23 +247,18 @@ const damageTypeCompiler = async (damageType, enemy, weapon, physicalDamage, mag
             };
         };
     };
-    return { 
-        physicalDamage,
-        magicalDamage
-    };
+    return { physicalDamage, magicalDamage };
 };
 
 const criticalCompiler = async (player, critChance, critClearance, weapon, physicalDamage, magicalDamage, weather, glancingBlow, criticalSuccess) => {
     if (weather === 'Alluring Isles') critChance -= 10;
     if (weather === 'Astralands') critChance += 10;
     if (weather === 'Kingdom') critChance += 5;
-
     if (critChance >= critClearance) {
         physicalDamage *= weapon.critical_damage;
         magicalDamage *= weapon.critical_damage;
         criticalSuccess = true;
     };
-
     if (critClearance > critChance + player.level + 80) {
         physicalDamage *= 0.1;
         magicalDamage *= 0.1;
@@ -327,12 +321,7 @@ const criticalCompiler = async (player, critChance, critClearance, weapon, physi
     //     magicalDamage *= 0.9;
     //     glancingBlow = true;
     // }
-    return {
-        criticalSuccess,
-        glancingBlow,
-        physicalDamage,
-        magicalDamage
-    };
+    return { criticalSuccess, glancingBlow, physicalDamage, magicalDamage };
 }; 
 
 const phaserActionConcerns =  (action) => {
@@ -354,7 +343,6 @@ const phaserSuccessConcerns = (counterSuccess, rollSuccess, computerCounterSucce
 const weatherEffectCheck = async (weapon, magDam, physDam, weather, critical) => {
     let magicalDamage = magDam;
     let physicalDamage = physDam;
-
     switch (weather) {
         case 'Alluring Isles':
             if (weapon.type === 'Bow' || weapon.type === 'Greatbow') {
@@ -429,11 +417,9 @@ const weatherEffectCheck = async (weapon, magDam, physDam, weather, critical) =>
                 physicalDamage *= 1.1;
             };
             break;
-
         default:
             break;
     };
-
     return { magicalDamage, physicalDamage };
 };
 
@@ -2630,8 +2616,7 @@ const instantDamageSplitter = async (combatData, mastery) => {
     combatData.currentComputerHealth = combatData.newComputerHealth; 
     combatData.computerDamaged = true;
     combatData.playerAction = 'invoke';
-    combatData.playerActionDescription = 
-        `You attack ${combatData.computer.name}'s Caeren with your ${combatData.player.mastery}'s Invocation of ${combatData.weapons[0].influences[0]} for ${Math.round(damage)} Pure Damage.`;    
+    combatData.playerActionDescription = `You attack ${combatData.computer.name}'s Caeren with your ${combatData.player.mastery}'s Invocation of ${combatData.weapons[0].influences[0]} for ${Math.round(damage)} Pure Damage.`;    
 };
 
 const instantActionSplitter = async (combatData) => {
@@ -2661,15 +2646,15 @@ const instantActionSplitter = async (combatData) => {
             await prayerSplitter(combatData, 'Debuff');
             break;
         };
+
     await instantEffectCheck(combatData);
-    
     combatData.actionData.push('invoke'); 
         
     if (combatData.newComputerHealth <= 0 || combatData.currentComputerHealth <= 0) {
         combatData.newComputerHealth = 0;
         combatData.playerWin = true;
     };
-    if (combatData.playerWin === true) await statusEffectCheck(combatData);
+    if (combatData.playerWin) await statusEffectCheck(combatData);
     const changes = {
         'actionData': combatData.actionData,
         'deityData': combatData.deityData,
@@ -2998,13 +2983,11 @@ const phaserEffectTickSplitter = async (data) => {
 
 const actionCompiler = async (combatData) => {
     try {
-        let result = await actionSplitter(combatData);
-        if (result.realizedComputerDamage > 0) result.playerDamaged = true;
-        if (result.realizedPlayerDamage > 0) result.computerDamaged = true;
-        if (result.playerWin === true || result.computerWin === true) {
-            await statusEffectCheck(result);
-        };
-        return result
+        let res = await actionSplitter(combatData);
+        if (res.realizedComputerDamage > 0) res.playerDamaged = true;
+        if (res.realizedPlayerDamage > 0) res.computerDamaged = true;
+        if (res.playerWin || res.computerWin) await statusEffectCheck(res);
+        return res;
     } catch (err) {
         console.log(err, 'Error in the Action Compiler of Game Services');
         res.status(400).json({ err })

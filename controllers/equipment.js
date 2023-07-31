@@ -88,7 +88,6 @@ const determineRarityByLevel = (level) => {
     let rScale = level / 200;
     let eScale = level / 500;
     let lScale = level / 10000;
-    console.log(level, chance, uScale, rScale, eScale, lScale, 'We have made it to the determineRarityByLevel in the Equipment Controller!');
     if (level < 4) {
         rarity = 'Common';
     } else if (level >= 4 && level < 12) {
@@ -119,8 +118,7 @@ const determineRarityByLevel = (level) => {
         } else {
             rarity = 'Uncommon';
         };
-    };
-    console.log(rarity, 'Rarity ?');
+    }; 
     return rarity;
 };
 
@@ -315,7 +313,7 @@ async function getMartialWeaponEquipment(req, res) {
                 equipment = await Weapon.aggregate([{ $match: { rarity, attack_type } }, { $sample: { size: 1 } }]).exec();
             } else {
                 equipment = await Weapon.aggregate([{ $match: { rarity, attack_type } }, { $sample: { size: 1 } }]).exec();
-            } ;
+            };
             await seedDB(equipment, rarity);
             merchantEquipment.push(equipment[0]);
         };

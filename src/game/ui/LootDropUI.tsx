@@ -22,7 +22,7 @@ export const LootDropUI = ({ gameState }: Props) => {
         <img src={logWindow} alt='Log Window' style={{ position: 'absolute' }} />
             <div style={{ display: 'inline-block', position: 'absolute' }} className='story-loot-scroll'>
                 { visibleLoot.length > 0 ? (
-                    visibleLoot.map((lootDrop: any, index: number) => { 
+                    visibleLoot.map((lootDrop: Equipment, index: number) => { 
                         return (
                             <LootDrop key={index} story={true} lootDrop={lootDrop} ascean={gameState.player} />
                         );

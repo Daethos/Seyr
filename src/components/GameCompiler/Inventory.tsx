@@ -541,26 +541,26 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 <tr style={{ color: '#fdf6d8' }}>
                     <td style={{ color: textColor((inventory?.constitution + inventory?.strength + inventory?.agility + inventory?.achre + inventory?.caeren + inventory?.kyosir), 
                         (ascean[inventoryType as keyof typeof ascean]?.constitution + ascean[inventoryType as keyof typeof ascean]?.strength + ascean[inventoryType as keyof typeof ascean]?.agility + ascean[inventoryType as keyof typeof ascean]?.achre + ascean[inventoryType as keyof typeof ascean]?.caeren + ascean[inventoryType as keyof typeof ascean]?.kyosir)) }}>
-                        {inventory?.constitution > 0 ? 'Con: +' + inventory?.constitution + ' ' : ''}
-                        {inventory?.strength > 0 ? 'Str: +' + inventory?.strength + ' ' : ''}
-                        {inventory?.agility > 0 ? 'Agi: +' + inventory?.agility + ' ' : ''}
-                        {inventory?.achre > 0 ? 'Ach: +' + inventory?.achre + ' ' : ''}
-                        {inventory?.caeren > 0 ? 'Caer: +' + inventory?.caeren + ' ' : ''}
-                        {inventory?.kyosir > 0 ? 'Kyo: +' + inventory?.kyosir + ' ' : ''}
+                        {inventory?.constitution > 0 ? 'Con: +' + inventory?.constitution + ' ' : ('')}
+                        {inventory?.strength > 0 ? 'Str: +' + inventory?.strength + ' ' : ('')}
+                        {inventory?.agility > 0 ? 'Agi: +' + inventory?.agility + ' ' : ('')}
+                        {inventory?.achre > 0 ? 'Ach: +' + inventory?.achre + ' ' : ('')}
+                        {inventory?.caeren > 0 ? 'Caer: +' + inventory?.caeren + ' ' : ('')}
+                        {inventory?.kyosir > 0 ? 'Kyo: +' + inventory?.kyosir + ' ' : ('')}
                     </td>
 
                     <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.constitution + ascean[inventoryType as keyof typeof ascean]?.strength + ascean[inventoryType as keyof typeof ascean]?.agility + ascean[inventoryType as keyof typeof ascean]?.achre + ascean[inventoryType as keyof typeof ascean]?.caeren + ascean[inventoryType as keyof typeof ascean]?.kyosir), 
                         (inventory?.constitution + inventory?.strength + inventory?.agility + inventory?.achre + inventory?.caeren + inventory?.kyosir)) }}>
-                        {ascean[inventoryType as keyof typeof ascean]?.constitution > 0 ? 'Con: +' + ascean[inventoryType as keyof typeof ascean]?.constitution + ' ' : ''}
-                        {ascean[inventoryType as keyof typeof ascean]?.strength > 0 ? 'Str: +' + ascean[inventoryType as keyof typeof ascean]?.strength + ' ' : ''}
-                        {ascean[inventoryType as keyof typeof ascean]?.agility > 0 ? 'Agi: +' + ascean[inventoryType as keyof typeof ascean]?.agility + ' ' : ''}
-                        {ascean[inventoryType as keyof typeof ascean]?.achre > 0 ? 'Ach: +' + ascean[inventoryType as keyof typeof ascean]?.achre + ' ' : ''}
-                        {ascean[inventoryType as keyof typeof ascean]?.caeren > 0 ? 'Caer: +' + ascean[inventoryType as keyof typeof ascean]?.caeren + ' ' : ''}
-                        {ascean[inventoryType as keyof typeof ascean]?.kyosir > 0 ? 'Kyo: +' + ascean[inventoryType as keyof typeof ascean]?.kyosir + ' ' : ''}
+                        {ascean[inventoryType as keyof typeof ascean]?.constitution > 0 ? 'Con: +' + ascean[inventoryType as keyof typeof ascean]?.constitution + ' ' : ('')}
+                        {ascean[inventoryType as keyof typeof ascean]?.strength > 0 ? 'Str: +' + ascean[inventoryType as keyof typeof ascean]?.strength + ' ' : ('')}
+                        {ascean[inventoryType as keyof typeof ascean]?.agility > 0 ? 'Agi: +' + ascean[inventoryType as keyof typeof ascean]?.agility + ' ' : ('')}
+                        {ascean[inventoryType as keyof typeof ascean]?.achre > 0 ? 'Ach: +' + ascean[inventoryType as keyof typeof ascean]?.achre + ' ' : ('')}
+                        {ascean[inventoryType as keyof typeof ascean]?.caeren > 0 ? 'Caer: +' + ascean[inventoryType as keyof typeof ascean]?.caeren + ' ' : ('')}
+                        {ascean[inventoryType as keyof typeof ascean]?.kyosir > 0 ? 'Kyo: +' + ascean[inventoryType as keyof typeof ascean]?.kyosir + ' ' : ('')}
                     </td>
                 </tr>
 
-                { (inventory?.physical_damage && inventory?.grip) || (inventory?.magical_damage && inventory?.grip) ?  
+                { (inventory?.physical_damage && inventory?.grip) || (inventory?.magical_damage && inventory?.grip) ? (
                 <tr style={{ color: '#fdf6d8' }}>
                     <td style={{ color: textColor((inventory?.physical_damage + inventory?.magical_damage), (ascean[inventoryType as keyof typeof ascean]?.physical_damage + ascean[inventoryType as keyof typeof ascean]?.magical_damage)) }}>
                     Damage: {inventory?.physical_damage} Phys | {inventory?.magical_damage} Magi
@@ -569,7 +569,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                     Damage: {ascean[inventoryType as keyof typeof ascean]?.physical_damage} Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_damage} Magi
                     </td>
                 </tr>
-                : ( '' ) }
+                ) : ( '' ) }
                 { inventory?.physical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_resistance > 0 || inventory?.magical_resistance > 0 || ascean[inventoryType as keyof typeof ascean]?.magical_resistance ? 
                 <tr>
                     <td style={{ color: textColor((inventory?.physical_resistance + inventory?.magical_resistance), (ascean[inventoryType as keyof typeof ascean]?.physical_resistance + ascean[inventoryType as keyof typeof ascean]?.magical_resistance)) }}>
@@ -587,25 +587,25 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                     : 'Defense: 0 Phys | 0 Magi' }
                     </td>
                 </tr>
-                : '' }
-                {inventory?.magical_penetration > 0 || ascean[inventoryType as keyof typeof ascean]?.magical_penetration > 0 || inventory?.physical_penetration > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_penetration > 0 ? 
+                : ( '' ) }
+                {inventory?.magical_penetration > 0 || ascean[inventoryType as keyof typeof ascean]?.magical_penetration > 0 || inventory?.physical_penetration > 0 || ascean[inventoryType as keyof typeof ascean]?.physical_penetration > 0 ? (
                 <tr>
                     <td style={{ color: textColor((inventory?.physical_penetration + inventory?.magical_penetration), (ascean[inventoryType as keyof typeof ascean]?.physical_penetration + ascean[inventoryType as keyof typeof ascean]?.magical_penetration)) }}>
-                    { inventory?.physical_penetration || inventory?.magical_penetration ?
+                    { inventory?.physical_penetration || inventory?.magical_penetration ? (
                         <>
                         Penetration: {inventory?.physical_penetration} Phys | {inventory?.magical_penetration} Magi 
                         </>
-                    : 'Penetration: 0 Phys | 0 Magi' }
+                    ) : 'Penetration: 0 Phys | 0 Magi' }
                     </td>
                     <td style={{ color: textColor((ascean[inventoryType as keyof typeof ascean]?.physical_penetration + ascean[inventoryType as keyof typeof ascean]?.magical_penetration), (inventory?.physical_penetration + inventory?.magical_penetration)) }}>
-                    { ascean[inventoryType as keyof typeof ascean]?.physical_penetration || ascean[inventoryType as keyof typeof ascean]?.magical_penetration ?
+                    { ascean[inventoryType as keyof typeof ascean]?.physical_penetration || ascean[inventoryType as keyof typeof ascean]?.magical_penetration ? (
                         <>
                         Penetration: {ascean[inventoryType as keyof typeof ascean]?.physical_penetration} Phys | {ascean[inventoryType as keyof typeof ascean]?.magical_penetration} Magi
                         </>
-                    : 'Penetration: 0 Phys | 0 Magi' }
+                    ) : 'Penetration: 0 Phys | 0 Magi' }
                     </td>
                 </tr>
-                : '' }
+                ) : ( '' ) }
 
                 <tr>
                     <td style={{ color: textColor(inventory?.critical_chance, ascean[inventoryType as keyof typeof ascean]?.critical_chance) }}>
@@ -625,14 +625,15 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                     </td>
                 </tr>
 
-                <tr >
+                {!story && (
+                <tr>
                     <td style={{ color: textColor(ascean[inventoryType as keyof typeof ascean]?.dodge, inventory?.dodge) }}>
                     Dodge Timer: {inventory?.dodge}s
                     </td>
                     <td style={{ color: textColor(inventory?.dodge, ascean[inventoryType as keyof typeof ascean]?.dodge) }}>
                     Dodge Timer: {ascean[inventoryType as keyof typeof ascean]?.dodge}s
                     </td>
-                </tr>
+                </tr>)}
 
                 <tr>
                     <td style={{ color: textColor(inventory?.roll, ascean[inventoryType as keyof typeof ascean]?.roll) }}>

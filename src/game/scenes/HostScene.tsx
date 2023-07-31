@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Phaser from "phaser";
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import VirtualJoystickPlugin from 'phaser3-rex-plugins/plugins/virtualjoystick-plugin.js';
@@ -22,7 +22,7 @@ import { StoryDialog } from '../ui/StoryDialog';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearNpc, getCombatTimerFetch, setRest, setToggleDamaged } from '../reducers/combatState';
-import { getGainExperienceFetch, getLootDropFetch, setShowDialog, setMerchantEquipment, setShowLoot } from '../reducers/gameState';
+import { setShowDialog, setMerchantEquipment, setShowLoot } from '../reducers/gameState';
 import PhaserCombatText from '../ui/PhaserCombatText';
 import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
@@ -37,7 +37,6 @@ interface Props {
 const HostScene = ({ assets, ascean }: Props) => {
     const dispatch = useDispatch();
     const combatState = useSelector((state: any) => state.combat);
-    const asceanState = useSelector((state: any) => state.game.asceanState);
     const gameState = useSelector((state: any) => state.game);
     const stamina = useSelector((state: any) => state.combat.playerAttributes.stamina);
     const { playDeath, playReligion, playCounter, playRoll, playPierce, playSlash, playBlunt, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind } = useGameSounds(gameState.soundEffectVolume);
@@ -107,31 +106,48 @@ const HostScene = ({ assets, ascean }: Props) => {
     };
  
     useEffect(() => { 
+        const startGame = async () => {
+            try {
+                setLoading(true); 
+                gameRef.current = new Phaser.Game(config); 
+                setTimeout(() => {
+                    setLoading(false);
+                }, 1000);
+            } catch (err: any) {
+                console.log(err.message, 'Error Starting Game');
+            };
+        };
         startGame();
     }, []);
 
     useEffect(() => {
         updateCombatListener(combatState);
     }, [combatState]);
+
+    const handleTimerTick = useCallback(() => {
+        setGameTimer((timer) => timer + 1);
+    }, []);
+
+    const handleStaminaUpdate = useCallback(async () => {
+        if (checkTraits("Kyn'gian", gameState.traits) && gameTimer % 10 === 0) {
+            setStaminaPercentage((percentage) => percentage + (stamina / 100));
+            EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (stamina / 100)) / 100) * stamina));
+            dispatch(setRest(1));
+        };
+    }, [gameState.traits, gameTimer, dispatch, stamina, staminaPercentage]);
      
     useEffect(() => {
         if (gameRef.current) {
             let scene = gameRef.current.scene.getScene('Play');
             if (scene && !pauseState) {
-                const timerInterval = setTimeout(() => {
-                    setGameTimer((timer: number) => (timer + 1));
-                }, 1000);
+                const timerInterval = setTimeout(handleTimerTick, 1000);
                 return () => {
-                    if (checkTraits("Kyn'gian", gameState.traits) && gameTimer % 10 === 0) {
-                        setStaminaPercentage(staminaPercentage + (stamina / 100));
-                        EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (stamina / 100)) / 100) * stamina));
-                        dispatch(setRest(1));
-                    };
+                    handleStaminaUpdate();
                     clearTimeout(timerInterval);
                 };
             };
         };
-    }, [currentGame, pauseState, gameTimer, dispatch, stamina, staminaPercentage, gameState.traits]); 
+    }, [currentGame, pauseState]); 
 
     useEffect(() => {
         if (staminaPercentage < 100) {
@@ -145,18 +161,6 @@ const HostScene = ({ assets, ascean }: Props) => {
             };
         }; 
     }, [stamina, staminaPercentage]);
-
-    const startGame = async () => {
-        try {
-            setLoading(true); 
-            gameRef.current = new Phaser.Game(config); 
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000);
-        } catch (err: any) {
-            console.log(err.message, 'Error Starting Game');
-        };
-    };
 
     const updateCombatListener = (data: CombatData) => EventEmitter.emit('update-combat-data', data); // Was Async
     const retrieveAssets = async () => EventEmitter.emit('send-assets', assets);
@@ -174,17 +178,7 @@ const HostScene = ({ assets, ascean }: Props) => {
             await deleteEquipment(gameState.merchantEquipment);
             dispatch(setMerchantEquipment([])); 
         };
-    }; 
-
-    const handlePlayerLuckout = async (): Promise<void> => {
-        try {
-            playReligion();
-            dispatch(getGainExperienceFetch({ asceanState, combatState })); 
-            dispatch(getLootDropFetch({ enemyID: combatState.enemyID, level: combatState.computer.level }));  
-        } catch (err: any) {
-            console.log("Error Handling Player Win");
-        };
-    }; 
+    };
 
     const soundEffects = async (sfx: CombatData): Promise<void> => {
         try {
@@ -301,7 +295,7 @@ const HostScene = ({ assets, ascean }: Props) => {
                     </div>
                 ) }
                 { gameState.showDialog && dialogTag ?    
-                    <StoryDialog state={combatState} deleteEquipment={deleteEquipment} handlePlayerLuckout={handlePlayerLuckout} />
+                    <StoryDialog state={combatState} deleteEquipment={deleteEquipment} />
                 : ( '' )}
                 { gameState?.lootDrops.length > 0 && gameState?.showLoot ? (
                     <LootDropUI gameState={gameState} />   

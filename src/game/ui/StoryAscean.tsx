@@ -17,7 +17,7 @@ import Firewater from '../../components/GameCompiler/Firewater';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOnlyInventoryFetch, setAsceanState, setVolume } from '../reducers/gameState';
 import { Player } from '../../components/GameCompiler/GameStore';
-import {CombatSettings, GeneralSettings, InventorySettings, TacticSettings} from '../../components/GameCompiler/SettingConcerns';
+import {CombatSettings, GeneralSettings, InventorySettings, TacticSettings, ControlSettings} from '../../components/GameCompiler/SettingConcerns';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 
 const CHARACTERS = {
@@ -31,6 +31,7 @@ const VIEWS = {
 };
 const SETTINGS = {
     ACTIONS: 'Actions',
+    CONTROL: 'Control',
     INVENTORY: 'Inventory',
     GENERAL: 'General',
     TACTICS: 'Tactics',
@@ -49,7 +50,7 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
     const asceanState = useSelector((state: any) => state.game.asceanState);
 
     const [savingInventory, setSavingInventory] = useState(false);
-    const [currentSetting, setCurrentSetting] = useState<string>('Actions');
+    const [currentSetting, setCurrentSetting] = useState<string>('Control');
     const [currentCharacter, setCurrentCharacter] = useState('Statistics');
     const [playerTraitWrapper, setPlayerTraitWrapper] = useState<any>({});
     const [dragAndDropInventory, setDragAndDropInventory] = useState(ascean.inventory);
@@ -307,6 +308,10 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
                 return (
                     <TacticSettings />
                 );
+            case SETTINGS.CONTROL:
+                return (
+                    <ControlSettings />
+                );
             default:
                 return ('');
         };
@@ -357,6 +362,7 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
             </h3>
             <Form.Select value={currentSetting} onChange={handleSettingChange} style={{ position: "absolute", width: "25%", left: "67.5%", top: "11%", background: "black", color: "#fdf6d8", borderColor: "#fdf6d8", textAlign: "center", paddingRight: '0.75rem' }}>
                 <option value="Actions">Actions</option> 
+                <option value="Control">Control</option>
                 <option value="General">General</option>
                 <option value="Inventory">Inventory</option>
                 <option value="Tactics">Tactics</option>

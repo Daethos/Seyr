@@ -34,6 +34,7 @@ export default class Player extends Entity {
         super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.newPlayerHealth }); 
         const spriteName = scene?.state?.player?.weapon_one.imgURL.split('/')[2].split('.')[0];
         this.ascean = scene.state.player;
+        this.playerID = scene.state.player._id;
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteName);
         if (scene?.state?.player?.weapon_one?.grip === 'Two Hand') {
             this.spriteWeapon.setScale(0.65);
@@ -114,6 +115,11 @@ export default class Player extends Entity {
                 onUpdate: this.onStunUpdate.bind(this),
                 onExit: this.onStunExit.bind(this),
             })
+            .addState(States.TSHAERAL, {
+                onEnter: this.onTshaeralEnter.bind(this),
+                onUpdate: this.onTshaeralUpdate.bind(this),
+                onExit: this.onTshaeralExit.bind(this),
+            })
         
         this.stateMachine.setState(States.NONCOMBAT);
 
@@ -151,6 +157,7 @@ export default class Player extends Entity {
         this.sensor = playerSensor;
         this.knocking = false;
         this.isCaerenic = false;
+        this.isTshaering = false;
         // this.glow = this.setGlow(this, true);
         // this.setGlow(this.spriteWeapon);
         this.highlight = this.scene.add.graphics()
@@ -168,29 +175,29 @@ export default class Player extends Entity {
         this.checkNpcCollision(playerSensor);
     };
 
-    setGlow = (object, glow) => {
-        const setColor = (mastery) => {
-            switch (mastery) {
-                case 'Constitution': return 0xFDF6D8;
-                case 'Strength': return 0xFF0000;
-                case 'Agility': return 0x00FF00;
-                case 'Achre': return 0x0000FF;
-                case 'Caeren': return 0x800080;
-                case 'Kyosir': return 0xFFD700;
-                default: return 0xFFFFFF;
-            };
-        };
+    // setGlow = (object, glow) => {
+    //     const setColor = (mastery) => {
+    //         switch (mastery) {
+    //             case 'Constitution': return 0xFDF6D8;
+    //             case 'Strength': return 0xFF0000;
+    //             case 'Agility': return 0x00FF00;
+    //             case 'Achre': return 0x0000FF;
+    //             case 'Caeren': return 0x800080;
+    //             case 'Kyosir': return 0xFFD700;
+    //             default: return 0xFFFFFF;
+    //         };
+    //     };
 
-        if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
+    //     if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
 
-        return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
-            outerStrength: 2,
-            innerStrength: 2,
-            glowColor: setColor(this.ascean.mastery),
-            intensity: 0.25,
-            knockout: true
-        });
-    };
+    //     return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
+    //         outerStrength: 2,
+    //         innerStrength: 2,
+    //         glowColor: setColor(this.ascean.mastery),
+    //         intensity: 0.25,
+    //         knockout: true
+    //     });
+    // };
 
     startingSpeed = (player) => {
         let speed = 1.75;
@@ -501,7 +508,6 @@ export default class Player extends Entity {
         this.scene.checkStamina('roll');
     };
     onRollUpdate = (dt) => {
-        // if (this.frameCount === 10 && !this.isRanged) this.scene.setState('action', 'roll');
         if (this.frameCount === 10 && !this.isRanged) this.scene.combatMachine.input('action', 'roll');
         if (!this.isRolling) { 
             if (this.inCombat) {
@@ -573,6 +579,42 @@ export default class Player extends Entity {
         if (!this.isCaerenic) this.glow = this.setGlow(this, false);
         this.scene.combatMachine.add({ type: 'Instant', data: this.scene.state.playerBlessing });
         screenShake(this.scene);
+        // this.scene.screenShaker.shake(); 
+    };
+
+    onTshaeralEnter = () => {
+        this.isTshaering = true;
+        this.attacking.isConsumed = true;
+        this.tshaeringTimer = this.scene.time.addEvent({
+            delay: 250,
+            callback: () => {
+                this.scene.combatMachine.add({ type: 'Tshaeral', data: '' });
+                screenShake(this.scene);
+                // this.scene.screenShaker.shake();
+                this.glowing = this.glowing ? false : true;
+                this.setGlow(this, this.glowing);
+            },
+            callbackScope: this,
+            loop: true,
+        }); // Add Tshaeral Event
+        // this.tshaeralCooldown = 30;
+    };
+    onTshaeralUpdate = (dt) => {
+        if (!this.isTshaering) {
+            if (this.inCombat) {
+                this.stateMachine.setState(States.COMBAT); 
+            } else {
+                this.stateMachine.setState(States.NONCOMBAT); 
+            };
+        };
+    };
+    onTshaeralExit = () => {
+        this.tshaeringTimer.destroy();
+        this.tshaeringTimer = null;
+        this.glow = this.setGlow(this, false);
+        // this.scene.combatMachine.add({ type: 'Instant', data: 'Tshaeral' });
+        // screenShake(this.scene);
+        // this.scene.screenShaker.shake(); 
     };
 
     onStunEnter = () => {
@@ -656,6 +698,7 @@ export default class Player extends Entity {
         };
         if (!this.isRanged) this.knockback(this.actionTarget);
         screenShake(this.scene); 
+        // this.scene.screenShaker.shake(); 
     };
 
     handleActions = () => {
@@ -751,12 +794,25 @@ export default class Player extends Entity {
                 };
                 const invokeIntervalId = setInterval(invokeLoop, invokeInterval);
             };
-    
+            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
+                this.stateMachine.setState(States.TSHAERAL);
+                this.scene.time.addEvent({
+                    delay: 2000,
+                    callback: () => {
+                        this.isTshaering = false;
+                    },
+                    callbackScope: this,
+                    loop: false,
+                });
+                // this.scene.combatMachine.add({ type: 'Consume', data: this.scene.state.playerEffects });
+                // screenShake(this.scene);
+            };
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
                 if (this.scene.state.playerEffects.length === 0) return;
                 this.isConsuming = true;
                 this.scene.combatMachine.add({ type: 'Consume', data: this.scene.state.playerEffects });
                 screenShake(this.scene);
+                // this.scene.screenShaker.shake(); 
             };
         };
 
@@ -774,7 +830,6 @@ export default class Player extends Entity {
 
     };
     handleAnimations = () => {
-        
         if (this.isStunned) {
             this.setVelocity(0);
         } else if (this.isHurt) {
@@ -801,16 +856,16 @@ export default class Player extends Entity {
                     this.body.parts[0].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
                     this.body.parts[1].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
                 };
-                this.dodgeCooldown = 2000; 
-                const dodgeDistance = 126;  
-                const dodgeDuration = 18;  
-                const dodgeInterval = 1;  
-                let elapsedTime = 0;
+                this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
+                const dodgeDistance = 2304; // 126
+                const dodgeDuration = 288; // 18  
                 let currentDistance = 0;
-            
-                const dodgeLoop = () => {
-                    if (elapsedTime >= dodgeDuration || currentDistance >= dodgeDistance) {
-                        clearInterval(dodgeIntervalId);
+
+                const dodgeLoop = (timestamp) => {
+                    if (!startTime) startTime = timestamp;
+                    const progress = timestamp - startTime;
+                
+                    if (progress >= dodgeDuration || currentDistance >= dodgeDistance) {
                         this.spriteWeapon.setVisible(true);
                         this.dodgeCooldown = 0;
                         this.isDodging = false;
@@ -824,12 +879,18 @@ export default class Player extends Entity {
                         this.body.parts[1].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
                         return;
                     };
+                
                     const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
-                    this.setVelocityX(direction);
+                    if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+                    if (this.velocity.y > 0.1) this.setVelocityY(dodgeDistance / dodgeDuration);
+                    if (this.velocity.y < -0.1) this.setVelocityY(-dodgeDistance / dodgeDuration);
                     currentDistance += Math.abs(dodgeDistance / dodgeDuration);
-                    elapsedTime += dodgeInterval;
-                }; 
-                const dodgeIntervalId = setInterval(dodgeLoop, dodgeInterval);  
+                    requestAnimationFrame(dodgeLoop);
+                };
+                let startTime = null;
+                requestAnimationFrame(dodgeLoop);
+                //     const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
+                //     this.setVelocityX(direction);
             };
             
         } else if (this.isRolling && !this.isJumping) { // ROLLING OUTSIDE COMBAT
@@ -844,35 +905,36 @@ export default class Player extends Entity {
                     this.body.parts[1].vertices[0].y += colliderDisp;
                     this.body.parts[1].vertices[1].y += colliderDisp; 
                 };
-                this.rollCooldown = 50; 
-                const rollDistance = 140; 
+                this.rollCooldown = 50; // Was a x7 Mult for Roll Prev aka 2240
+                const rollDistance = 1920; // 140
                 
-                const rollDuration = 20; 
-                const rollInterval = 1;
-                
-                let elapsedTime = 0;
+                const rollDuration = 320; // 20
                 let currentDistance = 0;
                 
-                const rollLoop = () => {
-                    if (elapsedTime >= rollDuration || currentDistance >= rollDistance) {
-                        clearInterval(rollIntervalId);
+                const rollLoop = (timestamp) => {
+                    if (!startTime) startTime = timestamp;
+                    const progress = timestamp - startTime;
+                
+                    if (progress >= rollDuration || currentDistance >= rollDistance) {
                         this.spriteWeapon.setVisible(true);
                         this.rollCooldown = 0;
                         this.isRolling = false;
                         this.body.parts[2].position.y -= sensorDisp;
                         this.body.parts[2].circleRadius = 36;
                         this.body.parts[1].vertices[0].y -= colliderDisp;
-                        this.body.parts[1].vertices[1].y -= colliderDisp; 
+                        this.body.parts[1].vertices[1].y -= colliderDisp;
                         return;
                     };
+
                     const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
                     if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
                     if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
                     if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
                     currentDistance += Math.abs(rollDistance / rollDuration);
-                    elapsedTime += rollInterval;
+                    requestAnimationFrame(rollLoop);
                 };
-                const rollIntervalId = setInterval(rollLoop, rollInterval);  
+                let startTime = null;
+                requestAnimationFrame(rollLoop);
             };
         } else if (this.isPosturing) { // POSTURING
             this.anims.play('player_attack_3', true).on('animationcomplete', () => {
@@ -887,17 +949,21 @@ export default class Player extends Entity {
             if (!this.isMoving) this.isMoving = true;
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING
-            console.log("Pinging CONSUMING")
+            console.log("Pinging CONSUMING");
             this.anims.play('player_health', true).on('animationcomplete', () => {
                 this.isConsuming = false;
             });
+        } else if (this.isTshaering) { // TSHAERING
+            console.log("Pinging TSHAERING");
+            this.setVelocity(0);
+            this.anims.play('player_health', true);
         } else if (this.isHealing) { // HEALING
-            console.log("Pinging HEALING")
+            console.log("Pinging HEALING");
             this.anims.play('player_pray', true).on('animationcomplete', () => {
                 this.isHealing = false;
             });
         } else if (this.isPraying) { // PRAYING
-            console.log("Pinging PRAYING")
+            console.log("Pinging PRAYING");
             this.anims.play('player_pray', true).on('animationcomplete', () => {
                 this.isPraying = false;
             });

@@ -82,6 +82,15 @@ io.on("connection", (socket) => {
     playerThree: null,
     playerFour: null,
   };
+  let players = {};
+
+  const addPlayer = (player) => {
+    players[player.id] = player;
+  };
+
+  const removePlayer = (player) => {
+    delete players[player.id];
+  };
 
   async function onSetup(userData) {
     console.log("Setting Up");
@@ -174,6 +183,16 @@ io.on("connection", (socket) => {
     console.timeEnd('Consume Prayer');
   }; 
 
+  const tshaeralAction = async (data) => {
+    combatData = {
+      ...combatData,
+      newPlayerHealth: data.newHealth,
+      currentPlayerHealth: data.newHealth,
+      newComputerHealth: combatData.newComputerHealth - data.drained,
+      currentComputerHealth: combatData.newComputerHealth - data.drained,
+    };
+  };
+
   const effectTick = async (data) => {
     let { effect, effectTimer } = data;
     const res = await gameService.phaserEffectTick({combatData, effect, effectTimer}); // data
@@ -201,6 +220,7 @@ io.on("connection", (socket) => {
     combatData = {
       ...combatData,
       ...parse,
+      newPlayerHealth: combatData.newPlayerHealth > combatData.playerHealth ? combatData.playerHealth : combatData.newPlayerHealth === 0 ? combatData.playerHealth * 0.05 : combatData.newPlayerHealth,
     };
     console.log('Setup Enemy Response');
   };
@@ -545,10 +565,14 @@ io.on("connection", (socket) => {
   socket.on('updateCombatData', updateCombatData);
   socket.on('setPhaserAggression', setPhaserAggression);
 
+  socket.on('addPlayer', addPlayer);
+  socket.on('removePlayer', removePlayer);
+
   socket.on('computerCombat', computerCombat);
   socket.on('enemyAction', enemyCombat);
   socket.on('invokePrayer', invokePrayer);
   socket.on('consumePrayer', consumePrayer);
+  socket.on('tshaeralAction', tshaeralAction);
   socket.on('effectTick', effectTick);
   socket.on('removeEffect', removeEffect);
   socket.on('playerWin', playerWin);

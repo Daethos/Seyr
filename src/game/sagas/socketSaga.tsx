@@ -20,6 +20,7 @@ export const SOCKET = {
     SETUP_COMBAT_DATA: 'setupCombatData',
     UPDATE_COMBAT_DATA: 'updateCombatData',
 
+    TSHAERAL_ACTION: 'tshaeralAction',
     CONSUME_PRAYER: 'consumePrayer',
     INVOKE_PRAYER: 'invokePrayer',
     EFFECT_TICK: 'effectTick',

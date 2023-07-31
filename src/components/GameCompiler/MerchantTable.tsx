@@ -11,7 +11,7 @@ interface Props {
     error: any;
     setError: any;
     gameDispatch?: React.Dispatch<any>;
-    gameState: GameData;
+    gameState: any;
     dispatch: React.Dispatch<any>;
 };
 
@@ -19,9 +19,13 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
     const [thievery, setThievery] = useState<boolean>(false);
     const [thieveryTraits, setThieveryTraits] = useState<any>({});
     useEffect(() => {
-        checkThievery();
+        if (gameDispatch) {
+            checkThievery();
+        } else {
+            storyThievery();
+        };
     }, []);
-    const checkThievery = async () => {
+    const checkThievery = async (): Promise<void> => {
         const traits = {
             primary: gameState?.primary,
             secondary: gameState?.secondary,
@@ -36,7 +40,24 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
         setThievery(true);
         setThieveryTraits(matchingTraits);
     };
-    const checkStatisticalValue = (rarity: string) => {
+    const storyThievery = async (): Promise<void> => {
+        const traits = {
+            primary: gameState?.traits?.primary,
+            secondary: gameState?.traits?.secondary,
+            tertiary: gameState?.traits?.tertiary,
+        };
+        console.log(traits, 'Traits');
+        const thieveryTraits = ["Ma'anreic"];
+        const matchingTraits = Object.values(traits).filter(trait => thieveryTraits.includes(trait.name));
+        console.log(matchingTraits, 'Matching Traits');
+        if (matchingTraits.length === 0) {
+            setThievery(false);
+            return;
+        };
+        setThievery(true);
+        setThieveryTraits(matchingTraits);
+    };
+    const checkStatisticalValue = (rarity: string): number => {
         switch (rarity) {
             case 'Common': return 10;
             case 'Uncommon': return 100;
@@ -46,7 +67,7 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
             default: return 0;
         };
     };
-    const getFine = (rarity: string) => {
+    const getFine = (rarity: string): number | string => {
         switch (rarity) {
             case 'Common': return '5 silver';
             case 'Uncommon': return '50 silver';
@@ -56,7 +77,7 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
             default: return 0;
         };
     };
-    const stealItem = async (purchaseSetting: { ascean: Ascean, item: Equipment, cost: { silver: number, gold: number } }) => {
+    const stealItem = async (purchaseSetting: { ascean: Ascean, item: Equipment, cost: { silver: number, gold: number } }): Promise<void> => {
         try {
             const weight = {
                 Common: 0,
@@ -100,10 +121,7 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
                 const res = await asceanAPI.purchaseToInventory(purchaseSetting);
                 console.log(res, 'Stole Item!');
                 gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
-                gameDispatch({
-                    type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT,
-                    payload: table.filter((i: any) => i._id !== purchaseSetting.item._id)
-                });    
+                gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: table.filter((i: any) => i._id !== purchaseSetting.item._id) });    
                 const statistic = {
                     asceanID: ascean._id, 
                     successes: 1,
@@ -130,11 +148,10 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
     };
     return (
         <Row>
-        { table.map((item: any, index: number) => {
+        {table.map((item: any, index: number) => {
             return (
                 <MerchantLoot item={item} table={table} ascean={ascean} error={error} setError={setError} key={index} thievery={thievery} gameDispatch={gameDispatch} stealItem={stealItem} />
-            )
-        }) }
+        )})}
         </Row>
     );
 };

@@ -16,7 +16,6 @@ interface ProfileProps {
 const ProfilePage = ({ user }: ProfileProps) => {
     const [ascean, setAscean] = useState<any>([]);
     const [profileUser, setProfileUser] = useState<any>({});
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const { username } = useParams();
 
@@ -28,8 +27,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
             setLoading(false)
         } catch (err: any) {
             console.log(err.message);
-            setError("Profile does not exist! You are in the wrong in place"); 
-        }
+        };
     }, [username]);
 
     useEffect(() => {
@@ -68,10 +66,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
             <SearchCard ascean={ascean} loggedUser={user} key={ascean._id} />
             {ascean.map((a: any) => {
                 return (
-                    <SolaAscean
-                        ascean={a}
-                        key={a._id}
-                    />
+                    <SolaAscean ascean={a} key={a._id} />
                 )
             })}
         </Container>

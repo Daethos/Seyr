@@ -6,7 +6,7 @@ import { CombatData, shakeScreen } from "../../components/GameCompiler/CombatSto
 import { getNpcDialog } from "../../components/GameCompiler/Dialog";
 import { getNodesForNPC, npcIds } from "../../components/GameCompiler/DialogNode";
 import EventEmitter from "../phaser/EventEmitter";
-import { setPlayerWin, setEnemyWin, setCombat, clearCombat, setCombatTimer, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatInput, setDamageType, setPlayerBlessing, setWeaponOrder, setEffectResponse, setEnemyActions, setCombatResolution, setEnemyPersuaded, setPlayerLuckout, setInstantStatus } from "../reducers/combatState";
+import { setPlayerWin, setEnemyWin, setCombat, clearCombat, setCombatTimer, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatInput, setDamageType, setPlayerBlessing, setWeaponOrder, setEffectResponse, setEnemyActions, setCombatResolution, setEnemyPersuaded, setPlayerLuckout, setInstantStatus, setLuckoutFailure, setDrain } from "../reducers/combatState";
 import { setStatistics, setDialog, setShowDialog } from "../reducers/gameState";
 import { workGetGainExperienceFetch, workGetLootDropFetch } from "./gameSaga";
 import { getSocketInstance } from "./socketManager";
@@ -222,6 +222,9 @@ function* workGetInitiate(action: any): SagaIterator {
             case 'Prayer':
                 socket.emit(SOCKET.CONSUME_PRAYER, action.payload.combatData);
                 break;
+            case 'Tshaeral':
+                yield put(setDrain(3));
+                break;
             default:
                 break;
             };
@@ -293,5 +296,9 @@ function* workGetLuckout(action: any): SagaIterator {
     };
     const res = yield call(() => asceanAPI.recordNonCombatStatistic(stat));
     yield put(setStatistics(res));
-    yield put(setPlayerLuckout({ playerLuckout: luckedOut, playerTrait: luck }));
+    if (luckedOut) {
+        yield put(setPlayerLuckout({ playerLuckout: luckedOut, playerTrait: luck }));
+    } else {
+        yield put(setLuckoutFailure({ playerLuckout: luckedOut, playerTrait: luck }));
+    };
 }; 

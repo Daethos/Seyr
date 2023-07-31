@@ -131,19 +131,21 @@ export interface Equipment {
     _id: string; 
 };
 
+// TODO:FIXME: Kyrisos (Kyrisian working name atm), Senari (Senarian working name atm) are not Ancients used yet for NPC's 
 const nonNamedEnemy = [
     'Achreon Druid', "Ahn'are Apostle", "Anashtre", 
     "Astral Apostle", "Cambiren Druid", "Chiomic Jester", 
     "Daethic Inquisitor", "Daethic Knight", "Fang Duelist", 
     "Fang Mercenary", 'Firesworn', 'Fyers Occultist', 
-    'Ilire Occultist', 'Kingsman', "Kyn'gian Shaman", 
+    'Ilire Occultist', 'Kingsman', "Kyn'gian Shaman", 'Kyrisian', 
     "Licivitan Soldier", "Ma'ier Occultist", "Marauder", 
     "Northren Wanderer", "Nyren", "Old Li'ivi Occultist", 
     "Quor'eite Occultist", "Quor'eite Stalker", "Rahvrecur", 
-    "Se'dyrist", "Sedyreal Guard", "Se'va Shrieker", 
+    "Se'dyrist", "Sedyreal Guard", 'Senarian', "Se'va Shrieker", 
     "Shrygeian Bard", "Southron Wanderer", "Soverain Blood Cloak", "Tshaeral Shaman"
 ];
 
+// TODO:FIXME: Plenty of work to incorporate more named enemies
 const namedEnemy = [
     "Achreus", "Ashreu'ul", "Caelan Greyne", "Chios Dachreon", "Cyrian Shyne", "Daetheus", 
     "Dorien Caderyn", "Eugenes", "Evrio Lorian Peroumes", "Fierous Ashfyre", "Garris Ashenus", 

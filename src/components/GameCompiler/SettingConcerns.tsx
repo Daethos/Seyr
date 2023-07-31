@@ -158,3 +158,26 @@ export const TacticSettings = () => {
         </>
     );
 };
+
+export const ControlSettings = () => {
+    return (
+        <>
+            <p style={{ color: '#fdf6d8' }}>
+                Movement - WASD or Arrow Keys for traditional, QE for strafing. Omnidirectional.
+            </p>
+            <p style={{ color: 'gold' }}>
+                Combat - 1-5 && Shift 1-3* [Attack*, Posture*, Roll*, Dodge, Counter-Counter]
+            </p>
+            <p style={{ color: '#fdf6d8' }}>
+                General - C: Character - x: mini-switch, T: Drink Flask, V: Dialog, Z: Minimap
+            </p>
+            <p style={{ color: 'gold' }}>
+                Specials - G: Stalwart, Shift-G: Caerenic, R: Invoke, F: Consume
+            </p>
+            <p style={{ color: '#fdf6d8' }}>
+                Tactics - (Lower middle of the screen) - Left/Middle Mouse Click to Enter, Shift to Switch Inset, Middle Mouse Wheel to Scroll Between Options: Weapons, Damage, Prayers.
+                [Apologies for this one, it feels normal to me but it's probably my least intuitive design choice.]
+            </p>
+        </>
+    );
+};

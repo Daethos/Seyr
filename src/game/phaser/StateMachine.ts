@@ -89,4 +89,6 @@ export const States = {
     STUN: "stun",
     INVOKE: "invoke",
     DEFEATED: "defeated",
+    CONSUMED: "consumed",
+    TSHAERAL: "tshaeral",
 };

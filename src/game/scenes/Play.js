@@ -12,6 +12,7 @@ import EventEmitter from '../phaser/EventEmitter';
 import { getInitiateFetch, getCombatStateUpdate, getEnemyActionFetch, getCombatFetch, setStalwart, getNpcSetupFetch, getEnemySetupFetch, clearNonAggressiveEnemy, setCombatInput, setCaerenic } from '../reducers/combatState';
 import { getDrinkFirewaterFetch } from '../reducers/gameState';
 import CombatMachine from '../phaser/CombatMachine';
+import ScreenShaker from '../phaser/ScreenShake';
  
 export default class Play extends Phaser.Scene {
     constructor() {
@@ -58,6 +59,7 @@ export default class Play extends Phaser.Scene {
         this.combatTime = 0;
         this.combatTimer = null;
         this.lootDrops = [];
+        this.players = [];
     }; 
 
     asceanOn = (e) => this.ascean = e;
@@ -161,12 +163,22 @@ export default class Play extends Phaser.Scene {
             };
         });
         this.particleManager = new ParticleManager(this);
+        // this.screenShaker = new ScreenShaker(this);
         this.createWelcome(); 
         this.stateListener(); 
         this.staminaListener();
         this.enemyLootDropListener();
         this.enemyStateListener();
     };
+
+    addPlayer = (e) => {
+        if (e.playerID !== this.player.playerID) this.players.push(new Player({ scene: this, x: e.x, y: e.y, texture: 'player_actions', frame: 'player_idle_0' }));
+    };
+    removePlayer = (e) => {
+        this.players = this.players.filter(player => player.playerID !== e.playerID); 
+    } 
+    addPlayerListener = () => EventEmitter.on('add-player', this.addPlayer);
+    removePlayerListener = () => EventEmitter.on('remove-player', this.removePlayer);
 
     enemyStateListener = () => {
         EventEmitter.on('aggressive-enemy', (e) => {
