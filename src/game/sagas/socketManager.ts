@@ -3,7 +3,9 @@ let socketInstance: io.Socket | null = null;
 
 export const connectToSocket = (url: string): io.Socket => {
     if (!socketInstance) {
-        socketInstance = io.connect(url, { transports: ['websocket'], reconnection: true, reconnectionDelay: 500, reconnectionAttempts: Infinity });
+        console.log("Connecting to Socket");
+        socketInstance = io.connect(url, { transports: ['websocket'] }); // , reconnection: true, reconnectionDelay: 500, reconnectionAttempts: Infinity
+        console.log(socketInstance, "Socket Instance");
     };
     return socketInstance;
 };

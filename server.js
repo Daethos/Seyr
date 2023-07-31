@@ -190,6 +190,23 @@ io.on("connection", (socket) => {
       currentPlayerHealth: data.newHealth,
       newComputerHealth: combatData.newComputerHealth - data.drained,
       currentComputerHealth: combatData.newComputerHealth - data.drained,
+      player_win: combatData.newComputerHealth - data.drained <= 0 ? true : false,
+    };
+    const setCombatData = async (cD, d) => {
+      return cD = {
+        ...cD,
+        newPlayerHealth: d.newHealth,
+        currentPlayerHealth: d.newHealth,
+        newComputerHealth: cD.newComputerHealth - d.drained,
+        currentComputerHealth: cD.newComputerHealth - d.drained,
+        player_win: cD.newComputerHealth - d.drained <= 0 ? true : false,
+      };
+    };
+    combatData = await setCombatData(combatData, data);
+    if (combatData.player_win) {
+      console.log('Tshaeral Action Player Win');
+      const deflatedResponse = zlib.deflateSync(JSON.stringify(combatData));
+      io.to(player.room).emit('computerCombatResponse', deflatedResponse);
     };
   };
 

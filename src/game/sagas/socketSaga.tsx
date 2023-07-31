@@ -9,7 +9,7 @@ export const SOCKET = {
     // Emitters
     SETUP: 'setup',
     DISCONNECT: 'disconnect',
-    URL: 'http://localhost:3000', // 'https://ascea.herokuapp.com' || 'http://localhost:3000'
+    URL: 'http://localhost:3001', // 'https://ascea.herokuapp.com' || 'http://localhost:3000'
     SETUP_PLAYER: 'setupPlayer',
 
     SET_PHASER_AGGRESSION: 'setPhaserAggression',
@@ -48,6 +48,7 @@ function createSocketEventChannel(socket: io.Socket, event: string) {
 };
 
 function* playerResEvent(_payload: Uint8Array): SagaIterator {
+    console.log('Player Response Event');
     const combat = yield select((state) => state.combat);
     const socket = getSocketInstance();
     const press = yield call(compress, combat);

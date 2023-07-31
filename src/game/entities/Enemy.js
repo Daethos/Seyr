@@ -724,6 +724,7 @@ export default class Enemy extends Entity {
 
     onConsumedEnter = () => {
         // this.setTint(0xff0000);
+        this.consumedDuration = 2000;
         this.consumedTimer = this.scene.time.addEvent({
             delay: 250,
             callback: () => {
@@ -738,11 +739,15 @@ export default class Enemy extends Entity {
                 this.setGlow(this, this.glowing);
             },
             callbackScope: this,
-            repeat: 8,
+            loop: true,
         });
     };
     onConsumedUpdate = (dt) => {
         if (!this.isConsumed) this.evaluateCombatDistance();
+        this.consumedDuration -= dt;
+        if (this.consumedDuration <= 0) {
+            this.isConsumed = false;
+        };
     };
     onConsumedExit = () => {
         this.consumedTimer.destroy();
