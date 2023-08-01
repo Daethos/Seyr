@@ -172,7 +172,7 @@ export const ControlSettings = () => {
                 General - C: Character - x: mini-switch, T: Drink Flask, V: Dialog, Z: Minimap
             </p>
             <p style={{ color: 'gold' }}>
-                Specials - G: Stalwart, Shift-G: Caerenic, R: Invoke, F: Consume
+                Specials - G: Stalwart, Shift-G: Caerenic, R: Invoke, F: Consume, Shift-F: Tshaer
             </p>
             <p style={{ color: '#fdf6d8' }}>
                 Tactics - (Lower middle of the screen) - Left/Middle Mouse Click to Enter, Shift to Switch Inset, Middle Mouse Wheel to Scroll Between Options: Weapons, Damage, Prayers.

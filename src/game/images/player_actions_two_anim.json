@@ -144,7 +144,7 @@
             "key": "player_slide",
             "type": "frames",
             "repeat": 0,
-            "frameRate": 18,
+            "frameRate": 30,
             "frames": [
                 {
                     "key": "player_actions_two",

@@ -1,5 +1,5 @@
 import './UserProfile.css';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading/Loading';
@@ -62,7 +62,7 @@ const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
   return (
     <Container>
       <HomeSettings ascean={asceans} loggedUser={user} userProfile={true} accordionState={accordionState} accordionChange={accordionChange} />
-        { asceans.length > 0 ? 
+        { asceans.length > 0 ? (
           asceans.map((ascean: Player, index: number) => {
             return (
               <SolaAscean
@@ -75,7 +75,7 @@ const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
               />
             )
           })
-        : '' }
+        ) : ( '' ) }
     </Container>
   );
 };

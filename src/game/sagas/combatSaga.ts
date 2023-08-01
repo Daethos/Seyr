@@ -94,9 +94,7 @@ function* workResolveCombat(state: CombatData): SagaIterator {
     };
 };
 function* workGetDrain(action: any): SagaIterator {
-    console.log('Drain', action);
     let state: CombatData = yield select((state) => state.combat);
-    console.log(state.newComputerHealth, state.playerWin, "New Computer Health and Player Win");
     if (state.newComputerHealth <= 0 || state.playerWin) return;
     const drained = Math.floor(state.playerHealth * (action / 100));
     const newPlayerHealth = state.newPlayerHealth + drained > state.playerHealth ? state.playerHealth : state.newPlayerHealth + drained;
@@ -112,8 +110,6 @@ function* workGetDrain(action: any): SagaIterator {
             newComputerHealth: 0,
             playerWin: true,
         };
-        // yield call(workResolveCombat, state);
-        // EventEmitter.emit('update-combat', state); // Added
     } else {
         state = {
             ...state,
@@ -126,10 +122,8 @@ function* workGetDrain(action: any): SagaIterator {
 
     const socket = getSocketInstance();
     socket.emit(SOCKET.TSHAERAL_ACTION, { newPlayerHealth, currentPlayerHealth: newPlayerHealth, newComputerHealth, currentComputerHealth: newComputerHealth, playerWin: won });
-    
+
     yield put(setCombatResolution(state));
-    console.log('Drain', drained, Math.round(newPlayerHealth), Math.round(state.newComputerHealth));
-    // yield put(setDrain({ drained, newPlayerHealth }));
     if (won) {
         yield call(workResolveCombat, state);
         EventEmitter.emit('update-combat', state); // Added

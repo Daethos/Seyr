@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './NavBar.css'
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
@@ -7,9 +7,10 @@ import Modal from 'react-bootstrap/Modal';
 import Navbar from 'react-bootstrap/Navbar';
 import { Nav } from 'react-bootstrap';
 import UserModal from '../UserModal/UserModal';
+import { User } from '../../pages/App/App';
 
 interface NavProps {
-    user: any;
+    user: User;
     handleLogout: () => void;
 };
 

@@ -796,15 +796,12 @@ export default class Player extends Entity {
                     callbackScope: this,
                     loop: false,
                 });
-                // this.scene.combatMachine.add({ type: 'Consume', data: this.scene.state.playerEffects });
-                // screenShake(this.scene);
             };
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
                 if (this.scene.state.playerEffects.length === 0) return;
                 this.isConsuming = true;
                 this.scene.combatMachine.add({ type: 'Consume', data: this.scene.state.playerEffects });
                 screenShake(this.scene);
-                // this.scene.screenShaker.shake(); 
             };
         };
 
@@ -1001,71 +998,74 @@ export default class Player extends Entity {
         // =================== MOVEMENT VARIABLES ================== \\
         const acceleration = this.acceleration;
         const deceleration = this.deceleration;
-        const speed = this.speed;
+        let speed = this.speed;
 
-       // =================== MOVEMENT ================== \\
+        // =================== MOVEMENT ================== \\
 
-       if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
-           this.playerVelocity.x += acceleration;
-           if (this.flipX) this.flipX = false;
-       };
+        if (this.inputKeys.right.D.isDown || this.inputKeys.right.RIGHT.isDown) {
+            this.playerVelocity.x += acceleration;
+            if (this.flipX) this.flipX = false;
+        };
 
-       if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
-           this.playerVelocity.x -= acceleration;
-           this.flipX = true;
-       };
+        if (this.inputKeys.left.A.isDown || this.inputKeys.left.LEFT.isDown) {
+            this.playerVelocity.x -= acceleration;
+            this.flipX = true;
+        };
 
-       if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown)) {
-           this.playerVelocity.y -= acceleration;
-       }; 
+        if ((this.inputKeys.up.W.isDown || this.inputKeys.up.UP.isDown)) {
+            this.playerVelocity.y -= acceleration;
+        }; 
 
-       if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
-           this.playerVelocity.y += acceleration;
-       };
+        if (this.inputKeys.down.S.isDown || this.inputKeys.down.DOWN.isDown) {
+            this.playerVelocity.y += acceleration;
+        };
 
-       // =================== STRAFING ================== \\
+        // =================== STRAFING ================== \\
 
-       if (this.inputKeys.strafe.E.isDown) {
-           this.playerVelocity.x = 1.75;
-           if (!this.flipX) this.flipX = true;
-       };
-       if (this.inputKeys.strafe.Q.isDown) {
-           this.playerVelocity.x = -1.75;
-           if (this.flipX) this.flipX = false;
-       };
+        if (this.inputKeys.strafe.E.isDown) {
+            this.playerVelocity.x = speed; // 1.75
+            if (!this.flipX) this.flipX = true;
+        };
+        if (this.inputKeys.strafe.Q.isDown) {
+            this.playerVelocity.x = -speed; // 1.75
+            if (this.flipX) this.flipX = false;
+        };
 
-       // =================== DECELERATION ================== \\
+        // =================== DECELERATION ================== \\
 
-       if (!this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown) {
-           this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
-       };
-       if (!this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown) {
-           this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
-       };
-       if (!this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown) {
-           this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
-       };
-       if (!this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown) {
-           this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
-       };
+        if (!this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown) {
+            this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
+        };
+        if (!this.inputKeys.left.A.isDown && !this.inputKeys.left.LEFT.isDown && this.playerVelocity.x !== 0 && !this.inputKeys.strafe.E.isDown && !this.inputKeys.strafe.Q.isDown && !this.inputKeys.right.D.isDown && !this.inputKeys.right.RIGHT.isDown) {
+            this.playerVelocity.x = this.zeroOutVelocity(this.playerVelocity.x, deceleration);
+        };
+        if (!this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown) {
+            this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
+        };
+        if (!this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown) {
+            this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
+        };
 
-       // =================== NORMALIZING VELOCITY ================== \\
 
-       this.playerVelocity.limit(speed);
+        // =================== VARIABLES IN MOTION ================== \\
 
-       // =================== VARIABLES IN MOTION ================== \\
+        if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
+            if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
+            if (!this.isStrafing) this.isStrafing = true;
+        } else if (this.isStrafing) {
+            this.isStrafing = false;
+        };
+        
+        if (this.isAttacking || this.isCountering || this.isPosturing) speed += 1;
 
-       if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
-           if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
-           if (!this.isStrafing) this.isStrafing = true;
-       } else if (this.isStrafing) {
-           this.isStrafing = false;
-       }; 
+        // =================== NORMALIZING VELOCITY ================== \\
 
-       // ==================== SETTING VELOCITY ==================== \\
-       
-       this.setVelocity(this.playerVelocity.x, this.playerVelocity.y);
-    };
+        this.playerVelocity.limit(speed);
+
+        // ==================== SETTING VELOCITY ==================== \\
+        
+        this.setVelocity(this.playerVelocity.x, this.playerVelocity.y);
+    }; 
     update() {
         this.handleConcerns();
         this.stateMachine.update(this.dt);
