@@ -22,6 +22,7 @@ const combatSlice = createSlice({
         getLuckoutFetch: (state, _action) => {},
         getEnemySetupFetch: (state, _action) => {},
         getNpcSetupFetch: (state, action) => {},
+        getDrainFetch: (state, action) => {},
         // ===== Combat Setup / Breakdown ===== \\
         setCombatPlayer: (state, action) => {
             return {
@@ -146,17 +147,13 @@ const combatSlice = createSlice({
             };
         },
         setDrain: (state, action) => {
-            const drained = Math.floor(state.playerHealth * (action.payload / 100));
-            const newHealth = state.newPlayerHealth + drained > state.playerHealth ? state.playerHealth : state.newPlayerHealth + drained;
-            const socket = getSocketInstance();
-            socket.emit(SOCKET.TSHAERAL_ACTION, { drained, newHealth });
-            console.log('Drain', drained, newHealth);
+            console.log(action.payload, "Drained");
             return {
                 ...state,
-                newPlayerHealth: newHealth,
-                currentPlayerHealth: newHealth,
-                newComputerHealth: state.newComputerHealth - drained,
-                currentComputerHealth: state.newComputerHealth - drained,
+                newPlayerHealth: action.payload.newHealth,
+                currentPlayerHealth: action.payload.newHealth,
+                newComputerHealth: state.newComputerHealth - action.payload.drained,
+                currentComputerHealth: state.newComputerHealth - action.payload.drained,
             };
         },
         setRest: (state, action) => {
@@ -283,16 +280,10 @@ const combatSlice = createSlice({
 
         // ===== Combat Resolution Concerns ===== \\
         setCombatResolution: (state, action) => {
-            return { 
-                ...state,
-                ...action.payload
-             };
+            return { ...state, ...action.payload };
         },
         setEffectResponse: (state, action) => {
-            return { 
-                ...state,
-                ...action.payload 
-            };
+            return { ...state, ...action.payload };
         },
         setPlayerWin: (state, _action) => {
             const socket = getSocketInstance();
@@ -428,6 +419,7 @@ export const {
     getLuckoutFetch,
     getEnemySetupFetch,
     getNpcSetupFetch,
+    getDrainFetch,
 
     setCombatPlayer,
     setEnemy,

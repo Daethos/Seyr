@@ -158,7 +158,7 @@ export default class Player extends Entity {
         this.knocking = false;
         this.isCaerenic = false;
         this.isTshaering = false;
-        // this.glow = this.setGlow(this, true);
+        this.tshaeringTimer = null;
         // this.setGlow(this.spriteWeapon);
         this.highlight = this.scene.add.graphics()
             .lineStyle(1, 0xFFD700)
@@ -173,31 +173,7 @@ export default class Player extends Entity {
         this.playerStateListener();
         this.checkLootdropCollision(playerSensor);
         this.checkNpcCollision(playerSensor);
-    };
-
-    // setGlow = (object, glow) => {
-    //     const setColor = (mastery) => {
-    //         switch (mastery) {
-    //             case 'Constitution': return 0xFDF6D8;
-    //             case 'Strength': return 0xFF0000;
-    //             case 'Agility': return 0x00FF00;
-    //             case 'Achre': return 0x0000FF;
-    //             case 'Caeren': return 0x800080;
-    //             case 'Kyosir': return 0xFFD700;
-    //             default: return 0xFFFFFF;
-    //         };
-    //     };
-
-    //     if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
-
-    //     return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
-    //         outerStrength: 2,
-    //         innerStrength: 2,
-    //         glowColor: setColor(this.ascean.mastery),
-    //         intensity: 0.25,
-    //         knockout: true
-    //     });
-    // };
+    }; 
 
     startingSpeed = (player) => {
         let speed = 1.75;
@@ -246,7 +222,7 @@ export default class Player extends Entity {
         return asset.imgURL.split('/')[2].split('.')[0];
     };
 
-    playerStateListener() {
+    playerStateListener = () => {
         EventEmitter.on('update-combat-data', (e) => {
             if (this.health > e.newPlayerHealth) {
                 this.isHurt = true;
@@ -259,7 +235,7 @@ export default class Player extends Entity {
             };
             if (this.currentRound !== e.combatRound) {
                 this.currentRound = e.combatRound;
-            }; 
+            };
             this.health = e.newPlayerHealth;
             this.healthbar.setValue(this.health);
             if (this.healthbar.getTotal() < e.playerHealth) this.healthbar.setTotal(e.playerHealth);
@@ -271,10 +247,14 @@ export default class Player extends Entity {
                     this.anims.play('player_idle', true);
                 });
             };
-            if (e.newComputerHealth <= 0) {
-                this.inCombat = false;
+            if (e.newComputerHealth <= 0 && e.playerWin) { // && e.playerWin
+                if (this.tshaeringTimer) {
+                    this.tshaeringTimer.remove(false);
+                    this.tshaeringTimer = null;
+                };
                 this.attacking = null;
                 this.touching = this.touching.filter(obj => obj.enemyID !== e.enemyID);
+                if (this.touching.every(obj => !obj.inCombat)) this.inCombat = false;
             };
             this.checkWeapons(e.weapons[0], e.playerDamageType.toLowerCase());
         });
@@ -285,6 +265,13 @@ export default class Player extends Entity {
                 this.scene.combatMachine.input('computerCounterSuccess', false);
             };
             if (e.playerWin) {
+                if (this.tshaeringTimer) {
+                    this.tshaeringTimer.remove(false);
+                    this.tshaeringTimer = null;
+                };
+                if (this.isTshaering) this.isTshaering = false;
+                
+                console.log("Player Win!");
                 let damage = 'Victory!';
                 this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 3000, 'effect', true);    
             };    
@@ -312,7 +299,7 @@ export default class Player extends Entity {
                         this.currentTarget = other.gameObjectB; 
                         if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id) && !other.gameObjectB.isDead) this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated, isTriumphant: other.gameObjectB.isTriumphant });
                         if (!this.scene.state.combatEngaged && !other.gameObjectB.isDead) {
-                            console.log("Engaging Combat", this.scene.state.combatEngaged, other.gameObjectB.isDead);
+                            console.log("Engaging Combat in Collision Sensor", this.scene.state.combatEngaged, other.gameObjectB.isDead);
                             this.scene.combatEngaged(true);
                             this.inCombat = true;
                         };
@@ -415,7 +402,7 @@ export default class Player extends Entity {
     };
 
     onNonCombatEnter = () => {
-        console.log("Entering Non Combat");
+        // console.log("Entering Non Combat");
         this.anims.play('player_idle', true);
         if (this.scene.combatTimer) this.scene.stopCombatTimer();
         if (this.currentRound !== 0) this.currentRound = 0;
@@ -429,7 +416,7 @@ export default class Player extends Entity {
     };
 
     onCombatEnter = () => {
-        console.log("Entering Combat");
+        // console.log("Entering Combat");
     };
     onCombatUpdate = (dt) => { 
         if (!this.inCombat) this.stateMachine.setState(States.NONCOMBAT);  
@@ -579,25 +566,25 @@ export default class Player extends Entity {
         if (!this.isCaerenic) this.glow = this.setGlow(this, false);
         this.scene.combatMachine.add({ type: 'Instant', data: this.scene.state.playerBlessing });
         screenShake(this.scene);
-        // this.scene.screenShaker.shake(); 
     };
 
     onTshaeralEnter = () => {
         this.isTshaering = true;
         this.attacking.isConsumed = true;
+        screenShake(this.scene);
         this.tshaeringTimer = this.scene.time.addEvent({
             delay: 250,
             callback: () => {
+                console.log("Tshaering Timer", this.isTshaering, this.scene.state.playerWin, this.scene.state.newComputerHealth);
+                if (!this.isTshaering || this.scene.state.playerWin || this.scene.state.newComputerHealth <= 0) return;
                 this.scene.combatMachine.add({ type: 'Tshaeral', data: '' });
-                screenShake(this.scene);
-                // this.scene.screenShaker.shake();
                 this.glowing = this.glowing ? false : true;
                 this.setGlow(this, this.glowing);
             },
             callbackScope: this,
-            loop: true,
-        }); // Add Tshaeral Event
-        // this.tshaeralCooldown = 30;
+            // loop: true,
+            repeat: 8,
+        });
     };
     onTshaeralUpdate = (dt) => {
         if (!this.isTshaering) {
@@ -609,12 +596,16 @@ export default class Player extends Entity {
         };
     };
     onTshaeralExit = () => {
-        this.tshaeringTimer.destroy();
-        this.tshaeringTimer = null;
-        this.glow = this.setGlow(this, false);
-        // this.scene.combatMachine.add({ type: 'Instant', data: 'Tshaeral' });
-        // screenShake(this.scene);
-        // this.scene.screenShaker.shake(); 
+        if (this.tshaeringTimer) {
+            this.tshaeringTimer.remove(false);
+            this.tshaeringTimer = null;
+        };
+        if (!this.isCaerenic) {
+            this.glow = this.setGlow(this, false)
+        } else {
+            this.glow = this.setGlow(this, true)
+        };
+        screenShake(this.scene);
     };
 
     onStunEnter = () => {
@@ -665,12 +656,13 @@ export default class Player extends Entity {
         };
         if (this.touching.some((gameObject) => gameObject.inCombat)) {
             if (!this.inCombat || !this.scene.combat) {
-                console.log("Engaging Combat", this.inCombat, this.scene.combat)
+                console.log("Engaging Combat in Touching Array Check", this.inCombat, this.scene.combat)
                 this.scene.combatEngaged(true);
                 this.inCombat = true;
             };
         };
         if (this.inCombat && this.touching.every((gameObject) => !gameObject.inCombat)) {
+            console.log("Disengaging Combat in Touching Array Check", this.inCombat, this.scene.combat)
             this.scene.combatEngaged(false);
             this.inCombat = false;
         };
@@ -857,8 +849,8 @@ export default class Player extends Entity {
                     this.body.parts[1].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
                 };
                 this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
-                const dodgeDistance = 2304; // 126
-                const dodgeDuration = 288; // 18  
+                const dodgeDistance = 2800; // 126 || 2304
+                const dodgeDuration = 350; // 18 || 288  
                 let currentDistance = 0;
 
                 const dodgeLoop = (timestamp) => {

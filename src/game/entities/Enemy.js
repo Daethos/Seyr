@@ -239,7 +239,7 @@ export default class Enemy extends Entity {
                     if (!this.scene.combat || !this.scene.state.combatEngaged) {
                         console.log('Computer Engaging Combat: ', this.scene.combat, this.scene.state.combatEngaged);
                         this.scene.combatEngaged(true);
-                    } 
+                    };
                 };
             },
             context: this.scene,
@@ -313,15 +313,7 @@ export default class Enemy extends Entity {
  
     enemyStateListener() {
         EventEmitter.on('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
-        EventEmitter.on('update-combat', this.combatDataUpdate);
-        // EventEmitter.on('update-combat', (e) => {
-        //     if (this.enemyID !== e.enemyID) return; 
-        //     this.health = e.newComputerHealth;
-        //     if (this.healthbar) this.updateHealthBar(this.health);
-        //     if (e.newComputerHealth <= 0) {
-        //         this.stateMachine.setState(States.DEFEATED);
-        //     };
-        // });
+        EventEmitter.on('update-combat', this.combatDataUpdate); 
     };
 
     combatDataUpdate = (e) => {
@@ -330,7 +322,7 @@ export default class Enemy extends Entity {
             console.log(`${e.player.name} Dealt ${Math.round(e.realizedPlayerDamage)} Damage To ${this.ascean.name}`);
             const damage = Math.round(this.health - e.newComputerHealth);
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.criticalSuccess);
-            this.stateMachine.setState(States.HURT);
+            if (!this.stateMachine.isCurrentState(States.CONSUMED)) this.stateMachine.setState(States.HURT);
             if (this.isStunned) this.isStunned = false;
             this.setHealth(e.newComputerHealth);
             if (e.newComputerHealth <= 0) {
@@ -410,7 +402,6 @@ export default class Enemy extends Entity {
         this.isAggressive = false;
         this.healthbar.destroy();
     };
-
     onDeathEnter = () => {
         this.isDead = true;
         this.anims.play('player_death', true);
@@ -723,17 +714,14 @@ export default class Enemy extends Entity {
     };
 
     onConsumedEnter = () => {
-        // this.setTint(0xff0000);
         this.consumedDuration = 2000;
         this.consumedTimer = this.scene.time.addEvent({
             delay: 250,
             callback: () => {
                 if (this.attacking) {
-                    if (this.x > this.attacking.x) {
-                        this.setVelocityX(-1);
-                    } else {
-                        this.setVelocityX(1);
-                    };
+                    const direction = this.attacking.position.subtract(this.position);
+                    direction.normalize();
+                    this.setVelocity(direction.x * 0.5, direction.y * 0.5);
                 };
                 this.glowing = !this.glowing;
                 this.setGlow(this, this.glowing);
@@ -753,7 +741,6 @@ export default class Enemy extends Entity {
         this.consumedTimer.destroy();
         this.consumedTimer = null;
         this.setGlow(this, false);
-        // this.clearTint();
     };
 
     onStunEnter = () => {
@@ -767,8 +754,7 @@ export default class Enemy extends Entity {
             this.isStunned = false;
         };
     };
-    onStunExit = () => {
-        this.stunDuration = 1500;
+    onStunExit = () => { 
         this.clearTint();
     };
 

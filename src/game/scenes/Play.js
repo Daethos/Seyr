@@ -194,7 +194,6 @@ export default class Play extends Phaser.Scene {
 
     checkPlayerSuccess = () => {
         if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) this.combatMachine.input('action', '');
-        
     };
 
     clearNonAggressiveEnemy = async () => this.dispatch(clearNonAggressiveEnemy()); 
