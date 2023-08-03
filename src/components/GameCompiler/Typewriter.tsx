@@ -51,56 +51,56 @@ const styleMap: StyleMap = {
     textAlign: "center",
     textShadow: "1.5px 1.5px 1.5px darkgoldenrod",
     overflowY: "auto",
-    width: "100vw",
+    width: "100%",
     fontSize: "16px",
     padding: "10px",
-    fontVariant: "small-caps"
+    fontVariant: "small-caps",
   },
   godBorderConstitution: {
     marginBottom: "15%",
-    marginTop: "20%",
+    marginTop: "5%",
     borderRadius: "50%",
-    maxWidth: "50vw",
+    maxWidth: "50%",
     border: "2px solid #fdf6d8",
     boxShadow: "0 0 3em #fdf6d8",
   },
   godBorderStrength: {
     marginBottom: "15%",
-    marginTop: "20%",
+    marginTop: "5%",
     borderRadius: "50%",
-    maxWidth: "50vw",
+    maxWidth: "50%",
     border: "2px solid #ff0000",
     boxShadow: "0 0 3em #ff0000",
   },
   godBorderAgility: {
     marginBottom: "15%",
-    marginTop: "20%",
+    marginTop: "5%",
     borderRadius: "50%",
-    maxWidth: "50vw",
+    maxWidth: "50%",
     border: "2px solid #00ff00",
     boxShadow: "0 0 3em #00ff00",
   },
   godBorderAchre: {
     marginBottom: "15%",
-    marginTop: "20%",
+    marginTop: "5%",
     borderRadius: "50%",
-    maxWidth: "50vw",
+    maxWidth: "50%",
     border: "2px solid blue",
     boxShadow: "0 0 3em blue",
   },
   godBorderCaeren: {
     marginBottom: "15%",
-    marginTop: "20%",
+    marginTop: "5%",
     borderRadius: "50%",
-    maxWidth: "50vw",
+    maxWidth: "50%",
     border: "2px solid purple",
     boxShadow: "0 0 3em purple",
   },
   godBorderKyosir: {
     marginBottom: "15%",
-    marginTop: "20%",
+    marginTop: "5%",
     borderRadius: "50%",
-    maxWidth: "50vw",
+    maxWidth: "50%",
     border: "2px solid gold",
     boxShadow: "0 0 3em gold",
   },
@@ -155,20 +155,20 @@ interface TypewriterProps {
 };
 
 const Typewriter = ({ stringText, styling, performAction }: TypewriterProps) => {
-  const el = useRef(null);
+  const el = useRef<HTMLDivElement | null>(null);
 
   (window as any).handleButton = (button: string) => {
-    console.log(button, "Button Clicked")
+    console.log(button, "Button Clicked");
     performAction(button);
   };
 
-  const applyStyles = (element: HTMLElement, styles: React.CSSProperties) => {
+  const applyStyles = (element: HTMLElement, styles: React.CSSProperties): void => {
     for (const [property, value] of Object.entries(styles)) {
       element.style[property as any] = value;
     };
   };
 
-  const applyEventListeners = (element: HTMLElement) => {
+  const applyEventListeners = (element: HTMLElement): void => {
     const functionName = element?.attributes?.["data-function-name" as any]?.value;
     element.setAttribute('onclick', `handleButton('${functionName}')`);
   };
@@ -177,16 +177,13 @@ const Typewriter = ({ stringText, styling, performAction }: TypewriterProps) => 
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, "text/html");
 
-    const traverseElement = (element: any) => {
-      if (element?.attributes?.classname?.value) {
-        applyStyles(element as HTMLElement, styleMap[element?.attributes?.classname?.value]);
-      };
-      if (element?.tagName === "BUTTON" && element?.attributes?.["data-function-name"]?.value) {
-        applyEventListeners(element as HTMLElement);
-      };
-      for (const child of element.children as any) {
-        traverseElement(child);
-      };
+    const traverseElement = (element: any): void => {
+      if (element?.attributes?.classname?.value) applyStyles(element as HTMLElement, styleMap[element?.attributes?.classname?.value]);
+      
+      if (element?.tagName === "BUTTON" && element?.attributes?.["data-function-name"]?.value) applyEventListeners(element as HTMLElement);
+      
+      for (const child of element.children as any) traverseElement(child);
+      
     };
     traverseElement(doc.body);
     return doc.body.innerHTML;
@@ -201,7 +198,8 @@ const Typewriter = ({ stringText, styling, performAction }: TypewriterProps) => 
       showCursor: false,
     };
     const typed = new Typed(el.current, typedContent);
-
+    if (el.current) el.current.scrollTop = el.current.scrollHeight;
+    
     return () => {
       typed.destroy();
     };

@@ -102,6 +102,7 @@
   "proxy": "http://localhost:3001",
   "devDependencies": {
     "@types/lodash": "^4.14.191",
+    "@types/matter-js": "^0.18.5",
     "@types/pako": "^2.0.0",
     "@types/react-beautiful-dnd": "^13.1.4",
     "file-loader": "^6.2.0"

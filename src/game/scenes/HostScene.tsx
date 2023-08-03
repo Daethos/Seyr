@@ -12,7 +12,7 @@ import Play from './Play';
 import StoryAscean from '../ui/StoryAscean';
 import * as eqpAPI from '../../utils/equipmentApi';
 import { Equipment, Player } from '../../components/GameCompiler/GameStore';
-import { CombatData } from '../../components/GameCompiler/CombatStore';
+import { CombatData, shakeScreen } from '../../components/GameCompiler/CombatStore';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
 import CombatUI from '../ui/CombatUI';
@@ -28,6 +28,7 @@ import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
 import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
 import SmallHud from '../ui/SmallHud';
+import Tutorial from '../../components/GameCompiler/Tutorial';
 
 interface Props {
     ascean: Player;
@@ -43,6 +44,7 @@ const HostScene = ({ assets, ascean }: Props) => {
     const [currentGame, setCurrentGame] = useState<any>(false);
     const [showPlayer, setShowPlayer] = useState<boolean>(false);
     const [pauseState, setPauseState] = useState<boolean>(false);
+    const [tutorial, setTutorial] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [dialogTag, setDialogTag] = useState<boolean>(false);
     const [staminaPercentage, setStaminaPercentage] = useState<number>(100); 
@@ -124,18 +126,53 @@ const HostScene = ({ assets, ascean }: Props) => {
         updateCombatListener(combatState);
     }, [combatState]);
 
-    const handleTimerTick = useCallback(() => {
+    const handleTimerTick = useCallback((): void => {
         setGameTimer((timer) => timer + 1);
     }, []);
 
-    const handleStaminaUpdate = useCallback(async () => {
+    const handleStaminaUpdate = useCallback(async (): Promise<void> => {
         if (checkTraits("Kyn'gian", gameState.traits) && gameTimer % 10 === 0) {
             setStaminaPercentage((percentage) => percentage + (stamina / 100));
             EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (stamina / 100)) / 100) * stamina));
             dispatch(setRest(1));
         };
     }, [gameState.traits, gameTimer, dispatch, stamina, staminaPercentage]);
-     
+
+    
+    const tutorialConcerns = useCallback(async (): Promise<void> => {
+        console.log(ascean.experience, ascean.tutorial, ascean.level, asceanViews, "Tutorial Concerns");
+        if (ascean.experience === 1000 && ascean.level === 1 && ascean.tutorial.firstLevelUp) await handleTutorial('firstLevelUp');
+        if (ascean.experience > 700 && ascean.tutorial.firstPhenomena) await handleTutorial('firstPhenomena');
+        if (ascean.inventory.length > 0) {
+            if (ascean.tutorial.firstLoot) await handleTutorial('firstLoot');
+            if (ascean.tutorial.firstInventory && asceanViews === 'Inventory') await handleTutorial('firstInventory');
+        };
+        if (ascean.health.current <= 0 && ascean.tutorial.firstDeath) await handleTutorial('firstDeath');
+    }, [ascean, asceanViews]);
+    
+    useEffect(() => {
+        tutorialConcerns();
+    }, [tutorialConcerns]);
+
+    const handleTutorial = async (tutorial: string): Promise<void | null> => {
+        switch (tutorial) {
+            case 'firstPhenomena':
+                shakeScreen({ duration: 1500, intensity: 2 });
+                playReligion();
+                return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstPhenomena={true} />);
+            case 'firstInventory':
+                return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstInventory={true} />);
+            case 'firstLoot':
+                return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstLoot={true} />);
+            case 'firstDeath':
+                return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstDeath={true} />);
+            case 'firstLevelUp':
+                return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstLevelUp={true} />);
+            default:
+                return null;
+        };
+    };
+
     useEffect(() => {
         if (gameRef.current) {
             let scene = gameRef.current.scene.getScene('Play');
@@ -156,19 +193,17 @@ const HostScene = ({ assets, ascean }: Props) => {
                 EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (stamina / 100)) / 100) * stamina));
             }, 200 - stamina);
 
-            return () => {
-                clearTimeout(timer);
-            };
+            return () => clearTimeout(timer);
         }; 
     }, [stamina, staminaPercentage]);
 
-    const updateCombatListener = (data: CombatData) => EventEmitter.emit('update-combat-data', data); // Was Async
-    const retrieveAssets = async () => EventEmitter.emit('send-assets', assets);
-    const sendEnemyData = async () => EventEmitter.emit('get-enemy', combatState.computer);
-    const sendAscean = async () => EventEmitter.emit('get-ascean', combatState.player);
-    const sendDispatch = async () => EventEmitter.emit('get-dispatch', dispatch);
-    const sendCombatData = async () => EventEmitter.emit('get-combat-data', combatState);
-    const sendGameData = async () => EventEmitter.emit('get-game-data', gameState);
+    const updateCombatListener = (data: CombatData): boolean => EventEmitter.emit('update-combat-data', data); // Was Async
+    const retrieveAssets = async (): Promise<boolean> => EventEmitter.emit('send-assets', assets);
+    const sendEnemyData = async (): Promise<boolean> => EventEmitter.emit('get-enemy', combatState.computer);
+    const sendAscean = async (): Promise<boolean> => EventEmitter.emit('get-ascean', combatState.player);
+    const sendDispatch = async (): Promise<boolean> => EventEmitter.emit('get-dispatch', dispatch);
+    const sendCombatData = async (): Promise<boolean> => EventEmitter.emit('get-combat-data', combatState);
+    const sendGameData = async (): Promise<boolean> => EventEmitter.emit('get-game-data', gameState);
     const updateCombatTimer = async (e: number) => dispatch(getCombatTimerFetch(e)); 
     const deleteEquipment = async (eqp: any): Promise<void> => await eqpAPI.deleteEquipment(eqp);
 
@@ -300,6 +335,7 @@ const HostScene = ({ assets, ascean }: Props) => {
                 { gameState?.lootDrops.length > 0 && gameState?.showLoot ? (
                     <LootDropUI gameState={gameState} />   
                 ) : ( '' ) }
+                { tutorial && ( tutorial ) }
                 </> 
             ) : ( '' ) }
             <div id='story-game' style={{ textAlign: 'center' }} ref={gameRef}></div>

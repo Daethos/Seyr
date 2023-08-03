@@ -263,16 +263,16 @@ export default class Player extends Entity {
             if (e.computerCounterSuccess) {
                 this.stateMachine.setState(States.STUN);
                 this.scene.combatMachine.input('computerCounterSuccess', false);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Counter!', 1500, 'heal');    
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Counter', 1500, 'heal', e.computerCriticalSuccess);    
             };
             if (e.rollSuccess) {
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll!', 1500, 'heal');
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll', 1500, 'heal', e.criticalSuccess);
             };
             if (e.counterSuccess) {
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter!', 1500, 'heal');
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter', 1500, 'heal', e.criticalSuccess);
             };
             if (e.computerRollSuccess) {
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Roll!', 1500, 'heal');
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Roll', 1500, 'heal', e.computerCriticalSuccess);
             };
             if (e.playerWin) {
                 if (this.tshaeringTimer) {
@@ -610,11 +610,7 @@ export default class Player extends Entity {
             this.tshaeringTimer.remove(false);
             this.tshaeringTimer = null;
         };
-        if (!this.isCaerenic) {
-            this.glow = this.setGlow(this, false)
-        } else {
-            this.glow = this.setGlow(this, true)
-        };
+        if (!this.isCaerenic && this.glowing) this.glow = this.setGlow(this, false);
         screenShake(this.scene);
     };
 

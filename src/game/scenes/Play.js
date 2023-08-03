@@ -182,6 +182,9 @@ export default class Play extends Phaser.Scene {
         this.staminaListener();
         this.enemyLootDropListener();
         this.enemyStateListener();
+        // this.addPlayerListener();
+        // this.removePlayerListener();
+        // this.multiplayerListeners();
     };
 
     // ================== Camera ================== \\
@@ -229,14 +232,33 @@ export default class Play extends Phaser.Scene {
 
     // ================== Combat ================== \\
 
-    addPlayer = (e) => {
-        if (e.playerID !== this.player.playerID) this.players.push(new Player({ scene: this, x: e.x, y: e.y, texture: 'player_actions', frame: 'player_idle_0' }));
-    };
-    removePlayer = (e) => {
-        this.players = this.players.filter(player => player.playerID !== e.playerID); 
-    } 
-    addPlayerListener = () => EventEmitter.on('add-player', this.addPlayer);
-    removePlayerListener = () => EventEmitter.on('remove-player', this.removePlayer);
+    // multiplayerListeners = () => {
+    //     EventEmitter.emit('addPlayer', { id: this.player.playerID, x: this.player.x, y: this.player.y });
+    //     EventEmitter.on('playerMoved', (e) => {
+    //         this.players.forEach(player => {
+    //             if (player.playerID === e.id) { 
+    //                 player.setPosition(e.x, e.y);
+    //             };
+    //         });
+    //     });
+    //     EventEmitter.on('currentPlayers', this.currentPlayers);
+    //     EventEmitter.on('playerAdded', this.addPlayer);
+    //     EventEmitter.on('playerRemoved', this.removePlayer);
+    // };
+
+    // addPlayer = (e) => {
+    //     if (e.id !== this.player.playerID) this.players.push(new Player({ scene: this, x: e.x, y: e.y, texture: 'player_actions', frame: 'player_idle_0' }));
+    // };
+    // currentPlayers = (e) => {
+    //     Object.keys(e).forEach((id) => {
+    //         if (e[id].playerID !== this.player.playerID) this.players.push(new Player({ scene: this, x: e[id].x, y: e[id].y, texture: 'player_actions', frame: 'player_idle_0' }));
+    //     });
+    // };
+    // removePlayer = (e) => {
+    //     this.players = this.players.filter(player => player.playerID !== e.id); 
+    // };
+    // addPlayerListener = () => EventEmitter.on('add-player', this.addPlayer);
+    // removePlayerListener = () => EventEmitter.on('remove-player', this.removePlayer);
 
     enemyStateListener = () => {
         EventEmitter.on('aggressive-enemy', (e) => {
@@ -467,3 +489,4 @@ export default class Play extends Phaser.Scene {
 export const worldToTile = (tile) => Math.floor(tile / 32);
 export const tileToWorld = (tile) => tile * 32 + 16;
 export const alignToGrid = (tile) => tileToWorld(worldToTile(tile));
+export const { Bodies } = Phaser.Physics.Matter.Matter;

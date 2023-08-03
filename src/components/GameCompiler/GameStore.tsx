@@ -35,12 +35,10 @@ export interface Ascean {
     level: number;
     
     coordinates: object;
-    health?: { current: number; total: number; };
     firewater: { charges: number; maxCharges: number; };
     inventory: [];
     maps: [];
-    quests: [];
-    tutorial: object;
+    quests: []; 
     
     index: string;
     shareable: string;
@@ -52,10 +50,22 @@ export interface Ascean {
 };
 
 export interface Player extends Ascean {
+    health: { current: number; total: number; };
     primary: { name: string, description: string };
     secondary: { name: string, description: string };
     tertiary: { name: string, description: string };
     journal: { entries: { type: [{ title: String, body: String, footnote: String, date: Date, location: String, coordinates: { x: Number, y: Number, }, }], default: null, length: number, }, currentEntry: { type: Number, default: 0, }, lastEntry: { type: Number, default: 0, }, },
+    tutorial: {
+        'firstBoot': { type: Boolean, default: true },
+        'firstCity': { type: Boolean, default: true },
+        'firstCombat': { type: Boolean, default: true },
+        'firstQuest': { type: Boolean, default: true }, 
+        'firstInventory': { type: Boolean, default: true },
+        'firstLoot': { type: Boolean, default: true }, 
+        'firstDeath': { type: Boolean, default: true },
+        'firstLevelUp': { type: Boolean, default: true },
+        'firstPhenomena': { type: Boolean, default: true },
+    }
 };
 
 export interface Enemy extends Ascean {

@@ -20,7 +20,7 @@ export const enemyAction = (dispatch: React.Dispatch<any>, data: any): void => {
 };
 
 export const actionInput = (dispatch: React.Dispatch<any>, { key, value }: { key: string, value: string | number | boolean }): void => {
-    dispatch(getCombatStateUpdate({ key, value })); //workGetCombatState
+    dispatch(getCombatStateUpdate({ key, value }));
 };
 
 export const tshaeralAction = (dispatch: React.Dispatch<any>): void => {

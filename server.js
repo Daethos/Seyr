@@ -86,12 +86,21 @@ io.on("connection", (socket) => {
 
   const addPlayer = (player) => {
     players[player.id] = player;
+    socket.emit('currentPlayers', players);
+    socket.broadcast.emit('playerAdded', player);
+    // Properties: id, x, y, playerId
   };
 
   const removePlayer = (player) => {
     delete players[player.id];
+    socket.broadcast.emit('playerRemoved', player.id);
   };
 
+  const playerMovement = async (data) => {
+    players[socket.id].x = data.x;
+    players[socket.id].y = data.y;
+    socket.broadcast.emit('playerMoved', players[socket.id]);
+  };
   async function onSetup(userData) {
     console.log("Setting Up");
     personalUser = {
@@ -564,6 +573,7 @@ io.on("connection", (socket) => {
 
   socket.on('addPlayer', addPlayer);
   socket.on('removePlayer', removePlayer);
+  socket.on('playerMovement', playerMovement);
 
   socket.on('computerCombat', computerCombat);
   socket.on('enemyAction', enemyCombat);

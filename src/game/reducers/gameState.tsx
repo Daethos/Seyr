@@ -79,7 +79,9 @@ export const gameSlice = createSlice({
         },
         getThieverySuccessFetch: (state, _action) => {},
         getPurchaseFetch: (state, _action) => {},
-        // ===== Player Concerns ===== \\
+
+        // ==================== Player Concerns ==================== \\
+
         setPlayer: (state, action) => {
             return { ...state, player: action.payload };
         },
@@ -136,7 +138,8 @@ export const gameSlice = createSlice({
             return { ...state, traits: action.payload };
         },
 
-        // ===== Game Concerns ===== \\
+        // ==================== Game Concerns ==================== \\
+
         setCheckLoot: (state, action) => {
             return { ...state, checkLoot: action.payload };
         },
@@ -164,8 +167,12 @@ export const gameSlice = createSlice({
         setMerchantEquipment: (state, action) => {
             return { ...state, merchantEquipment: action.payload };
         },
+        setTutorial: (state, action) => {
+            return { ...state, player: { ...state.player, tutorial: action.payload } };
+        },
 
-        // ===== Loot Drops ===== \\
+        // ==================== Loot Drops ==================== \\
+
         setLootDrops: (state, action) => {
             return { ...state, lootDrops: [ ...state.lootDrops, action.payload ] };
         },
@@ -196,7 +203,8 @@ export const gameSlice = createSlice({
             return { ...state, showLoot: action.payload };
         }, 
 
-        // ===== Dialogue ===== \\
+        // ==================== Dialogue ==================== \\
+
         setCurrentDialogNode: (state, action) => {
             return { ...state, currentNode: action.payload };
         },
@@ -207,7 +215,8 @@ export const gameSlice = createSlice({
             return { ...state, renderedOptions: action.payload.options, renderedText: action.payload.text };
         },
 
-        // ====== Settings ====== \\
+        // ==================== Settings ==================== \\
+
         setVolume: (state, action) => {
             return { ...state, soundEffectVolume: action.payload };
         },
@@ -251,6 +260,7 @@ export const {
     setJournalEntry, 
     setStatistics, 
     setTraits, 
+    setTutorial,
     
     setCombatResolved, 
     setInstantStatus, 

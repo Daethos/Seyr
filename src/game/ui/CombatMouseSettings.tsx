@@ -38,7 +38,9 @@ const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) 
             newIndex = direction === 1 ? 2 : 1;
             if (!weapons[newIndex]) return;
             setSelectedWeaponIndex(newIndex);
-            const one = [weapons[newIndex], weapons[0], weapons[2]._id === weapons[newIndex]._id ? weapons[1] : weapons[2]];
+            let one: any[] = [];
+            if (weapons.length === 3) one = [weapons?.[newIndex], weapons?.[0], weapons?.[2]._id === weapons?.[newIndex]._id ? weapons?.[1] : weapons?.[2]];
+            if (weapons.length === 2) one = [weapons?.[newIndex], weapons?.[0]];
             dispatch(getCombatSettingFetch({ loadout: one, type: 'Weapon' }));
             setSelectedHighlight('Weapon');
         };

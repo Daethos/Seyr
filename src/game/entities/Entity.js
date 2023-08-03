@@ -348,8 +348,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 case 'Kyosir': return 0xFFD700;
                 default: return 0xFFFFFF;
             };
-        };
-
+        }; 
         if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
 
         return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
@@ -1001,6 +1000,6 @@ export const pauseGame = (scene, duration) => {
     });
 };
   
-export function walk(scene, duration = 48, intensity = 0.000375) { // 32 || 0.0003
+export function walk(scene, duration = 48, intensity = 0.0004) { // 32 || 0.0003
     scene.cameras.main.shake(duration, intensity);
 };

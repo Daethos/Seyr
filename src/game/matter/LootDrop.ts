@@ -1,11 +1,18 @@
 import Phaser from "phaser";
 import EventEmitter from "../phaser/EventEmitter";
+import { Equipment } from "../../components/GameCompiler/GameStore";
+import Play from "../scenes/Play";
+import { Bodies } from "../scenes/Play";
+
 
 export default class LootDrop extends Phaser.Physics.Matter.Image {  
-    constructor(data) {
+    private _id: string;
+    private drop: Equipment;
+
+    constructor(data: { scene: Play, enemyID: string, drop: Equipment }) {
         let { scene, enemyID, drop } = data;
         const texture = imgURL(drop.imgURL);
-        const enemy = scene.enemies.find((e) => e.enemyID === enemyID);
+        const enemy = scene.enemies?.find((e) => e.enemyID === enemyID);
         super (scene.matter.world, enemy.body.position.x - 16, enemy.body.position.y + 16, texture);
         this.scene = scene;
         this.scene.add.existing(this);
@@ -16,8 +23,7 @@ export default class LootDrop extends Phaser.Physics.Matter.Image {
         this.setupListener();
     }; 
 
-    setupCollider = () => {
-        const { Bodies } = Phaser.Physics.Matter.Matter;
+    private setupCollider = (): void => {
         const circleCollider = Bodies.circle(this.x, this.y, 12, {
           isSensor: false,
           label: "lootdropCollider",
@@ -26,7 +32,7 @@ export default class LootDrop extends Phaser.Physics.Matter.Image {
         this.setStatic(true);
     };
 
-    setupListener = () => {
+    private setupListener = (): void => {
         EventEmitter.on('destroy-lootdrop', (e) => {
             if (e === this._id) {
                 this.destroyLootDrop();
@@ -34,11 +40,11 @@ export default class LootDrop extends Phaser.Physics.Matter.Image {
         });
     };
     
-    destroyLootDrop = () => {
+    private destroyLootDrop = (): void => {
         this.destroy();
     }; 
 };
 
-const imgURL = (url) => {
+const imgURL = (url: string): string => {
     return url.split('/')[2].split('.')[0];
 };

@@ -4,10 +4,13 @@ import * as asceanAPI from '../../utils/asceanApi';
 import Button from 'react-bootstrap/Button';
 import { shakeScreen } from './CombatStore';
 import Typewriter from './Typewriter';
+import { setAttributes, setFirewater, setJournal, setTutorial } from '../../game/reducers/gameState';
+import dialogWindow from '../../game/images/dialog_window.png';
 
 interface TutorialProps {
     player: any;
-    gameDispatch: React.Dispatch<any>;
+    dispatch?: React.Dispatch<any>;
+    gameDispatch?: React.Dispatch<any>;
     setTutorialContent: React.Dispatch<any>;
     firstBoot?: boolean;
     firstCity?: boolean;
@@ -22,7 +25,7 @@ interface TutorialProps {
     firstPhenomena?: boolean;
 };
 
-const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, firstPhenomena, setTutorialContent }: TutorialProps) => {
+const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, firstPhenomena, setTutorialContent }: TutorialProps) => {
     console.log(player, "Tutorial Triggering");
     const [typewriterString, setTypewriterString] = useState<string>('');
     function performAction(actionName: string) {
@@ -74,19 +77,15 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
         const response = await asceanAPI.saveTutorial(data);
         console.log(response, tutorial, "Tutorial Complete");
         setTutorialContent(null);
-        gameDispatch({ type: GAME_ACTIONS.SET_TUTORIAL, payload: response.tutorial });
+        if (gameDispatch) {
+            gameDispatch({ type: GAME_ACTIONS.SET_TUTORIAL, payload: response.tutorial });
+        } else if (dispatch) {
+            dispatch(setTutorial(response.tutorial));
+        };
     };
     const blessPlayer = async () => {
         try {
-            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             shakeScreen({ duration: 1500, intensity: 1.5});
-            if (player.faith === 'devoted') {
-                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n Of its own sin to orchestrate?"` });
-            } else if (player.faith === 'adherent') {
-                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree. \n\n Pondering why its form's forgot, and what this tether with you has wrought.` });
-            } else {
-                gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You may not be one for the Ancients or so-called God of this world, yet an undeniable surge courses through you. \n\n Care for whom and what you befriend, ${player.name}.` })
-            };
             const response = await asceanAPI.blessAscean(player._id);
             const entry = {
                 title: 'Who am I?',
@@ -105,29 +104,35 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             };
             const journalResponse = await asceanAPI.saveJournalEntry(data);
             console.log(journalResponse, "Journal Response");
-            gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: journalResponse.journal });
-
-            gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
-            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your curiosity or perchance conviction? A journey to the discovery of yourself awaits, ${player.name}.` });
-                        
             console.log(response, "Blessing Player");
+            if (gameDispatch) {
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                if (player.faith === 'devoted') {
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n Of its own sin to orchestrate?"` });
+                } else if (player.faith === 'adherent') {
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree. \n\n Pondering why its form's forgot, and what this tether with you has wrought.` });
+                } else {
+                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You may not be one for the Ancients or so-called God of this world, yet an undeniable surge courses through you. \n\n Care for whom and what you befriend, ${player.name}.` })
+                };
+                gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: journalResponse.journal });
+                
+                gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your curiosity or perchance conviction? A journey to the discovery of yourself awaits, ${player.name}.` });
+                gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_BLESSING, payload: true });
+                setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
+            } else if (dispatch) {
+                dispatch(setJournal(journalResponse.journal));
+                dispatch(setAttributes(response));
+            };
             await completeTutorial('firstPhenomena', player._id);
-            gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_BLESSING, payload: true });
-            setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
         } catch (err: any) {
             console.log(err, '%c <- You have an error in blessing a player', 'color: red')
         };
     };
     const rebukePlayer = async () => {
         try {
-            gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
             shakeScreen({ duration: 1500, intensity: 1.5});
-            if (player.faith === 'none') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You have no faith, and thus no god to rebuke. You're uncertain of what attempted contact, and sought no part of it.` });
-            if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless, your caer it persists, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
-            if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we sing, \n\n Fearfully."` });
             const response = await asceanAPI.curseAscean(player._id);
-            gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
-            gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
             const entry = {
                 title: 'Who am I?',
                 body: `You felt the presence of... ${highestFaith()}? \n\n You become attuned to a halt and paltry whisper, ringing, it stretches your soft edges, serenity begging you hither. \n\n "Who are you?"`,
@@ -136,7 +141,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 location: 'Unknown',
                 coordinates: {
                     x: 0,
-                    y: 0,
+                y: 0,
                 },
             };
             const data = {
@@ -145,15 +150,28 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
             };
             const journalResponse = await asceanAPI.saveJournalEntry(data);
             console.log(journalResponse, "Journal Response");
-            gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: journalResponse.journal });
+            if (gameDispatch) {
+                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
+                if (player.faith === 'none') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You have no faith, and thus no god to rebuke. You're uncertain of what attempted contact, and sought no part of it.` });
+                if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless, your caer it persists, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
+                if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we sing, \n\n Fearfully."` });
+                gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
+                gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
+                gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: journalResponse.journal });
 
-            gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your caution or perchance cynicism? A journey to the discovery of this presence awaits, ${player.name}.` });
+                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your caution or perchance cynicism? A journey to the discovery of this presence awaits, ${player.name}.` });
+                setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
+            } else if (dispatch) {
+                dispatch(setJournal(journalResponse.journal));
+                dispatch(setAttributes(response));
+                dispatch(setFirewater(response.firewater));
+            };
             await completeTutorial('firstPhenomena', player._id);
-            setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
         } catch (err: any) {
             console.log(err, '%c <- You have an error in rebuking a player', 'color: red');
         };
     };
+
     const highestFaith = () => {
         const influences = [player.weapon_one.influences[0], player.weapon_two.influences[0], player.weapon_three.influences[0], player.amulet.influences[0], player.trinket.influences[0]];
         const faithsCount = influences.reduce((acc: any, faith: any) => {
@@ -212,16 +230,17 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
         <div className='d-flex align-items-center justify-content-center'
         style={{
           position: 'fixed',
-          top: firstPhenomena ? 0 : '17.5%',
+          top: 0,
+        //   top: firstPhenomena ? 0 : '17.5%',
           left: 0,
           width: '100%',
           height: firstPhenomena ? '100vh' : '45vh',
-          backgroundColor: 'rgba(0, 0, 0, 1)',
           zIndex: 9999, 
-          border: "0.2em solid purple",
           color: "#fdf6d8",
-          overflow: 'scroll',
+        //   overflow: 'scroll',
+        //   scrollbarWidth: 'none',
         }}>
+            <img src={dialogWindow} alt='Dialog Window' style={{ transform: "scale(1.5)" }} />
             { firstBoot ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
                 <br /><br />
@@ -229,7 +248,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6>
             ) : ( '' ) }
             { firstCity ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%", width: "99%" }}>
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}>
                 Welcome to your first city, {player.name}. Various services and shops can be found to aid you in your journey.<br /><br />
                 <p style={{ color: '#fdf6d8' }}>
                 You can click on the [ City ] button that appears when you are in* a city, enabling multiple vendors selling specified equipment, and various services to heal and replenish your firewater. Much of the city's content is in framework and
@@ -241,7 +260,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6>
             ) : ( '' ) }
             { firstCombat ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "75%", width: "99%" }}>
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "75%", width: "65%" }}>
                 Welcome to your first combat encounter, {player.name}. Below explains the series of actions in conception and execution.<br /><br />
                 <p style={{ color: '#fdf6d8' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 512 512">
@@ -310,7 +329,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6> 
             ) : ( '' ) }
             { firstDeath ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%", width: "99%" }}> 
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}> 
                     Welcome to your first death, {player.name}! If you are reading this, it ain't hardcore so never fear.<br /><br />
                     <p style={{ color: '#fdf6d8' }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 436.028 436.028">
@@ -324,7 +343,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6> 
             ) : ( '') }
             { firstInventory ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "75%", width: "99%" }}>
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}>
                     Welcome again, {player.name}, it appears you've opened your inventory with an item for the first time!<br /><br />
                     <p style={{ color: '#fdf6d8' }}>
                     Inventory - Here you are able to view item statistics, and inspect for use in various ways. If you are of the mind, you may even be able to find a way to tinker with them.
@@ -344,7 +363,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6>
             ) : ( '') }
             { firstLevelUp ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "99%", marginTop: "75%" }}>
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}>
                     <br /><br /><br /><br />
                     Welcome {player.name} to your first level up!
                     <br /><br />
@@ -374,7 +393,7 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6>
             ) : ( '') }
             { firstLoot ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%", width: "99%"}}>
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%"}}>
                     Congratulations {player.name} on your first piece of equipment you've come across.
                     <br /><br />
                     <p style={{ color: '#fdf6d8' }}>
@@ -388,15 +407,13 @@ const Tutorial = ({ player, gameDispatch, firstBoot, firstCity, firstCombat, fir
                 </h6>
             ) : ( '' ) }
             { firstMovement ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "99%", marginTop: "75%" }}>First Move
+                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}>First Move
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstMovement', player._id)}>X</Button>
                 </h6>
             ) : ( '' ) }
 
             { firstPhenomena ? (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typewriter stringText={typewriterString} styling={{ overflowY: 'auto' }} performAction={performAction} />
-                </div>
+                <Typewriter stringText={typewriterString} styling={{ position: 'absolute', overflowY: 'auto', opacity: 1, width: '65%', maxHeight: '40vh', margin: '0 auto', zIndex: 99999, scrollbarWidth: 'none' }} performAction={performAction} />
             ) : ( '' ) }
 
             { firstQuest ? (
