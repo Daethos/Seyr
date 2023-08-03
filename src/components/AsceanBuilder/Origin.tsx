@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -9,7 +8,7 @@ interface Props {
     setAsceanState?: any;
     originModalShow?: boolean;
     setOriginModalShow?: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
 const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalShow }: Props) => {
     const originState = [
@@ -62,47 +61,44 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             bonus: '+2 STR, +2 CAER, +3% Mag Def, +3% Phys Def, +3% Crit Dam',
             imgUrl: '/images/Sedyreal-Man.jpg'
         }
-    ]
+    ];
     function handleOrigin(origin: any) {
-        console.log(origin.target.value, '<- the origin value being handled?')
         setAsceanState({
             ...asceanState,
             'origin': origin.target.value,
-        })
-    }
-  return (
-    <>
-    <div className="actions">
-        <h3>Race-Culture Origins</h3>
-        <div className="edit-eqp-button">
-        <Button variant="outline" 
-            className="my-2" 
-            size="lg" 
-            style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
-            onClick={() => setOriginModalShow!(true)}
-        >Origins</Button>
-        <Modal show={originModalShow} onHide={() => setOriginModalShow!(false)} centered aria-labelledby="contained-modal-title-vcenter" id="modal-weapon" > 
-            <Modal.Body id="modal-weapon" className="equipment-modal">
-            {originState.map((origin: any, index: any) => {
+        });
+    };
+    return (
+        <div className="actions">
+            <h3>Race-Culture Origins</h3>
+            <div className="edit-eqp-button">
+            <Button variant="outline" 
+                className="my-2" 
+                size="lg" 
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                onClick={() => setOriginModalShow!(true)}
+            >Origins</Button>
+            <Modal show={originModalShow} onHide={() => setOriginModalShow!(false)} centered aria-labelledby="contained-modal-title-vcenter" id="modal-weapon" > 
+                <Modal.Body id="modal-weapon" className="equipment-modal">
+                {originState.map((origin: any, index: any) => {
+                    return (
+                        <OriginsCard origin={origin} key={index} />
+                )})}
+                </Modal.Body>
+            </Modal>
+        </div>
+        <div className="property-block">
+        <Form.Select value={asceanState.origin}  onChange={handleOrigin}>
+            <option>Origin Selection Here</option>
+            {originState.map((origin: any) => {
                 return (
-                    <OriginsCard origin={origin} key={index} />
-            )})}
-            </Modal.Body>
-        </Modal>
-    </div>
-    <div className="property-block">
-    <Form.Select value={asceanState.origin}  onChange={handleOrigin}>
-        <option>Origin Selection Here</option>
-        {originState.map((origin: any) => {
-            return (
-                <option value={origin.name} key={origin.index}>{origin.name}</option>
-            )
-        })}
-    </Form.Select>
-    </div>
-    </div>
-    </>
-  )
-}
+                    <option value={origin.name} key={origin.index}>{origin.name}</option>
+                )
+            })}
+        </Form.Select>
+        </div>
+        </div>
+    );
+};
 
-export default Origin
+export default Origin;

@@ -1464,10 +1464,10 @@ const GamePvPLobby = ({ user }: Props) => {
                     )
                 })}
             </select>
-                <div className='' style={{  }}>
-            <input className='my-1' type='text' placeholder='Room ID...' onChange={handleRoom} style={{ width: '50%' }}/>
-            <input className='my-1' type='text' placeholder='Password...' onChange={handlePassword} style={{ width: '50%' }}/>
-                </div>
+            <div>
+                <input className='my-1' type='text' placeholder='Room ID...' onChange={handleRoom} style={{ width: '50%' }}/>
+                <input className='my-1' type='text' placeholder='Password...' onChange={handlePassword} style={{ width: '50%' }}/>
+            </div>
             <button className='btn btn-outline-info my-2' onClick={joinRoom} > Join Room </button>
             { gameState?.player ? (
                 <div className='friend-block my-3' style={{ maxWidth: "90%", marginLeft: "5%" }}>
@@ -1496,7 +1496,6 @@ const GamePvPLobby = ({ user }: Props) => {
             />
         ) }
         </>
-
     );
 };
 

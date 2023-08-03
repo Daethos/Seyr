@@ -1,6 +1,5 @@
 import Col from 'react-bootstrap/Col';
 import { Link } from "react-router-dom";
-import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler'
 import FeelingsCard from '../FeelingsCard/FeelingsCard';
 
 
@@ -26,7 +25,6 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
             <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}>
                 <img 
                     src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
-                    // id="ascean-pic"
                     className='dialog-picture' 
                 />
             </Link>

@@ -190,6 +190,6 @@ function* workGetThieverySuccessFetch(action: any): SagaIterator {
 };
 function* workGetPurchaseFetch(action: any): SagaIterator {
     const res = yield call(asceanAPI.purchaseToInventory, action.payload);
-    console.log(res, "Response Purchasing Item")
+    console.log(res, "Response Purchasing Item");
     yield put(setCurrency(res.currency));
 };

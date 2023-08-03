@@ -30,20 +30,13 @@ const CommunityFocus = ({ handleAsceanCreate }: CommunityProps) => {
         );
     };
 
-    return (
-        ascean && (
-            <Container>
-            <Row className="justify-content-center my-5">
-            <FocusAscean
-                ascean={ascean}
-                key={ascean._id}
-                loggedUser={user}
-                handleAsceanCreate={handleAsceanCreate}
-                />
-            </Row>
+    return ( ascean && (
+        <Container>
+        <Row className="justify-content-center my-5">
+            <FocusAscean ascean={ascean} key={ascean._id} loggedUser={user} handleAsceanCreate={handleAsceanCreate} />
+        </Row>
         </Container>
-        )
-    );
+    ));
 };
 
 export default CommunityFocus;

@@ -14,7 +14,6 @@ interface Props {
 const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
 
     return (
-        <>
         <Col className="stat-block wide">
         <hr className="orange-border" />
         <div className="section-left">
@@ -22,11 +21,11 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
                 <Link to={`/${ascean?.user?.username}`} style={{ textDecoration: 'none' }}>
                     <h3>
                         <img 
-                            src={ascean?.user?.photoUrl ? ascean?.user?.photoUrl : ''} 
-                            alt={ascean?.user?.username ? ascean?.user?.username : ''} 
+                            src={ascean?.user?.photoUrl ? ascean?.user?.photoUrl : ('')} 
+                            alt={ascean?.user?.username ? ascean?.user?.username : ('')} 
                             id="community-pic"
                         />
-                        {ascean?.user?.username ? ascean.user.username : '' } 
+                        {ascean?.user?.username ? ascean.user.username : ('')} 
                     </h3>
                 </Link>
             </div>
@@ -92,7 +91,6 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
         </div>
         <hr className='orange-border bottom' />
         </Col>
-        </>
     );
 };
 

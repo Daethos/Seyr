@@ -8,7 +8,7 @@ import Loading from '../Loading/Loading';
 interface Props {
     ascean?: any;
     loggedUser?: any;
-}
+};
 
 const FeelingsCard = ({ loggedUser, ascean }: Props) => {
   const [asceanState, setAsceanState] = useState(ascean);

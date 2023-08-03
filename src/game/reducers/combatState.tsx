@@ -21,9 +21,11 @@ const combatSlice = createSlice({
         getPersuasionFetch: (state, _action) => {},
         getLuckoutFetch: (state, _action) => {},
         getEnemySetupFetch: (state, _action) => {},
-        getNpcSetupFetch: (state, action) => {},
-        getDrainFetch: (state, action) => {},
-        // ===== Combat Setup / Breakdown ===== \\
+        getNpcSetupFetch: (state, _action) => {},
+        getDrainFetch: (state, _action) => {},
+
+        // ==================== Combat Setup / Breakdown ==================== \\
+
         setCombatPlayer: (state, action) => {
             return {
                 ...state,
@@ -167,13 +169,12 @@ const combatSlice = createSlice({
                 currentPlayerHealth: newHealth,
             };
         },
-        setWeather: (state, action) => {
-            return {
-                ...state,
-                weather: action.payload,
-            };
+        setWeather: (state, action) => { 
+            return { ...state, weather: action.payload }; 
         },
-        // ===== Combat Input Concerns ===== \\
+
+        // ==================== Combat Input Concerns ==================== \\
+
         setCombatInput: (state, action) => {
             const { key, value } = action.payload;
             return { ...state, [key]: value };
@@ -278,7 +279,8 @@ const combatSlice = createSlice({
             };
         }, 
 
-        // ===== Combat Resolution Concerns ===== \\
+        // ==================== Combat Resolution Concerns ==================== \\
+
         setCombatResolution: (state, action) => {
             return { ...state, ...action.payload };
         },
@@ -363,7 +365,9 @@ const combatSlice = createSlice({
                 enemyID: '',
             };
         }, 
-        // ===== Noncombat Resolution Concerns ===== \\
+
+        // ==================== Noncombat Resolution Concerns ==================== \\
+
         setPlayerLuckout: (state, action) => {
             return {
                 ...state,

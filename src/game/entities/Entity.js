@@ -1001,6 +1001,6 @@ export const pauseGame = (scene, duration) => {
     });
 };
   
-export function walk(scene, duration = 32, intensity = 0.0003) {
+export function walk(scene, duration = 48, intensity = 0.000375) { // 32 || 0.0003
     scene.cameras.main.shake(duration, intensity);
 };

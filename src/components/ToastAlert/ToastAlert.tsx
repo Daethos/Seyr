@@ -3,7 +3,7 @@ import Toast from 'react-bootstrap/Toast';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 interface Props {
-  error: any;
+  error: { title: string, content: string };
   setError: any;
 };
 

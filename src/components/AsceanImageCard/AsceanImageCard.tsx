@@ -45,38 +45,40 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
             <Popover className="text-info" id="popover" style={{ zIndex: 9999 }}>
             <Popover.Header id="popover-header" className="" as="h2">{item?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
-                { item?.name === 'Empty Weapon Slot' || item?.name === 'Empty Shield Slot' || item?.name === 'Empty Amulet Slot' || item?.name === 'Empty Ring Slot' || item?.name === 'Empty Trinket Slot' ? '' : 
+                { item?.name === 'Empty Weapon Slot' || item?.name === 'Empty Shield Slot' || item?.name === 'Empty Amulet Slot' || item?.name === 'Empty Ring Slot' || item?.name === 'Empty Trinket Slot' ? ( '' ) :  
                     <>
-                    { item?.type && item?.grip ? 
-                    <>
-                    {item?.type} [{item?.grip}] <br />
-                    {item?.attack_type} [{item?.damage_type?.[0]}{item?.damage_type?.[1] ? ' / ' + item.damage_type[1] : '' }{item?.damage_type?.[2] ? ' / ' + item?.damage_type?.[2] : '' }] <br />
-                    </>
-                : item?.type ? <>{item.type} <br /></> : ''}
-                {item?.constitution > 0 ? 'CON: +' + item?.constitution + ' ' : ''}
-                {item?.strength > 0 ? 'STR: +' + item?.strength + ' ' : ''}
-                {item?.agility > 0 ? 'AGI: +' + item?.agility + ' ' : ''}
-                {item?.achre > 0 ? 'ACH: +' + item?.achre + ' ' : ''}
-                {item?.caeren > 0 ? 'CAER: +' + item?.caeren + ' ' : ''}
-                {item?.kyosir > 0 ? 'KYO: +' + item?.kyosir + ' ' : ''}<br />
+                    { item?.type && item?.grip ? (
+                        <>
+                        {item?.type} [{item?.grip}] <br />
+                        {item?.attack_type} [{item?.damage_type?.[0]}{item?.damage_type?.[1] ? ' / ' + item.damage_type[1] : '' }{item?.damage_type?.[2] ? ' / ' + item?.damage_type?.[2] : '' }] <br />
+                        </>
+                    ) : item?.type ? (
+                        <>{item.type} <br /></> 
+                    ) : ( '' ) }
+                {item?.constitution > 0 ? 'CON: +' + item?.constitution + ' ' : ( '' )}
+                {item?.strength > 0 ? 'STR: +' + item?.strength + ' ' : ( '' )}
+                {item?.agility > 0 ? 'AGI: +' + item?.agility + ' ' : ( '' )}
+                {item?.achre > 0 ? 'ACH: +' + item?.achre + ' ' : ( '' )}
+                {item?.caeren > 0 ? 'CAER: +' + item?.caeren + ' ' : ( '' )}
+                {item?.kyosir > 0 ? 'KYO: +' + item?.kyosir + ' ' : ( '' )}<br />
                 Damage: {item?.physical_damage} Phys | {item?.magical_damage} Magi <br />
-                { item?.physical_resistance || item?.magical_resistance ?
+                { item?.physical_resistance || item?.magical_resistance ? (
                     <>
                     Defense: {item?.physical_resistance} Phys | {item?.magical_resistance} Magi <br />
                     </>
-                : '' }
-                { item?.physical_penetration || item?.magical_penetration ?
+                ) : ( '' ) }
+                { item?.physical_penetration || item?.magical_penetration ? (
                     <>
                     Penetration: {item?.physical_penetration} Phys | {item?.magical_penetration} Magi <br />
                     </>
-                : '' }
+                ) : ( '' ) }
                 Crit Chance: {item?.critical_chance}% <br />
                 Crit Damage: {item?.critical_damage}x <br />
                 Dodge Timer: {item?.dodge}s <br />
                 Roll Chance: {item?.roll}% <br />
-                { item?.influences && item?.influences?.length > 0 ?
+                { item?.influences && item?.influences?.length > 0 ? (
                     <>Influence: {item?.influences?.[0]}<br /><br /></>
-                : '' }
+                ) : ( '' ) }
                 {item?.rarity}
                 </>}
             </Popover.Body>
@@ -110,9 +112,7 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
         };
     };
 
-    const getId = () => {
-        return damaged ? 'flicker' : ''
-    };
+    const getId = () =>  damaged ? 'flicker' : '';
 
     if (loading) {
         return (

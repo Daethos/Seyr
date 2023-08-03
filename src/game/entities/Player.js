@@ -263,6 +263,16 @@ export default class Player extends Entity {
             if (e.computerCounterSuccess) {
                 this.stateMachine.setState(States.STUN);
                 this.scene.combatMachine.input('computerCounterSuccess', false);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Counter!', 1500, 'heal');    
+            };
+            if (e.rollSuccess) {
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll!', 1500, 'heal');
+            };
+            if (e.counterSuccess) {
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter!', 1500, 'heal');
+            };
+            if (e.computerRollSuccess) {
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Roll!', 1500, 'heal');
             };
             if (e.playerWin) {
                 if (this.tshaeringTimer) {
@@ -744,7 +754,7 @@ export default class Player extends Entity {
                 this.scene.stalwart(false);
             };
         }; 
-        if (this.inCombat) {
+        if (this.inCombat && this.attacking) {
             if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
                 this.scene.combatMachine.input('counterGuess', 'attack');
                 this.stateMachine.setState(States.COUNTER);           
@@ -884,6 +894,7 @@ export default class Player extends Entity {
             
         } else if (this.isRolling && !this.isJumping) { // ROLLING OUTSIDE COMBAT
             this.anims.play('player_roll', true);
+            walk(this.scene);
             this.spriteWeapon.setVisible(false);
             if (this.rollCooldown === 0) {
                 const sensorDisp = 12;
@@ -926,10 +937,12 @@ export default class Player extends Entity {
                 requestAnimationFrame(rollLoop);
             };
         } else if (this.isPosturing) { // POSTURING
+            walk(this.scene);
             this.anims.play('player_attack_3', true).on('animationcomplete', () => {
                 this.isPosturing = false;
             });
         } else if (this.isAttacking) { // ATTACKING
+            walk(this.scene);
             this.anims.play('player_attack_1', true).on('animationcomplete', () => {
                 this.isAttacking = false;
             }); 
@@ -1045,7 +1058,6 @@ export default class Player extends Entity {
         if (!this.inputKeys.down.S.isDown && !this.inputKeys.down.DOWN.isDown && this.playerVelocity.y !== 0 && !this.inputKeys.up.W.isDown && !this.inputKeys.up.UP.isDown) {
             this.playerVelocity.y = this.zeroOutVelocity(this.playerVelocity.y, deceleration);
         };
-
 
         // =================== VARIABLES IN MOTION ================== \\
 

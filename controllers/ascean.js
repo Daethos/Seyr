@@ -959,7 +959,7 @@ async function purchaseToInventory(req, res) {
         ascean.currency.gold -= req.body.cost.gold;
         await rebalanceCurrency(ascean);
         await ascean.save();
-        res.status(201).json({ ascean });
+        res.status(201).json(ascean);
     } catch (err) {
         console.log(err.message, '<- Error in the Controller Purchasing to Inventory!');
         res.status(400).json({ err });

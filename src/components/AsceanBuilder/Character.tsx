@@ -1,4 +1,3 @@
-import React from 'react'
 import Form from 'react-bootstrap/Form';
 
 interface Props {
@@ -12,8 +11,8 @@ const Character = ({ asceanState, setAsceanState }: Props) => {
         setAsceanState({
             ...asceanState,
             [e.target.name]: e.target.value,
-        })
-    }
+        });
+    };
     return (
         <>
         <div className="actions">

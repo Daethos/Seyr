@@ -63,7 +63,7 @@ export function* combatSaga(): SagaIterator {
     yield takeEvery('combat/getCombatTimerFetch', workGetCombatTimer);
     yield takeEvery('combat/getPersuasionFetch', workGetPersuasion);
     yield takeEvery('combat/getLuckoutFetch', workGetLuckout);
-    yield takeLatest('combat/getDrainFetch', workGetDrain);
+    yield takeEvery('combat/getDrainFetch', workGetDrain); // Was takeLatest
 };
 
 function* workResolveCombat(state: CombatData): SagaIterator {

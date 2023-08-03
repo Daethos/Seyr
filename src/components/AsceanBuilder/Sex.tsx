@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 
 interface Props {
@@ -7,13 +6,12 @@ interface Props {
 };
 
 const Sex = ({ asceanState, setAsceanState }: Props) => {
-  const [sexState, setSexState] = useState<any[]>([
+  const sex = [
     { name: 'Man' },
     { name: 'Woman' },
-  ]);
+  ];
 
   function handleSex(origin: any) {
-    console.log(origin.target.value, '<- the origin value being handled?')
     setAsceanState!({
         ...asceanState,
         'sex': origin.target.value,
@@ -24,7 +22,7 @@ const Sex = ({ asceanState, setAsceanState }: Props) => {
     <div className="actions">
       <Form.Select value={asceanState.sex} onChange={handleSex} className="mt-4">
         <option>Sex Selection Here</option>
-          {sexState.map((sex: any, index: number) => {
+          {sex.map((sex: any, index: number) => {
               return (
                   <option value={sex.name} key={index}>{sex.name}</option>
               )
@@ -32,7 +30,7 @@ const Sex = ({ asceanState, setAsceanState }: Props) => {
       </Form.Select>
     </div>
     </>
-  )
-}
+  );
+};
 
-export default Sex
+export default Sex;

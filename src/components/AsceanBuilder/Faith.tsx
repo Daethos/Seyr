@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import FaithCard from '../FaithCard/FaithCard';
 
@@ -8,7 +7,7 @@ interface Props {
 };
 
 const Faith = ({ asceanState, setAsceanState }: Props) => {
-    const [faithState, setFaithState] = useState([
+    const faithState = [
         {
             name: 'Ancients',
             origin: "The Ancients were figures of fantastic might existing before historical recording of time, commanding worshipers of all peoples of this world.          These godlike beings interacted with humans at their leisure, whether distantly ala Achreo of the Wild, or heavily involved in the daily lives of their worshipersers: Ilios of the Sun, and Ma'anre of the Moon. Some time a thousand years past, a great war between the Ancients--heavily involing humans broke out and wiped out the majority of both. It's unknown at this time who remains, and in what form they may be existing.",
@@ -21,9 +20,8 @@ const Faith = ({ asceanState, setAsceanState }: Props) => {
             worshipers: 'devoted',
             iconography: '/images/daethos-forming.png'
         }
-    ]);
+    ];
     function handleFaith(faith: any) {
-        console.log(faith.target.value, '<- the faith value being handled?')
         setAsceanState({
             ...asceanState,
             'faith': faith.target.value,
@@ -31,7 +29,6 @@ const Faith = ({ asceanState, setAsceanState }: Props) => {
     };
 
     return (
-        <>
         <div className="actions">
         <h3>Faith</h3>
         <div className="edit-eqp-button">
@@ -52,7 +49,6 @@ const Faith = ({ asceanState, setAsceanState }: Props) => {
         </Form.Select>
         </div>
         </div>
-        </>
     );
 };
 

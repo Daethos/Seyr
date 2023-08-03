@@ -28,7 +28,7 @@ const CommunityFeed = () => {
     const [searchText, setSearchText] = useState<string>('');
     const [allAscean, setAllAscean] = useState<any>(ascean);
 
-    async function filterAscean(results: any) {
+    async function filterAscean(results: any): Promise<void> {
       let finalResults = [];
         for (let i = 0; i < results.length; i++) {
           if (finalResults.length < ascean.length) {
@@ -38,7 +38,7 @@ const CommunityFeed = () => {
       setAllAscean(finalResults);
     };
 
-    function displayResults() {
+    function displayResults(): JSX.Element[] {
         let views = [];
         for (let i = 0; i < allAscean.length; i++) {
             views.push(
@@ -48,7 +48,7 @@ const CommunityFeed = () => {
         return (views)
     };
 
-    function handleChange(e: any) {
+    function handleChange(e: any): void {
         e.preventDefault();
         setSearchText(e.target.value);
     };
@@ -79,7 +79,7 @@ const CommunityFeed = () => {
             <img 
                 src={user.photoUrl} 
                 alt="User" 
-                style={{maxWidth: 5 + 'vw', maxHeight: 5 + 'vh'}}
+                style={{ maxWidth: '5vw', maxHeight: '5vh' }}
             />
             </InputGroup.Text>
             <Form.Control 
@@ -90,9 +90,9 @@ const CommunityFeed = () => {
             />
             </InputGroup>
             </Col>
-            { ascean.length > 0
-                ? <>{displayResults()}</>
-            : '' }
+            { ascean.length > 0 ? (
+              <>{displayResults()}</>
+            ) : ( '' ) }
         </Row>
         <Row className="justify-content-center my-2">
             <h6 style={{ textAlign: 'center' }}className='mb-5' >
@@ -116,13 +116,13 @@ const CommunityFeed = () => {
               <tr>
                 <td>
                 <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
-                  style={{ height: 40 + 'px', width: 40 + 'px', borderRadius: 50 + '%', border: '1px solid purple', marginLeft: '0px' }} />
+                  style={{ height: '40px', width: '40px', borderRadius: '50%', border: '1px solid purple', marginLeft: '0px' }} />
                 </td>
-                <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>
+                <td style={{ padding: '5%', fontSize: '14px' }}>
                   <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id}>{ascean[0].ascean}</Nav.Link>
                 </td>
-                <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].score}</td>
-                <td style={{ padding: 5 + '%', fontSize: 14 + 'px' }}>{ascean[0].mastery}</td>
+                <td style={{ padding: '5%', fontSize: '14px' }}>{ascean[0].score}</td>
+                <td style={{ padding: '5%', fontSize: '14px' }}>{ascean[0].mastery}</td>
               </tr>
              )}
             </tbody>

@@ -66,7 +66,7 @@ const HostScene = ({ assets, ascean }: Props) => {
         physics: {
             default: 'matter',
             matter: {
-                debug: true,
+                // debug: true,
                 gravity: { y: 0 },
             }
         }, 
@@ -278,7 +278,7 @@ const HostScene = ({ assets, ascean }: Props) => {
             { currentGame ? ( 
                 <> 
                 <SmallHud ascean={ascean} setShowPlayer={setShowPlayer} dialogTag={dialogTag} />
-                <CombatMouseSettings damageType={combatState.weapons[0].damage_type} weapons={combatState.weapons.filter((weapon: any) => weapon.name !== 'Empty Weapon Slot')} />
+                <CombatMouseSettings damageType={combatState.weapons[0].damage_type} weapons={combatState.weapons.filter((weapon: Equipment) => weapon?.name !== 'Empty Weapon Slot')} />
                 { showPlayer ? (  
                     <StoryAscean ascean={ascean} asceanViews={asceanViews} loading={loading} />
                 ) : ( 

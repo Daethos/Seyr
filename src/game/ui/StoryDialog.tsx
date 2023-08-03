@@ -332,14 +332,13 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
             dispatch(getGainExperienceFetch({ asceanState: gameState.asceanState, combatState: state })); 
             dispatch(getLootDropFetch({ enemyID: state.enemyID, level: state.computer.level }));
             const num = Math.floor(Math.random() * 2);
-            setLuckoutString(`${luckoutTrait?.luckout?.success[num].replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', influence).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)}`);
-            // await handlePlayerLuckout();
+            setLuckoutString(`${luckoutTrait?.luckout?.success[num].replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', influence).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith).replace('{article}', enemyArticle)}`);
             shakeScreen({ duration: 1000, intensity: 1.5 });
             if ('vibrate' in navigator) navigator.vibrate(1000);
         } else {
             dispatch(getLuckoutFetch({ luck, id: state.player._id, luckedOut: false }));
             await checkingLoot();
-            setLuckoutString(`${luckoutTrait?.luckout?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', influence).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith)} \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.`);
+            setLuckoutString(`${luckoutTrait?.luckout?.failure.replace('{enemy.name}', enemy.name).replace('{ascean.weapon_one.influences[0]}', influence).replace('{ascean.name}', ascean.name).replace('{enemy.weapon_one.influences[0]}', enemy.weapon_one.influences[0]).replace('{enemy.faith}', enemy.faith).replace('{article}', enemyArticle)} \n\n Prepare for combat, ${ascean.name}, and may your weapon strike surer than your words.`);
         };
     };
 

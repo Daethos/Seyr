@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import Player from '../entities/Player';
 import Enemy from '../entities/Enemy';
 import NPC from '../entities/NPC';
-import Treasure from '../matter/Treasure';
+// import Treasure from '../matter/Treasure';
 import NewText from '../phaser/NewText'
 import stick from '../images/stick.png';
 import base from '../images/base.png';
@@ -12,7 +12,8 @@ import EventEmitter from '../phaser/EventEmitter';
 import { getInitiateFetch, getCombatStateUpdate, getEnemyActionFetch, getCombatFetch, setStalwart, getNpcSetupFetch, getEnemySetupFetch, clearNonAggressiveEnemy, setCombatInput, setCaerenic } from '../reducers/combatState';
 import { getDrinkFirewaterFetch } from '../reducers/gameState';
 import CombatMachine from '../phaser/CombatMachine';
-import ScreenShaker from '../phaser/ScreenShake';
+// import ScreenShaker from '../phaser/ScreenShake';
+import { Mrpas } from 'mrpas';
  
 export default class Play extends Phaser.Scene {
     constructor() {
@@ -82,7 +83,7 @@ export default class Play extends Phaser.Scene {
         const layer3 = map.createLayer('Tile Layer 3 - Plants', decorations, 0, 0);
         const layer4 = map.createLayer('Tile Layer 4 - Primes', decorations, 0, 0);
         const layer5 = map.createLayer('Tile Layer 5 - Snags', decorations, 0, 0);
- 
+        this.groundLayer = layer0;
         layer0.setCollisionByProperty({ collides: true });
         layer1.setCollisionByProperty({ collides: true });
         layerC.setCollisionByProperty({ collides: true });
@@ -104,6 +105,11 @@ export default class Play extends Phaser.Scene {
         this.navMesh.enableDebug(debugGraphics); 
         this.matter.world.createDebugGraphic(); 
         this.matter.world.setBounds(0, 0, 4096, 4096); // Top Down
+        // this.fov = new Mrpas(this.map.width, this.map.height, (x, y) => {
+        //     const tile = this.groundLayer.getTileAt(x, y);
+        //     return tile 
+        //     // && !tile.collides;
+        // });
 
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
@@ -152,7 +158,14 @@ export default class Play extends Phaser.Scene {
         this.minimapBorder.setStrokeStyle(2, 0x000000);
         this.minimapBorder.setScrollFactor(0);
         this.minimapBorder.setScale(1 / camera.zoom);
-        
+
+        this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
+
+        // // OR using a dark overlay
+        const darkOverlay = this.add.graphics();
+        darkOverlay.fillStyle(0x000000, 0.375); // Black with 50% opacity
+        darkOverlay.fillRect(0, 0, 4096, 4096);
+
         this.input.keyboard.on('keydown-Z', () => {
             if (this.minimap.visible) {
                 this.minimap.visible = false;
@@ -170,6 +183,51 @@ export default class Play extends Phaser.Scene {
         this.enemyLootDropListener();
         this.enemyStateListener();
     };
+
+    // ================== Camera ================== \\
+
+    // computerFov = () => {
+    //     if (!this.fov || !this.map || !this.player || !this.groundLayer) return;
+    //     const camera = this.cameras.main;
+    //     const bounds = new Phaser.Geom.Rectangle(
+    //         this.map.worldToTileX(camera.worldView.x) - 1,
+    //         this.map.worldToTileY(camera.worldView.y) - 1,
+    //         this.map.worldToTileX(camera.worldView.width) + 2,
+    //         this.map.worldToTileY(camera.worldView.height) + 3
+    //     );
+
+    //     for (let y = bounds.y; y < bounds.y + bounds.height; y++) {
+    //         for (let x = bounds.x; x < bounds.x + bounds.width; x++) {
+    //             if (y < 0 || y >= this.map.height || x < 0 || x >= this.map.width) continue;
+    //             const tile = this.groundLayer.getTileAt(x, y);
+    //             if (!tile) continue;
+    //             tile.alpha = 1;
+    //             tile.tint = 0x404040;
+    //         };
+    //     };
+
+    //     const { px, py } = this.map.worldToTileXY(this.player.x, this.player.y);
+
+    //     this.fov.compute(px, py, 1, 
+    //         (x, y) => { 
+    //             const tile = this.groundLayer.getTileAt(x, y);
+    //             if (!tile) return;
+    //             return tile.tint === 0xffffff;
+    //             // return tile.alpha > 0;
+    //         },
+    //         (x, y) => {
+    //             const tile = this.groundLayer.getTileAt(x, y);
+    //             if (!tile) return;
+    //             const distance = Phaser.Math.Distance.Between(py, px, y, x);
+    //             const alpha = Math.min(2 - distance / 6, 1);
+
+    //             // tile.alpha = 1;
+    //             tile.tint = 0xffffff;
+    //             tile.alpha =  alpha;
+    //     });
+    // };
+
+    // ================== Combat ================== \\
 
     addPlayer = (e) => {
         if (e.playerID !== this.player.playerID) this.players.push(new Player({ scene: this, x: e.x, y: e.y, texture: 'player_actions', frame: 'player_idle_0' }));
@@ -396,6 +454,7 @@ export default class Play extends Phaser.Scene {
         this.enemies.forEach((enemy) => enemy.update());
         this.npcs.forEach((npc) => npc.update());
         this.combatMachine.processor();
+        // this.computerFov();
     };
     pause() {
         this.scene.pause();

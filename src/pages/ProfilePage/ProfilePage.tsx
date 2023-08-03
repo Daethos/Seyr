@@ -19,7 +19,7 @@ const ProfilePage = ({ user }: ProfileProps) => {
     const [loading, setLoading] = useState(true);
     const { username } = useParams();
 
-    const getProfile = useCallback(async () => {
+    const getProfile = useCallback(async (): Promise<void> => {
         try {
             const response = await userService.getProfile(username);
             setProfileUser(response.data.user);

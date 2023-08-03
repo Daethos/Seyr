@@ -107,14 +107,14 @@ export const TRAIT_DESCRIPTIONS = {
             description: "you can persuade the enemy to cease the pitiless attempt to invoke meaning and purpose in themselves by base and petty means, and to instead embrace the hush and tendril of things.",
             action: "Shame {enemy.name} for their attempt to invoke meaning and purpose in themselves by base and petty means.",
             modal: "Apathy (Affects all enemies of lesser conviction)",
-            success: ["{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you.", "I'm sorry, {ascea.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here."],
+            success: ["{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you.", "I'm sorry, {ascean.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here."],
             failure: "Seems {enemy.name} is not ready to give up on their attempt to invoke meaning and purpose in themselves by base and petty means."
         },
         luckout: {
             description: "you can convince the enemy to acquiesce and die, giving up their life to the Aenservaesai.",
             action: "Offer a glimpse of the aenservaesai in its totality.",
             modal: "Aenservaesai (Unburden the enemy to acquiesce and die)",
-            success: ["{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you.", "I'm sorry, {ascea.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here."],
+            success: ["{ascean.name}, all my life as {article} {enemy.name} has been worthless. I am completely rid of compulsion to take one further step in this world. I am now certain of myself for the first time, and it is thanks to you.", "I'm sorry, {ascean.name}, I don't understand what you're saying. I don't understand anything anymore. I'm uncertain of myself and this place, here, now, with you. I don't believe that I should be here."],
             failure: "It appears {enemy.name} is not ready to die, and is infact renewed with vigor at a chance to instill meaning (your murder) into their life (continuining)."
         }
     },

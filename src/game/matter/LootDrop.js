@@ -16,7 +16,7 @@ export default class LootDrop extends Phaser.Physics.Matter.Image {
         this.setupListener();
     }; 
 
-    setupCollider() {
+    setupCollider = () => {
         const { Bodies } = Phaser.Physics.Matter.Matter;
         const circleCollider = Bodies.circle(this.x, this.y, 12, {
           isSensor: false,
