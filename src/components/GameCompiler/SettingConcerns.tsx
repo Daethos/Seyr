@@ -166,7 +166,8 @@ export const ControlSettings = () => {
                 Movement - WASD or Arrow Keys for traditional, QE for strafing. Omnidirectional.
             </p>
             <p style={{ color: 'gold' }}>
-                Combat - 1-5 && Shift 1-3* [Attack*, Posture*, Roll*, Dodge, Counter-Counter]
+                Combat - 1-5 && Shift + 1-3* [Attack*, Posture*, Roll*, Dodge, Parry-Counter]
+                *Parry-Action
             </p>
             <p style={{ color: '#fdf6d8' }}>
                 General - C: Character - x: mini-switch, T: Drink Flask, V: Dialog, Z: Minimap
@@ -175,8 +176,8 @@ export const ControlSettings = () => {
                 Specials - G: Stalwart, Shift-G: Caerenic, R: Invoke, F: Consume, Shift-F: Tshaering
             </p>
             <p style={{ color: '#fdf6d8' }}>
-                Tactics - Tilda, Shift to Switch Inset: Weapons, Damage, Prayers. Middle Mouse Wheel to Scroll Between Options.* <br /><br />
-                [*Apologies for this one, it feels normal to me but it's probably my least intuitive design choice.]
+                Tactics - Tilda, Shift to Switch Inset: Weapons, Damage, Prayers. Middle Mouse Wheel to Scroll Between Options.
+                [Apologies for this one, it feels normal to me but it's probably my least intuitive design choice.]
             </p>
         </>
     );

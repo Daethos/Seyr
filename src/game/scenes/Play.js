@@ -159,12 +159,12 @@ export default class Play extends Phaser.Scene {
         this.minimapBorder.setScrollFactor(0);
         this.minimapBorder.setScale(1 / camera.zoom);
 
-        this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
-
+        
         // // OR using a dark overlay
-        const darkOverlay = this.add.graphics();
-        darkOverlay.fillStyle(0x000000, 0.375); // Black with 50% opacity
-        darkOverlay.fillRect(0, 0, 4096, 4096);
+        // this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
+        // const darkOverlay = this.add.graphics();
+        // darkOverlay.fillStyle(0x000000, 0.375); // Black with 50% opacity
+        // darkOverlay.fillRect(0, 0, 4096, 4096);
 
         this.input.keyboard.on('keydown-Z', () => {
             if (this.minimap.visible) {

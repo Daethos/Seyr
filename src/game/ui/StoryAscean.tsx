@@ -15,7 +15,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import { useNavigate } from 'react-router-dom';
 import Firewater from '../../components/GameCompiler/Firewater';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOnlyInventoryFetch, setAsceanState, setTutorialContent, setVolume } from '../reducers/gameState';
+import { getOnlyInventoryFetch, setAsceanState, setShakeDuration, setShakeIntensity, setTutorialContent, setVibrationTime, setVolume } from '../reducers/gameState';
 import { Player } from '../../components/GameCompiler/GameStore';
 import {CombatSettings, GeneralSettings, InventorySettings, TacticSettings, ControlSettings} from '../../components/GameCompiler/SettingConcerns';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
@@ -247,6 +247,10 @@ const StoryAscean = ({ ascean, asceanViews }: Props) => {
             console.log(err, "Error Saving Game Settings");
         };
     };
+
+    const handleShakeDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => dispatch(setShakeDuration(parseFloat(e.target.value)));
+    const handleShakeIntensityChange = (e: React.ChangeEvent<HTMLInputElement>) => dispatch(setShakeIntensity(parseFloat(e.target.value)));
+    const handleVibrationChange = (e: React.ChangeEvent<HTMLInputElement>) => dispatch(setVibrationTime(parseFloat(e.target.value)));
     const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => dispatch(setVolume(parseFloat(e.target.value)));
     const handleSettingChange = (e: any): void => setCurrentSetting(e.target.value); 
     const handleCharacterChange = (e: any): void => setCurrentCharacter(e.target.value);
@@ -431,12 +435,34 @@ const StoryAscean = ({ ascean, asceanViews }: Props) => {
                     </Button>
                     </h5>
                     <br />
+
+                    <h6>
+                        <span style={{ float: "left" }}></span>
+                        Screenshake Duration ({gameState.shake.duration})
+                        <span style={{ float: "right" }}></span>
+                    </h6>
+                    <Form.Range value={gameState.shake.duration} onChange={handleShakeDurationChange} min={0} max={1000} step={50} /><br />
+
+                    <h6>
+                        <span style={{ float: "left" }}></span>
+                        Screenshake Intensity ({gameState.shake.intensity})
+                        <span style={{ float: "right" }}></span>
+                    </h6>
+                    <Form.Range value={gameState.shake.intensity} onChange={handleShakeIntensityChange} min={0} max={5} step={0.25} /><br />
+
                     <h6>
                         <span style={{ float: "left" }}></span>
                         Sound Volume ({gameState.soundEffectVolume})
                         <span style={{ float: "right" }}></span>
                     </h6>
                     <Form.Range value={gameState.soundEffectVolume} onChange={handleVolumeChange} min={0} max={1} step={0.1} /><br />
+
+                    <h6>
+                        <span style={{ float: "left" }}></span>
+                        Vibration Time ({gameState.vibrationTime})
+                        <span style={{ float: "right" }}></span>
+                    </h6>
+                    <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} /><br />
                     
                     <Button variant='' style={{ color: 'gold', marginTop: '80%' }} onClick={returnHome}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-return-left" viewBox="0 0 16 16">

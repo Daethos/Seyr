@@ -83,7 +83,7 @@ const Settings = ({ ascean, dispatch, gameDispatch, inventory, currentTile, save
     function handleShakeIntensityChange(e: React.ChangeEvent<HTMLInputElement>) {
         let intensity = parseFloat(e.target.value);
         gameDispatch({ type: GAME_ACTIONS.SET_SHAKE_INTENSITY, payload: intensity });
-    }
+    };
 
     function handleVolumeChange(e: React.ChangeEvent<HTMLInputElement>) {
         let volume = parseFloat(e.target.value);

@@ -49,7 +49,7 @@ export const gameSlice = createSlice({
             avarice: false,
         },
         tutorial: null,
-        asceanViews: 'Character',
+        asceanViews: 'Settings',
         gameTimer: 0,
         staminaPercentage: 100,
         dialogTag: false,
@@ -235,7 +235,8 @@ export const gameSlice = createSlice({
         // ==================== Settings ==================== \\
 
         setVolume: (state, action) => { return { ...state, soundEffectVolume: action.payload }; },
-        setShake: (state, action) => { return { ...state, shake: action.payload }; },
+        setShakeDuration: (state, action) => { return { ...state, shake: { ...state.shake, duration: action.payload } }; },
+        setShakeIntensity: (state, action) => { return { ...state, shake: { ...state.shake, intensity: action.payload } }; },
         setVibrationTime: (state, action) => { return { ...state, vibrationTime: action.payload }; },
     },
 });
@@ -258,7 +259,8 @@ export const {
     setInitialAsceanState,
     setPlayerLevelUp, 
     setShowPlayer,
-    setShake, 
+    setShakeDuration,
+    setShakeIntensity, 
     setVibrationTime, 
     setVolume, 
     

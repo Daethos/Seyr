@@ -123,7 +123,7 @@ const HostScene = ({ assets, ascean }: Props) => {
     const updateStamina = async (e: number) => dispatch(setStaminaPercentage(gameState.staminaPercentage - e <= 0 ? 0 : gameState.staminaPercentage - e));
     const useStamina = (percent: number): void => {
         useEffect(() => { 
-            if (gameState.percent < 100) {
+            if (percent < 100) {
                 const timer = setTimeout(() => {
                     dispatch(setStaminaPercentage(percent + (stamina / 100)));
                     EventEmitter.emit('updated-stamina', Math.round(((percent + (stamina / 100)) / 100) * stamina));
@@ -167,7 +167,7 @@ const HostScene = ({ assets, ascean }: Props) => {
         <div className='story-div' style={{ border: gameState.currentGame ? '' : '3px solid #fdf6d8' }}>
             { gameState.currentGame && ( 
                 <> 
-                <SmallHud ascean={ascean} setShowPlayer={setShowPlayer} dialogTag={gameState.dialogTag} />
+                <SmallHud ascean={ascean} dialogTag={gameState.dialogTag} />
                 { gameState.scrollEnabled && (
                     <CombatMouseSettings damageType={combatState.weapons[0].damage_type} weapons={combatState.weapons.filter((weapon: Equipment) => weapon?.name !== 'Empty Weapon Slot')} />
                 ) }

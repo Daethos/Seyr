@@ -173,7 +173,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
             <div style={{ position: "absolute", left: "187.5px", top: "0px", transform: "scale(0.75)" }}> 
                 <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} caerenic={state.isCaerenic} />
             </div>
-            <div style={{ position: "absolute", left: "230px", top: "-10px" }}>
+            <div style={{ position: "absolute", left: "230px", top: "-5px" }}>
             { state.isStalwart ? (
                 <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.player.shield, true)}>
                     <img src={state.player.shield.imgURL} className="m-1 eqp-popover spec" alt={state.player.shield.name} style={getItemRarityStyle(state.player.shield.rarity)} />
