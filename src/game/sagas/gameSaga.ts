@@ -3,13 +3,14 @@ import { takeEvery, select, put, call } from "redux-saga/effects";
 import { getAsceanTraits } from "../../components/GameCompiler/PlayerTraits";
 import EventEmitter from "../phaser/EventEmitter";
 import { setCombatPlayer, setPhaser, setRest } from "../reducers/combatState";
-import { setPlayer, setInitialAsceanState, setSettings, setTraits, setPlayerLevelUp, setAsceanState, setFirewater, setExperience, setCurrency, setInventory, setLootDrops, setShowLoot, setStatistics } from "../reducers/gameState";
+import { setPlayer, setInitialAsceanState, setSettings, setTraits, setPlayerLevelUp, setAsceanState, setFirewater, setExperience, setCurrency, setInventory, setLootDrops, setShowLoot, setStatistics, setTutorialContent } from "../reducers/gameState";
 import { compress, workGetCombatStatistic } from "./combatSaga";
 import { getSocketInstance } from "./socketManager";
 import { SOCKET } from "./socketSaga";
 import * as asceanAPI from '../../utils/asceanApi';
 import * as equipmentAPI from '../../utils/equipmentApi';
 import * as settingsAPI from '../../utils/settingsApi';
+import Tutorial from "../../components/GameCompiler/Tutorial";
 
 const checkStatisticalValue = (rarity: string) => {
     switch (rarity) {
@@ -36,6 +37,7 @@ export function* gameSaga(): SagaIterator {
     yield takeEvery('game/getInteracingLootFetch', workGetInteracingLootFetch);
     yield takeEvery('game/getPurchaseFetch', workGetPurchaseFetch);
     yield takeEvery('game/getThieverySuccessFetch', workGetThieverySuccessFetch);
+    yield takeEvery('game/getTutorialFetch', workGetTutorialFetch);
 };
 
 function* workGetGameFetch(action: any): SagaIterator {
@@ -148,6 +150,8 @@ export function* workGetGainExperienceFetch(action: any): SagaIterator {
         'opponent': 0,
         'opponentExp': 0
     }));
+    if (res.level === 1 && res.experience > 700 && res.tutorial.firstPhenomena) yield put(setTutorialContent('firstPhenomena'));
+    if (res.level === 1 && res.experience === 1000 && res.tutorial.firstLevelUp) yield put(setTutorialContent('firstLevelUp'));
 };
 function* workGetAsceanAndInventoryFetch(action: any): SagaIterator {
     const re = yield call(asceanAPI.getAsceanAndInventory, action.payload);
@@ -171,6 +175,8 @@ export function* workGetLootDropFetch(action: any): SagaIterator {
     } else {
         EventEmitter.emit('enemyLootDrop', { enemyID: action.payload.enemyID, drops: res.data } );
     };
+    const game = yield select((state) => state.game);
+    if (game.player.tutorial.firstLoot) yield put(setTutorialContent('firstLoot'));
 };
 function* workGetInteracingLootFetch(action: any): SagaIterator {
     yield put(setShowLoot(action.payload));
@@ -193,3 +199,63 @@ function* workGetPurchaseFetch(action: any): SagaIterator {
     console.log(res, "Response Purchasing Item");
     yield put(setCurrency(res.currency));
 };
+
+export function* workGetTutorialFetch(): SagaIterator {
+    const ascean = yield select((state) => state.game.player);
+    const asceanViews = yield select((state) => state.game.asceanViews);
+    if (!Object.keys(ascean).length) return;
+    let tutorial: string = '';
+
+    if (ascean.experience === 1000 && ascean.level === 1 && ascean.tutorial.firstLevelUp) tutorial = 'firstLevelUp';
+    if (ascean.experience > 700 && ascean.tutorial.firstPhenomena) tutorial = 'firstPhenomena';
+    if (ascean.inventory.length > 0) {
+        if (ascean.tutorial.firstLoot) tutorial = 'firstLoot';
+        if (ascean.tutorial.firstInventory && asceanViews === 'Inventory') tutorial = 'firstInventory'; 
+    };
+    if (ascean.health.current <= 0 && ascean.tutorial.firstDeath) tutorial = 'firstDeath';
+    console.log(tutorial, "Tutorial");
+    switch (tutorial) {
+        case 'firstPhenomena':
+            return setTutorialContent(tutorial);
+        case 'firstInventory':
+            return setTutorialContent(tutorial);
+        case 'firstLoot':
+            return setTutorialContent(tutorial);
+        case 'firstDeath':
+            return setTutorialContent(tutorial);
+        case 'firstLevelUp':
+            return setTutorialContent(tutorial);
+        default:
+            return null;
+    };
+}; 
+    
+    // const tutorialConcerns = useCallback(async (): Promise<void> => {
+    //     console.log(ascean.experience, ascean.tutorial, ascean.level, gameState.asceanViews, "Tutorial Concerns");
+    //     if (ascean.experience === 1000 && ascean.level === 1 && ascean.tutorial.firstLevelUp) await handleTutorial('firstLevelUp');
+    //     if (ascean.experience > 700 && ascean.tutorial.firstPhenomena) await handleTutorial('firstPhenomena');
+    //     if (ascean.inventory.length > 0) {
+    //         if (ascean.tutorial.firstLoot) await handleTutorial('firstLoot');
+    //         if (ascean.tutorial.firstInventory && gameState.asceanViews === 'Inventory') await handleTutorial('firstInventory');
+    //     };
+    //     if (ascean.health.current <= 0 && ascean.tutorial.firstDeath) await handleTutorial('firstDeath');
+    // }, [ascean, gameState.asceanViews]);
+     
+    // const handleTutorial = async (tutorial: string): Promise<void | null> => {
+    //     switch (tutorial) {
+    //         case 'firstPhenomena':
+    //             shakeScreen({ duration: 1500, intensity: 2 });
+    //             playReligion();
+    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstPhenomena={true} />);
+    //         case 'firstInventory':
+    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstInventory={true} />);
+    //         case 'firstLoot':
+    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstLoot={true} />);
+    //         case 'firstDeath':
+    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstDeath={true} />);
+    //         case 'firstLevelUp':
+    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstLevelUp={true} />);
+    //         default:
+    //             return null;
+    //     };
+    // };

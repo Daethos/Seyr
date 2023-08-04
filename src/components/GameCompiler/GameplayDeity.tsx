@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import EnemyDialogNodes from './EnemyDialogNodes.json';
 import { GAME_ACTIONS, GameData, Player } from './GameStore';
 import { MapData } from './WorldStore';
-import { ACTIONS, CombatData, shakeScreen } from './CombatStore';
+import { CombatData, shakeScreen } from './CombatStore';
 import useGameSounds from './Sounds';
 import Typewriter from './Typewriter';
 import { DialogNodeOption, DialogNode } from './DialogNode';

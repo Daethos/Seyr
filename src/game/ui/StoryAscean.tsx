@@ -15,7 +15,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import { useNavigate } from 'react-router-dom';
 import Firewater from '../../components/GameCompiler/Firewater';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOnlyInventoryFetch, setAsceanState, setVolume } from '../reducers/gameState';
+import { getOnlyInventoryFetch, setAsceanState, setTutorialContent, setVolume } from '../reducers/gameState';
 import { Player } from '../../components/GameCompiler/GameStore';
 import {CombatSettings, GeneralSettings, InventorySettings, TacticSettings, ControlSettings} from '../../components/GameCompiler/SettingConcerns';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
@@ -63,6 +63,11 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
     useEffect(() => {
         playerTraits();
     }, [ascean]);
+    
+    useEffect(() => {
+        console.log(ascean.tutorial.firstInventory, ascean.inventory.length, "Hello");
+        if (ascean.tutorial.firstInventory && ascean.inventory.length && asceanViews === 'Inventory') dispatch(setTutorialContent('firstInventory'));
+    }, [ascean.tutorial, asceanViews, dispatch]);
 
     useEffect(() => {
         setDragAndDropInventory(ascean.inventory);

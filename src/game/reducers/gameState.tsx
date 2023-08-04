@@ -6,7 +6,7 @@ export const gameSlice = createSlice({
     initialState: {
         player: {} as unknown as Player,
         dialog: {},
-        traits: {},
+        traits: null,
         loading: true,
         loadingAscean: false,
         loadingDeity: false,
@@ -47,38 +47,31 @@ export const gameSlice = createSlice({
             mastery: '',
             faith: '',
             avarice: false,
-        }
+        },
+        tutorial: null,
+        asceanViews: 'Character',
+        gameTimer: 0,
+        staminaPercentage: 100,
+        dialogTag: false,
+        pauseState: false,
+        showPlayer: false,
+        currentGame: false,
+        scrollEnabled: false,
     },
     reducers: {
-        getGameFetch: (state, _action) => {
-            state.loading = true;    
-        }, 
-        getDrinkFirewaterFetch: (state, _action) => {
-            state.loadedAscean = false;
-        },
-        getReplenishFirewaterFetch: (state, _action) => {
-            state.loadedAscean = false;
-        },
-        getRestoreFirewaterFetch: (state, _action) => {
-        },
-        getGainExperienceFetch: (state, _action) => {
-            state.loadedAscean = false;
-        },
-        getAsceanAndInventoryFetch: (state, _action) => {
-            state.loadingAscean = true;
-        },
-        getOnlyInventoryFetch: (state, _action) => {
-            state.loadingAscean = true;
-        },
+        getGameFetch: (state, _action) => { state.loading = true; },
+        getDrinkFirewaterFetch: (state, _action) => {},
+        getReplenishFirewaterFetch: (state, _action) => {},
+        getRestoreFirewaterFetch: (state, _action) => {},
+        getGainExperienceFetch: (state, _action) => {},
+        getAsceanAndInventoryFetch: (state, _action) => {},
+        getOnlyInventoryFetch: (state, _action) => {},
         getLootDropFetch: (state, _action) => {},
-        getCombatStatisticFetch: (state, _action) => {
-            state.loadedAscean = false;
-        },
-        getAsceanLevelUpFetch: (state, _action) => {
-            state.loadedAscean = false;
-        },
+        getCombatStatisticFetch: (state, _action) => {},
+        getAsceanLevelUpFetch: (state, _action) => {},
         getThieverySuccessFetch: (state, _action) => {},
         getPurchaseFetch: (state, _action) => {},
+        getTutorialFetch: (state, _action) => {},
 
         // ==================== Player Concerns ==================== \\
 
@@ -131,6 +124,9 @@ export const gameSlice = createSlice({
         setSettings: (state, action) => { 
             return { ...state, soundEffectVolume: action.payload.soundEffectVolume, shake: action.payload.shake, vibrationTime: action.payload.vibrationTime };
         },
+        setStaminaPercentage: (state, action) => {
+            return { ...state, staminaPercentage: action.payload };
+        },
         setStatistics: (state, action) => {
             return { ...state, player: { ...state.player, statistics: action.payload } };
         },
@@ -140,17 +136,29 @@ export const gameSlice = createSlice({
 
         // ==================== Game Concerns ==================== \\
 
+        setAsceanViews: (state, action) => {
+            return { ...state, asceanViews: action.payload };
+        },
         setCheckLoot: (state, action) => {
             return { ...state, checkLoot: action.payload };
         },
         setCombatResolved: (state, action) => {
             return { ...state, combatResolved: action.payload };
         },
+        setCurrentGame: (state, action) => {
+            return { ...state, currentGame: action.payload };
+        },
         setCurrentIntent: (state, action) => {
             return { ...state, currentIntent: action.payload };
         },
         setDialog: (state, action) => {
             return { ...state, dialog: action.payload };
+        },
+        setDialogTag: (state, action) => {
+            return { ...state, dialogTag: action.payload };
+        },
+        setGameTimer: (state, action) => {
+            return { ...state, gameTimer: action.payload };
         },
         setInstantStatus: (state, action) => {
             return { ...state, instantStatus: action.payload };
@@ -167,8 +175,20 @@ export const gameSlice = createSlice({
         setMerchantEquipment: (state, action) => {
             return { ...state, merchantEquipment: action.payload };
         },
+        setPauseState: (state, action) => {
+            return { ...state, pauseState: action.payload };
+        },
+        setScrollEnabled: (state, action) => {
+            return { ...state, scrollEnabled: action.payload };
+        },
+        setShowPlayer: (state, action) => {
+            return { ...state, showPlayer: action.payload };
+        },
         setTutorial: (state, action) => {
             return { ...state, player: { ...state.player, tutorial: action.payload } };
+        },
+        setTutorialContent: (state, action) => {
+            return { ...state, tutorial: action.payload };
         },
 
         // ==================== Loot Drops ==================== \\
@@ -205,27 +225,15 @@ export const gameSlice = createSlice({
 
         // ==================== Dialogue ==================== \\
 
-        setCurrentDialogNode: (state, action) => {
-            return { ...state, currentNode: action.payload };
-        },
-        setCurrentNodeIndex: (state, action) => {
-            return { ...state, currentNodeIndex: action.payload };
-        },
-        setRendering: (state, action) => {
-            return { ...state, renderedOptions: action.payload.options, renderedText: action.payload.text };
-        },
+        setCurrentDialogNode: (state, action) => { return { ...state, currentNode: action.payload }; },
+        setCurrentNodeIndex: (state, action) => { return { ...state, currentNodeIndex: action.payload }; },
+        setRendering: (state, action) => { return { ...state, renderedOptions: action.payload.options, renderedText: action.payload.text }; },
 
         // ==================== Settings ==================== \\
 
-        setVolume: (state, action) => {
-            return { ...state, soundEffectVolume: action.payload };
-        },
-        setShake: (state, action) => {
-            return { ...state, shake: action.payload };
-        },
-        setVibrationTime: (state, action) => {
-            return { ...state, vibrationTime: action.payload };
-        },
+        setVolume: (state, action) => { return { ...state, soundEffectVolume: action.payload }; },
+        setShake: (state, action) => { return { ...state, shake: action.payload }; },
+        setVibrationTime: (state, action) => { return { ...state, vibrationTime: action.payload }; },
     },
 });
 
@@ -240,12 +248,14 @@ export const {
     getPurchaseFetch, 
     getReplenishFirewaterFetch, 
     getRestoreFirewaterFetch,
-    getThieverySuccessFetch, 
+    getThieverySuccessFetch,
+    getTutorialFetch, 
     
     setPlayer, 
     setSettings, 
     setInitialAsceanState,
     setPlayerLevelUp, 
+    setShowPlayer,
     setShake, 
     setVibrationTime, 
     setVolume, 
@@ -261,11 +271,18 @@ export const {
     setStatistics, 
     setTraits, 
     setTutorial,
+    setTutorialContent,
     
+    setAsceanViews,
+    setGameTimer,
     setCombatResolved, 
+    setCurrentGame,
+    setScrollEnabled,
     setInstantStatus, 
-    setMerchantEquipment, 
-    setPlayerBlessing, 
+    setMerchantEquipment,
+    setPauseState, 
+    setPlayerBlessing,
+    setStaminaPercentage, 
     
     setShowInventory, 
     setCheckLoot, 
@@ -276,6 +293,7 @@ export const {
     setShowLootOne, 
     
     setDialog, 
+    setDialogTag,
     setShowDialog, 
     setCurrentDialogNode, 
     setCurrentIntent, 

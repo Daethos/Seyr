@@ -3,41 +3,49 @@ import { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
-export const traitStyle = (trait: string) => {
-    switch (trait) {
-        case 'Arbituous':
-            return 'green';
-        case 'Chiomic':
-            return 'gold';
-        case 'Kyr\'naic':
-            return 'purple';
-        case 'Lilosian':
-            return '#fdf6d8';
-        case 'Ilian':
-            return 'white';
-        case 'Kyn\'gian':
-            return 'brown';
-        case 'Se\'van':
-            return 'red';
-        case 'Shrygeian':
-            return 'orange';
-        case 'Fyeran':
-            return 'orangered';
-        case 'Tshaeral':
-            return 'darkblue';
-        case 'Astral':
-            return 'yellow';
-        case 'Shaorahi':
-            return 'blue';
-        case 'Cambiren':
-            return 'darkgreen';
-        case 'Sedyrist':
-            return 'silver';
-        case 'Ma\'anreic':
-            return 'darkgoldenrod';
-        default:
-            break;
-    };
+const ATTRIBUTE_TRAITS = {
+    Constitution: {
+        strength: 'Ilian', 
+        agility: "Kyn'gian", 
+        achre: "Arbituous", 
+        caeren: "Lilosian", 
+        kyosir: "Kyr'naic", 
+    },
+    Strength: {
+        constitution: 'Ilian', 
+        agility: "Se'van", 
+        achre: "Sedyrist", 
+        caeren: "Shaorahi",  
+        kyosir: "Tshaeral",  
+    },
+    Agility: {
+        constitution: "Kyn'gian", 
+        strength: "Se'van", 
+        achre: "Ma'anreic", 
+        caeren: "Cambiren", 
+        kyosir: "Shrygeian", 
+    },
+    Achre: {
+        constitution: "Arbituous", 
+        strength: "Sedyrist", 
+        agility: "Ma'anreic", 
+        caeren: "Fyeran",    
+        kyosir: "Chiomic", 
+    },
+    Caeren: {
+        constitution: "Lilosian", 
+        strength: "Shaorahi",  
+        agility: "Cambiren", 
+        achre: "Fyeran",    
+        kyosir: "Astral", 
+    },
+    Kyosir: {
+        constitution: "Kyr'naic", 
+        strength: "Tshaeral",  
+        agility: "Shrygeian", 
+        achre: "Chiomic", 
+        caeren: "Astral", 
+    },
 };
 
 export const TRAIT_DESCRIPTIONS = {
@@ -272,59 +280,12 @@ export const getAsceanTraits = async (ascean: Player) => {
         tertiary: { name: '' },
     };
 
-
-    const ATTRIBUTE_TRAITS = {
-        Constitution: {
-            strength: 'Ilian', 
-            agility: "Kyn'gian", 
-            achre: "Arbituous", 
-            caeren: "Lilosian", 
-            kyosir: "Kyr'naic", 
-        },
-        Strength: {
-            constitution: 'Ilian', 
-            agility: "Se'van", 
-            achre: "Sedyrist", 
-            caeren: "Shaorahi",  
-            kyosir: "Tshaeral",  
-        },
-        Agility: {
-            constitution: "Kyn'gian", 
-            strength: "Se'van", 
-            achre: "Ma'anreic", 
-            caeren: "Cambiren", 
-            kyosir: "Shrygeian", 
-        },
-        Achre: {
-            constitution: "Arbituous", 
-            strength: "Sedyrist", 
-            agility: "Ma'anreic", 
-            caeren: "Fyeran",    
-            kyosir: "Chiomic", 
-        },
-        Caeren: {
-            constitution: "Lilosian", 
-            strength: "Shaorahi",  
-            agility: "Cambiren", 
-            achre: "Fyeran",    
-            kyosir: "Astral", 
-        },
-        Kyosir: {
-            constitution: "Kyr'naic", 
-            strength: "Tshaeral",  
-            agility: "Shrygeian", 
-            achre: "Chiomic", 
-            caeren: "Astral", 
-        },
-    };
-
     let asceanTraits = ATTRIBUTE_TRAITS[ascean.mastery as keyof typeof ATTRIBUTE_TRAITS];
-    let topThree = Object.entries(asceanTraits).sort((a, b) => b[0].length - a[0].length)
+    let topThree = Object.entries(asceanTraits).sort((a, b) => b[0].length - a[0].length);
     const mappedTraits = topThree.map(trait => {
         const traitName = trait[0];
         const traitValue = trait[1];
         const attributeValue = ascean[traitName as keyof typeof ascean];
-      
         return [traitName, traitValue, attributeValue];
     });
     const topThreeSorted = mappedTraits.sort((a, b) => b[2] - a[2]);
@@ -350,9 +311,47 @@ export const checkPlayerTrait = (trait: string, gameState: GameData) => {
     return false;
 };
 
-export const checkTraits = (trait: string, traits: any) => {
+export const checkTraits = (trait: string, traits: { primary: { name: string; }; secondary: { name: string; }; tertiary: { name: string; }; }): boolean => {
+    if (!traits) return false;
     if (traits.primary.name.includes(trait) || traits.secondary.name.includes(trait) || traits.tertiary.name.includes(trait)) return true;
     return false;
+};
+
+export const traitStyle = (trait: string) => {
+    switch (trait) {
+        case 'Arbituous':
+            return 'green';
+        case 'Chiomic':
+            return 'gold';
+        case 'Kyr\'naic':
+            return 'purple';
+        case 'Lilosian':
+            return '#fdf6d8';
+        case 'Ilian':
+            return 'white';
+        case 'Kyn\'gian':
+            return 'brown';
+        case 'Se\'van':
+            return 'red';
+        case 'Shrygeian':
+            return 'orange';
+        case 'Fyeran':
+            return 'orangered';
+        case 'Tshaeral':
+            return 'darkblue';
+        case 'Astral':
+            return 'yellow';
+        case 'Shaorahi':
+            return 'blue';
+        case 'Cambiren':
+            return 'darkgreen';
+        case 'Sedyrist':
+            return 'silver';
+        case 'Ma\'anreic':
+            return 'darkgoldenrod';
+        default:
+            break;
+    };
 };
 
 interface TraitModalProps {
@@ -360,8 +359,8 @@ interface TraitModalProps {
     callback: (trait: string) => void;
     name: string;
     influence: string
-}
-;
+};
+
 export const LuckoutModal = ({ traits, callback, name, influence }: TraitModalProps) => {
     const [show, setShow] = useState(false);
     return (

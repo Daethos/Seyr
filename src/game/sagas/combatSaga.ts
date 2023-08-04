@@ -7,7 +7,7 @@ import { getNpcDialog } from "../../components/GameCompiler/Dialog";
 import { getNodesForNPC, npcIds } from "../../components/GameCompiler/DialogNode";
 import EventEmitter from "../phaser/EventEmitter";
 import { setPlayerWin, setEnemyWin, setCombat, clearCombat, setCombatTimer, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatInput, setDamageType, setPlayerBlessing, setWeaponOrder, setEffectResponse, setEnemyActions, setCombatResolution, setEnemyPersuaded, setPlayerLuckout, setInstantStatus, setLuckoutFailure, setDrain, getDrainFetch } from "../reducers/combatState";
-import { setStatistics, setDialog, setShowDialog } from "../reducers/gameState";
+import { setStatistics, setDialog, setShowDialog, setTutorialContent } from "../reducers/gameState";
 import { workGetGainExperienceFetch, workGetLootDropFetch } from "./gameSaga";
 import { getSocketInstance } from "./socketManager";
 import { SOCKET } from "./socketSaga";
@@ -87,7 +87,8 @@ function* workResolveCombat(state: CombatData): SagaIterator {
             console.log("Enemy Won");
             const health = { payload: { health: combat.newPlayerHealth, id: combat.player._id } };
             yield call(workGetAsceanHealthUpdate, health);      
-            yield put(setEnemyWin(combat));    
+            yield put(setEnemyWin(combat));
+            if (combat.player.tutorial.firstDeath) yield put(setTutorialContent('firstDeath'));    
         };
     } catch (err: any) {
         console.log(err, 'Error in workResolveCombat');

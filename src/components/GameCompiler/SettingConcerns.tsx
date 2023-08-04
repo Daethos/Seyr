@@ -175,8 +175,8 @@ export const ControlSettings = () => {
                 Specials - G: Stalwart, Shift-G: Caerenic, R: Invoke, F: Consume, Shift-F: Tshaering
             </p>
             <p style={{ color: '#fdf6d8' }}>
-                Tactics - (Lower middle of the screen) - Left/Middle Mouse Click to Enter, Shift to Switch Inset, Middle Mouse Wheel to Scroll Between Options: Weapons, Damage, Prayers.
-                [Apologies for this one, it feels normal to me but it's probably my least intuitive design choice.]
+                Tactics - Tilda, Shift to Switch Inset: Weapons, Damage, Prayers. Middle Mouse Wheel to Scroll Between Options.* <br /><br />
+                [*Apologies for this one, it feels normal to me but it's probably my least intuitive design choice.]
             </p>
         </>
     );

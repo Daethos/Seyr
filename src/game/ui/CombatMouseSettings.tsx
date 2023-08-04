@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getCombatSettingFetch } from '../reducers/combatState';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import { useKeyEvent } from '../../pages/Story/Story';
+import { setScrollEnabled } from '../reducers/gameState';
 
 interface CombatMouseSettingsProps {
     damageType: any[];
@@ -11,13 +12,13 @@ interface CombatMouseSettingsProps {
 
 const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) => {
     const dispatch = useDispatch();
+    const scrollEnabled = useSelector((state: any) => state.game.scrollEnabled);
     const { playWO } = useGameSounds(0.25);
     const [prayers, setPrayers] = useState([ 'Buff', 'Heal', 'Debuff', 'Damage', 'Avarice', 'Denial', 'Dispel', 'Silence']);
     const [selectedWeaponIndex, setSelectedWeaponIndex] = useState<number>(0);
     const [selectedDamageTypeIndex, setSelectedDamageTypeIndex] = useState<number>(0);
     const [selectedPrayerIndex, setSelectedPrayerIndex] = useState<number>(0);
-    const [selectedHighlight, setSelectedHighlight] = useState<string>('');
-    const [scrollEnabled, setScrollEnabled] = useState(false);
+    const [selectedHighlight, setSelectedHighlight] = useState<string>('Weapon');
   
     const handleWheelRotation = (event: WheelEvent): void => {
         if (!scrollEnabled) return;
@@ -61,7 +62,7 @@ const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) 
         };
     };
 
-    const handleToggleScroll = (): void => setScrollEnabled((prevScrollEnabled) => !prevScrollEnabled);
+    const handleToggleScroll = () => dispatch(setScrollEnabled(!scrollEnabled));
     
     const mapTypes = (types: any[]): any[] => {
         let newTypes: any[] = []; 

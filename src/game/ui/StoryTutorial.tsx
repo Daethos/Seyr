@@ -1,33 +1,22 @@
 import { useEffect, useState } from 'react'
-import { GAME_ACTIONS } from './GameStore';
 import * as asceanAPI from '../../utils/asceanApi';
 import Button from 'react-bootstrap/Button';
-import { shakeScreen } from './CombatStore';
-import Typewriter from './Typewriter';
-import { setAttributes, setFirewater, setJournal, setTutorial } from '../../game/reducers/gameState';
+import { setAttributes, setFirewater, setJournal, setTutorial, setTutorialContent } from '../../game/reducers/gameState';
 import dialogWindow from '../../game/images/dialog_window.png';
-import { CombatSettings, TacticSettings } from './SettingConcerns';
+import { shakeScreen } from '../../components/GameCompiler/CombatStore';
+import Typewriter from '../../components/GameCompiler/Typewriter';
+import { CombatSettings, InventorySettings, TacticSettings } from '../../components/GameCompiler/SettingConcerns';
 
 interface TutorialProps {
     player: any;
-    dispatch?: React.Dispatch<any>;
-    gameDispatch?: React.Dispatch<any>;
-    setTutorialContent: React.Dispatch<any>;
-    firstBoot?: boolean;
-    firstCity?: boolean;
-    firstCombat?: boolean;
-    firstQuest?: boolean;
-    firstShop?: boolean;
-    firstInventory?: boolean;
-    firstLoot?: boolean;
-    firstMovement?: boolean;
-    firstLevelUp?: boolean;
-    firstDeath?: boolean;
-    firstPhenomena?: boolean;
+    dispatch: React.Dispatch<any>;
+    tutorial: string;
 };
 
-const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstCombat, firstDeath, firstInventory, firstLevelUp, firstLoot, firstMovement, firstQuest, firstShop, firstPhenomena, setTutorialContent }: TutorialProps) => {
-    console.log(player, "Tutorial Triggering");
+const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
+    useEffect(() => {
+        console.log(tutorial, "Tutorial Triggering");
+    }, [tutorial])
     const [typewriterString, setTypewriterString] = useState<string>('');
     function performAction(actionName: string) {
         console.log(actionName, "Action Name of Perform Action Function")
@@ -37,12 +26,12 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
         };
     };
     const actions = {
-        rebukePlayer: () => rebukePlayer(),
-        blessPlayer: () => blessPlayer(),
+        rebukePlayer: (): Promise<void> => rebukePlayer(),
+        blessPlayer: (): Promise<void> => blessPlayer(),
     };
 
     useEffect(() => {
-        if (firstPhenomena) {
+        if (tutorial === 'firstPhenomena') {
             setTypewriterString(
                 `<h6 className='typewriterContainer' key='phenomena'>
                 <Button variant='' className='button' data-function-name='blessPlayer'>
@@ -73,18 +62,14 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
                 );
             };
     }, []);
-    const completeTutorial = async (tutorial: string, ascean: string) => {
+    const completeTutorial = async (tutorial: string, ascean: string): Promise<void> => {
         const data = { ascean, tutorial };
         const response = await asceanAPI.saveTutorial(data);
         console.log(response, tutorial, "Tutorial Complete");
-        setTutorialContent(null);
-        if (gameDispatch) {
-            gameDispatch({ type: GAME_ACTIONS.SET_TUTORIAL, payload: response.tutorial });
-        } else if (dispatch) {
-            dispatch(setTutorial(response.tutorial));
-        };
+        dispatch(setTutorial(response.tutorial));
+        dispatch(setTutorialContent(null));
     };
-    const blessPlayer = async () => {
+    const blessPlayer = async (): Promise<void> => {
         try {
             shakeScreen({ duration: 1500, intensity: 1.5});
             const response = await asceanAPI.blessAscean(player._id);
@@ -94,43 +79,22 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
                 footnote: `Seems you've been blessed by ${highestFaith()}, or some greater mimicry of it. It asked who you were, how would it not know?`,
                 date: Date.now(),
                 location: 'Unknown',
-                coordinates: {
-                    x: 0,
-                    y: 0,
-                },
+                coordinates: { x: 0, y: 0 },
             };
-            const data = {
-                asceanID: player._id,
-                entry,
-            };
+            const data = { asceanID: player._id, entry };
             const journalResponse = await asceanAPI.saveJournalEntry(data);
             console.log(journalResponse, "Journal Response");
             console.log(response, "Blessing Player");
-            if (gameDispatch) {
-                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-                if (player.faith === 'devoted') {
-                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Would you perform me sympathies, \n\n Should you feel these hands of slate, \n\n That which wrap the world to seize, \n\n Of its own sin to orchestrate?"` });
-                } else if (player.faith === 'adherent') {
-                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `Bled and dried into the ground, its lives were not their own it found, \n\n And still it watches with eyes free, perching on its Ancient tree. \n\n Pondering why its form's forgot, and what this tether with you has wrought.` });
-                } else {
-                    gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You may not be one for the Ancients or so-called God of this world, yet an undeniable surge courses through you. \n\n Care for whom and what you befriend, ${player.name}.` })
-                };
-                gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: journalResponse.journal });
-                
-                gameDispatch({ type: GAME_ACTIONS.SET_ASCEAN_ATTRIBUTES, payload: response });
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your curiosity or perchance conviction? A journey to the discovery of yourself awaits, ${player.name}.` });
-                gameDispatch({ type: GAME_ACTIONS.SET_PLAYER_BLESSING, payload: true });
-                setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
-            } else if (dispatch) {
-                dispatch(setJournal(journalResponse.journal));
-                dispatch(setAttributes(response));
-            };
+            
+            dispatch(setJournal(journalResponse.journal));
+            dispatch(setAttributes(response));
             await completeTutorial('firstPhenomena', player._id);
+            dispatch(setTutorialContent(null));
         } catch (err: any) {
             console.log(err, '%c <- You have an error in blessing a player', 'color: red')
         };
     };
-    const rebukePlayer = async () => {
+    const rebukePlayer = async (): Promise<void> => {
         try {
             shakeScreen({ duration: 1500, intensity: 1.5});
             const response = await asceanAPI.curseAscean(player._id);
@@ -140,34 +104,16 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
                 footnote: `Some mimicry of ${highestFaith()} asked who you were, as though the true incarnation would not know? Careful of what you rebuke, ${player.name}.`,
                 date: Date.now(),
                 location: 'Unknown',
-                coordinates: {
-                    x: 0,
-                y: 0,
-                },
+                coordinates: { x: 0, y: 0 },
             };
-            const data = {
-                asceanID: player._id,
-                entry,
-            };
+            const data = { asceanID: player._id, entry };
             const journalResponse = await asceanAPI.saveJournalEntry(data);
-            console.log(journalResponse, "Journal Response");
-            if (gameDispatch) {
-                gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: true });
-                if (player.faith === 'none') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `You have no faith, and thus no god to rebuke. You're uncertain of what attempted contact, and sought no part of it.` });
-                if (player.faith === 'adherent') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"Bleating and ceaseless, your caer it persists, \n\n To never waver, with no Ancient’s favor, \n\n To unabashedly exist."` });
-                if (player.faith === 'devoted') gameDispatch({ type: GAME_ACTIONS.SET_OVERLAY_CONTENT, payload: `"These soft and fatal songs we sing, \n\n Fearfully."` });
-                gameDispatch({ type: GAME_ACTIONS.SET_FIREWATER, payload: response.firewater });
-                gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response.statistics });
-                gameDispatch({ type: GAME_ACTIONS.SET_JOURNAL, payload: journalResponse.journal });
-
-                gameDispatch({ type: GAME_ACTIONS.SET_STORY_CONTENT, payload: `You cannot discern the nature of this phenomena, yet propose to learn into your caution or perchance cynicism? A journey to the discovery of this presence awaits, ${player.name}.` });
-                setTimeout(() => gameDispatch({ type: GAME_ACTIONS.LOADING_OVERLAY, payload: false }), 10000);
-            } else if (dispatch) {
-                dispatch(setJournal(journalResponse.journal));
-                dispatch(setAttributes(response));
-                dispatch(setFirewater(response.firewater));
-            };
+            console.log(journalResponse, "Journal Response"); 
+            dispatch(setJournal(journalResponse.journal));
+            dispatch(setAttributes(response));
+            dispatch(setFirewater(response.firewater)); 
             await completeTutorial('firstPhenomena', player._id);
+            dispatch(setTutorialContent(null));
         } catch (err: any) {
             console.log(err, '%c <- You have an error in rebuking a player', 'color: red');
         };
@@ -187,28 +133,20 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
         }, faithsArray[0]);
         return highestFaith[0];
     };
+
     return (
-        <div className='d-flex align-items-center justify-content-center'
-        style={{
-          position: 'fixed',
-          top: 0,
-        //   top: firstPhenomena ? 0 : '17.5%',
-          left: 0,
-          width: '100%',
-          height: firstPhenomena ? '100vh' : '45vh',
-          zIndex: 9999, 
-          color: "#fdf6d8",
-        //   overflow: 'scroll',
-        //   scrollbarWidth: 'none',
-        }}>
+        <div className='d-flex align-items-center justify-content-center' style={{
+          position: 'absolute', top: 0, left: 0,
+          width: '100%', height: '100vh', // tutorial === 'firstPhenomena' ? '100vh' : 
+          zIndex: 99999,  color: "#fdf6d8" }}>
             <img src={dialogWindow} alt='Dialog Window' style={{ transform: "scale(1.5)" }} />
-            { firstBoot ? (
+            { tutorial === 'firstBoot' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
                 <br /><br />
                 Welcome to the Ascea, {player.name}. Below explains the general premise and gameplay loop which is a work in progress.<br /><br />
                 </h6>
             ) : ( '' ) }
-            { firstCity ? (
+            { tutorial === 'firstCity' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}>
                 Welcome to your first city, {player.name}. Various services and shops can be found to aid you in your journey.<br /><br />
                 <p style={{ color: '#fdf6d8' }}>
@@ -220,7 +158,7 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", marginTop: "2.5vw", color: "red" }} onClick={() => completeTutorial('firstCity', player._id)}>X</Button>
                 </h6>
             ) : ( '' ) }
-            { firstCombat ? (
+            { tutorial === 'firstCombat' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "75%", width: "65%" }}>
                 Welcome to your first combat encounter, {player.name}. Below explains the series of actions in conception and execution.<br /><br />
                 <CombatSettings />
@@ -230,7 +168,7 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstCombat', player._id)}>X</Button>
                 </h6> 
             ) : ( '' ) }
-            { firstDeath ? (
+            { tutorial === 'firstDeath' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}> 
                     Welcome to your first death, {player.name}! If you are reading this, it ain't hardcore so never fear.<br /><br />
                     <p style={{ color: '#fdf6d8' }}>
@@ -244,27 +182,14 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstDeath', player._id)}>X</Button>
                 </h6> 
             ) : ( '') }
-            { firstInventory ? (
+            { tutorial === 'firstInventory' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}>
                     Welcome again, {player.name}, it appears you've opened your inventory with an item for the first time!<br /><br />
-                    <p style={{ color: '#fdf6d8' }}>
-                    Inventory - Here you are able to view item statistics, and inspect for use in various ways. If you are of the mind, you may even be able to find a way to tinker with them.
-                    </p>
-                    Equip - This will swap items of the same oritentation once chosen and selected.
-                    <p style={{ color: '#fdf6d8' }}>
-                    Sedyrist - If you're of the ability, you may be able to find a way to tinker with your items to curious effect.
-                    </p>
-                    Remove - This will remove the item from your inventory, and permanently destroy it.<br /><br />
-                    <br /><br />
-                    <p style={{ color: '#fdf6d8' }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 512 512">
-                    <path d="M29.438 59.375c-3.948.032-7.903.093-11.875.188 4.333 2.772 8.685 5.483 13.062 8.124C126.162 123.92 230.69 151.4 340.5 180.594c.022.006.04.025.063.03.02.006.043-.004.062 0 1.87.498 3.72 1.003 5.594 1.5l.155-.53c.947.078 1.91.125 2.875.125 4.26 0 8.34-.767 12.125-2.19l-12.5 46.595 18.063 4.813L383 170.968c25.828 1.312 50.508 6.867 74.28 15.845-1.065 11.948 2.73 21.82 9.814 23.718 8.71 2.335 19.136-8.313 23.28-23.78 1.27-4.742 1.78-9.366 1.657-13.594l.345-1.28c-.136-.008-.27-.025-.406-.032-.56-8.924-4.116-15.77-9.876-17.313-6.808-1.823-14.666 4.304-19.75 14.44-25.275-3.725-49.624-10.894-72.47-23.69l16.345-60.968-18.033-4.843-12.093 45.155c-3.24-3.908-7.318-7.1-11.938-9.313l.094-.374C250.12 83.98 144.89 58.446 29.437 59.374zm161.25 44.25c55.52-.002 105.272 12.492 159.656 27.03 8.536.55 15.094 7.463 15.094 16.157 0 9.06-7.127 16.22-16.188 16.22-2.4 0-4.653-.5-6.688-1.407-56.172-15.04-109.352-27.786-157.406-57.97 1.85-.027 3.694-.03 5.53-.03zm-46.22 164.25v20.344H55.532c15.996 38.806 51.258 65.428 88.94 74.28v32.97h58.56c-12.115 30.534-33.527 55.682-58.5 77.592h-25.436v18.72h284.344v-18.72H376c-28.728-21.894-50.024-47.016-61.594-77.593h63.656V366.31c19.75-6.995 39.5-19.54 59.25-36.718-19.806-17.518-39.235-27.25-59.25-31.938v-29.78H144.47z"></path>
-                    </svg>{' '}- The inventory itself can be changed with dragging and dropping your items to realign them as you see fit. This allows you to save the position of your inventory.
-                    </p>
-                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstInventory', player._id)}>X</Button>
+                    <InventorySettings />
+                    <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstInventory', player._id)}>X</Button>
                 </h6>
             ) : ( '') }
-            { firstLevelUp ? (
+            { tutorial === 'firstLevelUp' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}>
                     <br /><br /><br /><br />
                     Welcome {player.name} to your first level up!
@@ -294,7 +219,7 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstLevelUp', player._id)}>X</Button>
                 </h6>
             ) : ( '') }
-            { firstLoot ? (
+            { tutorial === 'firstLoot' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%"}}>
                     Congratulations {player.name} on your first piece of equipment you've come across.
                     <br /><br />
@@ -305,34 +230,22 @@ const Tutorial = ({ player, dispatch, gameDispatch, firstBoot, firstCity, firstC
                     Loot - Equipment and its improvement is paramount to your success as you gain power to combat tougher enemies. No item is unique and can be held and worn in multiplicity. You can also use your gear to craft higher quality items. Common and Uncommon quality scale with leveling, yet Rare and Epic are refined to a degree that even a novice would feel its improvement.
                     </p>
                     If you wish to keep the item, inspect the gear itself and click 'save' in order to add it into your inventory. If you do not and exit the conversation, it will be lost forever.
-                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstLoot', player._id)}>X</Button>
+                    <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstLoot', player._id)}>X</Button>
                 </h6>
-            ) : ( '' ) }
-            { firstMovement ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}>First Move
-                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstMovement', player._id)}>X</Button>
-                </h6>
-            ) : ( '' ) }
-
-            { firstPhenomena ? (
+            ) : ( '' ) } 
+            { tutorial === 'firstPhenomena' ? (
                 <Typewriter stringText={typewriterString} styling={{ position: 'absolute', overflowY: 'auto', opacity: 1, width: '65%', maxHeight: '40vh', margin: '0 auto', zIndex: 99999, scrollbarWidth: 'none' }} performAction={performAction} />
-            ) : ( '' ) }
-
-            { firstQuest ? (
-                <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", marginTop: "25%" }}>First Quest
-                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstQuest', player._id)}>X</Button>
-                </h6>
-            ) : ( '' ) }
-            { firstShop ? (
+            ) : ( '' ) } 
+            { tutorial === 'firstShop' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Shop
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstShop', player._id)}>X</Button>
                 </h6>
             ) : ( '' ) }
-            { !firstBoot && !firstPhenomena && !firstCity && !firstCombat && !firstDeath && !firstInventory && !firstLevelUp && !firstLoot && !firstMovement && !firstQuest && !firstShop && 
+            { !tutorial && (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>Nothing to see here!
-                <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('', player._id)}>X</Button>
+                    <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('', player._id)}>X</Button>
                 </h6> 
-            }
+            ) }
         </div>
     );
 };
