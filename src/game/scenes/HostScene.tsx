@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Phaser from "phaser"; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
 import CombatUI from '../ui/CombatUI';
@@ -6,7 +6,7 @@ import EnemyUI from '../ui/EnemyUI';
 import EventEmitter from '../phaser/EventEmitter';
 import PhaserCombatText from '../ui/PhaserCombatText';
 import SmallHud from '../ui/SmallHud';
-import StoryAscean from '../ui/StoryAscean';
+import StoryAscean, { viewCycleMap } from '../ui/StoryAscean';
 import StoryTutorial from '../ui/StoryTutorial';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import * as eqpAPI from '../../utils/equipmentApi';
@@ -15,9 +15,8 @@ import { CombatData } from '../../components/GameCompiler/CombatStore';
 import { LootDropUI } from '../ui/LootDropUI';
 import { StoryDialog } from '../ui/StoryDialog';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearNpc, getCombatTimerFetch, setRest, setToggleDamaged } from '../reducers/combatState';
+import { clearNpc, getCombatTimerFetch, setToggleDamaged } from '../reducers/combatState';
 import { setShowDialog, setMerchantEquipment, setShowLoot, setGameTimer, setStaminaPercentage, setAsceanViews, setShowPlayer, setDialogTag, setPauseState, setCurrentGame, setScrollEnabled } from '../reducers/gameState';
-import { checkTraits } from '../../components/GameCompiler/PlayerTraits';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
 import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
 import { config } from './Config';
@@ -29,24 +28,14 @@ interface Props {
 
 const HostScene = ({ assets, ascean }: Props) => {
     const dispatch = useDispatch();
+    const gameRef = useRef<any>({}); 
     const combatState = useSelector((state: any) => state.combat);
     const gameState = useSelector((state: any) => state.game);
     const stamina = useSelector((state: any) => state.combat.playerAttributes.stamina);
     const { playDeath, playReligion, playCounter, playRoll, playPierce, playSlash, playBlunt, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind } = useGameSounds(gameState.soundEffectVolume);
-    const [loading, setLoading] = useState<boolean>(false);
-    const gameRef = useRef<any>({}); 
+
     useEffect(() => { 
-        const startGame = async () => {
-            try {
-                setLoading(true); 
-                gameRef.current = new Phaser.Game(config); 
-                setTimeout(() => {
-                    setLoading(false);
-                }, 1000);
-            } catch (err: any) {
-                console.log(err.message, 'Error Starting Game');
-            };
-        };
+        const startGame = async (): Promise<Phaser.Game> => gameRef.current = new Phaser.Game(config); 
         startGame();
     }, []);
 
@@ -54,49 +43,12 @@ const HostScene = ({ assets, ascean }: Props) => {
         updateCombatListener(combatState);
     }, [combatState]);
 
-    const useTimer = (timer: number, pause: boolean, ref: any, game: boolean): void => {
-        useEffect(() => {
-            console.log(timer, 'Timer');
-            if (!ref || !game) return;
-            if (!pause) {
-                const timeout = setTimeout(() => {
-                    dispatch(setGameTimer(timer + 1));
-                }, 1000);
-                return () => clearTimeout(timeout);
-            };
-        }, [timer, pause, ref, game]);
-    };
-    useTimer(gameState.gameTimer, gameState.pauseState, gameRef.current, gameState.currentGame);
-
-    const useStamina = (staminaPercentage: number,): void => {
-        useEffect(() => { 
-            if (gameState.staminaPercentage < 100) {
-                const timer = setTimeout(() => {
-                    dispatch(setStaminaPercentage(staminaPercentage + (stamina / 100)));
-                    EventEmitter.emit('updated-stamina', Math.round(((staminaPercentage + (stamina / 100)) / 100) * stamina));
-                }, 200 - stamina);
-                return () => clearTimeout(timer);
-            };
-        }, [staminaPercentage]);
-    };
-    useStamina(gameState.staminaPercentage); 
-
-    const updateCombatListener = (data: CombatData): boolean => EventEmitter.emit('update-combat-data', data); // Was Async
-    const retrieveAssets = async (): Promise<boolean> => EventEmitter.emit('send-assets', assets);
-    const sendEnemyData = async (): Promise<boolean> => EventEmitter.emit('get-enemy', combatState.computer);
-    const sendAscean = async (): Promise<boolean> => EventEmitter.emit('get-ascean', combatState.player);
-    const sendDispatch = async (): Promise<boolean> => EventEmitter.emit('get-dispatch', dispatch);
-    const sendCombatData = async (): Promise<boolean> => EventEmitter.emit('get-combat-data', combatState);
-    const sendGameData = async (): Promise<boolean> => EventEmitter.emit('get-game-data', gameState);
-    const updateCombatTimer = async (e: number) => dispatch(getCombatTimerFetch(e)); 
-    const deleteEquipment = async (eqp: any): Promise<void> => await eqpAPI.deleteEquipment(eqp);
-
     const clearNPC = async (): Promise<void> => {
         if (gameState.merchantEquipment.length > 0) {
             await deleteEquipment(gameState.merchantEquipment);
             dispatch(setMerchantEquipment([])); 
         };
-        dispatch(clearNpc()); 
+        dispatch(clearNpc); 
     };
 
     const soundEffects = async (sfx: CombatData): Promise<void> => {
@@ -137,21 +89,13 @@ const HostScene = ({ assets, ascean }: Props) => {
         };
     };
 
-    const toggleCombatHud = (e: { preventDefault: () => void; key: string; keyCode: number }) => {
+    const toggleCombatHud = (e: { preventDefault: () => void; key: string; keyCode: number }): void => {
         e.preventDefault();
         if (e.key === 'v' || e.key === 'V') dispatch(setShowDialog(!gameState.showDialog));
         if (e.key === 'c' || e.key === 'C') dispatch(setShowPlayer(!gameState.showPlayer));
         if (e.key === 'x' || e.key === 'X') {
-            switch (gameState.asceanViews) {
-                case 'Character':
-                    return dispatch(setAsceanViews('Inventory'));
-                case 'Inventory':
-                    return dispatch(setAsceanViews('Settings'));
-                case 'Settings':
-                    return dispatch(setAsceanViews('Character'));
-                default:
-                    break;
-            }; 
+            const nextView = viewCycleMap[gameState.asceanViews as keyof typeof viewCycleMap];
+            if (nextView) dispatch(setAsceanViews(nextView));
         };
         if (e.key === ' ' || e.keyCode === 32) togglePause();
         if (e.key === '`') dispatch(setScrollEnabled(!gameState.scrollEnabled));
@@ -160,19 +104,46 @@ const HostScene = ({ assets, ascean }: Props) => {
     const togglePause = (): void => {
         const pause = () => gameRef.current.scene.getScene('Play').pause();
         const resume = () => gameRef.current.scene.getScene('Play').resume();
-        if (!gameState.pauseState) {
-            pause();
-        } else {
-            resume();
-        };
+        if (!gameState.pauseState) { pause(); } else { resume(); };
         dispatch(setPauseState(!gameState.pauseState));
     }; 
 
-    const launchGame = async (e: boolean) => dispatch(setCurrentGame(e));
-    const updateStamina = async (e: number) => dispatch(setStaminaPercentage(gameState.staminaPercentage - e <= 0 ? 0 : gameState.staminaPercentage - e));
+    const deleteEquipment = async (eqp: any): Promise<void> => await eqpAPI.deleteEquipment(eqp);
     const interactingLoot = async (e: boolean): Promise<{payload: any; type: "game/setShowLoot";}> => dispatch(setShowLoot(e)); 
+    const launchGame = async (e: boolean) => dispatch(setCurrentGame(e));
+    const retrieveAssets = async (): Promise<boolean> => EventEmitter.emit('send-assets', assets);
+    const sendAscean = async (): Promise<boolean> => EventEmitter.emit('get-ascean', combatState.player);
+    const sendCombatData = async (): Promise<boolean> => EventEmitter.emit('get-combat-data', combatState);
+    const sendDispatch = async (): Promise<boolean> => EventEmitter.emit('get-dispatch', dispatch);
+    const sendEnemyData = async (): Promise<boolean> => EventEmitter.emit('get-enemy', combatState.computer);
+    const sendGameData = async (): Promise<boolean> => EventEmitter.emit('get-game-data', gameState);
     const showDialog = async (e: boolean) => dispatch(setDialogTag(e));
-
+    const updateCombatListener = (data: CombatData): boolean => EventEmitter.emit('update-combat-data', data); // Was Async
+    const updateCombatTimer = async (e: number) => dispatch(getCombatTimerFetch(e)); 
+    const updateStamina = async (e: number) => dispatch(setStaminaPercentage(gameState.staminaPercentage - e <= 0 ? 0 : gameState.staminaPercentage - e));
+    const useStamina = (percent: number): void => {
+        useEffect(() => { 
+            if (gameState.percent < 100) {
+                const timer = setTimeout(() => {
+                    dispatch(setStaminaPercentage(percent + (stamina / 100)));
+                    EventEmitter.emit('updated-stamina', Math.round(((percent + (stamina / 100)) / 100) * stamina));
+                }, 200 - stamina);
+                return () => clearTimeout(timer);
+            };
+        }, [percent]);
+    };
+    const useTimer = (timer: number, pause: boolean, ref: any, game: boolean): void => {
+        useEffect(() => {
+            if (!ref || !game) return;
+            if (!pause) {
+                const timeout = setTimeout(() => {
+                    dispatch(setGameTimer(timer + 1));
+                }, 1000);
+                return () => clearTimeout(timeout);
+            };
+        }, [timer, pause, ref, game]);
+    };
+    
     useKeyEvent('keydown', toggleCombatHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('clear-npc', clearNPC);
@@ -189,6 +160,8 @@ const HostScene = ({ assets, ascean }: Props) => {
     usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-combat-timer', updateCombatTimer);
     usePhaserEvent('update-sound', soundEffects);
+    useStamina(gameState.staminaPercentage);
+    useTimer(gameState.gameTimer, gameState.pauseState, gameRef.current, gameState.currentGame);
  
     return (
         <div className='story-div' style={{ border: gameState.currentGame ? '' : '3px solid #fdf6d8' }}>
@@ -199,7 +172,7 @@ const HostScene = ({ assets, ascean }: Props) => {
                     <CombatMouseSettings damageType={combatState.weapons[0].damage_type} weapons={combatState.weapons.filter((weapon: Equipment) => weapon?.name !== 'Empty Weapon Slot')} />
                 ) }
                 { gameState.showPlayer ? (  
-                    <StoryAscean ascean={ascean} asceanViews={gameState.asceanViews} loading={loading} />
+                    <StoryAscean ascean={ascean} asceanViews={gameState.asceanViews} />
                 ) : ( 
                     <div style={{ position: "absolute", zIndex: 1 }}>
                         <CombatUI state={combatState} staminaPercentage={gameState.staminaPercentage} pauseState={gameState.pauseState} />

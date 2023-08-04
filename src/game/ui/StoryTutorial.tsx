@@ -13,10 +13,7 @@ interface TutorialProps {
     tutorial: string;
 };
 
-const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
-    useEffect(() => {
-        console.log(tutorial, "Tutorial Triggering");
-    }, [tutorial])
+const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => { 
     const [typewriterString, setTypewriterString] = useState<string>('');
     function performAction(actionName: string) {
         console.log(actionName, "Action Name of Perform Action Function")
@@ -64,9 +61,8 @@ const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
     }, []);
     const completeTutorial = async (tutorial: string, ascean: string): Promise<void> => {
         const data = { ascean, tutorial };
-        const response = await asceanAPI.saveTutorial(data);
-        console.log(response, tutorial, "Tutorial Complete");
-        dispatch(setTutorial(response.tutorial));
+        const res = await asceanAPI.saveTutorial(data);
+        dispatch(setTutorial(res.tutorial));
         dispatch(setTutorialContent(null));
     };
     const blessPlayer = async (): Promise<void> => {
@@ -82,11 +78,8 @@ const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
                 coordinates: { x: 0, y: 0 },
             };
             const data = { asceanID: player._id, entry };
-            const journalResponse = await asceanAPI.saveJournalEntry(data);
-            console.log(journalResponse, "Journal Response");
-            console.log(response, "Blessing Player");
-            
-            dispatch(setJournal(journalResponse.journal));
+            const res = await asceanAPI.saveJournalEntry(data); 
+            dispatch(setJournal(res.journal));
             dispatch(setAttributes(response));
             await completeTutorial('firstPhenomena', player._id);
             dispatch(setTutorialContent(null));
@@ -107,9 +100,8 @@ const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
                 coordinates: { x: 0, y: 0 },
             };
             const data = { asceanID: player._id, entry };
-            const journalResponse = await asceanAPI.saveJournalEntry(data);
-            console.log(journalResponse, "Journal Response"); 
-            dispatch(setJournal(journalResponse.journal));
+            const res = await asceanAPI.saveJournalEntry(data);
+            dispatch(setJournal(res.journal));
             dispatch(setAttributes(response));
             dispatch(setFirewater(response.firewater)); 
             await completeTutorial('firstPhenomena', player._id);
@@ -122,8 +114,7 @@ const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
     const highestFaith = () => {
         const influences = [player.weapon_one.influences[0], player.weapon_two.influences[0], player.weapon_three.influences[0], player.amulet.influences[0], player.trinket.influences[0]];
         const faithsCount = influences.reduce((acc: any, faith: any) => {
-            if (acc[faith]) acc[faith]++;
-            else acc[faith] = 1;
+            if (acc[faith]) { acc[faith]++; } else { acc[faith] = 1; };
             return acc;
         }, {});
         const faithsArray = Object.entries(faithsCount).filter((faith: any) => faith[0] !== '');
@@ -137,12 +128,11 @@ const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
     return (
         <div className='d-flex align-items-center justify-content-center' style={{
           position: 'absolute', top: 0, left: 0,
-          width: '100%', height: '100vh', // tutorial === 'firstPhenomena' ? '100vh' : 
+          width: '100%', height: '100%', // tutorial === 'firstPhenomena' ? '100vh' : 
           zIndex: 99999,  color: "#fdf6d8" }}>
             <img src={dialogWindow} alt='Dialog Window' style={{ transform: "scale(1.5)" }} />
             { tutorial === 'firstBoot' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>
-                <br /><br />
                 Welcome to the Ascea, {player.name}. Below explains the general premise and gameplay loop which is a work in progress.<br /><br />
                 </h6>
             ) : ( '' ) }
@@ -170,13 +160,13 @@ const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
             ) : ( '' ) }
             { tutorial === 'firstDeath' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}> 
-                    Welcome to your first death, {player.name}! If you are reading this, it ain't hardcore so never fear.<br /><br />
+                    Welcome to your first death, {player.name}!<br /><br />
                     <p style={{ color: '#fdf6d8' }}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="24" height="24" viewBox="0 0 436.028 436.028">
                     <path d="M416.242,385.134c-4.974-2.112-10.893-4.122-17.701-6.02c5.432-17.537,33.617-26.237,33.919-26.329    c2.023-0.605,3.448-2.416,3.56-4.525c0.111-2.109-1.113-4.061-3.06-4.876c-24.541-10.283-48.866-7.254-59.377-5.133    c-0.322-5.05,0.156-12.962,1.022-19.423c0.203-1.523-0.305-3.056-1.378-4.156c-1.072-1.099-2.591-1.644-4.119-1.479    c-5.784,0.63-11.288,2.605-16.462,5.85v-215.96c0-2.761-2.238-5-5-5h-30.842c-3.337-39.962-46.371-71.685-98.79-71.685    s-95.453,31.723-98.79,71.685H88.382c-2.761,0-5,2.239-5,5v215.949c-5.173-3.245-10.678-5.209-16.462-5.838    c-1.529-0.165-3.047,0.38-4.12,1.479c-1.073,1.1-1.581,2.633-1.377,4.156c0.865,6.461,1.343,14.373,1.021,19.423    c-10.511-2.121-34.838-5.149-59.376,5.133c-1.951,0.817-3.173,2.774-3.058,4.885c0.116,2.112,1.55,3.923,3.578,4.522    c0.307,0.091,28.666,8.685,33.949,26.309c-6.83,1.903-12.766,3.917-17.751,6.034C6.472,390.788,0,397.165,0,404.63    c0,1.326,0.527,2.598,1.464,3.536c0.938,0.938,2.209,1.464,3.536,1.464h426.027c1.326,0,2.598-0.527,3.535-1.464    c0.938-0.938,1.465-2.209,1.465-3.536C436.027,397.165,429.556,390.788,416.242,385.134z M352.646,331.53    c3.577-3.22,7.351-5.543,11.282-6.949c-0.583,6.89-0.931,16.656,1.089,21.625c0.969,2.385,3.592,3.644,6.057,2.91    c0.247-0.073,21.458-6.21,45.456-0.567c-10.343,5.183-23.664,14.299-27.693,28.081c-5.916-1.397-12.352-2.725-19.315-3.976    c-5.396-0.969-11.033-1.878-16.876-2.729V331.53z M93.382,108.082h30.634c2.761,0,5-2.239,5-5    c0-36.77,39.924-66.685,88.998-66.685c49.073,0,88.998,29.915,88.998,66.685c0,2.761,2.238,5,5,5h30.634v260.47    c-3.538-0.457-7.14-0.894-10.809-1.309V124.394c0-2.761-2.238-5-5-5h-28.378v-6.418c0-16.842-8.72-33.665-23.924-46.153    C259.153,54.188,239.08,47.23,218.014,47.23c-21.066,0-41.139,6.958-56.522,19.593c-15.204,12.489-23.924,29.311-23.924,46.153    v6.418H109.19c-2.761,0-5,2.239-5,5v242.848c-3.669,0.415-7.271,0.853-10.809,1.309V108.082z M293.459,129.394h28.378V366.18    c-31.427-3.14-66.918-4.811-103.823-4.811c-36.906,0-72.397,1.671-103.823,4.811V129.394h28.378c2.761,0,5-2.239,5-5v-11.418    c0-29.697,32.918-55.747,70.445-55.747c37.527,0,70.445,26.05,70.445,55.747v11.418    C288.459,127.156,290.697,129.394,293.459,129.394z M19.604,348.531c23.887-5.56,45.107,0.513,45.35,0.585    c2.466,0.734,5.088-0.525,6.057-2.91c2.02-4.968,1.672-14.734,1.089-21.625c3.932,1.406,7.705,3.73,11.282,6.951v38.393    c-5.843,0.852-11.48,1.76-16.875,2.729c-6.943,1.247-13.362,2.571-19.265,3.964C43.297,362.787,29.984,353.693,19.604,348.531z     M13.881,399.63c6.489-4.793,22.138-11.341,54.393-17.134c39.95-7.176,93.128-11.128,149.74-11.128s109.79,3.952,149.739,11.128    c32.256,5.793,47.905,12.342,54.393,17.134H13.881z"></path>
                     <path d="M296.211,220.087H139.816c-2.761,0-5-2.239-5-5v-48.659c0-2.761,2.239-5,5-5h156.395c2.762,0,5,2.239,5,5v48.659     C301.211,217.848,298.973,220.087,296.211,220.087z M144.816,210.087h146.395v-38.659H144.816V210.087z"></path>
                     </svg>{' '}
-                    Death - At the moment this is not heavily designed for punishment, as it's a prototype and not all consequences need to be dialed in at the moment. For now, you simply must find a way to regain your health: drinking Fyervas Firewater, resting at an Inn in a City, praying in Combat, refreshing your browser, etc.
+                    Death - At the moment this is not heavily designed for punishment, as it's a prototype and not all consequences need to be dialed in at the moment. For now, you simply must find a way to regain your health: drinking Fyervas Firewater, resting at an inn in a city, praying in combat, etc.
                     </p>
                     Future Concerns to Mull Around: Experience loss, inventory loss, attribute degradation, etc.
                 <Button variant='' style={{ float: "right", fontSize: "24px", zIndex: 9999, marginLeft: "90vw", color: "red" }} onClick={() => completeTutorial('firstDeath', player._id)}>X</Button>
@@ -191,7 +181,6 @@ const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
             ) : ( '') }
             { tutorial === 'firstLevelUp' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards", width: "65%" }}>
-                    <br /><br /><br /><br />
                     Welcome {player.name} to your first level up!
                     <br /><br />
                     <p style={{ color: '#fdf6d8' }}>

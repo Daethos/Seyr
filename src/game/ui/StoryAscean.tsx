@@ -20,6 +20,11 @@ import { Player } from '../../components/GameCompiler/GameStore';
 import {CombatSettings, GeneralSettings, InventorySettings, TacticSettings, ControlSettings} from '../../components/GameCompiler/SettingConcerns';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 
+export const viewCycleMap = {
+    Character: 'Inventory',
+    Inventory: 'Settings',
+    Settings: 'Character'
+};
 const CHARACTERS = {
     STATISTICS: 'Statistics',
     TRAITS: 'Traits',
@@ -39,33 +44,28 @@ const SETTINGS = {
 
 interface Props {
     ascean: Player;
-    loading: boolean;
     asceanViews: string;
 };
 
-const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
+const StoryAscean = ({ ascean, asceanViews }: Props) => {
     const dispatch = useDispatch();
+    const asceanState = useSelector((state: any) => state.game.asceanState);
     const gameState = useSelector((state: any) => state.game);
     const state = useSelector((state: any) => state.combat) as CombatData;
-    const asceanState = useSelector((state: any) => state.game.asceanState);
-
+    const navigate = useNavigate();
     const [savingInventory, setSavingInventory] = useState(false);
     const [currentSetting, setCurrentSetting] = useState<string>('Control');
     const [currentCharacter, setCurrentCharacter] = useState('Statistics');
     const [playerTraitWrapper, setPlayerTraitWrapper] = useState<any>({});
     const [dragAndDropInventory, setDragAndDropInventory] = useState(ascean.inventory);
-    const navigate = useNavigate();
-    const [highlighted, setHighlighted] = useState({
-        item: null as any,
-        comparing: false,
-    });
+    const [highlighted, setHighlighted] = useState({ item: null as any, comparing: false });
 
     useEffect(() => {
         playerTraits();
     }, [ascean]);
-    
+
     useEffect(() => {
-        console.log(ascean.tutorial.firstInventory, ascean.inventory.length, "Hello");
+        console.log("Checking Relevant Views");
         if (ascean.tutorial.firstInventory && ascean.inventory.length && asceanViews === 'Inventory') dispatch(setTutorialContent('firstInventory'));
     }, [ascean.tutorial, asceanViews, dispatch]);
 
@@ -77,9 +77,7 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
     const checkHighlight = (): void => {
         if (highlighted?.item) {
             const item = ascean.inventory.find((item: any) => item._id === highlighted?.item?._id);
-            if (!item) {
-                setHighlighted({ item: null, comparing: false });
-            };
+            if (!item) setHighlighted({ item: null, comparing: false });
         };
     };
 
@@ -324,11 +322,6 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
 
     const returnHome = () => navigate('/');
 
-    if (loading) {
-        return (
-            <Loading Combat={true} />
-        );
-    };
     return (
         <div style={{ zIndex: 9999 }}>
         <img src ={statPng} alt="Player Portrait" style={{ position: "absolute" }} />
@@ -398,7 +391,7 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
                     ring_two={ascean.ring_two}
                     trinket={ascean.trinket}
                     gameDisplay={true}
-                    loading={loading}
+                    loading={false}
                     damage={state.playerDamaged}
                     key={ascean._id}
                     story={true}
@@ -434,7 +427,7 @@ const StoryAscean = ({ ascean, loading, asceanViews }: Props) => {
                     <h5 style={{ color: 'gold', marginLeft: 'auto' }}>
                         Gameplay Controls
                     <Button variant='' onClick={saveGameSettings} style={{ position: 'absolute', top: '-5px' }}>
-                        <span style={{ float: "right", color: "gold", fontSize: "10px" }}>{ loading ? ( <Loading Combat={true} /> ) : ( 'Save' ) }</span>
+                        <span style={{ float: "right", color: "gold", fontSize: "10px" }}>Save</span>
                     </Button>
                     </h5>
                     <br />

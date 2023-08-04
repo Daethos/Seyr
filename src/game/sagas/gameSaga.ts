@@ -37,7 +37,6 @@ export function* gameSaga(): SagaIterator {
     yield takeEvery('game/getInteracingLootFetch', workGetInteracingLootFetch);
     yield takeEvery('game/getPurchaseFetch', workGetPurchaseFetch);
     yield takeEvery('game/getThieverySuccessFetch', workGetThieverySuccessFetch);
-    yield takeEvery('game/getTutorialFetch', workGetTutorialFetch);
 };
 
 function* workGetGameFetch(action: any): SagaIterator {
@@ -198,64 +197,4 @@ function* workGetPurchaseFetch(action: any): SagaIterator {
     const res = yield call(asceanAPI.purchaseToInventory, action.payload);
     console.log(res, "Response Purchasing Item");
     yield put(setCurrency(res.currency));
-};
-
-export function* workGetTutorialFetch(): SagaIterator {
-    const ascean = yield select((state) => state.game.player);
-    const asceanViews = yield select((state) => state.game.asceanViews);
-    if (!Object.keys(ascean).length) return;
-    let tutorial: string = '';
-
-    if (ascean.experience === 1000 && ascean.level === 1 && ascean.tutorial.firstLevelUp) tutorial = 'firstLevelUp';
-    if (ascean.experience > 700 && ascean.tutorial.firstPhenomena) tutorial = 'firstPhenomena';
-    if (ascean.inventory.length > 0) {
-        if (ascean.tutorial.firstLoot) tutorial = 'firstLoot';
-        if (ascean.tutorial.firstInventory && asceanViews === 'Inventory') tutorial = 'firstInventory'; 
-    };
-    if (ascean.health.current <= 0 && ascean.tutorial.firstDeath) tutorial = 'firstDeath';
-    console.log(tutorial, "Tutorial");
-    switch (tutorial) {
-        case 'firstPhenomena':
-            return setTutorialContent(tutorial);
-        case 'firstInventory':
-            return setTutorialContent(tutorial);
-        case 'firstLoot':
-            return setTutorialContent(tutorial);
-        case 'firstDeath':
-            return setTutorialContent(tutorial);
-        case 'firstLevelUp':
-            return setTutorialContent(tutorial);
-        default:
-            return null;
-    };
 }; 
-    
-    // const tutorialConcerns = useCallback(async (): Promise<void> => {
-    //     console.log(ascean.experience, ascean.tutorial, ascean.level, gameState.asceanViews, "Tutorial Concerns");
-    //     if (ascean.experience === 1000 && ascean.level === 1 && ascean.tutorial.firstLevelUp) await handleTutorial('firstLevelUp');
-    //     if (ascean.experience > 700 && ascean.tutorial.firstPhenomena) await handleTutorial('firstPhenomena');
-    //     if (ascean.inventory.length > 0) {
-    //         if (ascean.tutorial.firstLoot) await handleTutorial('firstLoot');
-    //         if (ascean.tutorial.firstInventory && gameState.asceanViews === 'Inventory') await handleTutorial('firstInventory');
-    //     };
-    //     if (ascean.health.current <= 0 && ascean.tutorial.firstDeath) await handleTutorial('firstDeath');
-    // }, [ascean, gameState.asceanViews]);
-     
-    // const handleTutorial = async (tutorial: string): Promise<void | null> => {
-    //     switch (tutorial) {
-    //         case 'firstPhenomena':
-    //             shakeScreen({ duration: 1500, intensity: 2 });
-    //             playReligion();
-    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstPhenomena={true} />);
-    //         case 'firstInventory':
-    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstInventory={true} />);
-    //         case 'firstLoot':
-    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstLoot={true} />);
-    //         case 'firstDeath':
-    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstDeath={true} />);
-    //         case 'firstLevelUp':
-    //             return setTutorial(<Tutorial setTutorialContent={setTutorial} player={ascean} dispatch={dispatch} firstLevelUp={true} />);
-    //         default:
-    //             return null;
-    //     };
-    // };

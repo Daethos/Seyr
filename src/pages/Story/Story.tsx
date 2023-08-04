@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import * as eqpAPI from '../../utils/equipmentApi';
 import HostScene from '../../game/scenes/HostScene';
 import { useDispatch, useSelector } from 'react-redux';
-import { getGameFetch } from '../../game/reducers/gameState';
+import { getGameFetch, setGameChange } from '../../game/reducers/gameState';
 import EventEmitter from '../../game/phaser/EventEmitter';
 
 export const usePhaserEvent = (event: string, callback: any) => {
@@ -28,9 +28,9 @@ export const useKeyEvent = (event: string, callback: any) => {
 const Story = () => {
     const { asceanID } = useParams();
     const ascean = useSelector((state: any) => state.game.player);
+    const gameChange = useSelector((state: any) => state.game.gameChange);
     const dispatch = useDispatch();
     const [assets, setAssets] = useState([]);
-    const [gameChange, setGameChange] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
@@ -39,7 +39,7 @@ const Story = () => {
                 const assetResponse = await eqpAPI.index();
                 const sanitizedAssets = await sanitizeAssets(assetResponse.data);
                 setAssets(sanitizedAssets);
-                setGameChange(true);
+                dispatch(setGameChange(true));
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
             };
@@ -50,13 +50,11 @@ const Story = () => {
     const sanitizeAssets = async (assets: any): Promise<[]> => {
         const fields = ['weapons', 'shields', 'helmets', 'chests', 'legs', 'rings', 'amulets', 'trinkets'];
         const newAssets: any = [];
-        const imageSprite = async (image: any) => {
-            return image.imgURL.split('/')[2].split('.')[0];
-        };
+        const imageSprite = async (url: string): Promise<string> => url.split('/')[2].split('.')[0];
 
         await Promise.all(fields.map(async (field: string) => {
             await Promise.all(assets[field].map(async (item: any) => {
-                const sprite = await imageSprite(item);
+                const sprite = await imageSprite(item.imgURL);
                 newAssets.push({
                     sprite: sprite,
                     imgURL: item.imgURL,
@@ -68,7 +66,7 @@ const Story = () => {
         
     return (
         <div>
-        { !gameChange ? ( '' ) : ( 
+        { gameChange && ( 
             <HostScene assets={assets} ascean={ascean} /> 
         ) }
         </div>

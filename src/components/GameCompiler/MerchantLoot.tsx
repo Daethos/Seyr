@@ -120,7 +120,7 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, stea
         };
     };
 
-    const purchaseItem = async () => {
+    const purchaseItem = async (): Promise<void> => {
         let asceanTotal = 0;
         let costTotal = 0;
         asceanTotal = ascean.currency.silver + (ascean.currency.gold * 100);
@@ -144,7 +144,9 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, stea
             } else { // Phaser
                 dispatch(getPurchaseFetch(purchaseSetting));
                 dispatch(setMerchantEquipment(table.filter((i: any) => i._id !== item._id)));
-                dispatch(getOnlyInventoryFetch(ascean._id));
+                setTimeout(() => {
+                    dispatch(getOnlyInventoryFetch(ascean._id));
+                }, 250);
             };
         } catch (err: any) {
             console.log(err.message, 'Error Purchasing Item!');

@@ -56,6 +56,7 @@ export const gameSlice = createSlice({
         pauseState: false,
         showPlayer: false,
         currentGame: false,
+        gameChange: false,
         scrollEnabled: false,
     },
     reducers: {
@@ -71,7 +72,6 @@ export const gameSlice = createSlice({
         getAsceanLevelUpFetch: (state, _action) => {},
         getThieverySuccessFetch: (state, _action) => {},
         getPurchaseFetch: (state, _action) => {},
-        getTutorialFetch: (state, _action) => {},
 
         // ==================== Player Concerns ==================== \\
 
@@ -156,6 +156,9 @@ export const gameSlice = createSlice({
         },
         setDialogTag: (state, action) => {
             return { ...state, dialogTag: action.payload };
+        },
+        setGameChange: (state, action) => {
+            return { ...state, gameChange: action.payload };
         },
         setGameTimer: (state, action) => {
             return { ...state, gameTimer: action.payload };
@@ -249,7 +252,6 @@ export const {
     getReplenishFirewaterFetch, 
     getRestoreFirewaterFetch,
     getThieverySuccessFetch,
-    getTutorialFetch, 
     
     setPlayer, 
     setSettings, 
@@ -277,6 +279,7 @@ export const {
     setGameTimer,
     setCombatResolved, 
     setCurrentGame,
+    setGameChange,
     setScrollEnabled,
     setInstantStatus, 
     setMerchantEquipment,
