@@ -1,12 +1,15 @@
 import Form from 'react-bootstrap/Form';
 import FaithCard from '../FaithCard/FaithCard';
+import { setAsceanState } from '../../game/reducers/gameState';
+import { useDispatch } from 'react-redux';
 
 interface Props {
     asceanState: any;
-    setAsceanState: React.Dispatch<any>;
+    setState?: React.Dispatch<any>;
 };
 
-const Faith = ({ asceanState, setAsceanState }: Props) => {
+const Faith = ({ asceanState, setState }: Props) => {
+    const dispatch = useDispatch();
     const faithState = [
         {
             name: 'Ancients',
@@ -22,10 +25,17 @@ const Faith = ({ asceanState, setAsceanState }: Props) => {
         }
     ];
     function handleFaith(faith: any) {
-        setAsceanState({
-            ...asceanState,
-            'faith': faith.target.value,
-        });
+        if (setState) {
+            setState({
+                ...asceanState,
+                'faith': faith.target.value,
+            });
+        } else {
+            dispatch(setAsceanState({
+                ...asceanState,
+                'faith': faith.target.value,
+            }));
+        };
     };
 
     return (

@@ -1,11 +1,14 @@
 import Form from 'react-bootstrap/Form';
+import { useDispatch } from 'react-redux';
+import { setAsceanState } from '../../game/reducers/gameState';
 
 interface Props {
   asceanState?: any;
-  setAsceanState?: React.Dispatch<any>;
+  setState?: React.Dispatch<any>;
 };
 
-const Mastery = ({ asceanState, setAsceanState }: Props) => {
+const Mastery = ({ asceanState, setState }: Props) => {
+  const dispatch = useDispatch();
   const masteryState = [
     { name: 'Constitution' },
     { name: 'Strength' },
@@ -16,10 +19,17 @@ const Mastery = ({ asceanState, setAsceanState }: Props) => {
   ];
 
   function handleMastery(origin: any) {
-    setAsceanState!({
+    if (setState) {
+      setState({
         ...asceanState,
         'mastery': origin.target.value,
-    });
+      });
+    } else {
+      dispatch(setAsceanState({
+        ...asceanState,
+        'mastery': origin.target.value
+      }));
+    };
   };
   return (
     <div className="actions">

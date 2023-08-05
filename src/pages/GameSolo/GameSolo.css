@@ -1912,31 +1912,55 @@
   max-height: 643px;
   margin: 0 auto;
 }
-.story-window-two {
+.story-window-two, .story-window-three {
   position: absolute;
   color: #fdf6d8;
   text-align: center;
+  overflow: scroll;
+  padding: 0.5%;
+  scrollbar-width: none;
+  font-size: 12px;
+  z-index: 9999;
   width: 27%;
   height: 55%;
+}
+.story-window-two {
   left: 350px;
   top: 22.25%;
-  font-size: 12px;
-  padding: 0.5%;
-  overflow: scroll;
-  scrollbar-width: none;
-  z-index: 9999;
 } 
 .story-window-three {
-  position: absolute;
-  color: #fdf6d8;
-  text-align: center;
-  width: 27%;
-  height: 55%;
   left: 635px;
   top: 22%;
-  font-size: 12px;
-  padding: 0.5%;
-  overflow: scroll;
-  scrollbar-width: none;
-  z-index: 9999;
+}
+.story-name, .story-portrait, .story-stamina {
+  position: absolute;
+  font-family: 'Cinzel';
+  text-shadow: 1px 1px 1px black;
 } 
+.story-name {
+  position: absolute;
+  color: gold;
+  font-size: 12px;
+  width: 150px;
+  top: -9px;
+  left: 27px;
+  font-weight: 600
+}
+.story-portrait {
+  color: #fdf6d8;
+  text-align: center;
+  top: 9px;
+  left: 8px;
+  width: 130px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.story-stamina {
+  color: #fdf6d8;
+  text-align: center;
+  top: 6px;
+  left: 149px;
+  width: 40px;
+  font-size: 13px;
+  font-weight: 700;
+}

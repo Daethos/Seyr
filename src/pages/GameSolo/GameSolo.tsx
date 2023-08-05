@@ -1827,7 +1827,7 @@ const GameSolo = ({ user }: GameProps) => {
                 gameDispatch={gameDispatch} gameState={gameState} mapState={mapState}
             />
             { asceanState.ascean.experience >= asceanState.experienceNeeded ?
-                <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+                <LevelUpModal asceanState={asceanState} levelUpAscean={levelUpAscean} />
             : ( '' ) }
             <GameAscean state={state} dispatch={dispatch} ascean={gameState.player} player={true} damage={state.playerDamaged} totalPlayerHealth={state.player_health} currentPlayerHealth={state.newPlayerHealth} loading={gameState.loadingAscean} />
             { state.combatEngaged ? 

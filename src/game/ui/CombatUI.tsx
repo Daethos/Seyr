@@ -74,7 +74,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
 
     return (
         <div style={{ position: "absolute", transform: "scale(1.25)", top: "15px", left: "10px" }} id={state.playerDamaged ? 'flicker' : ''}> 
-            { !state.instantStatus ? (
+            { !state.instantStatus && (
                 <>
                 <Modal show={invokeModal} onHide={() => setInvokeModal(false)} centered id="modal-weapon" style={{ top: "-25%" }}>
                 <Modal.Header closeButton closeVariant='white' style={{ color: "gold", fontSize: "24px", fontWeight: 600 }}>Invoke Prayer</Modal.Header>
@@ -101,8 +101,8 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                     </p> 
                 </button> 
                 </>
-            ) : ( '' ) } 
-            { state.playerEffects.length > 0 ? (
+            ) } 
+            { state.playerEffects.length > 0 && (
                 <div className='story-prayers' style={{ position: "absolute" }}>
                     <Modal show={prayerModal} onHide={() => setPrayerModal(false)} centered id="modal-weapon">
                     <Modal.Header closeButton closeVariant='white' style={{ color: "gold" }}>Consume Prayer</Modal.Header>
@@ -130,63 +130,39 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                     </Modal>
                     <Button variant='' onClick={() => setPrayerModal(true)} style={getInvokeStyle}>Consume </Button><br />
                 </div>
-            ) : ( '' )}
+            ) }
             <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '150px', height: '40px' }} />
-            <p style={{ position: "absolute", color: "gold", fontSize: "12px", width: "150px", top: "-9px", left: "27px", fontFamily: "Cinzel", fontWeight: 600 }}>
-                {state.player.name}
-            </p>
+            <p className='story-name'>{state.player.name}</p>
             <ProgressBar 
                 variant="info"
                 now={playerHealthPercentage}
                 style={{ position: "absolute", top: "11px", left: "10px", width: "130px", height: "15px", backgroundColor: "red" }} 
             />
-            <p style={{ 
-                position: "absolute", 
-                color: "#fdf6d8", 
-                textShadow: "1px 1px 1px black", 
-                top: "9px", 
-                left: "8px",
-                width: "130px", 
-                fontSize: "12px", 
-                textAlign: "center", 
-                fontFamily: "Cinzel", 
-                fontWeight: 700 
-            }}>{`${Math.round(state.newPlayerHealth)} / ${state.playerHealth} [${playerHealthPercentage}%]`}</p>
+            <p className='story-portrait'>{`${Math.round(state.newPlayerHealth)} / ${state.playerHealth} [${playerHealthPercentage}%]`}</p>
             <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '40px', height: '40px', top: "-4px", left: "149px", borderRadius: "50%"  }} />
             <ProgressBar 
                 variant="success"
                 now={staminaPercentage}
                 style={{ position: "absolute", top: "-1.5px", left: "151px", width: "35px", height: "35px", backgroundColor: "red", borderRadius: "50%", transform: "rotate(-90deg)" }} 
             />
-            <p style={{ 
-                position: "absolute", 
-                color: "#fdf6d8", 
-                textShadow: "1px 1px 1px black", 
-                top: "6px", 
-                left: "149px",
-                width: "40px", 
-                fontSize: "13px", 
-                textAlign: "center", 
-                fontFamily: "Cinzel", 
-                fontWeight: 700 
-            }}>{Math.round((staminaPercentage / 100) * state.playerAttributes.stamina)}</p>
+            <p className='story-stamina'>{Math.round((staminaPercentage / 100) * state.playerAttributes.stamina)}</p>
             <div style={{ position: "absolute", left: "187.5px", top: "0px", transform: "scale(0.75)" }}> 
                 <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} caerenic={state.isCaerenic} />
             </div>
             <div style={{ position: "absolute", left: "230px", top: "-5px" }}>
-            { state.isStalwart ? (
+            { state.isStalwart && (
                 <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.player.shield, true)}>
                     <img src={state.player.shield.imgURL} className="m-1 eqp-popover spec" alt={state.player.shield.name} style={getItemRarityStyle(state.player.shield.rarity)} />
                 </OverlayTrigger>
-            ) : ( '' )}
+            ) }
             </div>
-            {state.playerEffects.length > 0 ? (
+            { state.playerEffects.length > 0 && (
                 <div className='combat-effects' style={{ zIndex: 2 }}>
                     {state.playerEffects.map((effect: any, index: number) => {
                         return ( <PhaserEffects state={state} effect={effect} pauseState={pauseState} key={index} /> )
                     })}
                 </div>
-            ) : ( '' ) } 
+            ) } 
         </div> 
     );
 };

@@ -15,7 +15,7 @@ import * as asceanAPI from '../../utils/asceanApi';
 import { useNavigate } from 'react-router-dom';
 import Firewater from '../../components/GameCompiler/Firewater';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOnlyInventoryFetch, setAsceanState, setShakeDuration, setShakeIntensity, setTutorialContent, setVibrationTime, setVolume } from '../reducers/gameState';
+import { getOnlyInventoryFetch, setShakeDuration, setShakeIntensity, setTutorialContent, setVibrationTime, setVolume } from '../reducers/gameState';
 import { Player } from '../../components/GameCompiler/GameStore';
 import {CombatSettings, GeneralSettings, InventorySettings, TacticSettings, ControlSettings} from '../../components/GameCompiler/SettingConcerns';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
@@ -374,7 +374,7 @@ const StoryAscean = ({ ascean, asceanViews }: Props) => {
         <div className="story-block" style={{ zIndex: 9999, fontFamily: "Cinzel", }}>
             <div className='story-ascean'> 
                 { ascean.experience === ascean.level * 1000 ? (
-                    <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} story={true} />
+                    <LevelUpModal asceanState={asceanState} story={true} />
                 ) : ( '' ) } 
                 <div style={{ textAlign: 'center', color: "#fdf6d8", width: '96%' }}>
                     {state.player.name}

@@ -143,12 +143,12 @@ const PersistAscean = ({ lineage }: AsceanProps) => {
             <Origin asceanState={asceanState} setAsceanState={setAsceanState} originModalShow={originModalShow} setOriginModalShow={setOriginModalShow} />
             <Sex asceanState={asceanState} setAsceanState={setAsceanState} />
             <img src={process.env.PUBLIC_URL + '/images/' + asceanState.origin + '-' + asceanState.sex + '.jpg'} id="ascean-pic" /><br />
-            <Faith asceanState={asceanState} setAsceanState={setAsceanState} />
+            <Faith asceanState={asceanState} setState={setAsceanState} />
             <svg height="5" width="100%" className="tapered-rule">
                 <polyline points="0,0 400,2.5 0,5"></polyline>
             </svg>
             <div className="top-stats">
-            <Mastery asceanState={asceanState} setAsceanState={setAsceanState} />
+            <Mastery asceanState={asceanState} setState={setAsceanState} />
             <AttributesCreate asceanState={asceanState} setAsceanState={setAsceanState} />
             <Communal editState={asceanState} setEditState={setAsceanState} />
             <svg height="5" width="100%" className="tapered-rule">

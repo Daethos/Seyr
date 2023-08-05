@@ -1074,7 +1074,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                     ) : ( '' ) }
                     { state.asceanLoaded ?
                     <>
-                    <LevelUpModal asceanState={asceanState} setAsceanState={setAsceanState} levelUpAscean={levelUpAscean} />
+                    <LevelUpModal asceanState={asceanState} levelUpAscean={levelUpAscean} />
                     <AdminAscean ascean={state.generatedAscean} loading={false} />
                     { state.asceanInventory.length > 0 ?
                         <>
