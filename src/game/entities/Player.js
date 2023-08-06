@@ -252,9 +252,11 @@ export default class Player extends Entity {
                     this.tshaeringTimer.remove(false);
                     this.tshaeringTimer = null;
                 };
-                this.attacking = null;
-                this.touching = this.touching.filter(obj => obj.enemyID !== e.enemyID);
-                if (this.touching.every(obj => !obj.inCombat)) this.inCombat = false;
+                this.defeatedEnemyCheck(e.enemyID);
+                this.checkTouching();
+                // this.attacking = null;
+                // this.touching = this.touching.filter(obj => obj.enemyID !== e.enemyID);
+                // if (this.touching.every(obj => !obj.inCombat)) this.inCombat = false;
             };
             this.checkWeapons(e.weapons[0], e.playerDamageType.toLowerCase());
         });
@@ -293,27 +295,108 @@ export default class Player extends Entity {
         this.hasMagic = this.checkDamageType(damage, 'magic');
         this.checkMeleeOrRanged(weapon);
     };
+
+    defeatedEnemyCheck = (enemy) => {
+        this.touching = this.touching.filter(obj => obj.enemyID !== enemy);
+        if (this.touching.every(obj => !obj.inCombat)) {
+            this.inCombat = false;
+            this.attacking = null;
+            if (this.currentTarget) {
+                this.currentTarget.clearTint();
+                this.currentTarget = null;
+            };
+        } else {
+            if (this.currentTarget.enemyID === enemy) {
+                this.currentTarget.clearTint();
+            }; 
+            console.log(this.touching, this.targetIndex);
+
+            // Find the next target that is still in combat
+            let newTarget = null;
+            for (let i = 0; i < this.touching.length; i++) {
+                const currentIndex = (this.targetIndex + i) % this.touching.length;
+                if (this.touching[currentIndex].inCombat) {
+                    newTarget = this.touching[currentIndex];
+                    this.targetIndex = currentIndex;
+                    break;
+                };
+            };
+            if (!newTarget) return;
+            // this.targetIndex = this.targetIndex + 1 === this.touching.length ? 0 : this.targetIndex + 1;
+            if (newTarget.npcType) { // NPC
+                this.scene.setupNPC({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, type: newTarget.npcType });
+            } else { // Enemy
+                this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated, isTriumphant: newTarget.isTriumphant }); 
+            };
+            this.currentTarget = newTarget;
+            this.highlightTarget(newTarget);
+        };
+    };
+
+    isPlayerInCombat = () => {
+        return this.inCombat || this.scene.combat || this.scene.state.combatEngaged;
+    };
+
+    shouldPlayerBeInOrEnterCombat = (enemy) => {
+        const hasAggressiveEnemy = enemy?.isAggressive;
+        const hasRemainingEnemies = this.scene.combat && this.scene.state.combatEngaged && this.inCombat;
+    
+        if (hasAggressiveEnemy) {
+            if (!hasRemainingEnemies) {
+                console.log('Player Should Enter Combat');
+                return true;
+            } else {
+                console.log('Player Should Be In Combat');
+                return true;
+            };
+        };
+    
+        console.log('Player Should Not Enter Combat');
+        return false;
+    }; 
+
+    isCurrentTarget = (enemy) => {
+        if (this.attacking?.enemyID === enemy.enemyID) {
+            return true;
+        };
+        return false;
+    };
+
+    isNewEnemy = (enemy) => {
+        const newEnemy = !this.touching.some(obj => obj.enemyID === enemy.enemyID);
+        if (newEnemy) {
+            console.log('New Enemy Pushed Into Touching Array');
+            this.touching.push(enemy);
+            return true;
+        };
+        return false;
+    };
+
+    isValidEnemyCollision(other) {
+        return (
+            other.gameObjectB &&
+            other.gameObjectB.name === 'enemy' &&
+            other.bodyB.label === 'enemyCollider' &&
+            other.gameObjectB.isAggressive
+        );
+    };
  
     checkEnemyAttackCollision(playerSensor) {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider' && other.gameObjectB.isAggressive) {
-                    const collisionPoint = this.calculateCollisionPoint(other);
-                    const attackDirection = this.getAttackDirection(collisionPoint);
-                    if (attackDirection === this.flipX) {
-                        this.actionAvailable = true;
+                if (this.isValidEnemyCollision(other)) {
+                    const isNewEnemy = this.isNewEnemy(other.gameObjectB);
+                    if (!isNewEnemy) return;
+                    if (this.shouldPlayerBeInOrEnterCombat(other.gameObjectB)) {
+                        console.log("Engaging Combat in Start Collision Sensor");
+                        this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated, isTriumphant: other.gameObjectB.isTriumphant });
                         this.actionTarget = other;
-                        const isNewEnemy = !this.touching.some(obj => obj.enemyID === other.gameObjectB.enemyID);
-                        if (isNewEnemy && !isNewEnemy.isDead) this.touching.push(other.gameObjectB);
-                        this.currentTarget = other.gameObjectB; 
-                        if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id) && !other.gameObjectB.isDead) this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated, isTriumphant: other.gameObjectB.isTriumphant });
-                        if (!this.scene.state.combatEngaged && !other.gameObjectB.isDead) {
-                            console.log("Engaging Combat in Collision Sensor", this.scene.state.combatEngaged, other.gameObjectB.isDead);
-                            this.scene.combatEngaged(true);
-                            this.inCombat = true;
-                        };
+                        this.currentTarget = other.gameObjectB;
+                        this.scene.combatEngaged(true);
+                        this.inCombat = true;
                     };
+                    this.checkTouching();
                 };
             },
             context: this.scene,
@@ -322,13 +405,12 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideActive({
             objectA: [playerSensor],
             callback: (other) => {
-                if (!other.gameObjectB || other.gameObjectB.name !== 'enemy' || other.bodyB.label !== 'enemyCollider') return;
-                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider' && other.gameObjectB.isAggressive) {
+                if (this.isValidEnemyCollision(other) && this.isCurrentTarget(other.gameObjectB)) {
                     const collisionPoint = this.calculateCollisionPoint(other);
                     const attackDirection = this.getAttackDirection(collisionPoint);
                     if (attackDirection === this.flipX) {
                         this.actionAvailable = true;
-                        // this.actionTarget = other;
+                        if (!this.actionTarget) this.actionTarget = other;    
                     };
                 };
             },
@@ -338,10 +420,10 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [playerSensor],
             callback: (other) => {
-                if (other.gameObjectB && other.gameObjectB.name === 'enemy' && other.bodyB.label === 'enemyCollider' && other.gameObjectB.isAggressive) {
+                if (this.isValidEnemyCollision(other)) {
                     this.actionAvailable = false;
-                    // this.actionTarget = null;
                 };
+                this.checkTouching();
             },
             context: this.scene,
         });
@@ -395,6 +477,7 @@ export default class Player extends Entity {
                     this.touching = this.touching.filter(obj => obj.enemyID !== other.gameObjectB.enemyID);
                     this.scene.clearNPC();
                 };
+                this.checkTouching();
             },
             context: this.scene,
         });
@@ -583,7 +666,6 @@ export default class Player extends Entity {
         this.attacking.isConsumed = true;
         screenShake(this.scene);
         if (!this.isCaerenic) {
-            // this.glowing = true;
             this.setGlow(this, true);
         };
         this.tshaeringTimer = this.scene.time.addEvent({
@@ -591,8 +673,6 @@ export default class Player extends Entity {
             callback: () => {
                 if (!this.isTshaering || this.scene.state.playerWin || this.scene.state.newComputerHealth <= 0) return;
                 this.scene.combatMachine.add({ type: 'Tshaeral', data: '' });
-                // this.glowing = this.glowing ? false : true;
-                // this.setGlow(this, this.glowing);
             },
             callbackScope: this,
             // loop: true,
@@ -614,10 +694,8 @@ export default class Player extends Entity {
             this.tshaeringTimer = null;
         };
         if (!this.isCaerenic) {
-            // this.glowing = false;
             this.setGlow(this, false);
         } 
-        // if (this.isCaerenic && !this.glowing) this.setGlow(this, true);
         screenShake(this.scene);
     };
 
@@ -654,33 +732,36 @@ export default class Player extends Entity {
     };
 
     checkTouching = () => {
+        const playerCombat = this.isPlayerInCombat();
+        
         this.touching = this.touching.filter(gameObject => {
-            if (gameObject.isDead) { // || (gameObject.isEnemy && !gameObject.inCombat)
-                console.log("Removing from touching array", gameObject, gameObject.inCombat, gameObject.isEnemy, gameObject.isDead);
-                return false;    
+            if (gameObject.isDead || (!gameObject.inCombat && playerCombat)) {
+                console.log("Removing from touching array: [isDead, !inCombat && playerCombat]");
+                return false;
             };
-            return true;
-        });
-        if (this.touching.length === 0 || this.touching.every((gameObject) => gameObject.npcType)) {
-            if (this.inCombat || this.scene.combat) {
+    
+            if (gameObject.npcType && playerCombat) {
+                console.log("Disengaging Combat in Touching Array Check: [npcTypes, playerCombat]");
                 this.scene.combatEngaged(false);
                 this.inCombat = false;
             };
-        };
-        if (this.touching.some((gameObject) => gameObject.inCombat)) {
-            if (!this.inCombat || !this.scene.combat) {
-                console.log("Engaging Combat in Touching Array Check", this.inCombat, this.scene.combat)
-                this.scene.combatEngaged(true);
-                this.inCombat = true;
-            };
-        };
-        if (this.inCombat && this.touching.every((gameObject) => !gameObject.inCombat)) {
-            console.log("Disengaging Combat in Touching Array Check", this.inCombat, this.scene.combat)
+    
+            return true;
+        });
+    
+        const someInCombat = this.touching.some(gameObject => gameObject.inCombat);
+    
+        if (someInCombat && !playerCombat) {
+            console.log("Engaging Combat in Touching Array Check: [some.inCombat, !playerCombat]");
+            this.scene.combatEngaged(true);
+            this.inCombat = true;
+        } else if (!someInCombat && playerCombat) {
+            console.log("Disengaging Combat in Touching Array Check: [!some.inCombat, playerCombat]");
             this.scene.combatEngaged(false);
             this.inCombat = false;
         };
     };
-
+    
     zeroOutVelocity = (velocityDirection, deceleration) => {
         if (velocityDirection > 0) {
             velocityDirection -= deceleration;
@@ -701,7 +782,7 @@ export default class Player extends Entity {
             this.particleEffect.effect.destroy();
             this.particleEffect = null;
         };
-        if (!this.isRanged) this.knockback(this.actionTarget);
+        if (!this.isRanged) this.knockback(this.actionTarget); // actionTarget
         screenShake(this.scene); 
         // this.scene.screenShaker.shake(); 
     };
@@ -715,10 +796,11 @@ export default class Player extends Entity {
             const newTarget = this.touching[this.targetIndex];
             if (!newTarget) return;
             this.targetIndex = this.targetIndex + 1 === this.touching.length ? 0 : this.targetIndex + 1;
-            if (newTarget.npcType) {
+            if (newTarget.npcType) { // NPC
                 this.scene.setupNPC({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, type: newTarget.npcType });
-            } else {
+            } else { // Enemy
                 this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated, isTriumphant: newTarget.isTriumphant }); 
+                
             };
             this.currentTarget = newTarget;
             this.highlightTarget(newTarget);
@@ -1082,7 +1164,7 @@ export default class Player extends Entity {
     update() {
         this.handleConcerns();
         this.stateMachine.update(this.dt);
-        this.checkTouching();
+        // if (this.touching.length) this.checkTouching();
         this.handleActions();
         this.handleAnimations();
         this.handleMovement();

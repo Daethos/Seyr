@@ -186,24 +186,25 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
             callback: other => {
+                // Other Object is the Player, the Enemy is Aggressive and hasn't 'Fought' yet aka isTriumphant && isDefeated is false
                 if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && this.isAggressive && !this.isTriumphant) {
                     this.attacking = other.gameObjectB;
                     this.inCombat = true;
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
                     if (newEnemy) other.gameObjectB.touching.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
-                    if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     this.stateMachine.setState(States.CHASE); 
                     this.actionTarget = other;
-                    other.gameObjectB.inCombat = true;
-                    other.gameObjectB.attacking = this;
-                    other.gameObjectB.currentTarget = this;
-                    if (!this.scene.combat) {
+                    if (!other.gameObjectB.inCombat) {
+                        if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
+                        other.gameObjectB.inCombat = true;
+                        other.gameObjectB.attacking = this;
+                        other.gameObjectB.currentTarget = this;
                         console.log('Computer Engaging Combat: ', this.scene.combat, this.scene.state.combatEngaged);
                         this.scene.combatEngaged(true);
                     };
-                } else if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && !this.isAggressive) {
+                } else if (other.gameObjectB && other.gameObjectB.name === 'player' && !other.gameObjectB.inCombat && !this.isDead && !this.isAggressive) {
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
                     if (newEnemy) other.gameObjectB.touching.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
@@ -221,7 +222,7 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideActive({
             objectA: [enemySensor],
             callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && this.isAggressive && !this.inCombat && !this.isAttacking && !this.isTriumphant) {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && !other.gameObjectB.inCombat && !this.isDead && this.isAggressive && !this.inCombat && !this.isAttacking && !this.isTriumphant) {
                     this.attacking = other.gameObjectB;
                     this.inCombat = true;
                     const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
@@ -247,7 +248,7 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [enemySensor],
             callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && !this.isAggressive) {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && !other.gameObjectB.inCombat && !this.isDead && !this.isAggressive) {
                     if (this.healthbar) this.healthbar.setVisible(false);
                     if (this.isDefeated) {
                         this.scene.showDialog(false);
@@ -724,8 +725,6 @@ export default class Enemy extends Entity {
                     direction.normalize();
                     this.setVelocity(direction.x * 0.75, direction.y * 0.75);
                 };
-                // this.glowing = !this.glowing;
-                // this.setGlow(this, this.glowing);
             },
             callbackScope: this,
             loop: true,

@@ -387,8 +387,9 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 knockout: true
             });
         }; 
+        
         updateGlow(this.scene.time.now);
-        // Call updateGlow after a delay to create the looping effect
+
         this.glowTimer = this.scene.time.addEvent({
             delay: 125, // Adjust the delay as needed
             callback: () => updateGlow(this.scene.time.now),
