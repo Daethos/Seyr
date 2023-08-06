@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useParams } from 'react-router-dom';
 import Phaser from "phaser"; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
 import CombatUI from '../ui/CombatUI';
@@ -27,6 +28,7 @@ interface Props {
 };
 
 const HostScene = ({ assets, ascean }: Props) => {
+    const { asceanID } = useParams();
     const dispatch = useDispatch();
     const gameRef = useRef<any>({}); 
     const combatState = useSelector((state: any) => state.combat);
@@ -37,7 +39,7 @@ const HostScene = ({ assets, ascean }: Props) => {
     useEffect(() => { 
         const startGame = async (): Promise<Phaser.Game> => gameRef.current = new Phaser.Game(config); 
         startGame();
-    }, []);
+    }, [asceanID]);
 
     useEffect(() => {
         updateCombatListener(combatState);

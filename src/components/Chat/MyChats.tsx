@@ -15,10 +15,10 @@ interface Props {
 };
 
 const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAgain }: Props) => {
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState<boolean>(false);
     const handleClose = () => setShow(false);
 
-    const fetchChats = async () => {
+    const fetchChats = async (): Promise<void> => {
         try {
             const response = await chatAPI.fetchChat();
             setChats(response.data);

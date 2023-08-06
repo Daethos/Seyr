@@ -39,7 +39,6 @@ export default class CombatMachine {
         Tshaeral: (data: KV) => Dispatcher.tshaeralAction(this.dispatch),
         Player: async (data: any) => {
             if (this.state.action === 'counter' && this.state.computerAction === '') {
-                // TODO:FIXME: This may need to self-terminate this action and then call the next action in the queue
                 return;
             } else {
                 Dispatcher.weaponAction(this.dispatch, data);
@@ -51,7 +50,6 @@ export default class CombatMachine {
                 await actionReset();
                 Dispatcher.enemyAction(this.dispatch, data);
             } else if (this.state.action === '' && this.state.computerAction === 'counter') {
-                // TODO:FIXME: This may need to self-terminate this action and then call the next action in the queue
                 return;
             } else {
                 Dispatcher.enemyAction(this.dispatch, data);

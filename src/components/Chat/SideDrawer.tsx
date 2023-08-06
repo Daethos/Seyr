@@ -43,7 +43,7 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
     };
 
     return (
-        <>
+        <div style={{ float: 'left' }}>
         <OverlayTrigger placement="bottom" delay={{ show: 250, hide: 400 }} overlay={renderTooltip}>
             <Button variant="" onClick={handleShow} style={{ color: '#fdf6d8' }}>
                 Users {' '}
@@ -80,7 +80,7 @@ const SideDrawer = ({ handleSearch, searchResult, loading, setChats, chats, setS
             ) : ('') }
         </Offcanvas.Body>
         </Offcanvas>
-        </>
+        </div>
     );
 };
 

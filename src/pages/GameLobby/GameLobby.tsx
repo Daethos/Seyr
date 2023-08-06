@@ -6,8 +6,6 @@ import MyChats from '../../components/Chat/MyChats';
 import ChatBox from '../../components/Chat/ChatBox';
 import userService from "../../utils/userService";
 import Notifications from '../../components/Chat/Notifications';
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
 import * as chatAPI from '../../utils/chatMessageApi';
 
 let socket: any;
@@ -24,24 +22,22 @@ const GameLobby = ({ user }: Props) => {
     const [chats, setChats] = useState<any>([]);
     const [socketConnected, setSocketConnected] = useState<boolean>(false);
     const [isTyping, setIsTyping] = useState<boolean>(false);
+
     useEffect(() => {
-        socket = io.connect("https://ascea.herokuapp.com", { transports: ['websocket'] }) 
-        // "http://localhost:3001" When Tinkering Around 
-        // "https://ascea.herokuapp.com" When Deploying
+        socket = io.connect("https://ascea.herokuapp.com", { transports: ['websocket'] }); // 'https://ascea.herokuapp.com' || 'http://localhost:3001'
         socket.emit("setup", user);
         socket.on("Connected", () => setSocketConnected(true));
 
         socket.on('typing', () => setIsTyping(true));
         socket.on('stop_typing', () => setIsTyping(false));
         socket.on('message_received', () => setFetchAgain(true));
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         const fetchChats = async () => {
             try {
-                const response = await chatAPI.allMessagesNotRead();
-                console.log(response.data);
-                setNotification(response.data);
+                const res = await chatAPI.allMessagesNotRead();
+                setNotification(res.data);
                 setFetchAgain(false);
             } catch (err: any) {
                 console.log(err.message, 'Error Fetching Chats');
@@ -65,12 +61,10 @@ const GameLobby = ({ user }: Props) => {
 
     return (
         <Container className="Game-Lobby-Chat">
-            <Tabs defaultActiveKey="Chat Groups" id="justify-tab-example" className="mb-3" justify >
-            <Tab eventKey="home" title={<SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />}>
-            </Tab>
-            <Tab eventKey="longer-tab" title={<Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} />}>
-            </Tab>
-            </Tabs>
+            <div className='mt-4'>
+                <SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />
+                <Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} />
+            </div> 
             { selectedChat?._id 
                 ? <ChatBox user={user} socket={socket} socketConnected={socketConnected} isTyping={isTyping} selectedChat={selectedChat} setSelectedChat={setSelectedChat} notification={notification} setNotification={setNotification} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
                 : <MyChats selectedChat={selectedChat} setSelectedChat={setSelectedChat} user={user} chats={chats} setChats={setChats} fetchAgain={fetchAgain} />

@@ -65,7 +65,6 @@ const StoryAscean = ({ ascean, asceanViews }: Props) => {
     }, [ascean]);
 
     useEffect(() => {
-        console.log("Checking Relevant Views");
         if (ascean.tutorial.firstInventory && ascean.inventory.length && asceanViews === 'Inventory') dispatch(setTutorialContent('firstInventory'));
     }, [ascean.tutorial, asceanViews, dispatch]);
 

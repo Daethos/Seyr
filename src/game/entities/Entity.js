@@ -113,7 +113,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.canSwing = true;
         this.swingTimer = 0; 
         this.glowing = false;
-
+        this.glowTimer = null;
     };
 
     get position() {
@@ -349,15 +349,52 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 default: return 0xFFFFFF;
             };
         }; 
-        if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
+        const glowFilter = this.scene.plugins.get('rexGlowFilterPipeline');
 
-        return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
-            outerStrength: 2,
-            innerStrength: 2,
-            glowColor: setColor(this.ascean.mastery),
-            intensity: 0.25,
-            knockout: true
+        // if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
+        if (!glow) {
+            if (this.glowTimer) {
+                this.glowTimer.remove();
+                this.glowTimer = null;
+            };
+            return glowFilter.remove(object); 
+        };
+
+        // return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
+        //     outerStrength: 2,
+        //     innerStrength: 2,
+        //     glowColor: setColor(this.ascean.mastery),
+        //     intensity: 0.25,
+        //     knockout: true
+        // }); 
+
+        let glowColor = setColor(this.ascean.mastery);
+
+        const updateGlow = (time) => {
+            if (glowFilter) {
+                glowFilter.remove(object);
+            };
+
+            const outerStrength = 2 + Math.sin(time * 0.005) * 2; // Adjust the frequency and amplitude as needed
+            const innerStrength = 2 + Math.cos(time * 0.005) * 2;
+            const intensity = 0.25;
+
+            glowFilter.add(object, {
+                outerStrength,
+                innerStrength,
+                glowColor,
+                intensity,
+                knockout: true
+            });
+        }; 
+        updateGlow(this.scene.time.now);
+        // Call updateGlow after a delay to create the looping effect
+        this.glowTimer = this.scene.time.addEvent({
+            delay: 125, // Adjust the delay as needed
+            callback: () => updateGlow(this.scene.time.now),
+            loop: true
         });
+
     };
  
     // setFrame = (spriteWeapon, action, direction, frameCount) => {
@@ -972,15 +1009,15 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
  
 let totalTrauma = 0;
  
-export const screenShake = (scene, duration = 80, intensity = 0.01) => {
+export const screenShake = (scene, duration = 80, intensity = 0.015) => {
     totalTrauma += 1.05;
-    intensity = 0.01 * Math.pow(totalTrauma, 2);
+    intensity *= Math.pow(totalTrauma, 2);
     
     if ("vibrate" in navigator) navigator.vibrate(duration);
     scene.cameras.main.shake(duration, intensity);
-    pauseGame(scene, 20).then(() => {
-        scene.resume();
-    });
+    // pauseGame(scene, 20).then(() => {
+    //     scene.resume();
+    // });
     
     const decayInterval = setInterval(() => {
         totalTrauma -= 1.05 / duration;

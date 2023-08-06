@@ -7,6 +7,7 @@ import ParticleManager from "../phaser/ParticleManager";
 import ascean_test from '../images/ascean_test.json';
 import AncientForestDecorative from '../images/AncientForestDecorative.png';
 import AncientForestMain from '../images/AncientForestMainLev.png';
+import Camp_Graves from '../images/Camp_Graves.png';
 
 export default class Preload extends Phaser.Scene {
     constructor() {
@@ -22,7 +23,6 @@ export default class Preload extends Phaser.Scene {
     };
 
     init(data) {
-        console.log(data, "Preload Data");
         this.gameData = data.gameData;
     };
 
@@ -44,6 +44,7 @@ export default class Preload extends Phaser.Scene {
         });
         this.load.image('AncientForestMain', AncientForestMain);
         this.load.image('AncientForestDecorative', AncientForestDecorative);
+        this.load.image('Camp_Graves', Camp_Graves);
 
         this.createLoadingBar();
     };

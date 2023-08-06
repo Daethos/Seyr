@@ -2,7 +2,7 @@
     "nodes": [
         {
             "id": "0001",
-            "text": "Greethings there, I'm ${enemy.name}. Whom am I hailing this glorious day?",
+            "text": "Greethings there, I'm a ${enemy.name}. Whom am I hailing this glorious day?",
             "options": [
                 {
                     "text": "Hello there ${enemy.name}, my name is ${ascean.name}.",
@@ -63,20 +63,6 @@
                     ]
                 },
                 {
-                    "text": "Yes, yes, enough pleasantries and the like. What is it you wish of me, ${enemy.name}?",
-                    "next": "0003",
-                    "npcIds": [
-                        1,
-                        2,
-                        3,
-                        4,
-                        5,
-                        6,
-                        7,
-                        8
-                    ]
-                },
-                {
                     "text": "You know we've had this conversation previously, yes?",
                     "next": "0003",
                     "npcIds": [
@@ -114,30 +100,26 @@
                     ]
                 },
                 {
-                    "text": "I would like to see some of your wares for purchase.",
-                    "next": "0004",
+                    "text": "I require some weaponry, your signs said you sold as much.",
+                    "next": "0007",
                     "npcIds": [
                         2,
+                        7
+                    ]
+                },
+                {
+                    "text": "I require something with a bit more armor and finesse, the road isn't getting any easier to travel.",
+                    "next": "0008",
+                    "npcIds": [
                         3,
-                        4,
-                        7,
                         8
                     ]
                 },
                 {
-                    "text": "I need to repair some equipment if you are able.",
-                    "next": "0005",
+                    "text": "I'm curious about some jewelry your sign mentioned.",
+                    "next": "0009",
                     "npcIds": [
-                        6,
-                        8
-                    ]
-                },
-                {
-                    "text": "I actually require some equipment forged if you're capable of that.",
-                    "next": "0006",
-                    "npcIds": [
-                        4,
-                        6
+                        4
                     ]
                 },
                 {
@@ -253,18 +235,20 @@
             "text": "What kind of weapon do you need?",
             "options": [
                 {
-                    "text": "Something of this world, please. Martial and reliable.",
-                    "next": "0014",
+                    "text": "Something of this world, martial and reliable.",
+                    "next": "0007",
                     "npcIds": [
                         2
-                    ]
+                    ],
+                    "action": "getWeapon"
                 },
                 {
-                    "text": "Perhance something a little bizarre, not quite of this world?",
-                    "next": "0015",
+                    "text": "Perhance something a little bizarre.",
+                    "next": "0007",
                     "npcIds": [
                         7
-                    ]
+                    ],
+                    "action": "getMystic"
                 }
             ],
             "npcIds": [

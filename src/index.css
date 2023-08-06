@@ -169,7 +169,6 @@ canvas {
   width: 25%;
 }
 .orange-border.bottom{
-    /* margin: 15px 0px -20px; */
     width: 95%;
     border-radius: 25%;
 }
@@ -225,7 +224,6 @@ canvas {
 }
 .abilities{
     text-align: center;
-    /* color: #922610; */
     color: #5a0043;
 }
 .abilities > div{
@@ -264,7 +262,6 @@ canvas {
 }
 .actions h3{
     border-bottom: 1px solid #5a0043;
-    /* color: #7A200D; */
     color: #5a0043;
     font-size: 21px;
     font-variant: small-caps;
@@ -333,9 +330,6 @@ canvas {
 .feeling-icon {
   transform: scale(2.5);
 }
-/* .feeling-icon:hover {
-  transform: scale(3);
-} */
 .friend-popover:hover {
   transform: scale(1.1);
 }
@@ -354,12 +348,6 @@ canvas {
   text-align: center;
   color: #fdf6d8;
 }
-/* .message-content {
-  color: #fdf6d8;
-}
-.message-meta {
-  color: #fdf6d8;
-} */
 #pvp-chat {
   grid-row-start: 8;
 }
@@ -368,9 +356,7 @@ canvas {
   margin: 0;
 }
 .Chat-Window .Chat-Header {
-  /* height: 45px; */
   border-radius: 6px;
-  /* background: #770089; */
   color: #770089;
   font-size: 18px;
   font-weight: 600;
@@ -408,7 +394,6 @@ canvas {
 #Chat-Body .message .message-content {
   width: auto;
   height: auto;
-  /* min-height: 40px; */
   max-width: 200px;
   background-color: #430067;
   border-radius: 5px;
@@ -417,8 +402,6 @@ canvas {
   margin-left: 5px;
   padding: 5px;
   font-size: 16px;
-  /* padding-right: 5px;
-  padding-left: 5px; */
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -444,7 +427,6 @@ canvas {
 .Chat-Window .Chat-Body .message .message-content {
   width: auto;
   height: auto;
-  /* min-height: 40px; */
   max-width: 200px;
   background-color: #6b00a4;
   border-radius: 5px;
@@ -452,8 +434,6 @@ canvas {
   margin-right: 5px;
   margin-left: 5px;
   padding: 5px;
-  /* padding-right: 5px;
-  padding-left: 5px; */
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -498,12 +478,8 @@ canvas {
 }
 .Chat-Window .chat-footer button {
   border: 0;
-  /* display: grid; */
   place-items: center;
   cursor: pointer;
-  /* font-weight: 700; */
-  /* font-size: 18px; */
-  
 }
 .side-drawer {
   color: #fdf6d8;
@@ -535,8 +511,6 @@ canvas {
 }
 #story-game {
   padding: 0;
-
-  /* border: 5px solid #2a0134; */
 }
 #story-game canvas {
   box-sizing: border-box;
@@ -553,6 +527,7 @@ canvas {
   justify-content: space-evenly;
   width: 100%;
   top: 95%; 
+  z-index: 9999;
 }
 #ascean-stats {
   width: 100%;

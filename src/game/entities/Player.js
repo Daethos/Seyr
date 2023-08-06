@@ -582,14 +582,17 @@ export default class Player extends Entity {
         this.isTshaering = true;
         this.attacking.isConsumed = true;
         screenShake(this.scene);
+        if (!this.isCaerenic) {
+            // this.glowing = true;
+            this.setGlow(this, true);
+        };
         this.tshaeringTimer = this.scene.time.addEvent({
             delay: 250,
             callback: () => {
-                console.log("Tshaering Timer", this.isTshaering, this.scene.state.playerWin, this.scene.state.newComputerHealth);
                 if (!this.isTshaering || this.scene.state.playerWin || this.scene.state.newComputerHealth <= 0) return;
                 this.scene.combatMachine.add({ type: 'Tshaeral', data: '' });
-                this.glowing = this.glowing ? false : true;
-                this.setGlow(this, this.glowing);
+                // this.glowing = this.glowing ? false : true;
+                // this.setGlow(this, this.glowing);
             },
             callbackScope: this,
             // loop: true,
@@ -610,7 +613,11 @@ export default class Player extends Entity {
             this.tshaeringTimer.remove(false);
             this.tshaeringTimer = null;
         };
-        if (!this.isCaerenic && this.glowing) this.glow = this.setGlow(this, false);
+        if (!this.isCaerenic) {
+            // this.glowing = false;
+            this.setGlow(this, false);
+        } 
+        // if (this.isCaerenic && !this.glowing) this.setGlow(this, true);
         screenShake(this.scene);
     };
 

@@ -113,16 +113,16 @@ const CommunityFeed = () => {
           return (
             <tbody key={index}>
             { index < 10 && (
-              <tr>
+              <tr style={{ verticalAlign: 'middle' }}>
                 <td>
                 <img src={ascean[0].photoUrl} alt={ascean[0].ascean}
-                  style={{ height: '40px', width: '40px', borderRadius: '50%', border: '1px solid purple', marginLeft: '0px' }} />
+                  style={{ width: '5vw', borderRadius: '50%', border: '2px solid purple', marginLeft: '0px' }} />
                 </td>
-                <td style={{ padding: '5%', fontSize: '14px' }}>
+                <td style={{ fontSize: '14px' }}>
                   <Nav.Link as={NavLink} to={`/CommunityFeed/` + ascean[0]._id}>{ascean[0].ascean}</Nav.Link>
                 </td>
-                <td style={{ padding: '5%', fontSize: '14px' }}>{ascean[0].score}</td>
-                <td style={{ padding: '5%', fontSize: '14px' }}>{ascean[0].mastery}</td>
+                <td style={{ fontSize: '14px' }}>{ascean[0].score}</td>
+                <td style={{ fontSize: '14px' }}>{ascean[0].mastery}</td>
               </tr>
              )}
             </tbody>

@@ -13,7 +13,7 @@ import Typewriter from '../../components/GameCompiler/Typewriter';
 import dialogWindow from '../images/dialog_window.png';
 import EventEmitter from '../phaser/EventEmitter';
 import { useDispatch, useSelector } from 'react-redux';
-import { getGainExperienceFetch, getLootDropFetch, getRestoreFirewaterFetch, setCurrentDialogNode, setCurrentIntent, setMerchantEquipment, setRendering, setShowDialog } from '../reducers/gameState';
+import { getGainExperienceFetch, getLootDropFetch, getRestoreFirewaterFetch, setCurrentDialogNode, setCurrentIntent, setCurrentNodeIndex, setMerchantEquipment, setRendering, setShowDialog } from '../reducers/gameState';
 import { getLuckoutFetch, getPersuasionFetch, setPhaserAggression } from '../reducers/combatState';
 import { ProvincialWhispersButtons, Region, regionInformation } from '../../components/GameCompiler/Regions';
 import { LuckoutModal, PersuasionModal, checkTraits, traitStyle } from '../../components/GameCompiler/PlayerTraits';
@@ -31,7 +31,7 @@ interface DialogOptionProps {
 
 const DialogOption = ({ option, onClick, actions, setPlayerResponses, setKeywordResponses, setShowDialogOptions, showDialogOptions }: DialogOptionProps) => {
     const hollowClick = () => console.log("Hollow Click");
-    const handleClick = async () => {
+    const handleClick = async (): Promise<void> => {
         setPlayerResponses((prev) => [...prev, option.text]);
         if (option?.keywords && option.keywords.length > 0) {
             setKeywordResponses((prev) => [...prev, ...option.keywords || []]);
@@ -73,25 +73,23 @@ interface DialogTreeProps {
 };
 
 const DialogTree = ({ ascean, enemy, dialogNodes, gameState, state, actions, setPlayerResponses, setKeywordResponses, dispatch }: DialogTreeProps) => {
-    const [currentNodeIndex, setCurrentNodeIndex] = useState(gameState?.currentNodeIndex || 0);
     const [showDialogOptions, setShowDialogOptions] = useState(false);
 
     useEffect(() => {
-        console.log("Current Node Index: ", gameState?.currentNodeIndex, dialogNodes, "Current Node: ", gameState?.currentNode);
-        setCurrentNodeIndex(gameState?.currentNodeIndex || 0);
-    }, [gameState?.currentNodeIndex]);
+        dispatch(setCurrentNodeIndex(gameState?.currentNodeIndex || 0));
+    }, [gameState?.currentNodeIndex, dispatch]);
     
     useEffect(() => {
-        dispatch(setCurrentDialogNode(dialogNodes?.[currentNodeIndex]));
-        dispatch(setRendering({ options: dialogNodes?.[currentNodeIndex]?.options, text: dialogNodes?.[currentNodeIndex]?.text }));
+        dispatch(setCurrentDialogNode(dialogNodes?.[gameState?.currentNodeIndex]));
+        dispatch(setRendering({ options: dialogNodes?.[gameState?.currentNodeIndex]?.options, text: dialogNodes?.[gameState?.currentNodeIndex]?.text }));
         const dialogTimeout = setTimeout(() => {
             setShowDialogOptions(true);
-        }, dialogNodes?.[currentNodeIndex]?.text.split('').reduce((a: number, s: string | any[]) => a + s.length * 50, 0));
+        }, dialogNodes?.[gameState?.currentNodeIndex]?.text.split('').reduce((a: number, s: string | any[]) => a + s.length * 50, 0));
 
         return () => {
             clearTimeout(dialogTimeout);
         }; 
-    }, [currentNodeIndex]);
+    }, [gameState?.currentNodeIndex]);
   
     useEffect(() => {
         if (gameState?.currentNode) {
@@ -133,7 +131,6 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, state, actions, set
                 });
             };
             dispatch(setRendering({ text: newText, options: newOptions }));
-            console.log("New Text: ", newText, "New Options: ", newOptions);
         };
     }, [gameState.currentNode]);
 
@@ -148,6 +145,7 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, state, actions, set
         } else {
             let nextNodeIndex = dialogNodes.findIndex((node: { id: string; }) => node.id === nextNodeId);
             if (nextNodeIndex === -1) nextNodeIndex = 0;
+            console.log("Next Node Index: ", nextNodeIndex, "Next Node ID: ", nextNodeId);
             dispatch(setCurrentNodeIndex(nextNodeIndex));
         };
     };

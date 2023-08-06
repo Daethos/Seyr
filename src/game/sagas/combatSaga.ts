@@ -68,7 +68,6 @@ export function* combatSaga(): SagaIterator {
 
 function* workResolveCombat(state: CombatData): SagaIterator {
     try {
-        console.log(state.playerWin, state.computerWin, 'Player Win, Computer Win');
         if ((!state.playerWin && !state.computerWin) || state.enemyID === '') return;
         let combat = yield select((state) => state.combat);
         combat = { ...combat, ...state };
@@ -76,7 +75,6 @@ function* workResolveCombat(state: CombatData): SagaIterator {
         const res = yield call(asceanAPI.recordCombatStatistic, stat);
         yield put(setStatistics(res));
         if (combat.playerWin) {
-            console.log("Player Won", combat.enemyID);
             const asceanState = yield select((state) => state.game.asceanState);
             const exp = { payload: { asceanState, combatState: combat } };
             yield call(workGetGainExperienceFetch, exp);
@@ -84,7 +82,6 @@ function* workResolveCombat(state: CombatData): SagaIterator {
             yield call(workGetLootDropFetch, loot);
             yield put(setPlayerWin(combat));
         } else {
-            console.log("Enemy Won");
             const health = { payload: { health: combat.newPlayerHealth, id: combat.player._id } };
             yield call(workGetAsceanHealthUpdate, health);      
             yield put(setEnemyWin(combat));
@@ -275,11 +272,10 @@ export function* workGetResponse(load: any, type?: string): SagaIterator {
         let dec = yield call(decompress, load);
         let combat: CombatData = yield select((state) => state.combat);
         combat = { ...combat, ...dec };
-        // console.log("Getting Response", combat.playerWin, combat.computerWin, combat.enemyID);
-        yield call(workResolveCombat, combat); 
         if (type === 'enemy') { yield put(setEnemyActions(dec)); } else { yield put(setCombatResolution(dec)); };
         if (type === 'enemy' || type === 'combat') EventEmitter.emit('update-sound', combat);
         EventEmitter.emit('update-combat', combat);
+        yield call(workResolveCombat, combat); // Figuring out where this one should go
         yield call(juice);
     } catch (err: any) {
         console.log(err, 'Error in workGetResponse');

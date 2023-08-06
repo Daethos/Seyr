@@ -135,7 +135,9 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
             } else { // Phaser
                 dispatch(getThieverySuccessFetch({ item: purchaseSetting, id: ascean._id }));
                 dispatch(setMerchantEquipment(table.filter((i: any) => i._id !== purchaseSetting.item._id)));
-                dispatch(getOnlyInventoryFetch(ascean._id));
+                setTimeout (() => {
+                    dispatch(getOnlyInventoryFetch(ascean._id));
+                }, 250);
             };
             setThievery(false);
         } catch (err: any) {

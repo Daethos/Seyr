@@ -74,6 +74,7 @@ export default class Play extends Phaser.Scene {
         // ================== Ascean Test Map ================== \\
         const map = this.make.tilemap({ key: 'ascean_test' });
         this.map = map;
+        const camps = map.addTilesetImage('Camp_Graves', 'Camp_Graves', 32, 32, 0, 0);
         const decorations = map.addTilesetImage('AncientForestDecorative', 'AncientForestDecorative', 32, 32, 0, 0);
         const tileSet = map.addTilesetImage('AncientForestMain', 'AncientForestMain', 32, 32, 0, 0);
         const layer0 = map.createLayer('Tile Layer 0 - Base', tileSet, 0, 0);
@@ -83,7 +84,8 @@ export default class Play extends Phaser.Scene {
         const layer3 = map.createLayer('Tile Layer 3 - Plants', decorations, 0, 0);
         const layer4 = map.createLayer('Tile Layer 4 - Primes', decorations, 0, 0);
         const layer5 = map.createLayer('Tile Layer 5 - Snags', decorations, 0, 0);
-        this.groundLayer = layer0;
+        const layer6 = map.createLayer('Tile Layer 6 - Camps', camps, 0, 0);
+        // this.groundLayer = layer0;
         layer0.setCollisionByProperty({ collides: true });
         layer1.setCollisionByProperty({ collides: true });
         layerC.setCollisionByProperty({ collides: true });
@@ -113,10 +115,11 @@ export default class Play extends Phaser.Scene {
 
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
-        for (let i = 0; i < 8; i++) {
-            this.npcs.push(new NPC({scene: this, x: 800, y: 200 + (i * 200), texture: 'player_actions', frame: 'player_idle_0'}));
-        };
+        // for (let i = 0; i < 8; i++) {
+        //     this.npcs.push(new NPC({scene: this, x: 800, y: 200 + (i * 200), texture: 'player_actions', frame: 'player_idle_0'}));
+        // };
         this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
+        this.map.getObjectLayer('Npcs').objects.forEach(npc => this.npcs.push(new NPC({ scene: this, x: npc.x, y: npc.y, texture: 'player_actions', frame: 'player_idle_0' })));
 
         // ================= Combat Machine ================= \\
         this.combatMachine = new CombatMachine(this, this.dispatch);

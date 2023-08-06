@@ -14,11 +14,8 @@ interface Props {
 };
 
 const ChatBox = ({ user, selectedChat, setSelectedChat, fetchAgain, setFetchAgain, notification, setNotification, socketConnected, isTyping, socket }: Props) => {
-
     return (
-        <>
-            <SingleChat socket={socket} notification={notification} setNotification={setNotification} socketConnected={socketConnected} isTyping={isTyping} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
-        </>  
+        <SingleChat socket={socket} notification={notification} setNotification={setNotification} socketConnected={socketConnected} isTyping={isTyping} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} user={user} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
     );
 };
 

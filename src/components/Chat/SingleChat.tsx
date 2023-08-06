@@ -131,7 +131,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain, user, selectedChat, setSelected
                     ? !selectedChat.isGroupChat
                         ? <>{chatLogic.getSender(user, selectedChat?.users)}</>
                         : <>{selectedChat.chatName}</>
-                    : ''
+                    : ('')
                 }
                 <Button variant='' style={{ color: '#fdf6d8', float: 'right' }} onClick={() => setModalShow(true)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye" viewBox="0 0 16 16">

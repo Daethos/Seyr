@@ -715,16 +715,17 @@ export default class Enemy extends Entity {
 
     onConsumedEnter = () => {
         this.consumedDuration = 2000;
+        this.setGlow(this, true);
         this.consumedTimer = this.scene.time.addEvent({
             delay: 250,
             callback: () => {
                 if (this.attacking) {
                     const direction = this.attacking.position.subtract(this.position);
                     direction.normalize();
-                    this.setVelocity(direction.x * 0.5, direction.y * 0.5);
+                    this.setVelocity(direction.x * 0.75, direction.y * 0.75);
                 };
-                this.glowing = !this.glowing;
-                this.setGlow(this, this.glowing);
+                // this.glowing = !this.glowing;
+                // this.setGlow(this, this.glowing);
             },
             callbackScope: this,
             loop: true,
@@ -772,7 +773,7 @@ export default class Enemy extends Entity {
             this.particleEffect.effect.destroy();
             this.particleEffect = null;
         };
-        // if (!this.isRanged) this.knockback(this.actionTarget)
+        if (!this.isRanged) this.knockback(this.actionTarget)
         screenShake(this.scene);
         // this.scene.screenShaker.shake(); 
     };

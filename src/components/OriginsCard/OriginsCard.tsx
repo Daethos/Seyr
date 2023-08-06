@@ -9,13 +9,13 @@ interface OriginProps {
 
 const OriginsCard = ({ origin }: OriginProps) => {
     const [originModalShow, setOriginModalShow] = useState(false);
-
+    // closeButton closeVariant='white' 
     return (
         <>
         <Modal show={originModalShow} onHide={() => setOriginModalShow(false)} centered id='modal-weapon'>
-        <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: 20 + 'px' }}> 
-        <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + origin.imgUrl} alt="Origin Culture Here" id="origin-pic" /></span>
-        {origin.name}
+        <Modal.Header closeButton closeVariant='white' style={{ fontSize: '24px' }}> 
+        <span id="popover-spec-image"><img src={process.env.PUBLIC_URL + origin.imgUrl} alt={origin.name} id="origin-pic" /></span>
+        <p style={{ marginLeft: 'auto' }}>{origin.name}</p>
         </Modal.Header>
         <Modal.Body id='weapon-modal'>
             {origin.bio}<br /><br />
