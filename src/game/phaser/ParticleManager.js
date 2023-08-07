@@ -52,23 +52,24 @@ class Particle {
         this.sensorListener(player, this, effectSensor);
     };
 
-    sensorListener(player, effect, effectSensor) {
+    sensorListener(player, effect, sensor) {
         this.scene.matterCollision.addOnCollideStart({
-            objectA: [effectSensor],
+            objectA: [sensor],
             callback: (other) => {
                 if (other.gameObjectB && ((other.gameObjectB.name === 'enemy' && player.name === 'player') || (other.gameObjectB.name === 'player' && player.name === 'enemy'))) {
                     if (player.name === 'player') {
+                        player.attackedTarget = other.gameObjectB;
                         if (this.scene.state.action !== effect.action) {
-                            console.log("Resetting Action To " + effect.action + " From " + this.scene.state.action + " Due to Collision Success For PLAYER");
+                            console.log("Action " + effect.action + "Success Due to Collision Success For PLAYER");
                             this.scene.combatMachine.input('action', effect.action);
                         };
                     } else if (player.name === 'enemy') {
                         if (player.isCurrentTarget && this.scene.state.computerAction !== effect.action) {
-                            console.log("Resetting Action To " + effect.action + " From " + this.scene.state.computerAction + " Due to Collision Success For TARGETED ENEMY");
+                            console.log("Action " + effect.action + "Success Due to Collision Success For TARGETED ENEMY");
                             this.scene.combatMachine.input('computerAction', effect.action);
                         } else if (!player.isCurrentTarget && player.currentAction !== effect.action) {
-                            console.log("Resetting Action To " + effect.action + " From " + player.currentAction + " Due to Collision Success For NON TARGETED ENEMY");
-                            player.currentAction = effect.action;
+                            console.log("Action " + effect.action + " Success Due to Collision Success For NON TARGETED ENEMY");
+                            // player.currentAction = effect.action;
                         };
                     };
                     if (player.particleEffect && this.scene.particleManager.particles.find((particle) => particle.id === player.particleEffect.id)) player.particleEffect.success = true;

@@ -1,5 +1,5 @@
 import React from "react";
-import { getCombatStateUpdate, getEnemyActionFetch, getInitiateFetch } from "../reducers/combatState";
+import { getCombatStateUpdate, getEnemyActionFetch, getInitiateFetch, getPlayerActionFetch } from "../reducers/combatState";
 import { KV } from "./CombatMachine";
 import { StatusEffect } from "../../components/GameCompiler/StatusEffects";
 
@@ -13,6 +13,10 @@ export const instantAction = (dispatch: React.Dispatch<any>, combatData: string)
 
 export const prayerAction = (dispatch: React.Dispatch<any>, combatData: StatusEffect[]): void => {
     dispatch(getInitiateFetch({ combatData, type: 'Prayer' }));
+};
+
+export const playerAction = (dispatch: React.Dispatch<any>, data: any): void => {
+    dispatch(getPlayerActionFetch(data));
 };
 
 export const enemyAction = (dispatch: React.Dispatch<any>, data: any): void => {

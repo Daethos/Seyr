@@ -8,6 +8,7 @@ const combatSlice = createSlice({
     initialState: initialCombatData,
     reducers: {
         // ===== Combat Getter ===== \\
+        getPlayerActionFetch: (state, _action) => {},
         getEnemyActionFetch: (state, _action) => {},
         getCombatStateUpdate: (state, _action) => {},
         getCombatStatisticFetch: (state, _action) => {},
@@ -244,7 +245,39 @@ const combatSlice = createSlice({
                 playerEffects: action.payload.playerEffects,  
             };
         },
-        
+        setPlayerActions: (state, action) => {
+            return {
+                ...state,
+                playerWin: action.payload.playerWin,
+                computerWin: action.payload.computerWin,
+                playerActionDescription: action.payload.playerActionDescription,
+                computerActionDescription: action.payload.computerActionDescription,
+                playerStartDescription: action.payload.playerStartDescription,
+                computerStartDescription: action.payload.computerStartDescription,
+                playerDeathDescription: action.payload.playerDeathDescription,
+                computerDeathDescription: action.payload.computerDeathDescription,
+                playerSpecialDescription: action.payload.playerSpecialDescription,
+                computerSpecialDescription: action.payload.computerSpecialDescription,
+                playerInfluenceDescription: action.payload.playerInfluenceDescription,
+                computerInfluenceDescription: action.payload.computerInfluenceDescription,
+                playerInfluenceDescriptionTwo: action.payload.playerInfluenceDescriptionTwo,
+                computerInfluenceDescriptionTwo: action.payload.computerInfluenceDescriptionTwo,
+                potentialPlayerDamage: action.payload.potentialPlayerDamage,
+                realizedPlayerDamage: action.payload.realizedPlayerDamage,
+                potentialComputerDamage: action.payload.potentialComputerDamage,
+                realizedComputerDamage: action.payload.realizedComputerDamage,
+                playerDamaged: action.payload.playerDamaged,
+                newPlayerHealth: action.payload.newPlayerHealth,
+                currentPlayerHealth: action.payload.currentPlayerHealth,
+                criticalSuccess: action.payload.criticalSuccess,
+                religiousSuccess: action.payload.religiousSuccess,
+                rollSuccess: action.payload.rollSuccess,
+                counterSuccess: action.payload.counterSuccess,
+                glancingBlow: action.payload.glancingBlow,
+                dualWielding: action.payload.dualWielding,
+                playerEffects: action.payload.playerEffects,  
+            };
+        },
         setRemoveEffect: (state, action) => {
             const socket = getSocketInstance();
             socket.emit(SOCKET.REMOVE_EFFECT, action.payload);
@@ -410,6 +443,7 @@ const combatSlice = createSlice({
 
 export const {
     getCombatStateUpdate,
+    getPlayerActionFetch,
     getEnemyActionFetch,
     getCombatStatisticFetch,
     getAsceanHealthUpdateFetch,
@@ -445,6 +479,7 @@ export const {
     setToggleDamaged,
     setWeaponOrder,
     setCombatResolution,
+    setPlayerActions,
     setPlayerBlessing,
     setPrayerSacrifice,
     setRemoveEffect,

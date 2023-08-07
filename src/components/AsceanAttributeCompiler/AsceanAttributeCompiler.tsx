@@ -49,7 +49,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <p style={{ fontStyle: 'italic', color: 'gold' }}>
                 The physical power you possess, weighing heavily into your abliity to deal and receive physical damage with brutality.
             </p><br />
-            <p> Increases Crit Damage, Physical Damage, Defense, and Posturing. Affects Dual-Wielding Two-Hand Weapons</p>
+            <p> Increases Crit Damage, Physical Damage, Defense, and all Posturing. Affects Dual-Wielding Two-Hand Weapons</p>
             </Popover.Body>
         </Popover>
     );
@@ -72,7 +72,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             Of Achreo, the Wild Ancient.<br /><br />
             Synonymous with being an Arbiter, they are measured by the quality of their Achre: discernment, poise, sagacity, and existence above error.</p>
             <br />
-            <p>Increases Magi Crit Change, Magi Damage, Dodge, Roll. Affects Dual-Wielding One-Hand Spells</p>
+            <p>Increases Magi Crit Change, Magi Damage, Dodge, Critical Posture, and Roll. Affects Dual-Wielding One-Hand Spells</p>
             </Popover.Body>
         </Popover>
     );
@@ -82,7 +82,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <Popover.Body id='popover-body'>
             <p style={{ fontStyle: 'italic', color: 'gold' }}>
             Of Cambire, the Ancient of Potential, lingering essence and manifestation.<br /><br />
-            An idealized person or thing. A specter or phantom. Inspired from Ancient Greek's Eidolon.<br />
+            An idealized person or thing. A specter or phantom. Eidolon.<br />
             <br /> The Caer (Informal, Colloquial): Synonymous to 'the will.'
             </p>
             <br />

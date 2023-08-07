@@ -81,6 +81,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.attacking = null;
         this.sensor = null;
         this.interacting = [];
+        this.targets = [];
         this.touching = [];
         this.knockbackActive = false;
         this.knocedBack = false;
@@ -351,7 +352,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         }; 
         const glowFilter = this.scene.plugins.get('rexGlowFilterPipeline');
 
-        // if (!glow) return this.scene.plugins.get('rexGlowFilterPipeline').remove(object);
         if (!glow) {
             if (this.glowTimer) {
                 this.glowTimer.remove();
@@ -359,14 +359,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             return glowFilter.remove(object); 
         };
-
-        // return this.scene.plugins.get('rexGlowFilterPipeline').add(object, {
-        //     outerStrength: 2,
-        //     innerStrength: 2,
-        //     glowColor: setColor(this.ascean.mastery),
-        //     intensity: 0.25,
-        //     knockout: true
-        // }); 
 
         let glowColor = setColor(this.ascean.mastery);
 
@@ -387,7 +379,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 knockout: true
             });
         }; 
-        
+
         updateGlow(this.scene.time.now);
 
         this.glowTimer = this.scene.time.addEvent({
@@ -397,76 +389,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         });
 
     };
- 
-    // setFrame = (spriteWeapon, action, direction, frameCount) => {
-    //     const angle = actionAngles[action][direction];
-    //     const originX = direction === LEFT ? 0.25 : -0.15;
-    //     const originY = direction === LEFT ? 1.1 : 1.3;
-    //     spriteWeapon.setOrigin(originX, originY);
-    //     spriteWeapon.setAngle(angle);
-      
-    //     if (action === 'attack' && frameCount === ATTACK_FRAME_COUNT) {
-    //         // Add particle effect for attacks at the specified frame count
-    //         const particleType = this.hasMagic ? this.currentDamageType : this.hasBow ? 'arrow' : null;
-    //         if (particleType) {
-    //             const particleEffect = this.scene.particleManager.addEffect(action, this, particleType);
-    //             // Set the particle effect origin based on the flipX value
-    //             if (this.flipX) {
-    //                 particleEffect.effect.setOrigin(2, 0.5);
-    //             } else {
-    //                 particleEffect.effect.setOrigin(-1, 0.5);
-    //             };
-    //         };
-    //     };
-    // };
-
-    // setWeaponRotation = (entity, target) => {
-    //     const isPlayer = entity === 'player';
-    //     const direction = this.flipX ? LEFT : RIGHT;
-      
-    //     if (!this.isPosturing && !this.isStrafing && !this.isStalwart && this.spriteShield) this.spriteShield.setVisible(false);
-      
-    //     if (this.isDodging) this.spriteShield.setVisible(false);
-      
-    //     if (this.isStalwart && !this.isRolling && !this.isDodging) this.spriteShield.setVisible(true);
-        
-      
-    //     // Rest of the function...
-      
-    //     if (this.isPraying || this.isHealing) {
-    //         // Handle praying or healing logic
-    //         //...
-    //         this.frameCount += 1;
-    //     } else if (this.isCountering) {
-    //         // Handle countering logic
-    //         //...
-    //         this.setFrame(this.spriteWeapon, 'counter', direction, this.frameCount);
-    //         this.frameCount += 1;
-    //     } else if (this.isRolling) {
-    //         // Handle rolling logic
-    //         //...
-    //         this.setFrame(this.spriteWeapon, 'roll', direction, this.frameCount);
-    //         this.frameCount += 1;
-    //     } else if (this.isAttacking) {
-    //         // Handle attacking logic
-    //         //...
-    //         this.setFrame(this.spriteWeapon, 'attack', direction, this.frameCount);
-    //         this.frameCount += 1;
-    //     } else if (this.isPosturing) {
-    //         // Handle posturing logic
-    //         //...
-    //         this.setFrame(this.spriteWeapon, 'posture', direction, this.frameCount);
-    //         this.frameCount += 1;
-    //     } else if (Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1) {
-    //         // Handle movement logic
-    //         //...
-    //         if (this.frameCount !== 0) this.frameCount = 0;
-    //     } else {
-    //         // Default weapon rotation when not in any action
-    //         this.setFrame(this.spriteWeapon, 'default', direction, this.frameCount);
-    //         if (this.frameCount !== 0) this.frameCount = 0;
-    //     }
-    // };
 
     weaponRotation = (entity, target) => {  
         if (!this.isPosturing && !this.isStrafing && !this.isStalwart && this.spriteShield) this.spriteShield.setVisible(false);
@@ -524,7 +446,10 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 }; 
                 
                 if (this.frameCount === 10) {
-                    if (entity === 'player' && this.actionAvailable && this.actionTarget) this.actionSuccess = true;
+                    if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                        this.actionSuccess = true;
+                        this.attackedTarget = this.triggeredActionAvailable;
+                    }; 
                     if (entity === 'enemy' && target && !this.isRanged) {
                         const direction = target.position.subtract(this.position);
                         const distance = direction.length();
@@ -622,7 +547,17 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     if (this.frameCount === 39) {
                         console.log("Frame Success: Attack");
                         this.spriteWeapon.setAngle(60);
-                        if (this.actionAvailable) this.actionSuccess = true;
+                        if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable) {
+                            this.attackedTarget = this.triggeredActionAvailable;
+                            this.actionSuccess = true;
+                        };
+                        if (entity === 'enemy' && target && !this.isRanged) {
+                            const direction = target.position.subtract(this.position);
+                            const distance = direction.length();
+                            if (distance < 51) {
+                                this.actionSuccess = true;
+                            };
+                        };
                     }; 
                 } else { 
                     if (this.frameCount === 0) { 
@@ -676,7 +611,17 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     if (this.frameCount === 39) {
                         console.log("Frame Success: Attack");
                         this.spriteWeapon.setAngle(30);
-                        if (this.actionAvailable) this.actionSuccess = true;
+                        if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable) {
+                            this.actionSuccess = true;
+                            this.attackedTarget = this.triggeredActionAvailable;
+                        };
+                        if (entity === 'enemy' && target && !this.isRanged) {
+                            const direction = target.position.subtract(this.position);
+                            const distance = direction.length();
+                            if (distance < 51) {
+                                this.actionSuccess = true;
+                            };
+                        };
                     }; 
                 };
             } else {
@@ -732,8 +677,11 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     if (this.frameCount === 39) {
                         this.spriteWeapon.setAngle(-170);
                         this.actionCounterable = false;
-                        if (entity === 'player' && this.actionAvailable && !this.actionCountered) this.actionSuccess = true;
-                        if (entity === 'enemy' && target && !this.isRanged && !this.actionCountered) {
+                        if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                            this.actionSuccess = true;
+                            this.attackedTarget = this.triggeredActionAvailable;
+                        };
+                        if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();
                             if (distance < 51) {
@@ -802,8 +750,11 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     if (this.frameCount === 39) {
                         this.spriteWeapon.setAngle(90);
                         this.actionCounterable = false;
-                        if (entity === 'player' && this.actionAvailable && !this.actionCountered) this.actionSuccess = true;
-                        if (entity === 'enemy' && target && !this.isRanged && !this.actionCountered) {
+                        if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                            this.actionSuccess = true;
+                            this.attackedTarget = this.triggeredActionAvailable;
+                        };
+                        if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();
                             if (distance < 51) {
@@ -897,7 +848,10 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(-250);
                         this.spriteShield.setOrigin(1, 0.15);
                         this.actionCounterable = false;
-                        if (entity === 'player' && this.actionAvailable && this.actionTarget) this.actionSuccess = true;
+                        if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                            this.actionSuccess = true;
+                            this.attackedTarget = this.triggeredActionAvailable;
+                        };
                         if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();
@@ -936,7 +890,10 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(-175);
                         this.spriteShield.setOrigin(0, 0.15);
                         this.actionCounterable = false;
-                        if (entity === 'player' && this.actionAvailable && this.actionTarget) this.actionSuccess = true; 
+                        if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                            this.actionSuccess = true; 
+                            this.attackedTarget = this.triggeredActionAvailable;
+                        };
                         if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();

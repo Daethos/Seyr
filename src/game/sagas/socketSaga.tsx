@@ -20,6 +20,7 @@ export const SOCKET = {
     SETUP_COMBAT_DATA: 'setupCombatData',
     UPDATE_COMBAT_DATA: 'updateCombatData',
 
+    PLAYER_ACTION: 'playerAction',
     TSHAERAL_ACTION: 'tshaeralAction',
     CONSUME_PRAYER: 'consumePrayer',
     INVOKE_PRAYER: 'invokePrayer',
@@ -33,6 +34,7 @@ export const SOCKET = {
     // Listeners
     PLAYER_SETUP: 'playerSetup',
     COMPUTER_COMBAT_RESPONSE: 'computerCombatResponse',
+    PLAYER_COMBAT_RESPONSE: 'playerCombatResponse',
     ENEMY_COMBAT_RESPONSE: 'enemyCombatResponse',
     INVOKE_PRAYER_RESPONSE: 'invokePrayerResponse',
     CONSUME_PRAYER_RESPONSE: 'consumePrayerResponse',
@@ -47,7 +49,7 @@ function createSocketEventChannel(socket: io.Socket, event: string) {
     });
 };
 
-function* playerResEvent(_payload: Uint8Array): SagaIterator {
+function* setupResEvent(_payload: Uint8Array): SagaIterator {
     const combat = yield select((state) => state.combat);
     const socket = getSocketInstance();
     const press = yield call(compress, combat);
@@ -55,6 +57,9 @@ function* playerResEvent(_payload: Uint8Array): SagaIterator {
 };
 function* combatResEvent(payload: Uint8Array): SagaIterator {
     yield call(workGetResponse, payload, 'combat');
+};
+function* playerResEvent(payload: Uint8Array): SagaIterator {
+    yield call(workGetResponse, payload, 'player');
 };
 function* prayerResEvent(payload: Uint8Array): SagaIterator {
     yield call(workGetResponse, payload);
@@ -68,17 +73,19 @@ function* effectResEvent(payload: Uint8Array): SagaIterator {
 
 function* socketSaga(): SagaIterator {
     const socket = yield call(connectToSocket, SOCKET.URL);
-    const playerChan = yield call(createSocketEventChannel, socket, SOCKET.PLAYER_SETUP);
+    const setupChan = yield call(createSocketEventChannel, socket, SOCKET.PLAYER_SETUP);
     const combatChan = yield call(createSocketEventChannel, socket, SOCKET.COMPUTER_COMBAT_RESPONSE);
     const invokeChan = yield call(createSocketEventChannel, socket, SOCKET.INVOKE_PRAYER_RESPONSE);
     const prayerChan = yield call(createSocketEventChannel, socket, SOCKET.CONSUME_PRAYER_RESPONSE);
     const effectChan = yield call(createSocketEventChannel, socket, SOCKET.EFFECT_TICK_RESPONSE);
     const enemyChan = yield call(createSocketEventChannel, socket, SOCKET.ENEMY_COMBAT_RESPONSE);
+    const playerChan = yield call(createSocketEventChannel, socket, SOCKET.PLAYER_COMBAT_RESPONSE);
     
     while (true) {
         try {
-            yield takeLatest(playerChan, playerResEvent);
+            yield takeLatest(setupChan, setupResEvent);
             yield takeEvery(combatChan, combatResEvent);
+            yield takeEvery(playerChan, playerResEvent);
             yield takeEvery(enemyChan, enemyResEvent);
             yield takeEvery(invokeChan, prayerResEvent);
             yield takeEvery(prayerChan, prayerResEvent);

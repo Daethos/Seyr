@@ -181,32 +181,40 @@ export default class Enemy extends Entity {
         this.enemySensor = enemySensor;
         this.enemyCollision(enemySensor);
     };
+
+    isNewEnemy = (player) => {
+        return !player.targets.some(obj => obj.enemyID === this.enemyID);
+    };
+
+    enemyStatusCheck = () => {
+        return !this.isDead && !this.isDefeated && !this.isTriumphant && !this.inCombat;
+    };
     
     enemyCollision = (enemySensor) => {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
             callback: other => {
                 // Other Object is the Player, the Enemy is Aggressive and hasn't 'Fought' yet aka isTriumphant && isDefeated is false
-                if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && this.isAggressive && !this.isTriumphant) {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && this.isAggressive && this.enemyStatusCheck()) {
                     this.attacking = other.gameObjectB;
                     this.inCombat = true;
-                    const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
-                    if (newEnemy) other.gameObjectB.touching.push(this);
+                    const newEnemy = this.isNewEnemy(other.gameObjectB);
+                    if (newEnemy) other.gameObjectB.targets.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     this.stateMachine.setState(States.CHASE); 
                     this.actionTarget = other;
-                    if (!other.gameObjectB.inCombat) {
+                    if (!other.gameObjectB.attacking) { // inCombat
                         if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
                         other.gameObjectB.inCombat = true;
-                        other.gameObjectB.attacking = this;
+                        // other.gameObjectB.attacking = this;
                         other.gameObjectB.currentTarget = this;
-                        console.log('Computer Engaging Combat: ', this.scene.combat, this.scene.state.combatEngaged);
+                        console.log('Computer Engaging Combat: [Collide Start]');
                         this.scene.combatEngaged(true);
                     };
                 } else if (other.gameObjectB && other.gameObjectB.name === 'player' && !other.gameObjectB.inCombat && !this.isDead && !this.isAggressive) {
-                    const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
-                    if (newEnemy) other.gameObjectB.touching.push(this);
+                    const newEnemy = this.isNewEnemy(other.gameObjectB);
+                    if (newEnemy) other.gameObjectB.targets.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
                     this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
@@ -222,11 +230,11 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideActive({
             objectA: [enemySensor],
             callback: other => {
-                if (other.gameObjectB && other.gameObjectB.name === 'player' && !other.gameObjectB.inCombat && !this.isDead && this.isAggressive && !this.inCombat && !this.isAttacking && !this.isTriumphant) {
+                if (other.gameObjectB && other.gameObjectB.name === 'player' && !other.gameObjectB.inCombat && this.isAggressive && !this.isAttacking && this.enemyStatusCheck()) {
                     this.attacking = other.gameObjectB;
                     this.inCombat = true;
-                    const newEnemy = !other.gameObjectB.touching.some(obj => obj.enemyID === this.enemyID);
-                    if (newEnemy) other.gameObjectB.touching.push(this);
+                    const newEnemy = this.isNewEnemy(other.gameObjectB);
+                    if (newEnemy) other.gameObjectB.targets.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
                     if (this.scene.state.enemyID !== this.enemyID) {
                         this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
@@ -235,10 +243,10 @@ export default class Enemy extends Entity {
                     this.stateMachine.setState(States.CHASE); 
                     this.actionTarget = other;
                     other.gameObjectB.inCombat = true;
-                    other.gameObjectB.attacking = this;
+                    // other.gameObjectB.attacking = this;
                     other.gameObjectB.currentTarget = this;
-                    if (!this.scene.combat || !this.scene.state.combatEngaged) {
-                        console.log('Computer Engaging Combat: ', this.scene.combat, this.scene.state.combatEngaged);
+                    if (!other.gameObjectB.attacking) { // !scene.combat || !scene.state.combatEngaged
+                        console.log('Computer Engaging Combat: [Collide Active]');
                         this.scene.combatEngaged(true);
                     };
                 };
@@ -263,12 +271,6 @@ export default class Enemy extends Entity {
         });
     };
 
-    createEnemy = () => {
-        const fetch = { enemyID: this.enemyID, level: this.scene.state.player.level };
-        EventEmitter.emit('fetch-enemy', fetch);
-        EventEmitter.on('enemy-fetched', this.enemyFetchedOn.bind(this));
-    };
-
     enemyFetchedOn = (e) => {
         if (this.enemyID !== e.enemyID) return;
         this.ascean = e.game;
@@ -283,8 +285,14 @@ export default class Enemy extends Entity {
         EventEmitter.off('enemy-fetched', this.enemyFetchedOn.bind(this));
     };
 
+    createEnemy = () => {
+        const fetch = { enemyID: this.enemyID, level: this.scene.state.player.level };
+        EventEmitter.emit('fetch-enemy', fetch);
+        EventEmitter.on('enemy-fetched', this.enemyFetchedOn.bind(this));
+    };
+
     createShield = (shield) => {
-        const shieldName = this.weaponSprite(shield);
+        const shieldName = this.imgSprite(shield);
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
         this.spriteShield.setScale(0.6);
         this.spriteShield.setOrigin(0.5, 0.5);
@@ -293,7 +301,7 @@ export default class Enemy extends Entity {
     };
 
     createWeapon = (weapon) => {
-        const weaponName = this.weaponSprite(weapon); 
+        const weaponName = this.imgSprite(weapon); 
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, weaponName);
         this.setWeapon(weapon);
         this.checkDamage(weapon.damage_type[0].toLowerCase());
@@ -308,8 +316,18 @@ export default class Enemy extends Entity {
         this.spriteWeapon.setAngle(-195);
     };
 
-    weaponSprite = (weapon) => {
-        return weapon.imgURL.split('/')[2].split('.')[0];
+    attackInterval() {
+        if (this.currentWeapon) {
+            const weapon = this.currentWeapon;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
+        } else if (this.currentWeaponSprite !== '') {
+            const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
+            const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
+        } else {
+            const weapon = this.ascean.weapon_one;
+            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
+        };
     };
  
     enemyStateListener() {
@@ -317,8 +335,18 @@ export default class Enemy extends Entity {
         EventEmitter.on('update-combat', this.combatDataUpdate); 
     };
 
+    clearCombat = () => {
+        console.log(`${this.ascean.name} Has Defeated ${this.scene.state.player.name}`);
+        if (!this.stateMachine.isCurrentState(States.LEASH)) this.stateMachine.setState(States.LEASH);
+        this.inCombat = false;
+        this.attacking = null;
+        this.isTriumphant = true;
+        this.isAggressive = false; // Added to see if that helps with post-combat losses for the player
+    };
+
     combatDataUpdate = (e) => {
         if (this.enemyID !== e.enemyID ) return;
+        const prevHealth = this.health;
         if (this.health > e.newComputerHealth) { // ENEMY DAMAGED
             console.log(`${e.player.name} Dealt ${Math.round(e.realizedPlayerDamage)} Damage To ${this.ascean.name}`);
             const damage = Math.round(this.health - e.newComputerHealth);
@@ -337,8 +365,8 @@ export default class Enemy extends Entity {
         };
         if (this.healthbar) this.updateHealthBar(this.health);
 
-        // If the round is the same, don't update past health concerns
-        if (this.currentRound === e.combatRound) return; 
+        // If the round and health is the same, don't update past health concerns
+        if (this.currentRound === e.combatRound && prevHealth === e.newComputerHealth) return; 
 
         this.currentRound = e.combatRound;
         this.weapons = e.computerWeapons; 
@@ -351,42 +379,27 @@ export default class Enemy extends Entity {
         this.checkMeleeOrRanged(e.computerWeapons?.[0]);
     };
 
-    setWeapon = (weapon) => {
-        return this.currentWeapon = weapon;
-    };
     checkDamage = (damage) => {
         this.currentDamageType = damage;
         this.hasMagic = this.checkDamageType(damage, 'magic');
     };
+
+    imgSprite = (weapon) => {
+        return weapon.imgURL.split('/')[2].split('.')[0];
+    };
+
     setHealth = (health) => {
         return this.health = health;
     };
+
     setStun = () => {
         console.log("Player Counter Success, Enemy Is Now Stunned");
         this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect', true);
         this.isStunned = true;
     };
-    clearCombat = () => {
-        console.log(`${this.ascean.name} Has Defeated ${this.scene.state.player.name}`);
-        if (!this.stateMachine.isCurrentState(States.LEASH)) this.stateMachine.setState(States.LEASH);
-        this.inCombat = false;
-        this.attacking = null;
-        this.isTriumphant = true;
-        this.isAggressive = false; // Added to see if that helps with post-combat losses for the player
-    };
 
-    attackInterval() {
-        if (this.currentWeapon) {
-            const weapon = this.currentWeapon;
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
-        } else if (this.currentWeaponSprite !== '') {
-            const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
-            const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
-        } else {
-            const weapon = this.ascean.weapon_one;
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
-        };
+    setWeapon = (weapon) => {
+        return this.currentWeapon = weapon;
     };
 
     updateHealthBar(health) {
@@ -759,22 +772,32 @@ export default class Enemy extends Entity {
     };
 
     enemyActionSuccess = () => {
-        if (this.scene.state.computerAction === '') return;
-        console.log("Enemy Action Success");
         if (this.isRanged) this.scene.checkPlayerSuccess();
-        if (this.isCurrentTarget) {
-            this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'computerAction', value: this.scene.state.computerAction } });
-        } else {
-            this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.currentAction, counter: this.counterAction }}})
-        };
+
         if (this.particleEffect) {
+            if (this.isCurrentTarget) {
+                this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'computerAction', value: this.particleEffect.action } });
+                console.log('Enemy Action Success [Particle]: Current Target: ', this.particleEffect.action);
+            } else {
+                this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.particleEffect.action, counter: this.counterAction }}});
+                console.log('Enemy Action Success [Particle]: Blind Enemy Attack - ', this.particleEffect.action);
+            };
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();
             this.particleEffect = null;
+        } else {
+            if (this.isCurrentTarget) {
+                if (this.scene.state.computerAction === '') return;
+                this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'computerAction', value: this.scene.state.computerAction } });
+                console.log('Enemy Action Success [Melee]: Current Target - ', this.scene.state.computerAction);
+            } else {
+                this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.currentAction, counter: this.counterAction }}});
+                console.log('Enemy Action Success [Melee]: Blind Enemy Attack - ', this.currentAction);
+            };
         };
+
         if (!this.isRanged) this.knockback(this.actionTarget)
         screenShake(this.scene);
-        // this.scene.screenShaker.shake(); 
     };
 
     handleAnimations = () => {
@@ -993,16 +1016,16 @@ export default class Enemy extends Entity {
             } else {
               this.setFlipX(false);  
             };
-            if (this.attacking.currentTarget.enemyID === this.enemyID && !this.isCurrentTarget) {
+            if (this.attacking?.currentTarget.enemyID === this.enemyID && !this.isCurrentTarget) {
                 this.isCurrentTarget = true;
-            } else if (this.attacking.currentTarget.enemyID !== this.enemyID) {
+            } else if (this.attacking?.currentTarget.enemyID !== this.enemyID) {
                 if (this.isCurrentTarget) this.isCurrentTarget = false;
             };
         } else if (!this.stateMachine.isCurrentState(States.PATROL)) {
             this.setFlipX(this.velocity.x < 0);
         };
-        if (this.currentWeapon && this.currentWeaponSprite !== this.weaponSprite(this.currentWeapon) && this.enemyID === this.scene.state.enemyID) {
-            this.currentWeaponSprite = this.weaponSprite(this.currentWeapon);
+        if (this.currentWeapon && this.currentWeaponSprite !== this.imgSprite(this.currentWeapon) && this.enemyID === this.scene.state.enemyID) {
+            this.currentWeaponSprite = this.imgSprite(this.currentWeapon);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
             if (this.currentWeapon.grip === 'Two Hand') {
                 this.spriteWeapon.setScale(0.65);
