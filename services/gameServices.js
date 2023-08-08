@@ -2255,6 +2255,7 @@ const phaserDualActionSplitter = async (combatData) => {
 const phaserActionSplitter = async (combatData) => {
     let cleanData = await newDataCompiler(combatData);
     let changes = { ...cleanData };
+    console.log(changes.enemyID, "Enemy ID in Changes {}");
     const playerActionLive = cleanData.action !== '' ? true : false;
     const computerActionLive = cleanData.computerAction !== '' ? true : false;
     if (playerActionLive && computerActionLive) {

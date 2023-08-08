@@ -8,81 +8,70 @@ type ActionHandler = (data: any) => void;
 interface Action {
     type: string;
     data: any;
+    id?: string;
 };
-export interface KV {
+export interface KVI {
     key: string;
-    value: string | number | boolean; 
+    value: string | number | boolean;
+    id?: string; 
 };
 
 export default class CombatMachine {
     private context: Play;
     private actionQueue: Action[];
-    private inputQueue: KV[];
+    private clearQueue: string[];
+    private inputQueue: KVI[];
     private dispatch: any;
     private state: CombatData;
 
     constructor(context: Play, dispatch: any) {
         this.context = context;
         this.actionQueue = [];
+        this.clearQueue = [];
         this.inputQueue = [];
         this.dispatch = dispatch;
         this.state = {} as CombatData;
         this.listener();
     };
     
-    private listener = () => EventEmitter.on('update-combat-data', (e: CombatData) => this.state = e);
+    private listener = () => EventEmitter.on('update-combat-data', (e: CombatData) => (this.state = e));
 
     private actionHandlers: { [key: string]: ActionHandler } = {
-        Weapon: (data: KV) => Dispatcher.weaponAction(this.dispatch, data),
+        Weapon: (data: KVI) => Dispatcher.weaponAction(this.dispatch, data),
         Instant: (data: string) => Dispatcher.instantAction(this.dispatch, data),
         Consume: (data: StatusEffect[]) => Dispatcher.prayerAction(this.dispatch, data),
-        Tshaeral: (data: KV) => Dispatcher.tshaeralAction(this.dispatch),
-        Player: (data: any) => {
-            console.log('Player Blind Attack', data.ascean.name);
-        //     if (!this.context?.player?.attacking?.actionSuccess && (this.state.computerAction !== 'counter' && this.state.computerAction !== '')) {
-        //         this.input('computerAction', '');
-        //         Dispatcher.playerAction(this.dispatch, data);
-        //     } else if (this.state.action === 'counter' && this.state.computerAction === '') {
-        //         return;
-        //     } else {
-                Dispatcher.playerAction(this.dispatch, data);
-            // };
-        },
-        Enemy: (data: any) => {
-            if (!this.context?.player?.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
-                // const actionReset = async () => this.input('action', '');
-                // await actionReset();
-                this.input('action', '');
-                Dispatcher.enemyAction(this.dispatch, data);
-            } else if (this.state.action === '' && this.state.computerAction === 'counter') {
-                return;
-            } else {
-                Dispatcher.enemyAction(this.dispatch, data);
-            };
-        },
+        Tshaeral: (data: KVI) => Dispatcher.tshaeralAction(this.dispatch),
+        Player: (data: any) => Dispatcher.playerAction(this.dispatch, data),
+        Enemy: (data: any) => Dispatcher.enemyAction(this.dispatch, data),
     };
 
     private process = (): void => {
-        if (this.state.playerWin || this.state.computerWin) {
+        if (this.state.computerWin) {
             this.inputQueue = [];
             this.actionQueue = [];
         };
-        while (this.inputQueue.length > 0) {
-            const { key, value } = this.inputQueue.shift()!;
+
+        while (this.clearQueue.length) {
+            const id = this.clearQueue.shift()!;
+            this.inputQueue = this.inputQueue.filter(({ id: _id }) => _id !== id);
+            this.actionQueue = this.actionQueue.filter(({ id: _id }) => _id !== id);
+        };
+
+        while (this.inputQueue.length) {
+            const { key, value, id } = this.inputQueue.shift()!;
+            if (id && this.state.enemyID !== id) continue;
             Dispatcher.actionInput(this.dispatch, { key, value });
         };
-        while (this.actionQueue.length > 0) {
+
+        while (this.actionQueue.length) {
             const action = this.actionQueue.shift()!;
             const handler = this.actionHandlers[action.type as keyof typeof this.actionHandlers];
-            if (handler) {
-                handler(action.data);
-            } else {
-                console.warn(`Action ${action.type} not recognized`);
-            }; 
+            if (handler) handler(action.data); 
         };
     };
 
     public add = (action: Action): number => this.actionQueue.push(action);
-    public input = (key: string, value: string | number | boolean): number => this.inputQueue.push({key, value});  
+    public input = (key: string, value: string | number | boolean, id?: string): number => this.inputQueue.push({key, value, id}); 
+    public clear = (id: string): number => this.clearQueue.push(id); 
     public processor = (): void => this.process();
 };

@@ -66,7 +66,7 @@ class Particle {
                     } else if (player.name === 'enemy') {
                         if (player.isCurrentTarget && this.scene.state.computerAction !== effect.action) {
                             console.log("Action " + effect.action + "Success Due to Collision Success For TARGETED ENEMY");
-                            this.scene.combatMachine.input('computerAction', effect.action);
+                            this.scene.combatMachine.input('computerAction', effect.action, player.enemyID);
                         } else if (!player.isCurrentTarget && player.currentAction !== effect.action) {
                             console.log("Action " + effect.action + " Success Due to Collision Success For NON TARGETED ENEMY");
                             // player.currentAction = effect.action;

@@ -252,14 +252,14 @@ export default class Player extends Entity {
                     this.anims.play('player_idle', true);
                 });
             };
-            if (e.newComputerHealth <= 0 && e.playerWin) { // && e.playerWin
-                if (this.tshaeringTimer) {
-                    this.tshaeringTimer.remove(false);
-                    this.tshaeringTimer = null;
-                };
-                this.defeatedEnemyCheck(e.enemyID);
-                this.checkTargets();
-            };
+            // if (e.newComputerHealth <= 0 && e.playerWin) { // && e.playerWin
+                // if (this.tshaeringTimer) {
+                //     this.tshaeringTimer.remove(false);
+                //     this.tshaeringTimer = null;
+                // };
+                // this.defeatedEnemyCheck(e.enemyID);
+                // this.checkTargets();
+            // };
             this.checkWeapons(e.weapons[0], e.playerDamageType.toLowerCase());
         });
 
@@ -278,14 +278,17 @@ export default class Player extends Entity {
             if (e.computerRollSuccess) {
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Roll', 1500, 'heal', e.computerCriticalSuccess);
             };
-            if (e.playerWin) {
+            if (e.newComputerHealth <= 0 && e.playerWin) {
+                console.log(`Player Win: ${e.playerWin} | Computer Health: ${e.newComputerHealth} | Enemy: ${e.computer.name}`);
+                if (this.isTshaering) this.isTshaering = false;
                 if (this.tshaeringTimer) {
                     this.tshaeringTimer.remove(false);
                     this.tshaeringTimer = null;
                 };
-                if (this.isTshaering) this.isTshaering = false;
                 
-                console.log("Player Win!");
+                this.defeatedEnemyCheck(e.enemyID);
+                this.checkTargets();
+
                 let damage = 'Victory!';
                 this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 3000, 'effect', true);    
             };    
@@ -300,6 +303,7 @@ export default class Player extends Entity {
 
     defeatedEnemyCheck = (enemy) => {
         this.targets = this.targets.filter(obj => obj.enemyID !== enemy);
+        this.scene.combatMachine.clear(enemy);
         if (this.targets.every(obj => !obj.inCombat)) {
             console.log("All Enemies Defeated!");
             this.inCombat = false;
@@ -310,21 +314,19 @@ export default class Player extends Entity {
             };
         } else {
             console.log("More Enemies Remain!");
-            if (this.currentTarget.enemyID === enemy) {
+            if (this.currentTarget.enemyID === enemy) { // Was targeting the enemy that was defeated
                 this.currentTarget.clearTint();
+                console.log(this.targets);
+                const newTarget = this.targets.find(obj => obj.enemyID !== enemy);
+                console.log(newTarget.ascean.name, 'New Enemy Target');
+                if (!newTarget) return;
+                this.scene.setupEnemy(newTarget);
+                // this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated, isTriumphant: newTarget.isTriumphant }); 
+                this.currentTarget = newTarget;
+                this.attacking = newTarget;
+                this.targetID = newTarget.enemyID;
+                this.highlightTarget(newTarget);
             }; 
-            console.log(this.targets, this.targetIndex);
-            // const newTarget = this.targets[this.targetIndex];
-            // if (!newTarget) return;
-            // this.targetIndex = this.targetIndex + 1 === this.targets.length ? 0 : this.targetIndex + 1;
-            const newTarget = this.targets.find(obj => obj.enemyID !== enemy);
-            console.log(newTarget, 'New Enemy Target');
-            if (!newTarget) return;
-            this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated, isTriumphant: newTarget.isTriumphant }); 
-            this.currentTarget = newTarget;
-            this.attacking = newTarget;
-            this.targetID = newTarget.enemyID;
-            this.highlightTarget(newTarget);
         };
     };
 
@@ -385,7 +387,8 @@ export default class Player extends Entity {
                     if (!isNewEnemy) return;
                     if (this.shouldPlayerEnterCombat(other.gameObjectB)) {
                         console.log("Engaging Combat in Start Collision Sensor");
-                        this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated, isTriumphant: other.gameObjectB.isTriumphant });
+                        this.scene.setupEnemy(other.gameObjectB);
+                        // this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated, isTriumphant: other.gameObjectB.isTriumphant });
                         this.actionTarget = other;
                         this.attacking = other.gameObjectB;
                         this.currentTarget = other.gameObjectB;
@@ -393,8 +396,8 @@ export default class Player extends Entity {
                         this.scene.combatEngaged(true);
                         this.inCombat = true;
                     };
-                    this.checkTargets();
                     this.touching.push(other.gameObjectB);
+                    this.checkTargets();
                 };
             },
             context: this.scene,
@@ -739,8 +742,8 @@ export default class Player extends Entity {
         const playerCombat = this.isPlayerInCombat();
         
         this.targets = this.targets.filter(gameObject => {
-            if (gameObject.isDead || (!gameObject.inCombat && playerCombat)) {
-                console.log("Removing from targets array: [isDead, !inCombat && playerCombat]");
+            if (gameObject.isDead || !gameObject.inCombat) { // && playerCombat
+                console.log("Removing from targets array: [isDead || !inCombat]");
                 return false;
             };
     
@@ -756,12 +759,11 @@ export default class Player extends Entity {
         const someInCombat = this.targets.some(gameObject => gameObject.inCombat);
     
         if (someInCombat && !playerCombat) {
-            console.log("Engaging Combat in Targets Array Check: [some.inCombat, !playerCombat]");
+            console.log("Engaging Combat in Targets Array Check: [someInCombat, !playerCombat]");
             this.scene.combatEngaged(true);
             this.inCombat = true;
         } else if (!someInCombat && playerCombat) {
-            console.log("Disengaging Combat in Targets Array Check: [!some.inCombat, playerCombat]");
-            // This also needs to remove the enemy from the scene
+            console.log("Disengaging Combat in Targets Array Check: [!someInCombat, playerCombat]");
             this.scene.clearNonAggressiveEnemy();
             this.scene.combatEngaged(false);
             this.inCombat = false;
@@ -780,37 +782,20 @@ export default class Player extends Entity {
     };
 
     enemyIdMatch = () => {
+        console.log(this.attackedTarget.enemyID, this.scene.state.enemyID, "Comparing Enemy ID Match");
         return this.attackedTarget.enemyID === this.scene.state.enemyID;
     };
 
     playerActionSuccess = async () => {
-        console.log("Player Action Success");
+        // console.log("Player Action Success");
         const match = this.enemyIdMatch();
         if (this.particleEffect) {
             if (match) {
                 this.scene.combatMachine.add({ type: 'Weapon',  data: { key: 'action', value: this.particleEffect.action } });
-                console.log("Player Action Success [Particle]: EnemyID Match " + this.particleEffect.action);
+                // console.log("Player Action Success [Particle]: EnemyID Match " + this.particleEffect.action);
             } else {
-                this.scene.combatMachine.add({ 
-                    type: 'Player', 
-                    data: { 
-                    playerAction: { 
-                        action: this.particleEffect.action, 
-                        counter: this.scene.state.counterGuess
-                    }, 
-                    enemyID: this.attackedTarget.enemyID, 
-                    ascean: this.attackedTarget.ascean, 
-                    damageType: this.attackedTarget.currentDamageType, 
-                    combatStats: this.attackedTarget.combatStats, 
-                    weapons: this.attackedTarget.weapons, 
-                    health: this.attackedTarget.health, 
-                    actionData: { 
-                        action: this.attackedTarget.currentAction, 
-                        counter: this.attackedTarget.counterAction 
-                    }
-                }
-            });
-                console.log("Player Action Success [Particle]: Blind Player Attack Against ", this.attackedTarget.ascean.name);
+                this.scene.combatMachine.add({ type: 'Player', data: { playerAction: { action: this.particleEffect.action, counter: this.scene.state.counterGuess },  enemyID: this.attackedTarget.enemyID, ascean: this.attackedTarget.ascean, damageType: this.attackedTarget.currentDamageType, combatStats: this.attackedTarget.combatStats, weapons: this.attackedTarget.weapons, health: this.attackedTarget.health, actionData: { action: this.attackedTarget.currentAction, counter: this.attackedTarget.counterAction } } });
+                // console.log("Player Action Success [Particle]: Blind Player Attack Against ", this.attackedTarget.ascean.name);
             };
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();
@@ -819,28 +804,10 @@ export default class Player extends Entity {
             if (this.scene.state.action === '') return;
             if (match) { // !Blind Player Attack
                 this.scene.combatMachine.add({ type: 'Weapon',  data: { key: 'action', value: this.scene.state.action } });
-                console.log("Player Action Success [Melee]: EnemyID Match");
+                // console.log("Player Action Success [Melee]: EnemyID Match");
             } else { // Blind Player Attack
-                this.scene.combatMachine.add({ 
-                    type: 'Player', 
-                    data: { 
-                        playerAction: { 
-                            action: this.scene.state.action, 
-                            counter: this.scene.state.counterGuess 
-                        }, 
-                        enemyID: this.attackedTarget.enemyID, 
-                        ascean: this.attackedTarget.ascean, 
-                        damageType: this.attackedTarget.currentDamageType, 
-                        combatStats: this.attackedTarget.combatStats, 
-                        weapons: this.attackedTarget.weapons, 
-                        health: this.attackedTarget.health, 
-                        actionData: { 
-                            action: this.attackedTarget.currentAction, 
-                            counter: this.attackedTarget.counterAction 
-                        }
-                    }
-                })
-                console.log("Player Action Success [Melee]: Blind Player Attack Against " + this.attackedTarget.ascean.name);
+                this.scene.combatMachine.add({ type: 'Player', data: { playerAction: { action: this.scene.state.action, counter: this.scene.state.counterGuess }, enemyID: this.attackedTarget.enemyID, ascean: this.attackedTarget.ascean, damageType: this.attackedTarget.currentDamageType, combatStats: this.attackedTarget.combatStats, weapons: this.attackedTarget.weapons, health: this.attackedTarget.health, actionData: { action: this.attackedTarget.currentAction, counter: this.attackedTarget.counterAction }} });
+                // console.log("Player Action Success [Melee]: Blind Player Attack Against " + this.attackedTarget.ascean.name);
             };
         };
             
@@ -849,18 +816,21 @@ export default class Player extends Entity {
     };
 
     handleActions = () => {
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.targets.length > 0) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.targets.length > 1) { // More than 1 i.e. worth tabbing
             if (this.currentTarget) {
                 this.currentTarget.clearTint();
             }; 
             console.log(this.targets, this.targetIndex);
             const newTarget = this.targets[this.targetIndex];
-            if (!newTarget) return;
+            console.log(newTarget.ascean.name, "New Target via Tab Targetting");
             this.targetIndex = this.targetIndex + 1 === this.targets.length ? 0 : this.targetIndex + 1;
+            if (!newTarget) return;
             if (newTarget.npcType) { // NPC
                 this.scene.setupNPC({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, type: newTarget.npcType });
             } else { // Enemy
-                this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated, isTriumphant: newTarget.isTriumphant }); 
+                this.scene.setupEnemy(newTarget);
+                // this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, 
+                //     startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated, isTriumphant: newTarget.isTriumphant }); 
                 this.attacking = newTarget;
             };
             this.currentTarget = newTarget;
@@ -871,9 +841,10 @@ export default class Player extends Entity {
         if (this.currentTarget) {
             this.highlightTarget(this.currentTarget); 
             if (this.inCombat && !this.scene.state.computer) {
-                this.scene.setupEnemy({ id: this.currentTarget.enemyID, game: this.currentTarget.ascean, enemy: this.currentTarget.combatStats, health: this.currentTarget.health, 
-                    isAggressive: this.currentTarget.isAggressive, startedAggressive: this.currentTarget.startedAggressive, isDefeated: this.currentTarget.isDefeated, isTriumphant: this.currentTarget.isTriumphant 
-                }); 
+                // this.scene.setupEnemy({ id: this.currentTarget.enemyID, game: this.currentTarget.ascean, enemy: this.currentTarget.combatStats, health: this.currentTarget.health, 
+                //     isAggressive: this.currentTarget.isAggressive, startedAggressive: this.currentTarget.startedAggressive, isDefeated: this.currentTarget.isDefeated, isTriumphant: this.currentTarget.isTriumphant 
+                // }); 
+                this.scene.setupEnemy(this.currentTarget);
             }; 
         } else {
             if (this.highlight.visible) {

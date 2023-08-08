@@ -145,6 +145,7 @@ function* workGetEnemySetup(action: any): SagaIterator {
     const dialog = yield call(getOpponentDialog, action.payload.enemy.name);
     if (dialog) yield put(setDialog(dialog));
     yield put(setEnemy({ enemy: action.payload.enemy, health: action.payload.health, enemyID: action.payload.id, isAggressive: action.payload.isAggressive, startedAggressive: action.payload.startedAggressive, isDefeated: action.payload.isDefeated, isTriumphant: action.payload.isTriumphant }));
+    console.log(action.payload.id, "Enemy ID in workGetEnemySetup");
     const socket = getSocketInstance();
     const inject = {
         computer: action.payload.enemy.ascean,
@@ -164,7 +165,7 @@ function* workGetEnemySetup(action: any): SagaIterator {
         startedAggressive: action.payload.isAggressive,
         playerWin: action.payload.isDefeated,
         computerWin: action.payload.isTriumphant,
-        enemyID: action.payload.enemyID, 
+        enemyID: action.payload.id, 
     };
     const press = yield call(compress, inject);
     socket.emit(SOCKET.SETUP_ENEMY, press);
@@ -220,6 +221,7 @@ export function* workTickResponse(load: any): SagaIterator {
 function* workGetPlayerAction(action: any): SagaIterator {
     try {
         const { playerAction, enemyID, ascean, damageType, combatStats, weapons, health, actionData } = action.payload;
+        console.log(enemyID, "Enemy ID in workGetPlayerAction");
         let enemyData = {
             action: playerAction.action,
             counterGuess: playerAction.counter,
@@ -249,6 +251,7 @@ function* workGetPlayerAction(action: any): SagaIterator {
 function* workGetEnemyAction(action: any): SagaIterator {
     try {
         const { enemyID, enemy, damageType, combatStats, weapons, health, actionData } = action.payload;
+        console.log(enemyID, "Enemy ID in workGetEnemyAction");
         let enemyData = {
             computer: enemy,
             computerAttributes: combatStats.attributes,
@@ -301,6 +304,7 @@ export function* workGetResponse(load: any, type?: string): SagaIterator {
     try {
         const dec = yield call(decompress, load);
         let combat: CombatData = yield select((state) => state.combat);
+        console.log(dec.enemyID, combat.enemyID, "Enemy ID Comparison in workGetResponse");
         if (type === 'player') {
             yield put(setPlayerActions(dec));
         } else if (type === 'enemy') { 

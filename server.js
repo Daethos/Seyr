@@ -136,13 +136,15 @@ io.on("connection", (socket) => {
   };
 
   const computerCombat = async (data) => {
-    // console.time('Weapon Combat');
+    console.time('Weapon Combat');
+    console.log(combatData.enemyID, "Enemy ID Pre-Check")
     combatData = { ...combatData, ...data };
     const res = await gameService.phaserActionCompiler(combatData); // data
     const deflate = zlib.deflateSync(JSON.stringify(res));
+    console.log(combatData.enemyID, res.enemyID, 'Enemy ID Check');
     combatData = { ...combatData, ...res };
     io.to(player.room).emit('computerCombatResponse', deflate);
-    // console.timeEnd('Weapon Combat');  
+    console.timeEnd('Weapon Combat');  
   };
 
   const playerBlindCombat = async (data) => {
@@ -240,6 +242,7 @@ io.on("connection", (socket) => {
   const setupEnemy = async (data) => {
     const inf = zlib.inflateSync(data).toString();
     const parse = JSON.parse(inf);
+    console.log(parse.enemyID, 'Enemy ID in Setup Enemy');
     combatData = {
       ...combatData,
       ...parse,

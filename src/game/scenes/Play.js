@@ -280,8 +280,12 @@ export default class Play extends Phaser.Scene {
     };
 
     clearNonAggressiveEnemy = async () => this.dispatch(clearNonAggressiveEnemy()); 
-    clearNPC = async () => EventEmitter.emit('clear-npc');
-    setupEnemy = async (data) => this.dispatch(getEnemySetupFetch(data)); 
+    clearNPC = async () => EventEmitter.emit('clear-npc'); 
+    setupEnemy = async (enemy) => {
+        const data = { id: enemy.enemyID, game: enemy.ascean, enemy: enemy.combatStats, health: enemy.health, isAggressive: enemy.isAggressive, startedAggressive: enemy.startedAggressive, isDefeated: enemy.isDefeated, isTriumphant: enemy.isTriumphant };
+        this.dispatch(getEnemySetupFetch(data));
+    };
+    // setupEnemy = async (data) => this.dispatch(getEnemySetupFetch(data)); 
     setupNPC = async (data) => this.dispatch(getNpcSetupFetch(data));
     combatEngaged = async (engagement) => {
         console.log('combatEngaged', engagement);
@@ -294,43 +298,43 @@ export default class Play extends Phaser.Scene {
     caerenic = async (update) => this.dispatch(setCaerenic(update));
     staminaListener = async () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e);
 
-    sendEnemyActionListener = async (enemyID, enemy, damageType, combatStats, weapons, health, actionData, currentTarget) => {
-        console.log('sendEnemyActionListener');
-        if (!currentTarget) {
-            const data = { enemyID, enemy, damageType, combatStats, weapons, health, actionData }; // state: this.state
-            await this.dispatch(getEnemyActionFetch(data));
-        } else {
-            if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
-                const actionReset = async () => this.setState('action', '');
-                await actionReset();
-                this.sendStateActionListener();
-            } else {
-                this.sendStateActionListener();
-            };
-        };
-    };
+    // sendEnemyActionListener = async (enemyID, enemy, damageType, combatStats, weapons, health, actionData, currentTarget) => {
+    //     console.log('sendEnemyActionListener');
+    //     if (!currentTarget) {
+    //         const data = { enemyID, enemy, damageType, combatStats, weapons, health, actionData }; // state: this.state
+    //         await this.dispatch(getEnemyActionFetch(data));
+    //     } else {
+    //         if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
+    //             const actionReset = async () => this.setState('action', '');
+    //             await actionReset();
+    //             this.sendStateActionListener();
+    //         } else {
+    //             this.sendStateActionListener();
+    //         };
+    //     };
+    // };
 
-    sendStateActionListener = () => { // Was Async
-        if ((this.state.action === 'counter' && this.state.computerAction === '') || (this.state.action === '' && this.state.computerAction === 'counter')) { 
-            console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
-            return; 
-        };
-        console.log("Sending State Action");
-        this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Weapon' }));
-    };
+    // sendStateActionListener = () => { // Was Async
+    //     if ((this.state.action === 'counter' && this.state.computerAction === '') || (this.state.action === '' && this.state.computerAction === 'counter')) { 
+    //         console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
+    //         return; 
+    //     };
+    //     console.log("Sending State Action");
+    //     this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Weapon' }));
+    // };
 
-    sendStateSpecialListener = (special) => { // Was Async
-        switch (special) {
-            case 'invoke':
-                this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Instant' }));
-                break;
-            case 'consume':
-                this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Prayer' }));
-                break;
-            default:
-                break;
-        };
-    };
+    // sendStateSpecialListener = (special) => { // Was Async
+    //     switch (special) {
+    //         case 'invoke':
+    //             this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Instant' }));
+    //             break;
+    //         case 'consume':
+    //             this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Prayer' }));
+    //             break;
+    //         default:
+    //             break;
+    //     };
+    // };
  
     checkStamina = (value) => {
         switch (value) {

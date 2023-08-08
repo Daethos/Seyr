@@ -1,9 +1,9 @@
 import React from "react";
 import { getCombatStateUpdate, getEnemyActionFetch, getInitiateFetch, getPlayerActionFetch } from "../reducers/combatState";
-import { KV } from "./CombatMachine";
+import { KVI } from "./CombatMachine";
 import { StatusEffect } from "../../components/GameCompiler/StatusEffects";
 
-export const weaponAction = (dispatch: React.Dispatch<any>, combatData: KV): void => {
+export const weaponAction = (dispatch: React.Dispatch<any>, combatData: KVI): void => {
     dispatch(getInitiateFetch({ combatData, type: 'Weapon' }));
 };
 
