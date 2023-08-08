@@ -158,6 +158,8 @@ export default class Enemy extends Entity {
         this.originalPosition = new Phaser.Math.Vector2(this.x, this.y);
         this.originPoint = {}; // For Leashing
         this.isConsumed = false;
+        this.sensorDisp = 12;
+        this.colliderDisp = 16;
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         const colliderWidth = 20; 
         const colliderHeight = 36; 
@@ -358,7 +360,7 @@ export default class Enemy extends Entity {
         };
         if (this.currentRound !== e.combatRound) this.currentRound = e.combatRound;
         if (this.health > e.newComputerHealth) { // ENEMY DAMAGED
-            console.log(`${e.player.name} Dealt ${Math.round(e.realizedPlayerDamage)} Damage To ${this.ascean.name}`);
+            console.log(`%c ${e.player.name} Dealt ${Math.round(e.realizedPlayerDamage)} Damage To ${this.ascean.name}`, 'color: #00ff00');
             const damage = Math.round(this.health - e.newComputerHealth);
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.criticalSuccess);
             if (!this.stateMachine.isCurrentState(States.CONSUMED)) this.stateMachine.setState(States.HURT);
@@ -375,9 +377,7 @@ export default class Enemy extends Entity {
         this.health = e.newComputerHealth;
         this.healthbar.setValue(this.health);
         if (this.healthbar.getTotal() < e.computerHealth) this.healthbar.setTotal(e.computerHealth);
-
         if (this.healthbar) this.updateHealthBar(this.health);
-
 
         this.weapons = e.computerWeapons;  
         this.setWeapon(e.computerWeapons[0]); 
@@ -638,6 +638,15 @@ export default class Enemy extends Entity {
     onDodgeEnter = () => {
         console.log('Dodging');
         this.isDodging = true; 
+
+        this.body.parts[2].position.y += this.sensorDisp;
+        this.body.parts[2].circleRadius = 21;
+        this.body.parts[1].vertices[0].y += this.colliderDisp;
+        this.body.parts[1].vertices[1].y += this.colliderDisp; 
+        this.body.parts[0].vertices[0].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[1].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[0].vertices[1].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[0].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
     };
     onDodgeUpdate = (dt) => {
         this.handleAnimations();
@@ -645,6 +654,14 @@ export default class Enemy extends Entity {
     };
     onDodgeExit = () => {
         console.log('Dodge Exit'); 
+        this.body.parts[2].position.y -= this.sensorDisp;
+        this.body.parts[2].circleRadius = 48;
+        this.body.parts[1].vertices[0].y -= this.colliderDisp;
+        this.body.parts[1].vertices[1].y -= this.colliderDisp; 
+        this.body.parts[0].vertices[0].x -= this.flipX ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[1].x -= this.flipX ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[0].vertices[1].x -= this.flipX ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[0].x -= this.flipX ? this.colliderDisp : -this.colliderDisp;
     };
 
     onPostureEnter = () => {
@@ -663,6 +680,10 @@ export default class Enemy extends Entity {
     onRollEnter = () => {
         console.log('Rolling');
         this.isRolling = true; 
+        this.body.parts[2].position.y += this.sensorDisp;
+        this.body.parts[2].circleRadius = 21;
+        this.body.parts[1].vertices[0].y += this.colliderDisp;
+        this.body.parts[1].vertices[1].y += this.colliderDisp; 
     };
     onRollUpdate = (dt) => { 
         this.handleAnimations();
@@ -672,6 +693,10 @@ export default class Enemy extends Entity {
     onRollExit = () => { 
         console.log('Roll Exit');
         if (this.scene.state.computerAction !== '') this.scene.combatMachine.input('computerAction', '', this.enemyID);   
+        this.body.parts[2].position.y -= this.sensorDisp;
+        this.body.parts[2].circleRadius = 48;
+        this.body.parts[1].vertices[0].y -= this.colliderDisp;
+        this.body.parts[1].vertices[1].y -= this.colliderDisp;
     };
 
     onLeashEnter = () => {
@@ -770,6 +795,7 @@ export default class Enemy extends Entity {
     onStunEnter = () => {
         this.stunDuration = 1500;
         this.setTint(0x888888); 
+        this.setStatic(true);
     };
     onStunUpdate = (dt) => {
         this.evaluateCombatDistance();
@@ -780,19 +806,17 @@ export default class Enemy extends Entity {
     };
     onStunExit = () => { 
         this.clearTint();
+        this.setStatic(false);
     };
 
     enemyActionSuccess = () => {
         if (this.isRanged) this.scene.checkPlayerSuccess();
-        console.log(this.isCurrentTarget, "Enemy Action Success - Current Target ?");
+        console.log(`Enemy Action Success - Current Target: ${this.isCurrentTarget}`);
         if (this.particleEffect) {
             if (this.isCurrentTarget) {
                 this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'computerAction', value: this.particleEffect.action }, id: this.enemyID });
-                // console.log('Enemy Action Success [Particle]: Current Target: ', this.particleEffect.action);
             } else {
-                this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, 
-                    actionData: { action: this.particleEffect.action, counter: this.counterAction }, id: this.enemyID}});
-                // console.log('Enemy Action Success [Particle]: Blind Enemy Attack - ', this.particleEffect.action);
+                this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.particleEffect.action, counter: this.counterAction }, id: this.enemyID}});
             };
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();
@@ -801,11 +825,8 @@ export default class Enemy extends Entity {
             if (this.isCurrentTarget) {
                 if (this.scene.state.computerAction === '') return;
                 this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'computerAction', value: this.scene.state.computerAction }, id: this.enemyID });
-                // console.log('Enemy Action Success [Melee]: Current Target - ', this.scene.state.computerAction);
             } else {
-                this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, 
-                    actionData: { action: this.currentAction, counter: this.counterAction }, id: this.enemyID}});
-                // console.log('Enemy Action Success [Melee]: Blind Enemy Attack - ', this.currentAction);
+                this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.currentAction, counter: this.counterAction }, id: this.enemyID}});
             };
         };
 
@@ -818,18 +839,18 @@ export default class Enemy extends Entity {
             this.anims.play('player_slide', true);
             this.spriteWeapon.setVisible(false);
             if (this.dodgeCooldown === 0) {
-                const sensorDisp = 12;
-                const colliderDisp = 16;
-                if (this.isDodging) {
-                    this.body.parts[2].position.y += sensorDisp;
-                    this.body.parts[2].circleRadius = 21;
-                    this.body.parts[1].vertices[0].y += colliderDisp;
-                    this.body.parts[1].vertices[1].y += colliderDisp; 
-                    this.body.parts[0].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
-                    this.body.parts[1].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
-                    this.body.parts[0].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
-                    this.body.parts[1].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
-                };
+                // const sensorDisp = 12;
+                // const colliderDisp = 16;
+                // if (this.isDodging) {
+                //     this.body.parts[2].position.y += sensorDisp;
+                //     this.body.parts[2].circleRadius = 21;
+                //     this.body.parts[1].vertices[0].y += colliderDisp;
+                //     this.body.parts[1].vertices[1].y += colliderDisp; 
+                //     this.body.parts[0].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
+                //     this.body.parts[1].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
+                //     this.body.parts[0].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
+                //     this.body.parts[1].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
+                // };
                 this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
                 const dodgeDistance = 2304; // 126
                 const dodgeDuration = 288; // 18  
@@ -843,14 +864,14 @@ export default class Enemy extends Entity {
                         this.spriteWeapon.setVisible(true);
                         this.dodgeCooldown = 0;
                         this.isDodging = false;
-                        this.body.parts[2].position.y -= sensorDisp;
-                        this.body.parts[2].circleRadius = 48;
-                        this.body.parts[1].vertices[0].y -= colliderDisp;
-                        this.body.parts[1].vertices[1].y -= colliderDisp; 
-                        this.body.parts[0].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
-                        this.body.parts[1].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
-                        this.body.parts[0].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
-                        this.body.parts[1].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        // this.body.parts[2].position.y -= sensorDisp;
+                        // this.body.parts[2].circleRadius = 48;
+                        // this.body.parts[1].vertices[0].y -= colliderDisp;
+                        // this.body.parts[1].vertices[1].y -= colliderDisp; 
+                        // this.body.parts[0].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        // this.body.parts[1].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        // this.body.parts[0].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
+                        // this.body.parts[1].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
                         this.currentAction = '';
                         return;
                     };
@@ -870,14 +891,14 @@ export default class Enemy extends Entity {
             this.anims.play('player_roll', true);
             this.spriteWeapon.setVisible(false);
             if (this.rollCooldown === 0) {
-                const sensorDisp = 12;
-                const colliderDisp = 16;
-                if (this.isRolling) {
-                    this.body.parts[2].position.y += sensorDisp;
-                    this.body.parts[2].circleRadius = 21;
-                    this.body.parts[1].vertices[0].y += colliderDisp;
-                    this.body.parts[1].vertices[1].y += colliderDisp; 
-                };
+                // const sensorDisp = 12;
+                // const colliderDisp = 16;
+                // if (this.isRolling) {
+                //     this.body.parts[2].position.y += sensorDisp;
+                //     this.body.parts[2].circleRadius = 21;
+                //     this.body.parts[1].vertices[0].y += colliderDisp;
+                //     this.body.parts[1].vertices[1].y += colliderDisp; 
+                // };
                 this.rollCooldown = 50; // Was a x7 Mult for Roll Prev aka 2240
                 const rollDistance = 1920; // 140
                 
@@ -892,10 +913,10 @@ export default class Enemy extends Entity {
                         this.spriteWeapon.setVisible(true);
                         this.rollCooldown = 0;
                         this.isRolling = false;
-                        this.body.parts[2].position.y -= sensorDisp;
-                        this.body.parts[2].circleRadius = 48;
-                        this.body.parts[1].vertices[0].y -= colliderDisp;
-                        this.body.parts[1].vertices[1].y -= colliderDisp;
+                        // this.body.parts[2].position.y -= sensorDisp;
+                        // this.body.parts[2].circleRadius = 48;
+                        // this.body.parts[1].vertices[0].y -= colliderDisp;
+                        // this.body.parts[1].vertices[1].y -= colliderDisp;
                         this.currentAction = '';
                         return;
                     };
@@ -935,35 +956,35 @@ export default class Enemy extends Entity {
             this.stateMachine.setState(States.CHASE);
         } else if (this.isRanged) {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
-            if (distanceY > 10) {
-                direction.normalize();
-                this.setVelocityY(direction.y * 4.5);
-            };
+            // if (distanceY > 10) {
+            //     direction.normalize();
+            //     this.setVelocityY(direction.y * 4.5);
+            // };
             if ((this.attacking.position.subtract(this.position)).length() > 75 * rangeMultiplier) { // 225-525
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * 2.5);
-                this.setVelocityY(direction.y * 2.5);
+                this.setVelocityX(direction.x * 2.25); // 2.5
+                this.setVelocityY(direction.y * 2.25); // 2.5
             } else if ((this.attacking.position.subtract(this.position)).length() < 75 && !this.attacking.isRanged) { // < 75
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * -2.25);
-                this.setVelocityY(direction.y * -1.5);
+                this.setVelocityX(direction.x * -2.0); // -2.25
+                this.setVelocityY(direction.y * -1.25); // -1.5
             } else if (distanceY < 10) { // Between 75 and 225 and within y-distance
                 this.setVelocityX(0);
                 this.setVelocityY(0);
                 this.anims.play('player_idle', true);
             } else { // Between 75 and 225 and outside y-distance
                 direction.normalize();
-                this.setVelocityY(direction.y * 2.5);
+                this.setVelocityY(direction.y * 2.25); // 2.5
             };
         } else { // Melee
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
             if (direction.length() > 60) { 
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * 2.75);
-                this.setVelocityY(direction.y * 2.75);  
+                this.setVelocityX(direction.x * 2.5); // 2.75
+                this.setVelocityY(direction.y * 2.5); // 2.75
             } else { // Inside melee range
                 this.setVelocityX(0);
                 this.setVelocityY(0);

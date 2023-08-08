@@ -286,7 +286,11 @@ export default class Play extends Phaser.Scene {
         this.dispatch(getEnemySetupFetch(data));
     };
     // setupEnemy = async (data) => this.dispatch(getEnemySetupFetch(data)); 
-    setupNPC = async (data) => this.dispatch(getNpcSetupFetch(data));
+    setupNPC = async (npc) => {
+        const data = { id: npc.npcID, game: npc.ascean, enemy: npc.combatStats, health: npc.health, type: npc.npcType };
+        this.dispatch(getNpcSetupFetch(data));
+    };
+    // setupNPC = async (data) => this.dispatch(getNpcSetupFetch(data));
     combatEngaged = async (engagement) => {
         console.log('combatEngaged', engagement);
         if (engagement) { this.combat = true; } else { this.combat = false; };

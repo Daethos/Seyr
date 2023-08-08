@@ -104,7 +104,8 @@ export default class NPC extends Entity {
                 if (other.gameObjectB && other.gameObjectB.name === 'player' && !this.isDead && !other.gameObjectB.inCombat) {
                     if (this.healthbar) this.healthbar.setVisible(true);
                     this.interacting = true;
-                    this.scene.setupNPC({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.combatStats.attributes.healthTotal, type: this.npcType });
+                    this.scene.setupNPC(this);
+                    // this.scene.setupNPC({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.combatStats.attributes.healthTotal, type: this.npcType });
                     this.npcTarget = other.gameObjectB;
                     this.stateMachine.setState(States.AWARE);
                 };

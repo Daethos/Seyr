@@ -127,6 +127,8 @@ export default class Player extends Entity {
             })
         
         this.stateMachine.setState(States.NONCOMBAT);
+        this.sensorDisp = 12;
+        this.colliderDisp = 16;
 
         // const helmetName = scene?.state?.player?.helmet.imgURL.split('/')[2].split('.')[0];
         // const chestName = scene?.state?.player?.chest.imgURL.split('/')[2].split('.')[0];
@@ -181,7 +183,7 @@ export default class Player extends Entity {
     }; 
 
     startingSpeed = (player) => {
-        let speed = 1.75;
+        let speed = 1.5; // 1.75
         const helmet = player.helmet.type;
         const chest = player.chest.type;
         const legs = player.legs.type;
@@ -233,14 +235,13 @@ export default class Player extends Entity {
                 this.isHurt = true;
                 let damage = Math.round(this.health - e.newPlayerHealth);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.computerCriticalSuccess);
+                console.log(`%c ${damage} Damage Taken by ${e.computer.name}`, 'color: #ff0000');
             };
             if (this.health < e.newPlayerHealth) {
                 let heal = Math.round(e.newPlayerHealth - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
             };
-            if (this.currentRound !== e.combatRound) {
-                this.currentRound = e.combatRound;
-            };
+            if (this.currentRound !== e.combatRound) this.currentRound = e.combatRound;
             this.health = e.newPlayerHealth;
             this.healthbar.setValue(this.health);
             if (this.healthbar.getTotal() < e.playerHealth) this.healthbar.setTotal(e.playerHealth);
@@ -252,14 +253,6 @@ export default class Player extends Entity {
                     this.anims.play('player_idle', true);
                 });
             };
-            // if (e.newComputerHealth <= 0 && e.playerWin) { // && e.playerWin
-                // if (this.tshaeringTimer) {
-                //     this.tshaeringTimer.remove(false);
-                //     this.tshaeringTimer = null;
-                // };
-                // this.defeatedEnemyCheck(e.enemyID);
-                // this.checkTargets();
-            // };
             this.checkWeapons(e.weapons[0], e.playerDamageType.toLowerCase());
         });
 
@@ -289,8 +282,7 @@ export default class Player extends Entity {
                 this.defeatedEnemyCheck(e.enemyID);
                 this.checkTargets();
 
-                let damage = 'Victory!';
-                this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 3000, 'effect', true);    
+                this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Victory', 3000, 'effect', true);    
             };    
         });
     }; 
@@ -321,7 +313,6 @@ export default class Player extends Entity {
                 console.log(newTarget.ascean.name, 'New Enemy Target');
                 if (!newTarget) return;
                 this.scene.setupEnemy(newTarget);
-                // this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated, isTriumphant: newTarget.isTriumphant }); 
                 this.currentTarget = newTarget;
                 this.attacking = newTarget;
                 this.targetID = newTarget.enemyID;
@@ -388,7 +379,6 @@ export default class Player extends Entity {
                     if (this.shouldPlayerEnterCombat(other.gameObjectB)) {
                         console.log("Engaging Combat in Start Collision Sensor");
                         this.scene.setupEnemy(other.gameObjectB);
-                        // this.scene.setupEnemy({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, isAggressive: other.gameObjectB.isAggressive, startedAggressive: other.gameObjectB.startedAggressive, isDefeated: other.gameObjectB.isDefeated, isTriumphant: other.gameObjectB.isTriumphant });
                         this.actionTarget = other;
                         this.attacking = other.gameObjectB;
                         this.currentTarget = other.gameObjectB;
@@ -471,7 +461,7 @@ export default class Player extends Entity {
                     if (isNewNpc && !isNewNpc.isDead) this.targets.push(other.gameObjectB);
                     this.currentTarget = other.gameObjectB;
                     this.targetID = other.gameObjectB.enemyID;
-                    if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id)) this.scene.setupNPC({ id: other.gameObjectB.enemyID, game: other.gameObjectB.ascean, enemy: other.gameObjectB.combatStats, health: other.gameObjectB.health, type: other.gameObjectB.npcType });
+                    if ((!this.scene.state.computer || this.scene.state.computer._id !== other.gameObjectB.ascean._id)) this.scene.setupNPC(other.gameObjectB);
                 };
             },
             context: this.scene,
@@ -593,6 +583,10 @@ export default class Player extends Entity {
         this.isRolling = true;
         if (this.inCombat) this.swingReset();
         this.scene.checkStamina('roll');
+        this.body.parts[2].position.y += this.sensorDisp;
+        this.body.parts[2].circleRadius = 21;
+        this.body.parts[1].vertices[0].y += this.colliderDisp;
+        this.body.parts[1].vertices[1].y += this.colliderDisp; 
     };
     onRollUpdate = (dt) => {
         if (this.frameCount === 10 && !this.isRanged) this.scene.combatMachine.input('action', 'roll');
@@ -608,11 +602,24 @@ export default class Player extends Entity {
         this.spriteWeapon.setVisible(true);
         this.rollCooldown = 0; 
         if (this.scene.state.action !== '') this.scene.combatMachine.input('action', '');
+        this.body.parts[2].position.y -= this.sensorDisp;
+        this.body.parts[2].circleRadius = 36;
+        this.body.parts[1].vertices[0].y -= this.colliderDisp;
+        this.body.parts[1].vertices[1].y -= this.colliderDisp;
     };
 
     onDodgeEnter = () => {
         this.isDodging = true;
         this.scene.checkStamina('dodge');
+        this.wasFlipped = this.flipX; 
+        this.body.parts[2].position.y += this.sensorDisp;
+        this.body.parts[2].circleRadius = 21;
+        this.body.parts[1].vertices[0].y += this.colliderDisp;
+        this.body.parts[1].vertices[1].y += this.colliderDisp; 
+        this.body.parts[0].vertices[0].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[1].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[0].vertices[1].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[0].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
     };
     onDodgeUpdate = (dt) => { 
         if (!this.isDodging) { 
@@ -627,6 +634,14 @@ export default class Player extends Entity {
         this.spriteWeapon.setVisible(true);
         this.dodgeCooldown = 0;
         this.isDodging = false;
+        this.body.parts[2].position.y -= this.sensorDisp;
+        this.body.parts[2].circleRadius = 36;
+        this.body.parts[1].vertices[0].y -= this.colliderDisp;
+        this.body.parts[1].vertices[1].y -= this.colliderDisp; 
+        this.body.parts[0].vertices[0].x -= this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[1].x -= this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[0].vertices[1].x -= this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[0].x -= this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
     };
 
     onPrayerEnter = () => {
@@ -712,6 +727,7 @@ export default class Player extends Entity {
         this.scene.input.keyboard.enabled = false;
         this.stunDuration = 1500;
         this.setTint(0x888888);
+        this.setStatic(true);
     };
     onStunUpdate = (dt) => {
         this.setVelocity(0);
@@ -729,6 +745,7 @@ export default class Player extends Entity {
         this.stunDuration = 1500;
         this.scene.input.keyboard.enabled = true;
         this.clearTint(); 
+        this.setStatic(false);
     };
 
     swingReset = () => {
@@ -740,24 +757,20 @@ export default class Player extends Entity {
 
     checkTargets = () => {
         const playerCombat = this.isPlayerInCombat();
-        
         this.targets = this.targets.filter(gameObject => {
             if (gameObject.isDead || !gameObject.inCombat) { // && playerCombat
                 console.log("Removing from targets array: [isDead || !inCombat]");
                 return false;
             };
-    
             if (gameObject.npcType && playerCombat) {
                 console.log("Disengaging Combat in Targets Array Check: [npcTypes, playerCombat]");
                 this.scene.combatEngaged(false);
                 this.inCombat = false;
             };
-    
             return true;
         });
-    
+
         const someInCombat = this.targets.some(gameObject => gameObject.inCombat);
-    
         if (someInCombat && !playerCombat) {
             console.log("Engaging Combat in Targets Array Check: [someInCombat, !playerCombat]");
             this.scene.combatEngaged(true);
@@ -782,32 +795,27 @@ export default class Player extends Entity {
     };
 
     enemyIdMatch = () => {
-        console.log(this.attackedTarget.enemyID, this.scene.state.enemyID, "Comparing Enemy ID Match");
+        console.log(this.attackedTarget.enemyID === this.scene.state.enemyID, "Enemy ID Match");
         return this.attackedTarget.enemyID === this.scene.state.enemyID;
     };
 
     playerActionSuccess = async () => {
-        // console.log("Player Action Success");
         const match = this.enemyIdMatch();
         if (this.particleEffect) {
             if (match) {
                 this.scene.combatMachine.add({ type: 'Weapon',  data: { key: 'action', value: this.particleEffect.action } });
-                // console.log("Player Action Success [Particle]: EnemyID Match " + this.particleEffect.action);
             } else {
                 this.scene.combatMachine.add({ type: 'Player', data: { playerAction: { action: this.particleEffect.action, counter: this.scene.state.counterGuess },  enemyID: this.attackedTarget.enemyID, ascean: this.attackedTarget.ascean, damageType: this.attackedTarget.currentDamageType, combatStats: this.attackedTarget.combatStats, weapons: this.attackedTarget.weapons, health: this.attackedTarget.health, actionData: { action: this.attackedTarget.currentAction, counter: this.attackedTarget.counterAction } } });
-                // console.log("Player Action Success [Particle]: Blind Player Attack Against ", this.attackedTarget.ascean.name);
             };
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();
             this.particleEffect = null;
         } else {
             if (this.scene.state.action === '') return;
-            if (match) { // !Blind Player Attack
+            if (match) { // Target Player Attack
                 this.scene.combatMachine.add({ type: 'Weapon',  data: { key: 'action', value: this.scene.state.action } });
-                // console.log("Player Action Success [Melee]: EnemyID Match");
             } else { // Blind Player Attack
                 this.scene.combatMachine.add({ type: 'Player', data: { playerAction: { action: this.scene.state.action, counter: this.scene.state.counterGuess }, enemyID: this.attackedTarget.enemyID, ascean: this.attackedTarget.ascean, damageType: this.attackedTarget.currentDamageType, combatStats: this.attackedTarget.combatStats, weapons: this.attackedTarget.weapons, health: this.attackedTarget.health, actionData: { action: this.attackedTarget.currentAction, counter: this.attackedTarget.counterAction }} });
-                // console.log("Player Action Success [Melee]: Blind Player Attack Against " + this.attackedTarget.ascean.name);
             };
         };
             
@@ -820,17 +828,14 @@ export default class Player extends Entity {
             if (this.currentTarget) {
                 this.currentTarget.clearTint();
             }; 
-            console.log(this.targets, this.targetIndex);
             const newTarget = this.targets[this.targetIndex];
             console.log(newTarget.ascean.name, "New Target via Tab Targetting");
             this.targetIndex = this.targetIndex + 1 === this.targets.length ? 0 : this.targetIndex + 1;
             if (!newTarget) return;
             if (newTarget.npcType) { // NPC
-                this.scene.setupNPC({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, type: newTarget.npcType });
+                this.scene.setupNPC(newTarget);
             } else { // Enemy
                 this.scene.setupEnemy(newTarget);
-                // this.scene.setupEnemy({ id: newTarget.enemyID, game: newTarget.ascean, enemy: newTarget.combatStats, health: newTarget.health, isAggressive: newTarget.isAggressive, 
-                //     startedAggressive: newTarget.startedAggressive, isDefeated: newTarget.isDefeated, isTriumphant: newTarget.isTriumphant }); 
                 this.attacking = newTarget;
             };
             this.currentTarget = newTarget;
@@ -841,9 +846,6 @@ export default class Player extends Entity {
         if (this.currentTarget) {
             this.highlightTarget(this.currentTarget); 
             if (this.inCombat && !this.scene.state.computer) {
-                // this.scene.setupEnemy({ id: this.currentTarget.enemyID, game: this.currentTarget.ascean, enemy: this.currentTarget.combatStats, health: this.currentTarget.health, 
-                //     isAggressive: this.currentTarget.isAggressive, startedAggressive: this.currentTarget.startedAggressive, isDefeated: this.currentTarget.isDefeated, isTriumphant: this.currentTarget.isTriumphant 
-                // }); 
                 this.scene.setupEnemy(this.currentTarget);
             }; 
         } else {
@@ -881,7 +883,7 @@ export default class Player extends Entity {
                 this.scene.combatMachine.input('counterGuess', 'posture');
                 this.stateMachine.setState(States.COUNTER);
             };
-            if (this.stamina >= 15 && !this.isStalwart && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+            if (this.stamina >= 15 && this.movementClear() && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
                 this.scene.combatMachine.input('counterGuess', 'roll');
                 this.stateMachine.setState(States.COUNTER);
             };
@@ -933,11 +935,11 @@ export default class Player extends Entity {
             };
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 15 && !this.isStalwart) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 15 && this.movementClear()) {
             this.stateMachine.setState(States.ROLL);
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 15 && !this.isStalwart) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 15 && this.movementClear()) {
             this.stateMachine.setState(States.DODGE);
         };
 
@@ -945,6 +947,19 @@ export default class Player extends Entity {
             this.stateMachine.setState(States.HEAL);
         };
 
+    };
+    movementClear = () => {
+        return (
+            !this.stateMachine.isCurrentState(States.ROLL) &&
+            !this.stateMachine.isCurrentState(States.DODGE) &&
+            !this.stateMachine.isCurrentState(States.COUNTER) &&
+            !this.stateMachine.isCurrentState(States.ATTACK) &&
+            !this.stateMachine.isCurrentState(States.POSTURE) &&
+            !this.stateMachine.isCurrentState(States.INVOKE) &&
+            !this.stateMachine.isCurrentState(States.TSHAERAL) &&
+            !this.stateMachine.isCurrentState(States.HEAL) &&
+            !this.isStalwart
+        )
     };
     handleAnimations = () => {
         if (this.isStunned) {
@@ -961,18 +976,6 @@ export default class Player extends Entity {
             this.anims.play('player_slide', true);
             this.spriteWeapon.setVisible(false);
             if (this.dodgeCooldown === 0) {
-                const sensorDisp = 12;
-                const colliderDisp = 16;
-                if (this.isDodging) {
-                    this.body.parts[2].position.y += sensorDisp;
-                    this.body.parts[2].circleRadius = 21;
-                    this.body.parts[1].vertices[0].y += colliderDisp;
-                    this.body.parts[1].vertices[1].y += colliderDisp; 
-                    this.body.parts[0].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
-                    this.body.parts[1].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
-                    this.body.parts[0].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
-                    this.body.parts[1].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
-                };
                 this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
                 const dodgeDistance = 2800; // 126 || 2304
                 const dodgeDuration = 350; // 18 || 288  
@@ -986,14 +989,6 @@ export default class Player extends Entity {
                         this.spriteWeapon.setVisible(true);
                         this.dodgeCooldown = 0;
                         this.isDodging = false;
-                        this.body.parts[2].position.y -= sensorDisp;
-                        this.body.parts[2].circleRadius = 36;
-                        this.body.parts[1].vertices[0].y -= colliderDisp;
-                        this.body.parts[1].vertices[1].y -= colliderDisp; 
-                        this.body.parts[0].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
-                        this.body.parts[1].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
-                        this.body.parts[0].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
-                        this.body.parts[1].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
                         return;
                     };
                 
@@ -1013,14 +1008,6 @@ export default class Player extends Entity {
             walk(this.scene);
             this.spriteWeapon.setVisible(false);
             if (this.rollCooldown === 0) {
-                const sensorDisp = 12;
-                const colliderDisp = 16;
-                if (this.isRolling) {
-                    this.body.parts[2].position.y += sensorDisp;
-                    this.body.parts[2].circleRadius = 21;
-                    this.body.parts[1].vertices[0].y += colliderDisp;
-                    this.body.parts[1].vertices[1].y += colliderDisp; 
-                };
                 this.rollCooldown = 50; // Was a x7 Mult for Roll Prev aka 2240
                 const rollDistance = 1920; // 140
                 
@@ -1035,10 +1022,6 @@ export default class Player extends Entity {
                         this.spriteWeapon.setVisible(true);
                         this.rollCooldown = 0;
                         this.isRolling = false;
-                        this.body.parts[2].position.y -= sensorDisp;
-                        this.body.parts[2].circleRadius = 36;
-                        this.body.parts[1].vertices[0].y -= colliderDisp;
-                        this.body.parts[1].vertices[1].y -= colliderDisp;
                         return;
                     };
 
@@ -1063,7 +1046,7 @@ export default class Player extends Entity {
                 this.isAttacking = false;
             }); 
         } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1) && !this.isRolling) { // RUNNING
-            // walk(this.scene);
+            walk(this.scene);
             if (!this.isMoving) this.isMoving = true;
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING
@@ -1073,7 +1056,6 @@ export default class Player extends Entity {
             });
         } else if (this.isTshaering) { // TSHAERING
             console.log("Pinging TSHAERING");
-            this.setVelocity(0);
             this.anims.play('player_health', true);
         } else if (this.isHealing) { // HEALING
             console.log("Pinging HEALING");
@@ -1197,7 +1179,6 @@ export default class Player extends Entity {
     update() {
         this.handleConcerns();
         this.stateMachine.update(this.dt);
-        // if (this.targets.length) this.checkTargets();
         this.handleActions();
         this.handleAnimations();
         this.handleMovement();

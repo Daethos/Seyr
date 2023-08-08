@@ -137,11 +137,9 @@ io.on("connection", (socket) => {
 
   const computerCombat = async (data) => {
     console.time('Weapon Combat');
-    console.log(combatData.enemyID, "Enemy ID Pre-Check")
     combatData = { ...combatData, ...data };
     const res = await gameService.phaserActionCompiler(combatData); // data
     const deflate = zlib.deflateSync(JSON.stringify(res));
-    console.log(combatData.enemyID, res.enemyID, 'Enemy ID Check');
     combatData = { ...combatData, ...res };
     io.to(player.room).emit('computerCombatResponse', deflate);
     console.timeEnd('Weapon Combat');  
@@ -151,11 +149,8 @@ io.on("connection", (socket) => {
     console.time('Player Blind Combat');
     const dec = zlib.inflateSync(data).toString();
     const parse = JSON.parse(dec);
-    console.log(parse.computer.name, combatData.computer.name, 'Blind Attacked, Current Target')
     const blind = { ...combatData, ...parse };
-    console.log(blind.computer.name, 'Blind Attacked, New Target');
     const res = await gameService.phaserActionCompiler(blind); // data
-    console.log(res.computer.name, 'Blind Attacked, Post Combat');
     const deflate = zlib.deflateSync(JSON.stringify(res));
     combatData = { 
       ...combatData, 
@@ -163,7 +158,6 @@ io.on("connection", (socket) => {
       currentPlayerHealth: res.currentPlayerHealth,
       playerEffects: res.playerEffects,
     };
-    console.log(player.room, 'Blind Attacked, Room');
     io.to(player.room).emit('playerCombatResponse', deflate);
     console.timeEnd('Player Blind Combat');
   };
@@ -231,7 +225,6 @@ io.on("connection", (socket) => {
 
   const updateCombatData = async (data) => {  
     // console.time('Update Combat Data');
-    // console.log(data, "Data Being Updated");
     combatData = {
       ...combatData,
       ...data,
@@ -242,13 +235,11 @@ io.on("connection", (socket) => {
   const setupEnemy = async (data) => {
     const inf = zlib.inflateSync(data).toString();
     const parse = JSON.parse(inf);
-    console.log(parse.enemyID, 'Enemy ID in Setup Enemy');
     combatData = {
       ...combatData,
       ...parse,
       newPlayerHealth: combatData.newPlayerHealth > combatData.playerHealth ? combatData.playerHealth : combatData.newPlayerHealth === 0 ? combatData.playerHealth * 0.05 : combatData.newPlayerHealth,
     };
-    console.log('Setup Enemy Response');
   };
 
   const setupCombatData = async (data) => {

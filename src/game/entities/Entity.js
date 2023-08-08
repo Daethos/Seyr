@@ -333,7 +333,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     checkMeleeOrRanged = (weapon) => {
         this.isRanged = weapon?.attack_type === 'Magic' || weapon?.type === 'Bow' || weapon?.type === 'Greatbow';
-        const gripToSwingTimer = { 'One Hand': 750, 'Two Hand': 1250 };
+        const gripToSwingTimer = { 'One Hand': 1000, 'Two Hand': 1500 }; // 750, 1250 [old]
         this.swingTimer = gripToSwingTimer[weapon?.grip] || 0;
         this.hasBow = this.checkBow(weapon);
     };
