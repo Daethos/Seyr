@@ -54,7 +54,7 @@ export default class Player extends Entity {
         this.isMoving = false;
         this.targetID = null;
         this.attackedTarget = null;
-        this.triggeringActionAvailable = null;
+        this.triggeredActionAvailable = null;
 
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
@@ -235,7 +235,7 @@ export default class Player extends Entity {
                 this.isHurt = true;
                 let damage = Math.round(this.health - e.newPlayerHealth);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.computerCriticalSuccess);
-                console.log(`%c ${damage} Damage Taken by ${e.computer.name}`, 'color: #ff0000');
+                console.log(`%c ${damage} Damage Taken by ${e?.computer?.name}`, 'color: #ff0000');
             };
             if (this.health < e.newPlayerHealth) {
                 let heal = Math.round(e.newPlayerHealth - this.health);
@@ -272,7 +272,6 @@ export default class Player extends Entity {
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Roll', 1500, 'heal', e.computerCriticalSuccess);
             };
             if (e.newComputerHealth <= 0 && e.playerWin) {
-                console.log(`Player Win: ${e.playerWin} | Computer Health: ${e.newComputerHealth} | Enemy: ${e.computer.name}`);
                 if (this.isTshaering) this.isTshaering = false;
                 if (this.tshaeringTimer) {
                     this.tshaeringTimer.remove(false);
@@ -401,7 +400,7 @@ export default class Player extends Entity {
                     const attackDirection = this.getAttackDirection(collisionPoint);
                     if (attackDirection === this.flipX) {
                         this.actionAvailable = true;
-                        this.triggeringActionAvailable = other.gameObjectB;
+                        this.triggeredActionAvailable = other.gameObjectB;
                         if (!this.actionTarget) this.actionTarget = other;
                         if (!this.attacking) this.attacking = other.gameObjectB;
                         if (!this.currentTarget) this.currentTarget = other.gameObjectB;
@@ -415,12 +414,13 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [playerSensor],
             callback: (other) => {
-                if (this.isValidEnemyCollision(other) && this.touching.length === 1) {
+                this.touching = this.touching.filter(obj => obj.enemyID !== other.gameObjectB.enemyID);
+                if (this.isValidEnemyCollision(other) && !this.touching.length) {
+                    console.log("No Longer Touching Any Enemy, Clearing Action Available and Triggered Action Available");
                     this.actionAvailable = false;
-                    this.triggeringActionAvailable = null;
+                    this.triggeredActionAvailable = null;
                 };
                 this.checkTargets();
-                this.touching = this.touching.filter(obj => obj.enemyID !== other.gameObjectB.enemyID);
             },
             context: this.scene,
         });
@@ -750,9 +750,11 @@ export default class Player extends Entity {
 
     swingReset = () => {
         this.canSwing = false;
+        console.log('Player Swinging');
         this.scene.time.delayedCall(this.swingTimer, () => {
             this.canSwing = true;
-        });
+            console.log('Player Swing Reset');
+        }, null, this);
     };
 
     checkTargets = () => {
@@ -799,6 +801,29 @@ export default class Player extends Entity {
         return this.attackedTarget.enemyID === this.scene.state.enemyID;
     };
 
+    checkPlayerAction = () => {
+        if (this.scene.state.action) return this.scene.state.action;    
+        if (this.isAttacking) return 'attack';
+        if (this.isCountering) return 'counter';
+        if (this.isPosturing) return 'posture';
+        if (this.isRolling) return 'roll';
+        return '';
+    };
+    
+    movementClear = () => {
+        return (
+            !this.stateMachine.isCurrentState(States.ROLL) &&
+            !this.stateMachine.isCurrentState(States.DODGE) &&
+            !this.stateMachine.isCurrentState(States.COUNTER) &&
+            !this.stateMachine.isCurrentState(States.ATTACK) &&
+            !this.stateMachine.isCurrentState(States.POSTURE) &&
+            !this.stateMachine.isCurrentState(States.INVOKE) &&
+            !this.stateMachine.isCurrentState(States.TSHAERAL) &&
+            !this.stateMachine.isCurrentState(States.HEAL) &&
+            !this.isStalwart
+        );
+    };
+
     playerActionSuccess = async () => {
         const match = this.enemyIdMatch();
         if (this.particleEffect) {
@@ -811,11 +836,13 @@ export default class Player extends Entity {
             this.particleEffect.effect.destroy();
             this.particleEffect = null;
         } else {
-            if (this.scene.state.action === '') return;
+            const action = this.checkPlayerAction();
+            console.log(action, "Action Check");
+            if (!action) return;
             if (match) { // Target Player Attack
-                this.scene.combatMachine.add({ type: 'Weapon',  data: { key: 'action', value: this.scene.state.action } });
+                this.scene.combatMachine.add({ type: 'Weapon',  data: { key: 'action', value: action } });
             } else { // Blind Player Attack
-                this.scene.combatMachine.add({ type: 'Player', data: { playerAction: { action: this.scene.state.action, counter: this.scene.state.counterGuess }, enemyID: this.attackedTarget.enemyID, ascean: this.attackedTarget.ascean, damageType: this.attackedTarget.currentDamageType, combatStats: this.attackedTarget.combatStats, weapons: this.attackedTarget.weapons, health: this.attackedTarget.health, actionData: { action: this.attackedTarget.currentAction, counter: this.attackedTarget.counterAction }} });
+                this.scene.combatMachine.add({ type: 'Player', data: { playerAction: { action: action, counter: this.scene.state.counterGuess }, enemyID: this.attackedTarget.enemyID, ascean: this.attackedTarget.ascean, damageType: this.attackedTarget.currentDamageType, combatStats: this.attackedTarget.combatStats, weapons: this.attackedTarget.weapons, health: this.attackedTarget.health, actionData: { action: this.attackedTarget.currentAction, counter: this.attackedTarget.counterAction }} });
             };
         };
             
@@ -823,7 +850,66 @@ export default class Player extends Entity {
         screenShake(this.scene); 
     };
 
+    playerDodge = () => {
+        this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
+        const dodgeDistance = 2800; // 126 || 2304
+        const dodgeDuration = 350; // 18 || 288  
+        let currentDistance = 0;
+
+        const dodgeLoop = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+        
+            if (progress >= dodgeDuration || currentDistance >= dodgeDistance) {
+                this.spriteWeapon.setVisible(true);
+                this.dodgeCooldown = 0;
+                this.isDodging = false;
+                return;
+            };
+        
+            const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
+            if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+            if (this.velocity.y > 0.1) this.setVelocityY(dodgeDistance / dodgeDuration);
+            if (this.velocity.y < -0.1) this.setVelocityY(-dodgeDistance / dodgeDuration);
+            currentDistance += Math.abs(dodgeDistance / dodgeDuration);
+            requestAnimationFrame(dodgeLoop);
+        };
+        let startTime = null;
+        requestAnimationFrame(dodgeLoop);
+    };
+
+    playerRoll = () => {
+        this.rollCooldown = 50; // Was a x7 Mult for Roll Prev aka 2240
+        const rollDistance = 1920; // 140
+        
+        const rollDuration = 320; // 20
+        let currentDistance = 0;
+        
+        const rollLoop = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+        
+            if (progress >= rollDuration || currentDistance >= rollDistance) {
+                this.spriteWeapon.setVisible(true);
+                this.rollCooldown = 0;
+                this.isRolling = false;
+                return;
+            };
+
+            const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
+            if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+            if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
+            if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
+            currentDistance += Math.abs(rollDistance / rollDuration);
+            requestAnimationFrame(rollLoop);
+        };
+        let startTime = null;
+        requestAnimationFrame(rollLoop);
+    };
+
     handleActions = () => {
+        // ========================= Tab Targeting ========================= \\
+        
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.targets.length > 1) { // More than 1 i.e. worth tabbing
             if (this.currentTarget) {
                 this.currentTarget.clearTint();
@@ -854,26 +940,8 @@ export default class Player extends Entity {
             };
         };
 
-        if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {
-            this.isCaerenic = this.isCaerenic ? false : true;
-            if (this.isCaerenic) {
-                this.scene.caerenic(true);
-                this.setGlow(this, true);
-                this.adjustSpeed(0.5);
-            } else {
-                this.scene.caerenic(false);
-                this.setGlow(this, false);
-                this.adjustSpeed(-0.5);
-            };
-        };
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {
-            this.isStalwart = this.isStalwart ? false : true;
-            if (this.isStalwart) {
-                this.scene.stalwart(true);
-            } else {
-                this.scene.stalwart(false);
-            };
-        }; 
+        // ========================= Player Combat Actions ========================= \\
+
         if (this.inCombat && this.attacking) {
             if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
                 this.scene.combatMachine.input('counterGuess', 'attack');
@@ -916,7 +984,7 @@ export default class Player extends Entity {
                 };
                 const invokeIntervalId = setInterval(invokeLoop, invokeInterval);
             };
-            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) {
+            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) { // this.tshaeralCooldown === 0
                 this.stateMachine.setState(States.TSHAERAL);
                 this.scene.time.addEvent({
                     delay: 2000,
@@ -935,6 +1003,8 @@ export default class Player extends Entity {
             };
         };
 
+        // ========================= Player Movement Actions ========================= \\
+
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 15 && this.movementClear()) {
             this.stateMachine.setState(States.ROLL);
         };
@@ -943,24 +1013,36 @@ export default class Player extends Entity {
             this.stateMachine.setState(States.DODGE);
         };
 
+        // ========================= Player Utility Actions ========================= \\
+
+        if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {
+            this.isCaerenic = this.isCaerenic ? false : true;
+            if (this.isCaerenic) {
+                this.scene.caerenic(true);
+                this.setGlow(this, true);
+                this.adjustSpeed(0.5);
+            } else {
+                this.scene.caerenic(false);
+                this.setGlow(this, false);
+                this.adjustSpeed(-0.5);
+            };
+        };
+
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {
+            this.isStalwart = this.isStalwart ? false : true;
+            if (this.isStalwart) {
+                this.scene.stalwart(true);
+            } else {
+                this.scene.stalwart(false);
+            };
+        }; 
+
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.firewater.T)) {
             this.stateMachine.setState(States.HEAL);
         };
 
     };
-    movementClear = () => {
-        return (
-            !this.stateMachine.isCurrentState(States.ROLL) &&
-            !this.stateMachine.isCurrentState(States.DODGE) &&
-            !this.stateMachine.isCurrentState(States.COUNTER) &&
-            !this.stateMachine.isCurrentState(States.ATTACK) &&
-            !this.stateMachine.isCurrentState(States.POSTURE) &&
-            !this.stateMachine.isCurrentState(States.INVOKE) &&
-            !this.stateMachine.isCurrentState(States.TSHAERAL) &&
-            !this.stateMachine.isCurrentState(States.HEAL) &&
-            !this.isStalwart
-        )
-    };
+
     handleAnimations = () => {
         if (this.isStunned) {
             this.setVelocity(0);
@@ -975,66 +1057,12 @@ export default class Player extends Entity {
         } else if (this.isDodging) { // DODGING AKA SLIDING OUTSIDE COMBAT
             this.anims.play('player_slide', true);
             this.spriteWeapon.setVisible(false);
-            if (this.dodgeCooldown === 0) {
-                this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
-                const dodgeDistance = 2800; // 126 || 2304
-                const dodgeDuration = 350; // 18 || 288  
-                let currentDistance = 0;
-
-                const dodgeLoop = (timestamp) => {
-                    if (!startTime) startTime = timestamp;
-                    const progress = timestamp - startTime;
-                
-                    if (progress >= dodgeDuration || currentDistance >= dodgeDistance) {
-                        this.spriteWeapon.setVisible(true);
-                        this.dodgeCooldown = 0;
-                        this.isDodging = false;
-                        return;
-                    };
-                
-                    const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
-                    if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
-                    if (this.velocity.y > 0.1) this.setVelocityY(dodgeDistance / dodgeDuration);
-                    if (this.velocity.y < -0.1) this.setVelocityY(-dodgeDistance / dodgeDuration);
-                    currentDistance += Math.abs(dodgeDistance / dodgeDuration);
-                    requestAnimationFrame(dodgeLoop);
-                };
-                let startTime = null;
-                requestAnimationFrame(dodgeLoop);
-            };
-            
+            if (this.dodgeCooldown === 0) this.playerDodge();
         } else if (this.isRolling && !this.isJumping) { // ROLLING OUTSIDE COMBAT
             this.anims.play('player_roll', true);
             walk(this.scene);
             this.spriteWeapon.setVisible(false);
-            if (this.rollCooldown === 0) {
-                this.rollCooldown = 50; // Was a x7 Mult for Roll Prev aka 2240
-                const rollDistance = 1920; // 140
-                
-                const rollDuration = 320; // 20
-                let currentDistance = 0;
-                
-                const rollLoop = (timestamp) => {
-                    if (!startTime) startTime = timestamp;
-                    const progress = timestamp - startTime;
-                
-                    if (progress >= rollDuration || currentDistance >= rollDistance) {
-                        this.spriteWeapon.setVisible(true);
-                        this.rollCooldown = 0;
-                        this.isRolling = false;
-                        return;
-                    };
-
-                    const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
-                    if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
-                    if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
-                    if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
-                    currentDistance += Math.abs(rollDistance / rollDuration);
-                    requestAnimationFrame(rollLoop);
-                };
-                let startTime = null;
-                requestAnimationFrame(rollLoop);
-            };
+            if (this.rollCooldown === 0) this.playerRoll();
         } else if (this.isPosturing) { // POSTURING
             walk(this.scene);
             this.anims.play('player_attack_3', true).on('animationcomplete', () => {
@@ -1071,6 +1099,11 @@ export default class Player extends Entity {
             if (this.isMoving) this.isMoving = false;
             this.anims.play('player_idle', true);
         };
+        this.spriteWeapon.setPosition(this.x, this.y);
+        this.spriteShield.setPosition(this.x, this.y);
+        // this.spriteHelmet.setPosition(this.x, this.y);
+        // this.spriteLegs.setPosition(this.x, this.y);
+        // this.spriteChest.setPosition(this.x, this.y);
     };
     handleConcerns = () => {
         if (this.actionSuccess) {
@@ -1183,12 +1216,6 @@ export default class Player extends Entity {
         this.handleAnimations();
         this.handleMovement();
         this.weaponRotation('player', this.currentTarget);
-
-        this.spriteWeapon.setPosition(this.x, this.y);
-        this.spriteShield.setPosition(this.x, this.y);
-        // this.spriteHelmet.setPosition(this.x, this.y);
-        // this.spriteLegs.setPosition(this.x, this.y);
-        // this.spriteChest.setPosition(this.x, this.y);
     };
 
     isAtEdgeOfLedge(scene) {

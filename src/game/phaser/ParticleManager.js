@@ -60,15 +60,15 @@ class Particle {
                     if (player.name === 'player') {
                         player.attackedTarget = other.gameObjectB;
                         if (this.scene.state.action !== effect.action) {
-                            console.log("Action " + effect.action + "Success Due to Collision Success For PLAYER");
+                            // console.log("Action " + effect.action + "Success Due to Collision Success For PLAYER");
                             this.scene.combatMachine.input('action', effect.action);
                         };
                     } else if (player.name === 'enemy') {
                         if (player.isCurrentTarget && this.scene.state.computerAction !== effect.action) {
-                            console.log("Action " + effect.action + "Success Due to Collision Success For TARGETED ENEMY");
+                            // console.log("Action " + effect.action + "Success Due to Collision Success For TARGETED ENEMY");
                             this.scene.combatMachine.input('computerAction', effect.action, player.enemyID);
                         } else if (!player.isCurrentTarget && player.currentAction !== effect.action) {
-                            console.log("Action " + effect.action + " Success Due to Collision Success For NON TARGETED ENEMY");
+                            // console.log("Action " + effect.action + " Success Due to Collision Success For NON TARGETED ENEMY");
                             // player.currentAction = effect.action;
                         };
                     };
@@ -92,8 +92,9 @@ class Particle {
     };
 
     setTimer(action, id) {
+        const time = { attack: 1500, counter: 1000, posture: 1250, roll: 1250 };
         this.scene.time.addEvent({
-            delay: action === 'attack' ? 1750 : action === 'counter' ? 1000 : (action === 'posture' || action === 'roll') ? 1250 : 2000,
+            delay: time[action],
             callback: () => {
                 this.scene.particleManager.removeEffect(id);
             },

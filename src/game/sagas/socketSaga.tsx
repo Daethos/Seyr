@@ -4,12 +4,12 @@ import { call, take, fork, cancel, takeEvery, select, takeLatest } from 'redux-s
 import * as io from 'socket.io-client';
 import { connectToSocket, closeSocketConnection, getSocketInstance } from './socketManager';
 import { compress, workGetResponse, workTickResponse } from './combatSaga';
-
+const API_URL = process.env.NODE_ENV === 'production' ? 'https://ascea.herokuapp.com' : 'http://localhost:3001';
 export const SOCKET = {
     // Emitters
     SETUP: 'setup',
     DISCONNECT: 'disconnect',
-    URL: 'https://ascea.herokuapp.com', // 'https://ascea.herokuapp.com' || 'http://localhost:3000'
+    URL: API_URL, // 'https://ascea.herokuapp.com' || 'http://localhost:3000'
     SETUP_PLAYER: 'setupPlayer',
 
     SET_PHASER_AGGRESSION: 'setPhaserAggression',

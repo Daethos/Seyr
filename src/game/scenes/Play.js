@@ -9,11 +9,12 @@ import base from '../images/base.png';
 import ParticleManager from '../phaser/ParticleManager';
 import LootDrop from '../matter/LootDrop';
 import EventEmitter from '../phaser/EventEmitter';
-import { getInitiateFetch, getCombatStateUpdate, getEnemyActionFetch, getCombatFetch, setStalwart, getNpcSetupFetch, getEnemySetupFetch, clearNonAggressiveEnemy, setCombatInput, setCaerenic } from '../reducers/combatState';
+import { getCombatFetch, setStalwart, getNpcSetupFetch, getEnemySetupFetch, clearNonAggressiveEnemy, setCombatInput, setCaerenic } from '../reducers/combatState';
 import { getDrinkFirewaterFetch } from '../reducers/gameState';
 import CombatMachine from '../phaser/CombatMachine';
 // import ScreenShaker from '../phaser/ScreenShake';
 import { Mrpas } from 'mrpas';
+export const { Bodies } = Phaser.Physics.Matter.Matter;
  
 export default class Play extends Phaser.Scene {
     constructor() {
@@ -115,14 +116,13 @@ export default class Play extends Phaser.Scene {
 
         this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
         // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
-        // for (let i = 0; i < 8; i++) {
-        //     this.npcs.push(new NPC({scene: this, x: 800, y: 200 + (i * 200), texture: 'player_actions', frame: 'player_idle_0'}));
-        // };
         this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
         this.map.getObjectLayer('Npcs').objects.forEach(npc => this.npcs.push(new NPC({ scene: this, x: npc.x, y: npc.y, texture: 'player_actions', frame: 'player_idle_0' })));
 
-        // ================= Combat Machine ================= \\
+        // ====================== Combat Machine ====================== \\
+
         this.combatMachine = new CombatMachine(this, this.dispatch);
+        this.particleManager = new ParticleManager(this);
 
         this.player.inputKeys = {
             up: this.input.keyboard.addKeys('W,UP'),
@@ -144,6 +144,8 @@ export default class Play extends Phaser.Scene {
             target: this.input.keyboard.addKeys('TAB'),
             stalwart: this.input.keyboard.addKeys('G'),
         }; 
+
+        // ====================== Camera ====================== \\
           
         let camera = this.cameras.main;
         camera.zoom = 1.5;
@@ -162,7 +164,6 @@ export default class Play extends Phaser.Scene {
         this.minimapBorder.setScrollFactor(0);
         this.minimapBorder.setScale(1 / camera.zoom);
 
-        
         // // OR using a dark overlay
         // this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
         // const darkOverlay = this.add.graphics();
@@ -178,7 +179,6 @@ export default class Play extends Phaser.Scene {
                 this.minimapBorder.visible = true;
             };
         });
-        this.particleManager = new ParticleManager(this);
         // this.screenShaker = new ScreenShaker(this);
         this.createWelcome(); 
         this.stateListener(); 
@@ -285,12 +285,10 @@ export default class Play extends Phaser.Scene {
         const data = { id: enemy.enemyID, game: enemy.ascean, enemy: enemy.combatStats, health: enemy.health, isAggressive: enemy.isAggressive, startedAggressive: enemy.startedAggressive, isDefeated: enemy.isDefeated, isTriumphant: enemy.isTriumphant };
         this.dispatch(getEnemySetupFetch(data));
     };
-    // setupEnemy = async (data) => this.dispatch(getEnemySetupFetch(data)); 
     setupNPC = async (npc) => {
         const data = { id: npc.npcID, game: npc.ascean, enemy: npc.combatStats, health: npc.health, type: npc.npcType };
         this.dispatch(getNpcSetupFetch(data));
     };
-    // setupNPC = async (data) => this.dispatch(getNpcSetupFetch(data));
     combatEngaged = async (engagement) => {
         console.log('combatEngaged', engagement);
         if (engagement) { this.combat = true; } else { this.combat = false; };
@@ -300,45 +298,7 @@ export default class Play extends Phaser.Scene {
     showDialog = async (dialog) => EventEmitter.emit('show-dialog', dialog);
     stalwart = async (update) => this.dispatch(setStalwart(update));
     caerenic = async (update) => this.dispatch(setCaerenic(update));
-    staminaListener = async () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e);
-
-    // sendEnemyActionListener = async (enemyID, enemy, damageType, combatStats, weapons, health, actionData, currentTarget) => {
-    //     console.log('sendEnemyActionListener');
-    //     if (!currentTarget) {
-    //         const data = { enemyID, enemy, damageType, combatStats, weapons, health, actionData }; // state: this.state
-    //         await this.dispatch(getEnemyActionFetch(data));
-    //     } else {
-    //         if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) {
-    //             const actionReset = async () => this.setState('action', '');
-    //             await actionReset();
-    //             this.sendStateActionListener();
-    //         } else {
-    //             this.sendStateActionListener();
-    //         };
-    //     };
-    // };
-
-    // sendStateActionListener = () => { // Was Async
-    //     if ((this.state.action === 'counter' && this.state.computerAction === '') || (this.state.action === '' && this.state.computerAction === 'counter')) { 
-    //         console.log("--- ERROR --- One Player Is Countering Against Inaction --- ERROR ---");
-    //         return; 
-    //     };
-    //     console.log("Sending State Action");
-    //     this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Weapon' }));
-    // };
-
-    // sendStateSpecialListener = (special) => { // Was Async
-    //     switch (special) {
-    //         case 'invoke':
-    //             this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Instant' }));
-    //             break;
-    //         case 'consume':
-    //             this.dispatch(getInitiateFetch({ combatData: this.state, type: 'Prayer' }));
-    //             break;
-    //         default:
-    //             break;
-    //     };
-    // };
+    staminaListener = async () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e); 
  
     checkStamina = (value) => {
         switch (value) {
@@ -500,4 +460,3 @@ export default class Play extends Phaser.Scene {
 export const worldToTile = (tile) => Math.floor(tile / 32);
 export const tileToWorld = (tile) => tile * 32 + 16;
 export const alignToGrid = (tile) => tileToWorld(worldToTile(tile));
-export const { Bodies } = Phaser.Physics.Matter.Matter;

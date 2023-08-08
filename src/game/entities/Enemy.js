@@ -355,14 +355,14 @@ export default class Enemy extends Entity {
 
     combatDataUpdate = (e) => {
         if (this.enemyID !== e.enemyID) {
-            if (this.inCombat && this.attacking && e.newPlayerHealth <= 0) this.clearCombat();
+            if (this.inCombat && this.attacking && e.newPlayerHealth <= 0 && e.computerWin) this.clearCombat();
             return;
         };
         if (this.currentRound !== e.combatRound) this.currentRound = e.combatRound;
         if (this.health > e.newComputerHealth) { // ENEMY DAMAGED
-            console.log(`%c ${e.player.name} Dealt ${Math.round(e.realizedPlayerDamage)} Damage To ${this.ascean.name}`, 'color: #00ff00');
             const damage = Math.round(this.health - e.newComputerHealth);
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.criticalSuccess);
+            console.log(`%c ${e.player.name} Dealt ${damage} Damage To ${this.ascean.name}`, 'color: #00ff00');
             if (!this.stateMachine.isCurrentState(States.CONSUMED)) this.stateMachine.setState(States.HURT);
             if (this.isStunned) this.isStunned = false;
             if (e.newComputerHealth <= 0) {
@@ -372,7 +372,7 @@ export default class Enemy extends Entity {
         if (this.health < e.newComputerHealth) { // ENEMY HEALED
             let heal = Math.round(e.newComputerHealth - this.health);
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
-        };
+        }; 
         
         this.health = e.newComputerHealth;
         this.healthbar.setValue(this.health);
@@ -499,14 +499,11 @@ export default class Enemy extends Entity {
     };
 
     onAwarenessEnter = () => {
-        console.log("Aware of Player")
         this.anims.play('player_idle', true);
         this.setVelocity(0);
         this.scene.showDialog(true);
     };
-    onAwarenessUpdate = (dt) => { 
-        
-    };
+    onAwarenessUpdate = (dt) => {};
     onAwarenessExit = () => {
         this.anims.stop('player_idle');
         this.scene.showDialog(false);
@@ -636,7 +633,6 @@ export default class Enemy extends Entity {
     };
 
     onDodgeEnter = () => {
-        console.log('Dodging');
         this.isDodging = true; 
 
         this.body.parts[2].position.y += this.sensorDisp;
@@ -653,7 +649,6 @@ export default class Enemy extends Entity {
         if (!this.isDodging) this.evaluateCombatDistance();
     };
     onDodgeExit = () => {
-        console.log('Dodge Exit'); 
         this.body.parts[2].position.y -= this.sensorDisp;
         this.body.parts[2].circleRadius = 48;
         this.body.parts[1].vertices[0].y -= this.colliderDisp;
@@ -678,7 +673,6 @@ export default class Enemy extends Entity {
     };
 
     onRollEnter = () => {
-        console.log('Rolling');
         this.isRolling = true; 
         this.body.parts[2].position.y += this.sensorDisp;
         this.body.parts[2].circleRadius = 21;
@@ -691,7 +685,6 @@ export default class Enemy extends Entity {
         if (!this.isRolling) this.evaluateCombatDistance();
     };
     onRollExit = () => { 
-        console.log('Roll Exit');
         if (this.scene.state.computerAction !== '') this.scene.combatMachine.input('computerAction', '', this.enemyID);   
         this.body.parts[2].position.y -= this.sensorDisp;
         this.body.parts[2].circleRadius = 48;
@@ -700,7 +693,7 @@ export default class Enemy extends Entity {
     };
 
     onLeashEnter = () => {
-        console.log("Leashing Enemy to Origin Point of Encounter");
+        console.log(`Leashing ${this.ascean.name} to Origin Point of Encounter`);
         this.anims.play('player_running', true);
         if (this.attacking) {
             if (this.attacking.targets.includes(this)) {
@@ -755,7 +748,7 @@ export default class Enemy extends Entity {
         };
     };
     onLeashExit = () => {
-        console.log("Enemy Leashed to Origin Point of Encounter")
+        console.log(`${this.ascean.name} Leashed to Origin Point of Encounter`)
         this.anims.stop('player_running');
         this.setVelocity(0, 0);
         this.leashTimer.destroy();
@@ -839,18 +832,6 @@ export default class Enemy extends Entity {
             this.anims.play('player_slide', true);
             this.spriteWeapon.setVisible(false);
             if (this.dodgeCooldown === 0) {
-                // const sensorDisp = 12;
-                // const colliderDisp = 16;
-                // if (this.isDodging) {
-                //     this.body.parts[2].position.y += sensorDisp;
-                //     this.body.parts[2].circleRadius = 21;
-                //     this.body.parts[1].vertices[0].y += colliderDisp;
-                //     this.body.parts[1].vertices[1].y += colliderDisp; 
-                //     this.body.parts[0].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
-                //     this.body.parts[1].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
-                //     this.body.parts[0].vertices[1].x += this.flipX ? colliderDisp : -colliderDisp;
-                //     this.body.parts[1].vertices[0].x += this.flipX ? colliderDisp : -colliderDisp;
-                // };
                 this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
                 const dodgeDistance = 2304; // 126
                 const dodgeDuration = 288; // 18  
@@ -864,14 +845,6 @@ export default class Enemy extends Entity {
                         this.spriteWeapon.setVisible(true);
                         this.dodgeCooldown = 0;
                         this.isDodging = false;
-                        // this.body.parts[2].position.y -= sensorDisp;
-                        // this.body.parts[2].circleRadius = 48;
-                        // this.body.parts[1].vertices[0].y -= colliderDisp;
-                        // this.body.parts[1].vertices[1].y -= colliderDisp; 
-                        // this.body.parts[0].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
-                        // this.body.parts[1].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
-                        // this.body.parts[0].vertices[1].x -= this.flipX ? colliderDisp : -colliderDisp;
-                        // this.body.parts[1].vertices[0].x -= this.flipX ? colliderDisp : -colliderDisp;
                         this.currentAction = '';
                         return;
                     };
@@ -891,14 +864,6 @@ export default class Enemy extends Entity {
             this.anims.play('player_roll', true);
             this.spriteWeapon.setVisible(false);
             if (this.rollCooldown === 0) {
-                // const sensorDisp = 12;
-                // const colliderDisp = 16;
-                // if (this.isRolling) {
-                //     this.body.parts[2].position.y += sensorDisp;
-                //     this.body.parts[2].circleRadius = 21;
-                //     this.body.parts[1].vertices[0].y += colliderDisp;
-                //     this.body.parts[1].vertices[1].y += colliderDisp; 
-                // };
                 this.rollCooldown = 50; // Was a x7 Mult for Roll Prev aka 2240
                 const rollDistance = 1920; // 140
                 
@@ -913,10 +878,6 @@ export default class Enemy extends Entity {
                         this.spriteWeapon.setVisible(true);
                         this.rollCooldown = 0;
                         this.isRolling = false;
-                        // this.body.parts[2].position.y -= sensorDisp;
-                        // this.body.parts[2].circleRadius = 48;
-                        // this.body.parts[1].vertices[0].y -= colliderDisp;
-                        // this.body.parts[1].vertices[1].y -= colliderDisp;
                         this.currentAction = '';
                         return;
                     };

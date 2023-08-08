@@ -2174,7 +2174,6 @@ const phaserDualActionSplitter = async (combatData) => {
     newData.playerStartDescription = 
         `You attempt to ${playerAction === '' ? 'defend' : playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}${playerCounter ? '-' + playerCounter.charAt(0).toUpperCase() + playerCounter.slice(1) : ''} against ${newData.computer.name}.`
     
-    // This is if COUNTER: 'ACTION' Is the Same for Both
     if (playerAction === 'counter' && computerAction === 'counter') { 
         if (playerCounter === computerCounter && playerCounter === 'counter') {
             if (playerInitiative > computerInitiative) {

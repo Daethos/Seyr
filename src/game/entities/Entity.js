@@ -447,6 +447,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 
                 if (this.frameCount === 10) {
                     if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                        console.log('Player Counter Success');
                         this.actionSuccess = true;
                         this.attackedTarget = this.triggeredActionAvailable;
                     }; 
@@ -678,6 +679,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(-170);
                         this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                            console.log('Player Attack Success');
                             this.actionSuccess = true;
                             this.attackedTarget = this.triggeredActionAvailable;
                         };
@@ -751,6 +753,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(90);
                         this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                            console.log('Player Attack Success');
                             this.actionSuccess = true;
                             this.attackedTarget = this.triggeredActionAvailable;
                         };
@@ -849,6 +852,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteShield.setOrigin(1, 0.15);
                         this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                            console.log('Player Posture Success');
                             this.actionSuccess = true;
                             this.attackedTarget = this.triggeredActionAvailable;
                         };
@@ -891,6 +895,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteShield.setOrigin(0, 0.15);
                         this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
+                            console.log('Player Posture Success');
                             this.actionSuccess = true; 
                             this.attackedTarget = this.triggeredActionAvailable;
                         };
