@@ -290,7 +290,6 @@ export default class Play extends Phaser.Scene {
         this.dispatch(getNpcSetupFetch(data));
     };
     combatEngaged = async (engagement) => {
-        console.log('combatEngaged', engagement);
         if (engagement) { this.combat = true; } else { this.combat = false; };
         this.dispatch(getCombatFetch(engagement));
     };

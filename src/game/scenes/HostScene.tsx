@@ -11,7 +11,7 @@ import StoryAscean, { viewCycleMap } from '../ui/StoryAscean';
 import StoryTutorial from '../ui/StoryTutorial';
 import useGameSounds from '../../components/GameCompiler/Sounds'; 
 import * as eqpAPI from '../../utils/equipmentApi';
-import { Equipment, Player } from '../../components/GameCompiler/GameStore';
+import { Equipment } from '../../components/GameCompiler/GameStore';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 import { LootDropUI } from '../ui/LootDropUI';
 import { StoryDialog } from '../ui/StoryDialog';
@@ -23,17 +23,16 @@ import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
 import { config } from './Config';
 
 interface Props {
-    ascean: Player;
     assets: never[];
 };
 
-const HostScene = ({ assets, ascean }: Props) => {
+const HostScene = ({ assets }: Props) => {
     const { asceanID } = useParams();
     const dispatch = useDispatch();
     const gameRef = useRef<any>({}); 
     const combatState = useSelector((state: any) => state.combat);
     const gameState = useSelector((state: any) => state.game);
-    const stamina = useSelector((state: any) => state.combat.playerAttributes.stamina);
+    const STAMINA = useSelector((state: any) => state.combat.playerAttributes.stamina);
     const { playDeath, playReligion, playCounter, playRoll, playPierce, playSlash, playBlunt, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind } = useGameSounds(gameState.soundEffectVolume);
 
     useEffect(() => { 
@@ -50,7 +49,7 @@ const HostScene = ({ assets, ascean }: Props) => {
             await deleteEquipment(gameState.merchantEquipment);
             dispatch(setMerchantEquipment([])); 
         };
-        dispatch(clearNpc); 
+        dispatch(clearNpc()); 
     };
 
     const soundEffects = async (sfx: CombatData): Promise<void> => {
@@ -84,14 +83,13 @@ const HostScene = ({ assets, ascean }: Props) => {
             if (sfx.counterSuccess === true || sfx.computerCounterSuccess === true) playCounter();
             if (sfx.playerWin) playReligion();
             if (sfx.computerWin) playDeath();
-
             dispatch(setToggleDamaged(false));
         } catch (err: any) {
             console.log(err.message, 'Error Setting Sound Effects');
         };
     };
 
-    const toggleCombatHud = (e: { preventDefault: () => void; key: string; keyCode: number }): void => {
+    const gameHud = (e: { preventDefault: () => void; key: string; keyCode: number }): void => {
         e.preventDefault();
         if (e.key === 'v' || e.key === 'V') dispatch(setShowDialog(!gameState.showDialog));
         if (e.key === 'c' || e.key === 'C') dispatch(setShowPlayer(!gameState.showPlayer));
@@ -127,9 +125,9 @@ const HostScene = ({ assets, ascean }: Props) => {
         useEffect(() => { 
             if (percent < 100) {
                 const timer = setTimeout(() => {
-                    dispatch(setStaminaPercentage(percent + (stamina / 100)));
-                    EventEmitter.emit('updated-stamina', Math.round(((percent + (stamina / 100)) / 100) * stamina));
-                }, 200 - stamina);
+                    dispatch(setStaminaPercentage(percent + (STAMINA / 100)));
+                    EventEmitter.emit('updated-stamina', Math.round(((percent + (STAMINA / 100)) / 100) * STAMINA));
+                }, 200 - STAMINA);
                 return () => clearTimeout(timer);
             };
         }, [percent]);
@@ -146,7 +144,7 @@ const HostScene = ({ assets, ascean }: Props) => {
         }, [timer, pause, ref, game]);
     };
     
-    useKeyEvent('keydown', toggleCombatHud);
+    useKeyEvent('keydown', gameHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('clear-npc', clearNPC);
     usePhaserEvent('fetch-enemy', fetchEnemy);
@@ -169,12 +167,12 @@ const HostScene = ({ assets, ascean }: Props) => {
         <div className='story-div' style={{ border: gameState.currentGame ? '' : '3px solid #fdf6d8' }}>
             { gameState.currentGame && ( 
                 <> 
-                <SmallHud ascean={ascean} dialogTag={gameState.dialogTag} />
+                <SmallHud ascean={gameState.player} dialogTag={gameState.dialogTag} />
                 { gameState.scrollEnabled && (
                     <CombatMouseSettings damageType={combatState.weapons[0].damage_type} weapons={combatState.weapons.filter((weapon: Equipment) => weapon?.name !== 'Empty Weapon Slot')} />
                 ) }
                 { gameState.showPlayer ? (  
-                    <StoryAscean ascean={ascean} asceanViews={gameState.asceanViews} />
+                    <StoryAscean ascean={gameState.player} asceanViews={gameState.asceanViews} />
                 ) : ( 
                     <div style={{ position: "absolute", zIndex: 1 }}>
                         <CombatUI state={combatState} staminaPercentage={gameState.staminaPercentage} pauseState={gameState.pauseState} />
@@ -195,7 +193,7 @@ const HostScene = ({ assets, ascean }: Props) => {
                     <LootDropUI gameState={gameState} />   
                 ) }
                 { gameState.tutorial && ( 
-                    <StoryTutorial tutorial={gameState.tutorial} dispatch={dispatch} player={ascean}  /> 
+                    <StoryTutorial tutorial={gameState.tutorial} dispatch={dispatch} player={gameState.player}  /> 
                 ) }
                 </> 
             ) }

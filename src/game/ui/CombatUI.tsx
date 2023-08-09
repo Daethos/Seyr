@@ -59,24 +59,17 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
         };
     }; 
 
-    const getEffectStyle = {
-        border: 'none',
-        backgroundColor: "transparent",
-        top: "-10px", // Was 22.5px
-    };
-
     const getInvokeStyle = {
         textShadow: '0 0 1em ' + borderColor(state?.player?.mastery),
         color: borderColor(state?.player?.mastery),
-        fontSize: "11.5px",
-        fontFamily: "Cinzel",
+        // letterSpacing: "0.5px",
     };
 
     return (
-        <div style={{ position: "absolute", transform: "scale(1.25)", top: "15px", left: "10px" }} id={state.playerDamaged ? 'flicker' : ''}> 
+        <div className='player-combat-ui' id={state.playerDamaged ? 'flicker' : ''}> 
             { !state.instantStatus && (
                 <>
-                <Modal show={invokeModal} onHide={() => setInvokeModal(false)} centered id="modal-weapon" style={{ top: "-25%" }}>
+                <Modal show={invokeModal} onHide={() => setInvokeModal(false)} centered id="modal-weapon" style={{ top: "-25%" }}> 
                 <Modal.Header closeButton closeVariant='white' style={{ color: "gold", fontSize: "24px", fontWeight: 600 }}>Invoke Prayer</Modal.Header>
                 <Modal.Body style={{ textAlign: "center", fontSize: "16px" }}>
                     <p style={{ color: "#fdf6d8" }}>
@@ -95,9 +88,9 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                     Invoke your mastery to experience a burst of brilliant conviction.<br /><br />
                 </Modal.Body>
                 </Modal>
-                <button className='story-invoke' style={getEffectStyle} onClick={() => setInvokeModal(true)}>
-                    <p style={getInvokeStyle}>
-                        Invoke
+                <button className='story-invoke' onClick={() => setInvokeModal(true)}>
+                    <p className='story-invoke-name' style={getInvokeStyle}>
+                        {state.playerBlessing}
                     </p> 
                 </button> 
                 </>
@@ -128,28 +121,20 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                         </p>
                     </Modal.Body>
                     </Modal>
-                    <Button variant='' onClick={() => setPrayerModal(true)} style={getInvokeStyle}>Consume </Button><br />
+                    <Button variant='' onClick={() => setPrayerModal(true)} className='story-consume' style={getInvokeStyle}>Consume </Button><br />
                 </div>
             ) }
             <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '150px', height: '40px' }} />
             <p className='story-name'>{state.player.name}</p>
-            <ProgressBar 
-                variant="info"
-                now={playerHealthPercentage}
-                style={{ position: "absolute", top: "11px", left: "10px", width: "130px", height: "15px", backgroundColor: "red" }} 
-            />
+            <ProgressBar variant="info" now={playerHealthPercentage} className='story-health-bar' />
             <p className='story-portrait'>{`${Math.round(state.newPlayerHealth)} / ${state.playerHealth} [${playerHealthPercentage}%]`}</p>
-            <img src ={playerPortrait} alt="Player Portrait" style={{ position: "absolute", width: '40px', height: '40px', top: "-4px", left: "149px", borderRadius: "50%"  }} />
-            <ProgressBar 
-                variant="success"
-                now={staminaPercentage}
-                style={{ position: "absolute", top: "-1.5px", left: "151px", width: "35px", height: "35px", backgroundColor: "red", borderRadius: "50%", transform: "rotate(-90deg)" }} 
-            />
+            <img src ={playerPortrait} alt="Player Portrait" className='player-portrait' />
+            <ProgressBar variant="success" now={staminaPercentage} className='story-stamina-bubble'  />
             <p className='story-stamina'>{Math.round((staminaPercentage / 100) * state.playerAttributes.stamina)}</p>
-            <div style={{ position: "absolute", left: "187.5px", top: "0px", transform: "scale(0.75)" }}> 
+            <div className='combat-ui-weapon'> 
                 <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} caerenic={state.isCaerenic} />
             </div>
-            <div style={{ position: "absolute", left: "230px", top: "-5px" }}>
+            <div className='stalwart'>
             { state.isStalwart && (
                 <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.player.shield, true)}>
                     <img src={state.player.shield.imgURL} className="m-1 eqp-popover spec" alt={state.player.shield.name} style={getItemRarityStyle(state.player.shield.rarity)} />

@@ -260,7 +260,7 @@ export default class Player extends Entity {
             if (e.computerCounterSuccess) {
                 this.stateMachine.setState(States.STUN);
                 this.scene.combatMachine.input('computerCounterSuccess', false);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Counter', 1500, 'heal', e.computerCriticalSuccess);    
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Counter', 1500, 'damage', e.computerCriticalSuccess);    
             };
             if (e.rollSuccess) {
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll', 1500, 'heal', e.criticalSuccess);
@@ -269,7 +269,7 @@ export default class Player extends Entity {
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter', 1500, 'heal', e.criticalSuccess);
             };
             if (e.computerRollSuccess) {
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Roll', 1500, 'heal', e.computerCriticalSuccess);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Roll', 1500, 'damage', e.computerCriticalSuccess);
             };
             if (e.newComputerHealth <= 0 && e.playerWin) {
                 if (this.isTshaering) this.isTshaering = false;
@@ -364,7 +364,8 @@ export default class Player extends Entity {
             other.gameObjectB &&
             other.gameObjectB.name === 'enemy' &&
             other.bodyB.label === 'enemyCollider' &&
-            other.gameObjectB.isAggressive
+            other.gameObjectB.isAggressive &&
+            other.gameObjectB.ascean
         );
     };
  
@@ -414,7 +415,7 @@ export default class Player extends Entity {
         this.scene.matterCollision.addOnCollideEnd({
             objectA: [playerSensor],
             callback: (other) => {
-                this.touching = this.touching.filter(obj => obj.enemyID !== other.gameObjectB.enemyID);
+                this.touching = this.touching.filter(obj => obj?.enemyID !== other?.gameObjectB?.enemyID);
                 if (this.isValidEnemyCollision(other) && !this.touching.length) {
                     console.log("No Longer Touching Any Enemy, Clearing Action Available and Triggered Action Available");
                     this.actionAvailable = false;
@@ -750,10 +751,8 @@ export default class Player extends Entity {
 
     swingReset = () => {
         this.canSwing = false;
-        console.log('Player Swinging');
         this.scene.time.delayedCall(this.swingTimer, () => {
             this.canSwing = true;
-            console.log('Player Swing Reset');
         }, null, this);
     };
 
@@ -797,7 +796,6 @@ export default class Player extends Entity {
     };
 
     enemyIdMatch = () => {
-        console.log(this.attackedTarget.enemyID === this.scene.state.enemyID, "Enemy ID Match");
         return this.attackedTarget.enemyID === this.scene.state.enemyID;
     };
 
@@ -837,7 +835,6 @@ export default class Player extends Entity {
             this.particleEffect = null;
         } else {
             const action = this.checkPlayerAction();
-            console.log(action, "Action Check");
             if (!action) return;
             if (match) { // Target Player Attack
                 this.scene.combatMachine.add({ type: 'Weapon',  data: { key: 'action', value: action } });

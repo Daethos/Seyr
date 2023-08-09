@@ -40,7 +40,7 @@ export default class CombatMachine {
         Weapon: (data: KVI) => Dispatcher.weaponAction(this.dispatch, data),
         Instant: (data: string) => Dispatcher.instantAction(this.dispatch, data),
         Consume: (data: StatusEffect[]) => Dispatcher.prayerAction(this.dispatch, data),
-        Tshaeral: (data: KVI) => Dispatcher.tshaeralAction(this.dispatch),
+        Tshaeral: (_data: KVI) => Dispatcher.tshaeralAction(this.dispatch),
         Player: (data: any) => Dispatcher.playerAction(this.dispatch, data),
         Enemy: (data: any) => Dispatcher.enemyAction(this.dispatch, data),
     };
@@ -52,26 +52,34 @@ export default class CombatMachine {
         };
 
         while (this.clearQueue.length) {
-            const id = this.clearQueue.shift()!;
-            this.inputQueue = this.inputQueue.filter(({ id: _id }) => _id !== id);
-            this.actionQueue = this.actionQueue.filter(({ id: _id }) => _id !== id);
+            const _id = this.clearQueue.shift()!;
+            console.log(`Clearing ${_id} from queues.`);
+            this.inputQueue = this.inputQueue.filter(({ id }) => id !== _id);
+            this.actionQueue = this.actionQueue.filter(({ id }) => id !== _id);
         };
 
         while (this.inputQueue.length) {
             const { key, value, id } = this.inputQueue.shift()!;
-            if (id && this.state.enemyID !== id) continue;
-            Dispatcher.actionInput(this.dispatch, { key, value });
+            if (!id || this.state.enemyID === id) Dispatcher.actionInput(this.dispatch, { key, value });
         };
 
         while (this.actionQueue.length) {
             const action = this.actionQueue.shift()!;
             const handler = this.actionHandlers[action.type as keyof typeof this.actionHandlers];
-            if (handler) handler(action.data); 
+            if (handler) {
+                console.log(`%c Handling action type: ${action.type}. Console data: ${action.data}.`, 'color: #ffff00');
+                handler(action.data); 
+            } else {
+                console.warn(`No handler for action type: ${action.type}. Console data: ${action.data}.`);
+            };
         };
     };
 
     public add = (action: Action): number => this.actionQueue.push(action);
     public input = (key: string, value: string | number | boolean, id?: string): number => this.inputQueue.push({key, value, id}); 
     public clear = (id: string): number => this.clearQueue.push(id); 
-    public processor = (): void => this.process();
+    public processor = (): void => {
+        this.process();
+        this.context.time.addEvent({ delay: 100, callback: this.processor, callbackScope: this, loop: false });
+    };
 };

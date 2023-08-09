@@ -1845,7 +1845,12 @@
 }
 .story-invoke {
   position: absolute;
-  left: 185px;
+  text-align: center;
+  width: 60px;
+  top: -10px;
+  border: none;
+  background-color: transparent;
+  left: 180px;
 }
 .story-effects { 
   background: black;
@@ -1946,6 +1951,24 @@
   font-size: 12px;
   font-weight: 700;
 }
+.story-health-bar {
+  position: absolute;
+  top: 11px;
+  left: 10px;
+  width: 130px;
+  height: 15px;
+  background-color: red;
+}
+.story-stamina-bubble {
+  position: absolute;
+  top: -1.5px;
+  left: 151px;
+  width: 35px;
+  height: 35px;
+  background-color: red;
+  border-radius: 50%;
+  transform: rotate(-90deg);
+}
 .story-stamina {
   color: #fdf6d8;
   text-align: center;
@@ -1954,4 +1977,34 @@
   width: 40px;
   font-size: 13px;
   font-weight: 700;
+}
+.story-invoke-name, .story-consume {
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: 'Cinzel';
+} 
+.player-portrait {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: -4px;
+  left: 149px;
+  border-radius: 50%;
+}
+.player-combat-ui {
+  position: absolute;
+  transform: scale(1.25);
+  top: 15px;
+  left: 10px;
+}
+.combat-ui-weapon {
+  position: absolute;
+  left: 187.5px;
+  top: 0px;
+  transform: scale(0.75);
+}
+.stalwart {
+  position: absolute;
+  left: 230px;
+  top: -5px;
 }

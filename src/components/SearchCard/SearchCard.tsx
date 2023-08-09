@@ -35,7 +35,7 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
     };
 
     function handleChange(e: any) {
-        e.preventDefault()
+        e.preventDefault();
         setSearchText(e.target.value);
     };
 
@@ -45,14 +45,14 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
             setAllAscean([]);
             return;
         };
-        const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText))        
-        filterAscean(filteredResults)
-        console.log(searchText, '<- the changing search text')
-    }, [searchText, ascean])
+        const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText));     
+        filterAscean(filteredResults);
+        console.log(searchText, '<- the changing search text');
+    }, [searchText, ascean]);
 
     return (
         <React.Fragment>
-            <Col md={{span: 8, offset: 2}} className="my-4">
+            <Col md={{ span: 8, offset: 2 }} className="my-4">
             <p style={{ color: '#fdf6d8', textAlign: 'center' }}>
         Character Search
         </p>
@@ -61,7 +61,7 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
         <img 
             src={loggedUser.photoUrl} 
             alt="User" 
-            style={{maxWidth: 5 + 'vw', maxHeight: 5 + 'vh'}}
+            style={{ maxWidth: '5vw', maxHeight: '5vh' }}
         />
         </InputGroup.Text>
         <Form.Control 
@@ -72,9 +72,9 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
         />
         </InputGroup>
         </Col>
-        { ascean.length > 0 ? 
+        { ascean.length > 0 ? (
             <>{displayResults()}</>
-        : '' }
+        ) : ( '' ) }
         </React.Fragment>
     );
 };

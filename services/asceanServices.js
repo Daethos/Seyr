@@ -95,7 +95,7 @@ const attributeCompiler = async (ascean, rarities) => {
     newAttributes.healthTotal = 15 + ((newAttributes.totalConstitution * ascean.level) + ((newAttributes.constitutionMod + Math.round((newAttributes.caerenMod + newAttributes.strengthMod) / 4)) * ascean.level));
     newAttributes.initiative = 10 + ((newAttributes.agilityMod + newAttributes.achreMod) / 2);
     newAttributes.stamina = 100 + (newAttributes.constitutionMod + newAttributes.agilityMod + newAttributes.caerenMod) / 2;
-    newAttributes.posture = 100 + (newAttributes.strengthMod + newAttributes.achreMod + newAttributes.kyosirMod) / 2; // Future Idea Maybe
+    newAttributes.grace = 100 + (newAttributes.strengthMod + newAttributes.achreMod + newAttributes.kyosirMod) / 2; // Future Idea Maybe
 
     return newAttributes;
 };

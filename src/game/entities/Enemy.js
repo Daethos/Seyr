@@ -33,7 +33,7 @@ export default class Enemy extends Entity {
 
     constructor(data) {
         let { scene } = data;
-        super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.newComputerHealth }); 
+        super({ ...data, name: "enemy", ascean: null, health: 1 }); 
         this.scene.add.existing(this);
         this.enemyID = uuidv4();
         this.createEnemy(); 
@@ -189,7 +189,7 @@ export default class Enemy extends Entity {
     };
 
     playerStatusCheck = (other) => {
-        return (other && other.name === 'player' && !other.inCombat);
+        return (this.ascean && other && other.name === 'player' && !other.inCombat);
     };
 
     enemyStatusCheck = () => {
@@ -201,7 +201,7 @@ export default class Enemy extends Entity {
             objectA: [enemySensor],
             callback: other => {
                 // Other Object is the Player, the Enemy is Aggressive and hasn't 'Fought' yet aka isTriumphant && isDefeated is false
-                if (other.gameObjectB && other.gameObjectB.name === 'player' && this.enemyStatusCheck()) {
+                if (this.ascean && other.gameObjectB && other.gameObjectB.name === 'player' && this.enemyStatusCheck()) {
                     this.attacking = other.gameObjectB;
                     this.inCombat = true;
                     const newEnemy = this.isNewEnemy(other.gameObjectB);
@@ -212,7 +212,6 @@ export default class Enemy extends Entity {
                     this.actionTarget = other;
                     if (!other.gameObjectB.attacking) { // inCombat
                         if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
-                        // if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
                         other.gameObjectB.inCombat = true;
                         other.gameObjectB.attacking = this;
                         other.gameObjectB.currentTarget = this;
@@ -224,7 +223,6 @@ export default class Enemy extends Entity {
                     if (newEnemy) other.gameObjectB.targets.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
                     if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
-                    // this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     if (this.stateMachine.isCurrentState(States.DEFEATED)) {
                         this.scene.showDialog(true);
@@ -244,10 +242,7 @@ export default class Enemy extends Entity {
                     const newEnemy = this.isNewEnemy(other.gameObjectB);
                     if (newEnemy) other.gameObjectB.targets.push(this);
                     if (this.healthbar) this.healthbar.setVisible(true);
-                    if (this.scene.state.enemyID !== this.enemyID) {
-                        this.scene.setupEnemy(this);
-                        // this.scene.setupEnemy({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.health, isAggressive: this.isAggressive, startedAggressive: this.startedAggressive, isDefeated: this.isDefeated, isTriumphant: this.isTriumphant });
-                    }; 
+                    if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
                     this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
                     this.stateMachine.setState(States.CHASE); 
                     this.actionTarget = other;
@@ -452,7 +447,7 @@ export default class Enemy extends Entity {
     onIdleUpdate = (dt) => {
         this.idleWait -= dt;
         if (this.idleWait <= 0) {
-            this.idleWait = 3000;
+            this.idleWait = Phaser.Math.RND.between(3500, 5000);;
             if (this.stateMachine.isCurrentState(States.IDLE)) this.stateMachine.setState(States.PATROL);
         };
     };
@@ -466,7 +461,7 @@ export default class Enemy extends Entity {
         if (patrolDirection.x < 0) { this.flipX = true };
         const patrolSpeed = 1;
         this.patrolVelocity = { x: patrolDirection.x * patrolSpeed, y: patrolDirection.y * patrolSpeed };
-        const delay = Phaser.Math.RND.between(1500, 3000);
+        const delay = Phaser.Math.RND.between(2000, 3500);
         this.patrolTimer = this.scene.time.addEvent({
             delay: delay,
             callback: () => {
@@ -917,10 +912,10 @@ export default class Enemy extends Entity {
             this.stateMachine.setState(States.CHASE);
         } else if (this.isRanged) {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
-            // if (distanceY > 10) {
-            //     direction.normalize();
-            //     this.setVelocityY(direction.y * 4.5);
-            // };
+            if (distanceY > 10) {
+                direction.normalize();
+                this.setVelocityY(direction.y * 4.5);
+            };
             if ((this.attacking.position.subtract(this.position)).length() > 75 * rangeMultiplier) { // 225-525
                 this.anims.play('player_running', true);
                 direction.normalize();
@@ -958,10 +953,70 @@ export default class Enemy extends Entity {
         const particleVector = new Phaser.Math.Vector2(particle.effect.x, particle.effect.y);
         const enemyVector = new Phaser.Math.Vector2(this.x, this.y);
         const distance = particleVector.subtract(enemyVector);
-        if (distance.length() < 50) {
+        if (distance.length() < 75) { // 50 || 100
             return true;
         };
         return false;
+    };
+
+    getEnemyParticle = () => {
+        return this.attacking.particleEffect
+            ? this.scene.particleManager.getEffect(this.attacking.particleEffect.id)
+            : null;
+    };
+
+    isUnderRangedAttack = () => {
+        const player = this.getEnemyParticle();
+        if (!player) return;
+        return (this.attacking.isRanged && player && this.checkEvasion(player));
+    };
+
+    evade = () => {
+        if (!this.stateMachine.isCurrentState(States.EVADE)) {
+            console.log(`%c ${this.ascean.name} Evading Ranged Attack`, 'color: gold');
+            this.stateMachine.setState(States.EVADE);
+        };
+    };
+
+    currentTargetCheck = () => {
+        if (this.scene.state.enemyID === this.enemyID && !this.isCurrentTarget) { // attacking.currentTarget?.enemyID
+            console.log("Wasn't Current Target, Now Selected as Current Target");
+            this.isCurrentTarget = true;
+        } else if (this.scene.state.enemyID !== this.enemyID && this.isCurrentTarget) {
+            console.log("Was Current Target, Now Deselected as Current Target");    
+            this.isCurrentTarget = false;
+        };
+    };
+
+    currentWeaponCheck = () => {
+        if (this.spriteWeapon && this.spriteShield) {
+            this.spriteWeapon.setPosition(this.x, this.y);
+            this.spriteShield.setPosition(this.x, this.y);
+            this.weaponRotation('enemy', this.attacking);
+        };
+        if (!this.currentWeapon || this.currentWeaponSprite === this.imgSprite(this.currentWeapon) || this.enemyID !== this.scene.state.enemyID) return;
+        this.currentWeaponSprite = this.imgSprite(this.currentWeapon);
+        this.spriteWeapon.setTexture(this.currentWeaponSprite);
+        const gripScale = { 'One Hand': 0.5, 'Two Hand': 0.65 };
+        this.spriteWeapon.setScale(gripScale[this.currentWeapon.grip]);
+    };
+
+    currentParticleCheck = () => {
+        if (!this.particleEffect.triggered) this.scene.particleManager.update(this, this.particleEffect);
+        if (this.particleEffect.success) {
+            this.particleEffect.triggered = true;
+            this.particleEffect.success = false;
+            this.enemyActionSuccess();
+        };
+    };
+
+    getDirection = () => {
+        const direction = this.attacking.position.subtract(this.position);
+        if (direction.x < 0 && !this.flipX) {
+            this.setFlipX(true);
+        } else if (direction.x > 0 && this.flipX) {
+            this.setFlipX(false);
+        };
     };
 
     evaluateEnemyState = () => {
@@ -977,59 +1032,19 @@ export default class Enemy extends Entity {
             this.actionSuccess = false;
             this.enemyActionSuccess();
         };
-        if (this.particleEffect) {
-            if (!this.particleEffect.triggered) {
-                this.scene.particleManager.update(this, this.particleEffect);
-            };
-            if (this.particleEffect.success) {
-                this.particleEffect.triggered = true;
-                this.particleEffect.success = false;
-                this.enemyActionSuccess();
-            };
-        };
-        if (this.spriteWeapon && this.spriteShield) {
-            this.spriteWeapon.setPosition(this.x, this.y);
-            this.spriteShield.setPosition(this.x, this.y);
-            this.weaponRotation('enemy', this.attacking);
-        };
+        if (this.particleEffect) this.currentParticleCheck();
+        this.currentWeaponCheck();
+
         if (this.healthbar) this.healthbar.update(this);
         if (this.scrollingCombatText) this.scrollingCombatText.update(this);
-        if (this.attacking && this.attacking.isRanged && (this.attacking.isAttacking || this.attacking.isPosturing || this.attacking.isCountering || this.attacking.isRolling)) {
-            if (this.attacking.particleEffect) {
-                const enemyParticle = this.scene.particleManager.getEffect(this.attacking.particleEffect.id);
-                if (enemyParticle) { 
-                    if (this.checkEvasion(enemyParticle)) {
-                        this.stateMachine.setState(States.EVADE);
-                    };
-                };
-            };
-        };
         if (this.attacking) {
-            let direction = this.attacking.position.subtract(this.position);
-            if (direction.x < 0) {
-              this.setFlipX(true);  
-            } else {
-              this.setFlipX(false);  
-            };
-            if (this.scene.state.enemyID === this.enemyID && !this.isCurrentTarget) { // attacking.currentTarget?.enemyID
-                console.log("Wasn't Current Target, Now Selected as Current Target");
-                this.isCurrentTarget = true;
-            } else if (this.scene.state.enemyID !== this.enemyID && this.isCurrentTarget) {
-                console.log("Was Current Target, Now Deselected as Current Target");    
-                this.isCurrentTarget = false;
-            };
+            if (this.isUnderRangedAttack()) this.evade();
+            this.getDirection();
+            this.currentTargetCheck();
         } else if (!this.stateMachine.isCurrentState(States.PATROL)) {
             this.setFlipX(this.velocity.x < 0);
         };
-        if (this.currentWeapon && this.currentWeaponSprite !== this.imgSprite(this.currentWeapon) && this.enemyID === this.scene.state.enemyID) {
-            this.currentWeaponSprite = this.imgSprite(this.currentWeapon);
-            this.spriteWeapon.setTexture(this.currentWeaponSprite);
-            if (this.currentWeapon.grip === 'Two Hand') {
-                this.spriteWeapon.setScale(0.65);
-            } else {
-                this.spriteWeapon.setScale(0.5);
-            };
-        }; 
+
         switch (this.currentAction) {
             case 'attack':
                 this.stateMachine.setState(States.ATTACK);
@@ -1058,7 +1073,6 @@ export default class Enemy extends Entity {
     };
  
     update() {
-        if (this.isDead) return; 
         this.evaluateEnemyState(); 
         this.stateMachine.update(this.scene.sys.game.loop.delta);   
     };

@@ -27,10 +27,9 @@ export const useKeyEvent = (event: string, callback: any) => {
 
 const Story = () => {
     const { asceanID } = useParams();
-    const ascean = useSelector((state: any) => state.game.player);
-    const gameChange = useSelector((state: any) => state.game.gameChange);
-    const dispatch = useDispatch();
     const [assets, setAssets] = useState([]);
+    const dispatch = useDispatch();
+    const gameChange = useSelector((state: any) => state.game.gameChange); 
 
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
@@ -67,7 +66,7 @@ const Story = () => {
     return (
         <div>
         { gameChange && ( 
-            <HostScene assets={assets} ascean={ascean} /> 
+            <HostScene assets={assets} /> 
         ) }
         </div>
     );
