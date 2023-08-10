@@ -241,7 +241,10 @@ export default class Player extends Entity {
                 let heal = Math.round(e.newPlayerHealth - this.health);
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
             };
-            if (this.currentRound !== e.combatRound) this.currentRound = e.combatRound;
+            if (this.currentRound !== e.combatRound) {
+                this.currentRound = e.combatRound;
+                this.checkTargets(); // Was inside playerWin
+            };
             this.health = e.newPlayerHealth;
             this.healthbar.setValue(this.health);
             if (this.healthbar.getTotal() < e.playerHealth) this.healthbar.setTotal(e.playerHealth);
@@ -260,7 +263,7 @@ export default class Player extends Entity {
             if (e.computerCounterSuccess) {
                 this.stateMachine.setState(States.STUN);
                 this.scene.combatMachine.input('computerCounterSuccess', false);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Counter', 1500, 'damage', e.computerCriticalSuccess);    
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Counter', 1500, 'damage', e.computerCriticalSuccess);    
             };
             if (e.rollSuccess) {
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll', 1500, 'heal', e.criticalSuccess);
@@ -269,7 +272,7 @@ export default class Player extends Entity {
                 this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter', 1500, 'heal', e.criticalSuccess);
             };
             if (e.computerRollSuccess) {
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.x, this.attacking?.y, 'Roll', 1500, 'damage', e.computerCriticalSuccess);
+                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Roll', 1500, 'damage', e.computerCriticalSuccess);
             };
             if (e.newComputerHealth <= 0 && e.playerWin) {
                 if (this.isTshaering) this.isTshaering = false;
@@ -279,10 +282,10 @@ export default class Player extends Entity {
                 };
                 
                 this.defeatedEnemyCheck(e.enemyID);
-                this.checkTargets();
-
+                
                 this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Victory', 3000, 'effect', true);    
             };    
+            // this.checkTargets(); // Was inside playerWin
         });
     }; 
 
@@ -420,8 +423,8 @@ export default class Player extends Entity {
                     console.log("No Longer Touching Any Enemy, Clearing Action Available and Triggered Action Available");
                     this.actionAvailable = false;
                     this.triggeredActionAvailable = null;
+                    this.checkTargets(); // Was outside of if statement
                 };
-                this.checkTargets();
             },
             context: this.scene,
         });
@@ -724,9 +727,9 @@ export default class Player extends Entity {
 
     onStunEnter = () => {
         this.isStunned = true;
-        this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect', true);
+        this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 2500, 'effect', true);
         this.scene.input.keyboard.enabled = false;
-        this.stunDuration = 1500;
+        this.stunDuration = 2500;
         this.setTint(0x888888);
         this.setStatic(true);
     };
@@ -781,6 +784,12 @@ export default class Player extends Entity {
             this.scene.clearNonAggressiveEnemy();
             this.scene.combatEngaged(false);
             this.inCombat = false;
+        };
+        console.log(this.touching, "Touching in Check");
+        if (!this.touching.length && (this.triggeredActionAvailable || this.actionAvailable)) {
+            console.log('Not Touching Enemies, flushing triggeredActionAvailable: ', this.triggeredActionAvailable, ' and actionAvailable: ', this.actionAvailable);
+            if (this.triggeredActionAvailable) this.triggeredActionAvailable = null;
+            if (this.actionAvailable) this.actionAvailable = false;
         };
     };
     

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import * as asceanAPI from '../../utils/asceanApi'
 import Loading from '../Loading/Loading'
 import { Equipment } from '../GameCompiler/GameStore';
+import { Symbols } from '../SolaAscean/SolaAscean';
 
 interface Weapon { weapon: Equipment };
 const WeaponCard = ({ weapon }: Weapon) => {
@@ -85,9 +86,7 @@ const AsceanStatCompiler = ({ ascean }: Props) => {
         <div className="property-line last">
             <h4>Initiative: </h4> <p>{attributes.initiative}</p>
         </div> 
-        <svg height="5" width="100%" className="tapered-rule my-1">
-            <polyline points="0,0 400,2.5 0,5"></polyline>
-        </svg> 
+        {Symbols.space} 
         { weaponOne ? (
             <WeaponCard weapon={weaponOne} />
         ) : ( '' ) } 

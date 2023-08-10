@@ -19,7 +19,7 @@ interface Props {
     handleAsceanCreate?: any;
 };
 
-const Symbols = {
+export const Symbols = {
     space: <svg height="5" width="100%" className="tapered-rule mt-2">
                 <polyline points="0,0 550,2.5 0,5"></polyline>
             </svg>,

@@ -49,52 +49,25 @@ const asceanSchema = new Schema(
         experience: {type: Number, default: 0},
         high_score: { type: Number, default: 0 },
         currency: {
-            silver: {
-                type: Number,
-                default: 0,
-            },
-            gold: {
-                type: Number,
-                default: 0,
-            },
+            silver: { type: Number, default: 0 },
+            gold: { type: Number, default: 0 },
         },
         maps: [{
             type: Schema.Types.ObjectId, ref: 'Map'
         }],
         coordinates: {
-            x: {
-                type: Number,
-                default: 0,
-            },
-            y: {
-                type: Number,
-                default: 0,
-            },
+            x: { type: Number, default: 0 },
+            y: { type: Number, default: 0 },
         },
         firewater: {
-            charges: {
-                type: Number,
-                default: 5,
-            },
-            maxCharges: {
-                type: Number,
-                default: 5,
-            },
+            charges: { type: Number, default: 5 },
+            maxCharges: { type: Number, default: 5 },
         },
         health: {
-            current: {
-                type: Number,
-                default: -10,
-            },
-            total: {
-                type: Number,
-                default: 0,
-            }
+            current: { type: Number, default: -10 },
+            total: { type: Number, default: 0 }
         },
-        inventory: {
-            type: [],
-            default: null
-        },
+        inventory: { type: [], default: null },
         journal: {
             entries: {
                 type: [{
@@ -127,10 +100,7 @@ const asceanSchema = new Schema(
         achre: Number,
         caeren: Number,
         kyosir: Number,
-        hardcore: {
-            type: Boolean,
-            default: false,
-        },
+        hardcore: { type: Boolean, default: false },
         alive: {
             type: Boolean,
             default: true,

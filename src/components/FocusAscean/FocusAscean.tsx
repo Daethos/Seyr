@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import FeelingsCard from '../FeelingsCard/FeelingsCard';
 import AsceanStatCompiler from '../../components/AsceanStatCompiler/AsceanStatCompiler';
 import AsceanAttributeCompiler from '../../components/AsceanAttributeCompiler/AsceanAttributeCompiler';
+import { Symbols } from '../SolaAscean/SolaAscean';
 
 interface Props {
     ascean: any;
@@ -35,9 +36,7 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
                 <h2>{ascean.description}</h2>
                 <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} id="ascean-pic" />
             </div>
-            <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
+            {Symbols.space}
             <div className="property-line first">
                 <h4>Level</h4>
                 <p> {ascean.level}</p>
@@ -54,14 +53,10 @@ const FocusAscean = ({ ascean, loggedUser, handleAsceanCreate }: Props) => {
                 <h4>Faith</h4>
                 <p> {ascean.faith.charAt(0).toUpperCase() + ascean.faith.slice(1)}</p>
             </div>
-            <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
+            {Symbols.space}
             <div className="top-stats">
                 <AsceanAttributeCompiler ascean={ascean} key={ascean._id} />
-            <svg height="5" width="100%" className="tapered-rule mt-3">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
+            {Symbols.space}
             </div>
             <FeelingsCard loggedUser={loggedUser} ascean={ascean} key={ascean._id} />
             <div className='actions'>

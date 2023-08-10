@@ -67,7 +67,6 @@ export default class CombatMachine {
             const action = this.actionQueue.shift()!;
             const handler = this.actionHandlers[action.type as keyof typeof this.actionHandlers];
             if (handler) {
-                console.log(`%c Handling action type: ${action.type}. Console data: ${action.data}.`, 'color: #ffff00');
                 handler(action.data); 
             } else {
                 console.warn(`No handler for action type: ${action.type}. Console data: ${action.data}.`);
@@ -78,8 +77,5 @@ export default class CombatMachine {
     public add = (action: Action): number => this.actionQueue.push(action);
     public input = (key: string, value: string | number | boolean, id?: string): number => this.inputQueue.push({key, value, id}); 
     public clear = (id: string): number => this.clearQueue.push(id); 
-    public processor = (): void => {
-        this.process();
-        this.context.time.addEvent({ delay: 100, callback: this.processor, callbackScope: this, loop: false });
-    };
+    public processor = (): void => this.process();
 };

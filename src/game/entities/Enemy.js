@@ -350,6 +350,7 @@ export default class Enemy extends Entity {
 
     combatDataUpdate = (e) => {
         if (this.enemyID !== e.enemyID) {
+            if (this.inCombat) this.currentRound = e.combatRound;
             if (this.inCombat && this.attacking && e.newPlayerHealth <= 0 && e.computerWin) this.clearCombat();
             return;
         };
@@ -393,8 +394,8 @@ export default class Enemy extends Entity {
     }; 
 
     setStun = () => {
-        console.log("Player Counter Success, Enemy Is Now Stunned");
-        this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 1500, 'effect', true);
+        console.log("%c Player Counter Success, Enemy Is Now Stunned", 'color: #00ff00');
+        this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 2500, 'effect', true);
         this.isStunned = true;
     };
 
@@ -580,10 +581,8 @@ export default class Enemy extends Entity {
     onEvasionEnter = () => { 
         const chance = Phaser.Math.Between(1, 100); 
         if (chance > 50) {
-            console.log("Dodging to Evade");
             this.isDodging = true; 
         } else {
-            console.log("Rolling to Evade");
             this.isRolling = true; 
         }; 
     };
@@ -781,7 +780,7 @@ export default class Enemy extends Entity {
     };
 
     onStunEnter = () => {
-        this.stunDuration = 1500;
+        this.stunDuration = 2500;
         this.setTint(0x888888); 
         this.setStatic(true);
     };

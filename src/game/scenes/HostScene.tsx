@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react'
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react'
 import Phaser from "phaser"; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
 import CombatUI from '../ui/CombatUI';
@@ -24,10 +23,10 @@ import { config } from './Config';
 
 interface Props {
     assets: never[];
+    setAssets: React.Dispatch<React.SetStateAction<never[]>>;
 };
 
-const HostScene = ({ assets }: Props) => {
-    const { asceanID } = useParams();
+const HostScene = ({ assets, setAssets }: Props) => {
     const dispatch = useDispatch();
     const gameRef = useRef<any>({}); 
     const combatState = useSelector((state: any) => state.combat);
@@ -38,7 +37,7 @@ const HostScene = ({ assets }: Props) => {
     useEffect(() => { 
         const startGame = async (): Promise<Phaser.Game> => gameRef.current = new Phaser.Game(config); 
         startGame();
-    }, [asceanID]);
+    }, []);
 
     useEffect(() => {
         updateCombatListener(combatState);
@@ -100,7 +99,10 @@ const HostScene = ({ assets }: Props) => {
         if (e.key === ' ' || e.keyCode === 32) togglePause();
         if (e.key === '`') dispatch(setScrollEnabled(!gameState.scrollEnabled));
     };
-
+    const retrieveAssets = async () => {
+        EventEmitter.emit('send-assets', assets);
+        setAssets([]);
+    };
     const togglePause = (): void => {
         const pause = () => gameRef.current.scene.getScene('Play').pause();
         const resume = () => gameRef.current.scene.getScene('Play').resume();
@@ -111,7 +113,6 @@ const HostScene = ({ assets }: Props) => {
     const deleteEquipment = async (eqp: any): Promise<void> => await eqpAPI.deleteEquipment(eqp);
     const interactingLoot = async (e: boolean): Promise<{payload: any; type: "game/setShowLoot";}> => dispatch(setShowLoot(e)); 
     const launchGame = async (e: boolean) => dispatch(setCurrentGame(e));
-    const retrieveAssets = async (): Promise<boolean> => EventEmitter.emit('send-assets', assets);
     const sendAscean = async (): Promise<boolean> => EventEmitter.emit('get-ascean', combatState.player);
     const sendCombatData = async (): Promise<boolean> => EventEmitter.emit('get-combat-data', combatState);
     const sendDispatch = async (): Promise<boolean> => EventEmitter.emit('get-dispatch', dispatch);

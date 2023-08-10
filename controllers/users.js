@@ -9,13 +9,38 @@ const Ring = require('../models/ring');
 const Amulet = require('../models/amulet');
 const Trinket = require('../models/trinket');
 const Equipment = require('../models/equipment');
+const asceanService = require('../services/asceanServices');
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const S3 = require("aws-sdk/clients/s3");
 const s3 = new S3(); // initate the S3 constructor which can talk to aws/s3 our bucket!
 const { v4: uuidv4 } = require("uuid");
 const BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 const SECRET = process.env.SECRET;
-
+const FIELDS = [
+  'weapon_one',
+  'weapon_two',
+  'weapon_three',
+  'shield',
+  'helmet',
+  'chest',
+  'legs',
+  'ring_one',
+  'ring_two',
+  'amulet',
+  'trinket'
+];
+const MODELS = {
+  'Equipment': Equipment,
+  'Weapon': Weapon,
+  'Shield': Shield,
+  'Helmet': Helmet,
+  'Chest': Chest,
+  'Legs': Legs,
+  'Ring': Ring,
+  'Amulet': Amulet,
+  'Trinket': Trinket,
+};
 module.exports = {
   signup,
   login,
@@ -35,21 +60,10 @@ async function createGuestToken(req, res) {
 }
 
 
-async function getModelType(id) {
-  const models = {
-      Weapon: Weapon,
-      Shield: Shield,
-      Helmet: Helmet,
-      Chest: Chest,
-      Legs: Legs,
-      Ring: Ring,
-      Amulet: Amulet,
-      Trinket: Trinket,
-      Equipment: Equipment,
-  };
+async function getModelType(id) { 
   const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
   for (const itemType of itemTypes) {
-      const item = await models[itemType].findById(id).exec();
+      const item = await MODELS[itemType].findById(id).exec();
       if (item) {
           return item.itemType;
       };
@@ -97,25 +111,39 @@ async function profile(req, res) {
     console.log(err.message, " <- profile controller");
     res.status(400).json({ error: "Something went wrong" });
   };
-};
+}; 
+
+async function determineItemType(id, itemType) {
+  for (const type of itemType) {
+    const item = await MODELS[type].findById(id).exec();
+    if (item) return item;
+  };
+  return null;
+}
+
 
 async function profileCharacter(req, res) {
   try {
-    const user = await User.findOne({ username: req.body.username });
-    const ascean = await Ascean.find({ user: user._id });
-    const asceanInRange = ascean.filter((a) => a.level >= req.body.minLevel && a.level <= req.body.maxLevel);
-    const randomAscean = asceanInRange[Math.floor(Math.random() * asceanInRange.length)];
+    let ascean = await Ascean.aggregate([
+      { $match: { user: mongoose.Types.ObjectId(req.body.username), level: { $gte: req.body.minLevel, $lte: req.body.maxLevel } } },
+      { $sample: { size: 1 } }
+    ]);
+    const itemFields = FIELDS.map(field => ({ field, itemType: [field.split('_')[0].charAt(0).toUpperCase() + field.split('_')[0].slice(1), 'Equipment'] }));
+    const populated = await Promise.all(itemFields.map(async ({ field, itemType }) => {
+      const item =  await determineItemType(ascean[0][field], itemType);
+      return item ? item : null;  
+    }));
 
-    res.status(200).json({
-      data: {
-        user: user,
-        ascean: randomAscean,
-      }
+    populated.forEach((item, index) => {
+      ascean[0][FIELDS[index]] = item;
     });
+
+    const data = await asceanService.asceanCompiler(ascean[0]);
+    res.status(200).json(data);
   } catch (err) {
     console.log(err.message, " <- Error fetching Character from Profile");
-    res.status(400).json({ err });
-  }
+    res.status(400).json(err);
+  };
 };
 
 async function deadEnemy(req, res) {

@@ -141,7 +141,6 @@ async function originCompiler(weapon, ascean) {
     };
 };
 
-
 async function gripCompiler(weapon, attributes, ascean) {
     let physicalMultiplier = 1;
     let magicalMultiplier = 1;

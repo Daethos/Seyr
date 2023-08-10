@@ -42,11 +42,13 @@ export const fetchEnemy = async (e: { enemyID: string; level: number; }): Promis
     const getOpponent = async () => {
         try { 
             const { minLevel, maxLevel } = getEnemyLevels(e.level); 
-            const enemyData = { username: 'mirio', minLevel: minLevel, maxLevel: maxLevel };
-            const rand = await userService.getRandomEnemy(enemyData);
-            const clean = await asceanAPI.getCleanAscean(rand.data.ascean._id);
-            const stat = await asceanAPI.getAsceanStats(rand.data.ascean._id);
-            return { game: clean.data, combat: stat.data.data, enemyID: e.enemyID };
+            const enemyData = { username: '637b06f47560b345910bbc44', minLevel: minLevel, maxLevel: maxLevel }; // mirio
+            const ascean = await userService.getRandomEnemy(enemyData);
+            // const clean = await asceanAPI.getCleanAscean(ascean.data.ascean._id);
+            // const stat = await asceanAPI.getAsceanStats(ascean.data.ascean._id);
+            // return { game: clean.data, combat: stat.data.data, enemyID: e.enemyID };
+            // console.log(ascean, "Random Enemy Response");
+            return { game: ascean.data.ascean, combat: ascean.data, enemyID: e.enemyID };
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')
         };

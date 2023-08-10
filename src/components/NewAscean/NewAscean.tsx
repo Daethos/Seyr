@@ -11,6 +11,7 @@ import Sex from '../AsceanBuilder/Sex';
 import Preference from '../AsceanBuilder/Preference';
 import Communal from '../AsceanBuilder/Communal';
 import Hardcore from '../AsceanBuilder/Hardcore';
+import { Symbols } from '../SolaAscean/SolaAscean';
 
 interface AsceanProps {
     createSuccess: boolean;
@@ -61,7 +62,7 @@ const NewAscean = ({ createSuccess, handleAsceanCreate }: AsceanProps) => {
         createAscean(); 
     };
     useEffect(() => {
-        console.log(asceanState, '<- New Statistics')
+        console.log(asceanState, '<- New Statistics');
     }, [asceanState]);
 
     return (
@@ -75,34 +76,30 @@ const NewAscean = ({ createSuccess, handleAsceanCreate }: AsceanProps) => {
             <Sex asceanState={asceanState} setAsceanState={setAsceanState} />
             <img src={process.env.PUBLIC_URL + '/images/' + asceanState.origin + '-' + asceanState.sex + '.jpg'} id="ascean-pic" /><br />
             <Faith asceanState={asceanState} setState={setAsceanState} />
-            <svg height="5" width="100%" className="tapered-rule">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
+            {Symbols.space}
             <div className="top-stats">
             <Preference asceanState={asceanState} setAsceanState={setAsceanState} />
             <Mastery asceanState={asceanState} setState={setAsceanState} />
             <AttributesCreate asceanState={asceanState} setAsceanState={setAsceanState} />
             <Communal editState={asceanState} setEditState={setAsceanState} />
             <Hardcore asceanState={asceanState} setAsceanState={setAsceanState} />
-            <svg height="5" width="100%" className="tapered-rule">
-                <polyline points="0,0 400,2.5 0,5"></polyline>
-            </svg>
+            {Symbols.space}
             </div>
-            { createSuccess ? 
+            { createSuccess ? (
                 <button 
                     className="btn mt-4" 
                     value={asceanState} 
                     style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: '28px', textDecoration: 'none', textAlign: "center" }}
                     type="submit" disabled>
                 Created {asceanState.name}!</button>
-            : 
+            ) : ( 
                 <button 
                     className="btn my-2" 
                     value={asceanState} 
                     style={{ color: 'blueviolet', fontWeight: 600, fontVariant: 'small-caps', fontSize: '28px', marginLeft: "22%" }}
                     type="submit">
                 Create Ascean</button>
-            }
+            ) }
             </div>
             <hr className="orange-border bottom" />
         </Form>
