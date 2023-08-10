@@ -224,12 +224,12 @@ io.on("connection", (socket) => {
   };
 
   const updateCombatData = async (data) => {  
-    // console.time('Update Combat Data');
+    const newData = { ...data };
+    console.log(newData, 'Update Combat Data');
     combatData = {
       ...combatData,
       ...data,
     };
-    // console.timeEnd('Update Combat Data');
   };
 
   const setupEnemy = async (data) => {

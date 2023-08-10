@@ -30,7 +30,6 @@ export default class Player extends Entity {
     };
     constructor(data) {
         let { scene } = data;
-        console.log(scene.state, "Scene State in Player.js");
         super({ ...data, name: 'player', ascean: scene.state.player, health: scene.state.newPlayerHealth }); 
         const spriteName = scene?.state?.player?.weapon_one.imgURL.split('/')[2].split('.')[0];
         this.ascean = scene.state.player;
@@ -203,7 +202,7 @@ export default class Player extends Entity {
                     modifier -= 0.025;
                     break;
             };
-            console.log(modifier, "Current Speed Modifier from", item);
+            // console.log(modifier, "Current Speed Modifier from", item);
         };
         addModifier(helmet);
         addModifier(chest);
@@ -299,7 +298,6 @@ export default class Player extends Entity {
         this.targets = this.targets.filter(obj => obj.enemyID !== enemy);
         this.scene.combatMachine.clear(enemy);
         if (this.targets.every(obj => !obj.inCombat)) {
-            console.log("All Enemies Defeated!");
             this.inCombat = false;
             this.attacking = null;
             if (this.currentTarget) {
@@ -307,12 +305,9 @@ export default class Player extends Entity {
                 this.currentTarget = null;
             };
         } else {
-            console.log("More Enemies Remain!");
             if (this.currentTarget.enemyID === enemy) { // Was targeting the enemy that was defeated
                 this.currentTarget.clearTint();
-                console.log(this.targets);
                 const newTarget = this.targets.find(obj => obj.enemyID !== enemy);
-                console.log(newTarget.ascean.name, 'New Enemy Target');
                 if (!newTarget) return;
                 this.scene.setupEnemy(newTarget);
                 this.currentTarget = newTarget;
@@ -355,7 +350,6 @@ export default class Player extends Entity {
     isNewEnemy = (enemy) => {
         const newEnemy = !this.targets.some(obj => obj.enemyID === enemy.enemyID);
         if (newEnemy) {
-            console.log('New Enemy Pushed Into Touching Array');
             this.targets.push(enemy);
             return true;
         };
@@ -496,7 +490,6 @@ export default class Player extends Entity {
     };
 
     onNonCombatEnter = () => {
-        // console.log("Entering Non Combat");
         this.anims.play('player_idle', true);
         if (this.scene.combatTimer) this.scene.stopCombatTimer();
         if (this.currentRound !== 0) this.currentRound = 0;
@@ -509,9 +502,7 @@ export default class Player extends Entity {
         this.anims.stop('player_idle');
     };
 
-    onCombatEnter = () => {
-        // console.log("Entering Combat");
-    };
+    onCombatEnter = () => {};
     onCombatUpdate = (dt) => { 
         if (!this.inCombat) this.stateMachine.setState(States.NONCOMBAT);  
     }; 
@@ -763,31 +754,31 @@ export default class Player extends Entity {
         const playerCombat = this.isPlayerInCombat();
         this.targets = this.targets.filter(gameObject => {
             if (gameObject.isDead || !gameObject.inCombat) { // && playerCombat
-                console.log("Removing from targets array: [isDead || !inCombat]");
+                // console.log("Removing from targets array: [isDead || !inCombat]");
                 return false;
             };
             if (gameObject.npcType && playerCombat) {
-                console.log("Disengaging Combat in Targets Array Check: [npcTypes, playerCombat]");
+                // console.log("Disengaging Combat in Targets Array Check: [npcTypes, playerCombat]");
                 this.scene.combatEngaged(false);
                 this.inCombat = false;
             };
             return true;
         });
+        if (!this.targets.length && this.scene.state.computer) this.scene.clearNonAggressiveEnemy();
 
         const someInCombat = this.targets.some(gameObject => gameObject.inCombat);
         if (someInCombat && !playerCombat) {
-            console.log("Engaging Combat in Targets Array Check: [someInCombat, !playerCombat]");
+            // console.log("Engaging Combat in Targets Array Check: [someInCombat, !playerCombat]");
             this.scene.combatEngaged(true);
             this.inCombat = true;
         } else if (!someInCombat && playerCombat) {
-            console.log("Disengaging Combat in Targets Array Check: [!someInCombat, playerCombat]");
+            // console.log("Disengaging Combat in Targets Array Check: [!someInCombat, playerCombat]");
             this.scene.clearNonAggressiveEnemy();
             this.scene.combatEngaged(false);
             this.inCombat = false;
         };
-        console.log(this.touching, "Touching in Check");
         if (!this.touching.length && (this.triggeredActionAvailable || this.actionAvailable)) {
-            console.log('Not Touching Enemies, flushing triggeredActionAvailable: ', this.triggeredActionAvailable, ' and actionAvailable: ', this.actionAvailable);
+            // console.log('Not Touching Enemies, flushing triggeredActionAvailable: ', this.triggeredActionAvailable, ' and actionAvailable: ', this.actionAvailable);
             if (this.triggeredActionAvailable) this.triggeredActionAvailable = null;
             if (this.actionAvailable) this.actionAvailable = false;
         };
@@ -916,12 +907,11 @@ export default class Player extends Entity {
     handleActions = () => {
         // ========================= Tab Targeting ========================= \\
         
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.targets.length > 1) { // More than 1 i.e. worth tabbing
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.targets.length > 1) { // was > 1 More than 1 i.e. worth tabbing
             if (this.currentTarget) {
                 this.currentTarget.clearTint();
             }; 
             const newTarget = this.targets[this.targetIndex];
-            console.log(newTarget.ascean.name, "New Target via Tab Targetting");
             this.targetIndex = this.targetIndex + 1 === this.targets.length ? 0 : this.targetIndex + 1;
             if (!newTarget) return;
             if (newTarget.npcType) { // NPC
@@ -1084,20 +1074,16 @@ export default class Player extends Entity {
             if (!this.isMoving) this.isMoving = true;
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING
-            console.log("Pinging CONSUMING");
             this.anims.play('player_health', true).on('animationcomplete', () => {
                 this.isConsuming = false;
             });
         } else if (this.isTshaering) { // TSHAERING
-            console.log("Pinging TSHAERING");
             this.anims.play('player_health', true);
         } else if (this.isHealing) { // HEALING
-            console.log("Pinging HEALING");
             this.anims.play('player_pray', true).on('animationcomplete', () => {
                 this.isHealing = false;
             });
         } else if (this.isPraying) { // PRAYING
-            console.log("Pinging PRAYING");
             this.anims.play('player_pray', true).on('animationcomplete', () => {
                 this.isPraying = false;
             });

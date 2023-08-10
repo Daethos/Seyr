@@ -9,9 +9,6 @@ const Trinket = require('../models/trinket');
 const Ascean = require('../models/ascean');
 const Equipment = require('../models/equipment');
 const mongodb = require('mongodb');
-const MongoClient = require('mongodb').MongoClient;
-const uri = process.env.DATABASE_URL;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 const fs = require('fs');
 
 module.exports = {
@@ -31,7 +28,7 @@ module.exports = {
     writeEnemyDialog,
     deleteEnemyDialogNode,
     deleteEnemyDialogNodeOption
-}
+};
 
 async function getTestEquipment(req, res) {
     try {
@@ -53,7 +50,7 @@ async function getTestEquipment(req, res) {
     } catch (err) {
         res.status(400).json({ err }); 
     };
-};
+}; 
 
 async function indexEquipment(req, res) {
     try {
@@ -238,7 +235,6 @@ const randomizeStats = (item, rarity) => {
 
 async function getMerchantEquipment(req, res) {
     try {
-        await client.connect();
         let merchantEquipment = [];
         let type;
         let rarity;
@@ -294,14 +290,11 @@ async function getMerchantEquipment(req, res) {
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
         res.status(400).json({ err });
-    } finally {
-        await client.close();
     };
 };
 
 async function getMartialWeaponEquipment(req, res) {
     try {
-        await client.connect();
         let merchantEquipment = [];
         let rarity;
         let attack_type = 'Physical';
@@ -321,14 +314,11 @@ async function getMartialWeaponEquipment(req, res) {
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
         res.status(400).json({ err });
-    } finally {
-        await client.close();
     };
 };
 
 async function getMysticalWeaponEquipment(req, res) {
     try {
-        await client.connect();
         let merchantEquipment = [];
         let rarity;
         let attack_type = 'Magic';
@@ -348,14 +338,11 @@ async function getMysticalWeaponEquipment(req, res) {
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
         res.status(400).json({ err });
-    } finally {
-        await client.close();
     };
 };
 
 async function getJewelryEquipment(req, res) {
     try {
-        await client.connect();
         let merchantEquipment = [];
         let type;
         let rarity;
@@ -381,14 +368,11 @@ async function getJewelryEquipment(req, res) {
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
         res.status(400).json({ err });
-    } finally {
-        await client.close();
     };
 };
 
 async function getClothEquipment(req, res) {
     try {
-        await client.connect();
         let merchantEquipment = [];
         let type;
         let rarity;
@@ -424,14 +408,11 @@ async function getClothEquipment(req, res) {
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
         res.status(400).json({ err });
-    } finally {
-        await client.close();
     };
 };
 
 async function getArmorEquipment(req, res) {
     try {
-        await client.connect();
         let merchantEquipment = [];
         let type;
         let rarity;
@@ -472,8 +453,6 @@ async function getArmorEquipment(req, res) {
     } catch (err) {
         console.log(err, 'Error in Merchant Function');
         res.status(400).json({ err });
-    } finally {
-        await client.close();
     };
 };
 
@@ -499,7 +478,6 @@ const mutateEquipment = async (item, rarity) => {
 
  async function getOneEquipment (req, res) {
     try {
-        await client.connect();
         let rarity = determineRarityByLevel(req.params.level);
         const type = determineEquipmentType();
 
@@ -563,8 +541,6 @@ const mutateEquipment = async (item, rarity) => {
     } catch (err) {
         console.log(err, 'Error Getting One Equipment')
         res.status(400).json(err);
-    } finally {
-        await client.close();
     };
 };
 

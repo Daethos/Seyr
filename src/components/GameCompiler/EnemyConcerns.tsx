@@ -4,50 +4,40 @@ import EventEmitter from "../../game/phaser/EventEmitter";
 import { Merchant } from "./NPCs";
 import { NPC } from "./GameStore";
 
+const levelRanges = [
+    { range: [1, 2], minLevel: 1, maxLevel: 2 },
+    { range: [3, 4], minLevel: 2, maxLevel: 4 },
+    { range: [5, 6], minLevel: 4, maxLevel: 6 },
+    { range: [7, 8], minLevel: 5, maxLevel: 9 },
+    { range: [9, 10], minLevel: 7, maxLevel: 12 },
+    { range: [11, 12], minLevel: 8, maxLevel: 14 },
+    { range: [13, 14], minLevel: 10, maxLevel: 16 },
+    { range: [15, 18], minLevel: 12, maxLevel: 18 },
+    { range: [19, 20], minLevel: 16, maxLevel: 20 }
+];
+
 export const getEnemyLevels = (level: number): { minLevel: number, maxLevel: number } => {
     let minLevel: number = 0;
     let maxLevel: number = 0; 
-    if (level < 3) { // 1-2
-        minLevel = 1;
-        maxLevel = 2;
-    } else  if (level <= 4) { // 3-4 
-        minLevel = 2;
-        maxLevel = 4;
-    } else if (level <= 6) { // 5-6
-        minLevel = 4;
-        maxLevel = 6;
-    } else if (level <= 8) { // 7-8
-        minLevel = 5;
-        maxLevel = 9;
-    } else if (level <= 10) { // 9-10
-        minLevel = 7;
-        maxLevel = 12;
-    } else if (level <= 12) { // 11-12
-        minLevel = 8;
-        maxLevel = 14;
-    } else if (level <= 14) { // 13-14
-        minLevel = 10;
-        maxLevel = 16;
-    } else if (level <= 18) { // 15-18
-        minLevel = 12;
-        maxLevel = 18;
-    } else if (level <= 20) {
-        minLevel = 16;
-        maxLevel = 20;
+    
+    for (const { range, minLevel: rangeMin, maxLevel: rangeMax } of levelRanges) {
+        const [rangeStart, rangeEnd] = range;
+        if (level >= rangeStart && level <= rangeEnd) {
+            minLevel = rangeMin;
+            maxLevel = rangeMax;
+            break;
+        };
     };
+    
     return { minLevel, maxLevel };
-};
+}; 
 
 export const fetchEnemy = async (e: { enemyID: string; level: number; }): Promise<void> => {
     const getOpponent = async () => {
         try { 
             const { minLevel, maxLevel } = getEnemyLevels(e.level); 
-            const enemyData = { username: '637b06f47560b345910bbc44', minLevel: minLevel, maxLevel: maxLevel }; // mirio
+            const enemyData = { username: '637b06f47560b345910bbc44', minLevel, maxLevel }; // mirio
             const ascean = await userService.getRandomEnemy(enemyData);
-            // const clean = await asceanAPI.getCleanAscean(ascean.data.ascean._id);
-            // const stat = await asceanAPI.getAsceanStats(ascean.data.ascean._id);
-            // return { game: clean.data, combat: stat.data.data, enemyID: e.enemyID };
-            // console.log(ascean, "Random Enemy Response");
             return { game: ascean.data.ascean, combat: ascean.data, enemyID: e.enemyID };
         } catch (err: any) {
             console.log(err.message, 'Error retrieving Enemies')

@@ -163,7 +163,7 @@ const combatSlice = createSlice({
             const healed = Math.floor(state.newPlayerHealth + state.playerHealth * (action.payload / 100)) ;
             const newHealth = healed > state.playerHealth ? state.playerHealth : healed;
             const socket = getSocketInstance();
-            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['newPlayerHealth']: newHealth });
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { newPlayerHealth: newHealth });
             return {
                 ...state,
                 newPlayerHealth: newHealth,
@@ -289,7 +289,7 @@ const combatSlice = createSlice({
         },
         setCaerenic: (state, action) => {
             const socket = getSocketInstance();
-            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['isCaerenic']: action.payload });
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { isCaerenic: action.payload });
             return {
                 ...state,
                 isCaerenic: action.payload,
@@ -297,7 +297,7 @@ const combatSlice = createSlice({
         },
         setStalwart: (state, action) => {
             const socket = getSocketInstance();
-            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['isStalwart']: action.payload });
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { isStalwart: action.payload });
             return {
                 ...state,
                 isStalwart: action.payload,
@@ -305,7 +305,7 @@ const combatSlice = createSlice({
         },
         setCombatTimer: (state, action) => {
             const socket = getSocketInstance();
-            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['combatTimer']: action.payload });
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { combatTimer: action.payload });
             return {
                 ...state,
                 combatTimer: action.payload,
@@ -348,7 +348,7 @@ const combatSlice = createSlice({
         },
         setInstantStatus: (state, action) => {
             const socket = getSocketInstance();
-            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { ['instantStatus']: action.payload });
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { instantStatus: action.payload });
             return {
                 ...state,
                 instantStatus: action.payload,

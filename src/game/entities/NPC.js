@@ -69,7 +69,7 @@ export default class NPC extends Entity {
         const paddedHeight = colliderHeight + 2 * paddingHeight;
         let npcCollider = Bodies.rectangle(this.x, this.y + 10, colliderWidth, colliderHeight, { isSensor: false, label: 'npcCollider' });
         npcCollider.boundsPadding = { x: paddedWidth, y: paddedHeight };
-        let npcSensor = Bodies.circle(this.x, this.y + 2, 48, { isSensor: true, label: 'npcSensor' });
+        let npcSensor = Bodies.circle(this.x, this.y + 2, 36, { isSensor: true, label: 'npcSensor' });
         const compoundBody = Body.create({
             parts: [npcCollider, npcSensor],
             frictionAir: 0.1, 
@@ -105,7 +105,6 @@ export default class NPC extends Entity {
                     if (this.healthbar) this.healthbar.setVisible(true);
                     this.interacting = true;
                     this.scene.setupNPC(this);
-                    // this.scene.setupNPC({ id: this.enemyID, game: this.ascean, enemy: this.combatStats, health: this.combatStats.attributes.healthTotal, type: this.npcType });
                     this.npcTarget = other.gameObjectB;
                     this.stateMachine.setState(States.AWARE);
                 };

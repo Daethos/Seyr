@@ -582,7 +582,7 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
                     ) }
                 </>
             ) : ( '' ) }
-            { state.isEnemy ? (
+            { state.isEnemy && state.computer ? (
                 <>
                     <DialogTree 
                         gameState={gameState} state={state} ascean={state.player} enemy={state.computer} dialogNodes={getNodesForEnemy(state?.computer?.name)} 
@@ -779,7 +779,7 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
                         <Typewriter stringText={"This will entail the world lore of the region you inhabit, the history of the world from the perspective of the enemy in question, and hopefully grant more insight into the cultural mindset."} styling={{ overflow: 'auto' }} performAction={hollowClick} />
                 ) : ( '' ) }
                 </>
-            ) : state.npcType !== 'Merchant-Alchemy' && state.npcType !== 'Merchant-Smith' ? (
+            ) : state.computer && state.npcType !== 'Merchant-Alchemy' && state.npcType !== 'Merchant-Smith' ? (
                 <DialogTree 
                     gameState={gameState} state={state} ascean={gameState.player} enemy={state.computer} dialogNodes={getNodesForNPC(npcIds[state.npcType])} 
                     setKeywordResponses={setKeywordResponses} setPlayerResponses={setPlayerResponses} actions={actions} dispatch={dispatch}

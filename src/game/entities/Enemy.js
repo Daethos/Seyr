@@ -32,7 +32,6 @@ export default class Enemy extends Entity {
     };
 
     constructor(data) {
-        let { scene } = data;
         super({ ...data, name: "enemy", ascean: null, health: 1 }); 
         this.scene.add.existing(this);
         this.enemyID = uuidv4();
@@ -200,24 +199,24 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
             callback: other => {
-                // Other Object is the Player, the Enemy is Aggressive and hasn't 'Fought' yet aka isTriumphant && isDefeated is false
                 if (this.ascean && other.gameObjectB && other.gameObjectB.name === 'player' && this.enemyStatusCheck()) {
-                    this.attacking = other.gameObjectB;
-                    this.inCombat = true;
-                    const newEnemy = this.isNewEnemy(other.gameObjectB);
-                    if (newEnemy) other.gameObjectB.targets.push(this);
-                    if (this.healthbar) this.healthbar.setVisible(true);
-                    this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
-                    this.stateMachine.setState(States.CHASE); 
-                    this.actionTarget = other;
-                    if (!other.gameObjectB.attacking) { // inCombat
-                        if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
-                        other.gameObjectB.inCombat = true;
-                        other.gameObjectB.attacking = this;
-                        other.gameObjectB.currentTarget = this;
-                        console.log('Computer Engaging Combat: [Collide Start]');
-                        this.scene.combatEngaged(true);
-                    };
+                    // this.attacking = other.gameObjectB;
+                    // this.inCombat = true;
+                    // const newEnemy = this.isNewEnemy(other.gameObjectB);
+                    // if (newEnemy) other.gameObjectB.targets.push(this);
+                    // if (this.healthbar) this.healthbar.setVisible(true);
+                    // this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
+                    // this.stateMachine.setState(States.CHASE); 
+                    // this.actionTarget = other;
+                    // if (!other.gameObjectB.attacking) { // inCombat
+                    //     if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
+                    //     other.gameObjectB.inCombat = true;
+                    //     other.gameObjectB.attacking = this;
+                    //     other.gameObjectB.currentTarget = this;
+                    //     console.log('Computer Engaging Combat: [Collide Start]');
+                    //     this.scene.combatEngaged(true);
+                    // };
+                    this.createCombat(other, 'start');
                 } else if (this.playerStatusCheck(other.gameObjectB) && !this.isDead && !this.isAggressive) {
                     const newEnemy = this.isNewEnemy(other.gameObjectB);
                     if (newEnemy) other.gameObjectB.targets.push(this);
@@ -237,22 +236,25 @@ export default class Enemy extends Entity {
             objectA: [enemySensor],
             callback: other => {
                 if (this.playerStatusCheck(other.gameObjectB) && this.enemyStatusCheck() && !this.isAttacking) {
-                    this.attacking = other.gameObjectB;
-                    this.inCombat = true;
-                    const newEnemy = this.isNewEnemy(other.gameObjectB);
-                    if (newEnemy) other.gameObjectB.targets.push(this);
-                    if (this.healthbar) this.healthbar.setVisible(true);
-                    if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
-                    this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
-                    this.stateMachine.setState(States.CHASE); 
-                    this.actionTarget = other;
-                    other.gameObjectB.inCombat = true;
-                    other.gameObjectB.attacking = this;
-                    other.gameObjectB.currentTarget = this;
-                    if (!other.gameObjectB.attacking) { // !scene.combat || !scene.state.combatEngaged
-                        console.log('Computer Engaging Combat: [Collide Active]');
-                        this.scene.combatEngaged(true);
-                    };
+                    // this.attacking = other.gameObjectB;
+                    // this.inCombat = true;
+                    // const newEnemy = this.isNewEnemy(other.gameObjectB);
+                    // if (newEnemy) {
+                    //     if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
+                    //     other.gameObjectB.targets.push(this);
+                    // };
+                    // if (this.healthbar) this.healthbar.setVisible(true);
+                    // this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
+                    // this.stateMachine.setState(States.CHASE); 
+                    // this.actionTarget = other;
+                    // other.gameObjectB.inCombat = true;
+                    // other.gameObjectB.attacking = this;
+                    // other.gameObjectB.currentTarget = this;
+                    // if (!other.gameObjectB.attacking) { // !scene.combat || !scene.state.combatEngaged
+                    //     console.log('Computer Engaging Combat: [Collide Active]');
+                    //     this.scene.combatEngaged(true);
+                    // };
+                    this.createCombat(other, 'during');
                 };
             },
             context: this.scene,
@@ -348,6 +350,27 @@ export default class Enemy extends Entity {
         this.isAggressive = false; // Added to see if that helps with post-combat losses for the player
     };
 
+    createCombat = (combat, when) => {
+        const newEnemy = this.isNewEnemy(combat.gameObjectB);
+        if (!newEnemy) return;
+        combat.gameObjectB.targets.push(this);
+        this.attacking = combat.gameObjectB;
+        this.inCombat = true;
+        if (this.healthbar) this.healthbar.setVisible(true);
+        this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
+        this.stateMachine.setState(States.CHASE); 
+        this.actionTarget = combat;
+
+        if (!combat.gameObjectB.attacking || !combat.gameObjectB.inCombat) { // !inCombat
+            if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
+            combat.gameObjectB.attacking = this;
+            combat.gameObjectB.currentTarget = this;
+            combat.gameObjectB.inCombat = true;
+            console.log(`%c ${this.ascean.name} engaging combat: [Collide ${when}]`, 'color: orange');
+            this.scene.combatEngaged(true);
+        }; 
+    };
+
     combatDataUpdate = (e) => {
         if (this.enemyID !== e.enemyID) {
             if (this.inCombat) this.currentRound = e.combatRound;
@@ -415,7 +438,14 @@ export default class Enemy extends Entity {
         this.inCombat = false;
         this.attacking = null;
         this.isAggressive = false;
-        this.healthbar.destroy();
+        // this.healthbar.destroy();
+        this.healthbar.setVisible(false);
+        this.defeatedTimer = this.scene.time.delayedCall(300000, () => {
+            this.isDefeated = false;
+            this.health = this.ascean.health.total;
+            this.isAggressive = true;
+            this.stateMachine.setState(States.IDLE);
+        }, [], this);
     };
     onDeathEnter = () => {
         this.isDead = true;
@@ -535,7 +565,7 @@ export default class Enemy extends Entity {
         const rangeMultiplier = this.isRanged ? 1.75 : 1;
         const direction = this.attacking.position.subtract(this.position);
         const distance = direction.length();
-        if ( Math.abs(this.originPoint.x - this.position.x) > 350 * rangeMultiplier || Math.abs(this.originPoint.y - this.position.y) > 400 * rangeMultiplier || !this.inCombat || distance > 500 * rangeMultiplier ) {
+        if (Math.abs(this.originPoint.x - this.position.x) > 750 * rangeMultiplier || Math.abs(this.originPoint.y - this.position.y) > 750 * rangeMultiplier || !this.inCombat || distance > 750 * rangeMultiplier) {
             this.stateMachine.setState(States.LEASH);
             return;
         };  
@@ -585,6 +615,7 @@ export default class Enemy extends Entity {
         } else {
             this.isRolling = true; 
         }; 
+        this.handleAnimations();
     };
     onEvasionUpdate = (dt) => {
         if (this.flipX) {
@@ -592,12 +623,9 @@ export default class Enemy extends Entity {
         } else {
             this.setVelocityY(-3); // Was 5
         };
-        this.handleAnimations();
         if (!this.isDodging && !this.isRolling) this.evaluateCombatDistance();
     }; 
-    onEvasionExit = () => {
-        console.log('Evasion Exit'); 
-    };
+    onEvasionExit = () => {};
 
     onAttackEnter = () => {
         this.isAttacking = true;
@@ -628,7 +656,6 @@ export default class Enemy extends Entity {
 
     onDodgeEnter = () => {
         this.isDodging = true; 
-
         this.body.parts[2].position.y += this.sensorDisp;
         this.body.parts[2].circleRadius = 21;
         this.body.parts[1].vertices[0].y += this.colliderDisp;
@@ -637,9 +664,9 @@ export default class Enemy extends Entity {
         this.body.parts[1].vertices[1].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
         this.body.parts[0].vertices[1].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
         this.body.parts[1].vertices[0].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
+        this.handleAnimations();
     };
     onDodgeUpdate = (dt) => {
-        this.handleAnimations();
         if (!this.isDodging) this.evaluateCombatDistance();
     };
     onDodgeExit = () => {
@@ -672,9 +699,9 @@ export default class Enemy extends Entity {
         this.body.parts[2].circleRadius = 21;
         this.body.parts[1].vertices[0].y += this.colliderDisp;
         this.body.parts[1].vertices[1].y += this.colliderDisp; 
+        this.handleAnimations();
     };
     onRollUpdate = (dt) => { 
-        this.handleAnimations();
         if (this.frameCount === 10 && !this.isRanged) this.scene.combatMachine.input('computerAction', 'roll', this.enemyID);
         if (!this.isRolling) this.evaluateCombatDistance();
     };
@@ -798,7 +825,6 @@ export default class Enemy extends Entity {
 
     enemyActionSuccess = () => {
         if (this.isRanged) this.scene.checkPlayerSuccess();
-        console.log(`Enemy Action Success - Current Target: ${this.isCurrentTarget}`);
         if (this.particleEffect) {
             if (this.isCurrentTarget) {
                 this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'computerAction', value: this.particleEffect.action }, id: this.enemyID });
@@ -821,71 +847,68 @@ export default class Enemy extends Entity {
         screenShake(this.scene);
     };
 
+    enemyDodge = () => {
+        this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
+        const dodgeDistance = 2304; // 126
+        const dodgeDuration = 288; // 18  
+        let currentDistance = 0;
+        const dodgeLoop = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+            if (progress >= dodgeDuration || currentDistance >= dodgeDistance) {
+                this.spriteWeapon.setVisible(true);
+                this.dodgeCooldown = 0;
+                this.isDodging = false;
+                this.currentAction = '';
+                return;
+            };
+            const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
+            if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+            if (this.velocity.y > 0.1) this.setVelocityY(dodgeDistance / dodgeDuration);
+            if (this.velocity.y < -0.1) this.setVelocityY(-dodgeDistance / dodgeDuration);
+            currentDistance += Math.abs(dodgeDistance / dodgeDuration);
+            requestAnimationFrame(dodgeLoop);
+        };
+        let startTime = null;
+        requestAnimationFrame(dodgeLoop);
+    };
+
+    enemyRoll = () => {
+        this.rollCooldown = 50; // Was a x7 Mult for Roll Prev aka 2240
+        const rollDistance = 1920; // 140
+        const rollDuration = 320; // 20
+        let currentDistance = 0;
+        const rollLoop = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+            if (progress >= rollDuration || currentDistance >= rollDistance) {
+                this.spriteWeapon.setVisible(true);
+                this.rollCooldown = 0;
+                this.isRolling = false;
+                this.currentAction = '';
+                return;
+            };
+            const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
+            if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
+            if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
+            if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
+            currentDistance += Math.abs(rollDistance / rollDuration);
+            requestAnimationFrame(rollLoop);
+        };
+        let startTime = null;
+        requestAnimationFrame(rollLoop);
+    };
+
     handleAnimations = () => {
         if (this.isDodging) { // DODGING AKA SLIDING OUTSIDE COMBAT
             this.anims.play('player_slide', true);
             this.spriteWeapon.setVisible(false);
-            if (this.dodgeCooldown === 0) {
-                this.dodgeCooldown = 50; // Was a 6x Mult for Dodge Prev aka 1728
-                const dodgeDistance = 2304; // 126
-                const dodgeDuration = 288; // 18  
-                let currentDistance = 0;
-
-                const dodgeLoop = (timestamp) => {
-                    if (!startTime) startTime = timestamp;
-                    const progress = timestamp - startTime;
-                
-                    if (progress >= dodgeDuration || currentDistance >= dodgeDistance) {
-                        this.spriteWeapon.setVisible(true);
-                        this.dodgeCooldown = 0;
-                        this.isDodging = false;
-                        this.currentAction = '';
-                        return;
-                    };
-                
-                    const direction = !this.flipX ? -(dodgeDistance / dodgeDuration) : (dodgeDistance / dodgeDuration);
-                    if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
-                    if (this.velocity.y > 0.1) this.setVelocityY(dodgeDistance / dodgeDuration);
-                    if (this.velocity.y < -0.1) this.setVelocityY(-dodgeDistance / dodgeDuration);
-                    currentDistance += Math.abs(dodgeDistance / dodgeDuration);
-                    requestAnimationFrame(dodgeLoop);
-                };
-                let startTime = null;
-                requestAnimationFrame(dodgeLoop);
-            };
+            if (this.dodgeCooldown === 0) this.enemyDodge();
         };
         if (this.isRolling) { // ROLLING OUTSIDE COMBAT
             this.anims.play('player_roll', true);
             this.spriteWeapon.setVisible(false);
-            if (this.rollCooldown === 0) {
-                this.rollCooldown = 50; // Was a x7 Mult for Roll Prev aka 2240
-                const rollDistance = 1920; // 140
-                
-                const rollDuration = 320; // 20
-                let currentDistance = 0;
-                
-                const rollLoop = (timestamp) => {
-                    if (!startTime) startTime = timestamp;
-                    const progress = timestamp - startTime;
-                
-                    if (progress >= rollDuration || currentDistance >= rollDistance) {
-                        this.spriteWeapon.setVisible(true);
-                        this.rollCooldown = 0;
-                        this.isRolling = false;
-                        this.currentAction = '';
-                        return;
-                    };
-
-                    const direction = this.flipX ? -(rollDistance / rollDuration) : (rollDistance / rollDuration);
-                    if (Math.abs(this.velocity.x) > 0.1) this.setVelocityX(direction);
-                    if (this.velocity.y > 0.1) this.setVelocityY(rollDistance / rollDuration);
-                    if (this.velocity.y < -0.1) this.setVelocityY(-rollDistance / rollDuration);
-                    currentDistance += Math.abs(rollDistance / rollDuration);
-                    requestAnimationFrame(rollLoop);
-                };
-                let startTime = null;
-                requestAnimationFrame(rollLoop);
-            };
+            if (this.rollCooldown === 0) this.enemyRoll();
         }; 
     };
 
@@ -967,22 +990,15 @@ export default class Enemy extends Entity {
     isUnderRangedAttack = () => {
         const player = this.getEnemyParticle();
         if (!player) return;
-        return (this.attacking.isRanged && player && this.checkEvasion(player));
-    };
-
-    evade = () => {
-        if (!this.stateMachine.isCurrentState(States.EVADE)) {
-            console.log(`%c ${this.ascean.name} Evading Ranged Attack`, 'color: gold');
-            this.stateMachine.setState(States.EVADE);
-        };
-    };
+        return (this.attacking.isRanged && this.checkEvasion(player) && !this.stateMachine.isCurrentState(States.EVADE));
+    }; 
 
     currentTargetCheck = () => {
         if (this.scene.state.enemyID === this.enemyID && !this.isCurrentTarget) { // attacking.currentTarget?.enemyID
-            console.log("Wasn't Current Target, Now Selected as Current Target");
+            console.log("%c Wasn't Current Target, Now Selected as Current Target", 'color: #00ff00');
             this.isCurrentTarget = true;
         } else if (this.scene.state.enemyID !== this.enemyID && this.isCurrentTarget) {
-            console.log("Was Current Target, Now Deselected as Current Target");    
+            console.log("%c Was Current Target, Now Deselected as Current Target", 'color: #ff0000');    
             this.isCurrentTarget = false;
         };
     };
@@ -1037,7 +1053,11 @@ export default class Enemy extends Entity {
         if (this.healthbar) this.healthbar.update(this);
         if (this.scrollingCombatText) this.scrollingCombatText.update(this);
         if (this.attacking) {
-            if (this.isUnderRangedAttack()) this.evade();
+            if (this.isUnderRangedAttack()) {
+                console.log(`%c ${this.ascean.name} Evading Ranged Attack`, 'color: gold');
+                this.stateMachine.setState(States.EVADE);
+                return; // Exit early to avoid other state changes
+            };
             this.getDirection();
             this.currentTargetCheck();
         } else if (!this.stateMachine.isCurrentState(States.PATROL)) {

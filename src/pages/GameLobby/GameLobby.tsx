@@ -7,6 +7,7 @@ import ChatBox from '../../components/Chat/ChatBox';
 import userService from "../../utils/userService";
 import Notifications from '../../components/Chat/Notifications';
 import * as chatAPI from '../../utils/chatMessageApi';
+import { SOCKET } from '../../game/sagas/socketSaga';
 
 let socket: any;
 interface Props {
@@ -24,7 +25,7 @@ const GameLobby = ({ user }: Props) => {
     const [isTyping, setIsTyping] = useState<boolean>(false);
 
     useEffect(() => {
-        socket = io.connect("https://ascea.herokuapp.com", { transports: ['websocket'] }); // 'https://ascea.herokuapp.com' || 'http://localhost:3001'
+        socket = io.connect(SOCKET.URL, { transports: ['websocket'] }); // 'https://ascea.herokuapp.com' || 'http://localhost:3001'
         socket.emit("setup", user);
         socket.on("Connected", () => setSocketConnected(true));
 
@@ -60,8 +61,8 @@ const GameLobby = ({ user }: Props) => {
     };
 
     return (
-        <Container className="Game-Lobby-Chat">
-            <div className='mt-4'>
+        <Container className="Game-Lobby-Chat" fluid>
+            <div className='my-3' style={{ maxWidth: '50%', marginLeft: '25%', borderBottom: '1px solid #fdf6d8' }}>
                 <SideDrawer setSelectedChat={setSelectedChat} chats={chats} setChats={setChats} loading={loading} handleSearch={handleSearch} searchResult={searchResult} />
                 <Notifications user={user} notification={notification} setNotification={setNotification} setSelectedChat={setSelectedChat} />
             </div> 

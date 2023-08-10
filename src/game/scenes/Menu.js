@@ -73,6 +73,8 @@ export default class Menu extends Phaser.Scene {
                 case 'Space':
                     this.goPlay();
                     break;
+                default:
+                    break;
             };
         };
         this.input.keyboard.on('keyup', handleKeyUp, this);
