@@ -502,7 +502,7 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
     const capitalize = (word: string): string => word === 'a' ? word?.charAt(0).toUpperCase() : word?.charAt(0).toUpperCase() + word?.slice(1);
 
     return (
-        <>
+        <> { state.computer && ( <> 
         <Modal show={luckoutModalShow} onHide={() => setLuckoutModalShow(false)} centered id='modal-weapon' style={{ zIndex: 9999, top: '-25%' }}>
             <Modal.Header closeButton closeVariant='white' style={{ textAlign: 'center', fontSize: "20px", color: "gold" }}>Hush and Tendril</Modal.Header>
             <Modal.Body style={{ textAlign: 'center' }}>
@@ -798,6 +798,6 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
                 </div>
             ) : ( '' ) }
         </div>
-        </>
+        </> ) } </>
     );
 };

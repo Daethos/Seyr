@@ -352,14 +352,15 @@ export default class Enemy extends Entity {
 
     createCombat = (combat, when) => {
         const newEnemy = this.isNewEnemy(combat.gameObjectB);
-        if (!newEnemy) return;
-        combat.gameObjectB.targets.push(this);
-        this.attacking = combat.gameObjectB;
-        this.inCombat = true;
-        if (this.healthbar) this.healthbar.setVisible(true);
-        this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
-        this.stateMachine.setState(States.CHASE); 
-        this.actionTarget = combat;
+        if (newEnemy) {
+            combat.gameObjectB.targets.push(this);
+            this.attacking = combat.gameObjectB;
+            this.inCombat = true;
+            if (this.healthbar) this.healthbar.setVisible(true);
+            this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
+            this.stateMachine.setState(States.CHASE); 
+            this.actionTarget = combat;
+        };
 
         if (!combat.gameObjectB.attacking || !combat.gameObjectB.inCombat) { // !inCombat
             if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
@@ -440,12 +441,12 @@ export default class Enemy extends Entity {
         this.isAggressive = false;
         // this.healthbar.destroy();
         this.healthbar.setVisible(false);
-        this.defeatedTimer = this.scene.time.delayedCall(300000, () => {
+        this.scene.time.delayedCall(300000, () => {
             this.isDefeated = false;
             this.health = this.ascean.health.total;
-            this.isAggressive = true;
+            this.isAggressive = this.startedAggressive;
             this.stateMachine.setState(States.IDLE);
-        }, [], this);
+        }, null, this);
     };
     onDeathEnter = () => {
         this.isDead = true;
@@ -478,7 +479,7 @@ export default class Enemy extends Entity {
     onIdleUpdate = (dt) => {
         this.idleWait -= dt;
         if (this.idleWait <= 0) {
-            this.idleWait = Phaser.Math.RND.between(3500, 5000);;
+            this.idleWait = Phaser.Math.RND.between(3500, 5000);
             if (this.stateMachine.isCurrentState(States.IDLE)) this.stateMachine.setState(States.PATROL);
         };
     };
