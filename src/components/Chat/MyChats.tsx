@@ -52,42 +52,23 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
         { chats ?  ( chats?.map((chat: any, index: number) => {
             return (
                 <div className="friend-block my-2" key={index}>
-                <span id='friend-card'>
-                    <h3 style={{ fontWeight: 500, fontSize: 25 + 'px', color: 'purple', fontVariant: 'small-caps', marginTop: 7.5 + 'px'}}>
-                        <Button variant="" style={{ color: '#fdf6d8' }} size="lg" onClick={() => setSelectedChat(chat)} key={index}>
-                        <h3>
+                    <h3 style={{ fontWeight: 500, fontSize: '25px', color: '#fdf6d8', fontVariant: 'small-caps' }}>
+                        <Button variant="" className='chat-friend-button' size="lg" onClick={() => setSelectedChat(chat)} key={index}>
+                        <h3 style={{ color: 'gold' }}>
                         { !chat.isGroupChat ? (
                             <> 
-                            <img 
-                                src={chatLogic.getSenderPhoto(user, chat.users)} 
-                                alt={chatLogic.getSender(user, chat.users)} 
-                                style={{ 
-                                    width: '35px', 
-                                    height: '35px', 
-                                    borderRadius: '50%', 
-                                    float: 'left',
-                                }}
-                            />{' '}
+                            <img src={chatLogic.getSenderPhoto(user, chat.users)} alt={chatLogic.getSender(user, chat.users)} className='chat-image' />{' '}
                             {chatLogic.getSender(user, chat.users)}
                             </>
                         ) : (
                             <> 
-                            <img
-                                src={user.photoUrl}
-                                alt={user.username}
-                                style={{ 
-                                    width: '35px', 
-                                    height: '35px', 
-                                    borderRadius: '50%', 
-                                    float: 'left',
-                                }}
-                            />{' '}
+                            <img src={user.photoUrl} alt={user.username} className='chat-image' />{' '}
                             {chat.chatName} 
                             </>
                         ) }
                         </h3>
                         {chat.latestMessages && (
-                            <p style={{ fontSize: 14 + 'px', color: getLastMessageColor(chat.latestMessages, user._id) }}>
+                            <p style={{ fontSize: '14px', color: getLastMessageColor(chat.latestMessages, user._id) }}>
                             <b>{chat.latestMessages.sender.username.charAt(0).toUpperCase() + chat.latestMessages.sender.username.slice(1)} : {' '}</b>
                             { chat.latestMessages.content.length > 50
                                 ? chat.latestMessages.content.substring(0, 51) + '...'
@@ -97,7 +78,6 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
                         )}
                         </Button>
                     </h3>
-                </span>
                 </div>
             )})
         ) : ( <Loading Combat={true} /> )}

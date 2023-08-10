@@ -48,7 +48,7 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
         const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText));     
         filterAscean(filteredResults);
         console.log(searchText, '<- the changing search text');
-    }, [searchText, ascean, filterAscean]);
+    }, [searchText, ascean]);
 
     return (
         <React.Fragment>

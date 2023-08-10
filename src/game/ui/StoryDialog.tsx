@@ -557,7 +557,6 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
                         <p className='darkorangeMarkup'>Sedyrus: 60g</p>
                         <br /><br />`} 
                     styling={{ overflow: 'auto' }} performAction={hollowClick} />
-                    <Currency ascean={gameState.player} />
                     { upgradeItems ? (
                         upgradeItems.map((item: any, index: number) => {
                             return (

@@ -164,11 +164,11 @@ export default class Play extends Phaser.Scene {
         this.minimapBorder.setScrollFactor(0);
         this.minimapBorder.setScale(1 / camera.zoom);
 
-        // // OR using a dark overlay
-        // this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
-        // const darkOverlay = this.add.graphics();
-        // darkOverlay.fillStyle(0x000000, 0.375); // Black with 50% opacity
-        // darkOverlay.fillRect(0, 0, 4096, 4096);
+        // OR using a dark overlay
+        this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
+        const darkOverlay = this.add.graphics();
+        darkOverlay.fillStyle(0x000000, 0.675); // Black with 50% opacity
+        darkOverlay.fillRect(0, 0, 4096, 4096);
 
         this.input.keyboard.on('keydown-Z', () => {
             if (this.minimap.visible) {
@@ -179,6 +179,14 @@ export default class Play extends Phaser.Scene {
                 this.minimapBorder.visible = true;
             };
         });
+
+        // ====================== Lighting ====================== \\
+
+        this.lights.enable();
+        this.playerLight = this.add.pointlight(this.player.x, this.player.y, 0xDAA520, 200, 0.0675, 0.0675); // 0xFFD700 || 0xFDF6D8 || 0xDAA520
+
+        // ====================== Listeners ====================== \\
+
         // this.screenShaker = new ScreenShaker(this);
         this.createWelcome(); 
         this.stateListener(); 
@@ -188,6 +196,14 @@ export default class Play extends Phaser.Scene {
         // this.addPlayerListener();
         // this.removePlayerListener();
         // this.multiplayerListeners();
+
+        // ====================== Debug ====================== \\
+
+        // this.uiContainer = this.add.container(0, 0);
+        // this.fpsText = this.add.text(430, 120, 'FPS: ', { font: '14px Cinzel', fill: '#fdf6d8' });
+        // this.uiContainer.add(this.fpsText);
+        // this.uiContainer.setScrollFactor(0);
+
     };
 
     // ================== Camera ================== \\
@@ -447,6 +463,8 @@ export default class Play extends Phaser.Scene {
         this.npcs.forEach((npc) => npc.update());
         this.combatMachine.processor();
         // this.computerFov();
+        this.playerLight.setPosition(this.player.x, this.player.y);
+        // this.fpsText.setText('FPS: ' + this.game.loop.actualFps.toFixed(2));
     };
     pause() {
         this.scene.pause();

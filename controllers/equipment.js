@@ -43,9 +43,7 @@ async function getTestEquipment(req, res) {
             Trinket
         };
         const { name, type, rarity } = req.body;
-        console.log(name, type, rarity, 'Name, Type, Rarity');
         const equipment = await types[type].findOne({ name, rarity }).exec();
-        console.log(equipment, 'Equipment');
         res.status(200).json({ data: equipment });
     } catch (err) {
         res.status(400).json({ err }); 

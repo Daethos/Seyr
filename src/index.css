@@ -590,9 +590,14 @@ canvas {
 }
 .friend-block {
   width: 100%;
-  height: 100px;
+  height: 125px;
   background-image: linear-gradient(to right top, #000630, #130125, #18001b, #170012, #110008, #140108, #170108, #190207, #240409, #2d0509, #370306, #410000);
   border-radius: 20px;
-  padding: 5px 10px 20px; 
   box-shadow: 0 0 0.7em #ff0195;
+}
+.chat-friend-button {
+  color: #fdf6d8;
+  width: 100%;
+  height: 100%;
+  /* margin-left: -1%; */
 }
