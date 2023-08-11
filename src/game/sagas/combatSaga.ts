@@ -1,12 +1,12 @@
 import * as asceanAPI from '../../utils/asceanApi';
 import pako from "pako";
 import { SagaIterator } from "redux-saga";
-import { call, put, select, takeEvery, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeEvery } from "redux-saga/effects";
 import { CombatData, shakeScreen } from "../../components/GameCompiler/CombatStore";
 import { getNpcDialog } from "../../components/GameCompiler/Dialog";
 import { getNodesForNPC, npcIds } from "../../components/GameCompiler/DialogNode";
 import EventEmitter from "../phaser/EventEmitter";
-import { setPlayerWin, setEnemyWin, setCombat, clearCombat, setCombatTimer, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatInput, setDamageType, setPlayerBlessing, setWeaponOrder, setEffectResponse, setEnemyActions, setCombatResolution, setEnemyPersuaded, setPlayerLuckout, setInstantStatus, setLuckoutFailure, setDrain, getDrainFetch, setPlayerActions } from "../reducers/combatState";
+import { setPlayerWin, setEnemyWin, setCombat, clearCombat, setCombatTimer, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatInput, setDamageType, setPlayerBlessing, setWeaponOrder, setEffectResponse, setEnemyActions, setCombatResolution, setEnemyPersuaded, setPlayerLuckout, setInstantStatus, setLuckoutFailure, setPlayerActions } from "../reducers/combatState";
 import { setStatistics, setDialog, setShowDialog, setTutorialContent } from "../reducers/gameState";
 import { workGetGainExperienceFetch, workGetLootDropFetch } from "./gameSaga";
 import { getSocketInstance } from "./socketManager";

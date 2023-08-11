@@ -555,9 +555,9 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
                         <p className='greenMarkup'>Kyn'gian: 1g</p> |  
                         <p className='blueMarkup'>Senic: 3g</p> | 
                         <p className='purpleMarkup'>Kyris: 12g</p> |  
-                        <p className='darkorangeMarkup'>Sedyrus: 60g</p>
-                        <br /><br />`} 
+                        <p className='darkorangeMarkup'>Sedyrus: 60g</p>`} 
                     styling={{ overflow: 'auto' }} performAction={hollowClick} />
+                    <br />
                     { upgradeItems ? (
                         upgradeItems.map((item: any, index: number) => {
                             return (

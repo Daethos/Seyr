@@ -2,7 +2,7 @@
     "nodes": [
         {
             "id": "0001",
-            "text": "Greethings there, I'm a ${enemy.name}. Whom am I hailing this glorious day?",
+            "text": "Greethings there, I'm a ${enemy.name}. Who are you, this glorious day?",
             "options": [
                 {
                     "text": "Hello there ${enemy.name}, my name is ${ascean.name}.",

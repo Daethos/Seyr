@@ -16,7 +16,7 @@ import { LootDropUI } from '../ui/LootDropUI';
 import { StoryDialog } from '../ui/StoryDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearNpc, getCombatTimerFetch, setToggleDamaged } from '../reducers/combatState';
-import { setShowDialog, setMerchantEquipment, setShowLoot, setGameTimer, setStaminaPercentage, setAsceanViews, setShowPlayer, setDialogTag, setPauseState, setCurrentGame, setScrollEnabled } from '../reducers/gameState';
+import { setShowDialog, setMerchantEquipment, setShowLoot, setGameTimer, setStaminaPercentage, setAsceanViews, setShowPlayer, setDialogTag, setPauseState, setCurrentGame, setScrollEnabled, setCurrentNodeIndex } from '../reducers/gameState';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
 import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
 import { config } from './Config';
@@ -49,6 +49,7 @@ const HostScene = ({ assets, setAssets }: Props) => {
             dispatch(setMerchantEquipment([])); 
         };
         dispatch(clearNpc()); 
+        dispatch(setCurrentNodeIndex(0));
     };
 
     const soundEffects = async (sfx: CombatData): Promise<void> => {

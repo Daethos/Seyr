@@ -116,7 +116,7 @@ canvas {
 	}
 }
 .welcome-text {
-  font-size: 15vw;
+  font-size: 12vw;
   text-align: center;
   font-variant: small-caps;
   font-weight: 500;
@@ -131,7 +131,7 @@ canvas {
 
 }
 .welcome-explanation {
-  font-size: 4vw;
+  font-size: 3vw;
   text-align: center;
   font-variant: small-caps;
   background-image: linear-gradient(to right top, #fdfd00, #ffdd00, #ffa600, #ff8800, #ff5c00);

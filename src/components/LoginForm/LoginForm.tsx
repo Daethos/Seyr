@@ -50,7 +50,7 @@ export default function LoginPage({ handleSignUpOrLogin }: LoginProps) {
           <hr className="orange-border" />
           <ToastAlert error={error} setError={setError} />
           <div className="section-left">
-              <div className="creature-heading">
+              <div className='mt-3' style={{ textAlign: 'center', color: 'gold', fontVariant: 'small-caps' }}>
                   <h1>Login Form</h1>
               </div>
               <svg height="5" width="100%" className="tapered-rule mt-4">

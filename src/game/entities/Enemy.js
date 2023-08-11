@@ -585,10 +585,16 @@ export default class Enemy extends Entity {
         this.handleAnimations();
     };
     onEvasionUpdate = (dt) => {
+        if (this.isDodging) { // DODGING AKA SLIDING OUTSIDE COMBAT
+            this.anims.play('player_slide', true);
+        };
+        if (this.isRolling) { // ROLLING OUTSIDE COMBAT
+            this.anims.play('player_roll', true);
+        }; 
         if (this.flipX) {
-            this.setVelocityY(3); // Was 5
+            this.setVelocityY(2); // Was 3
         } else {
-            this.setVelocityY(-3); // Was 5
+            this.setVelocityY(-2); // Was 3
         };
         if (!this.isDodging && !this.isRolling) this.evaluateCombatDistance();
     }; 
@@ -912,9 +918,12 @@ export default class Enemy extends Entity {
                 this.setVelocityX(direction.x * 2.25); // 2.5
                 this.setVelocityY(direction.y * 2.25); // 2.5
             } else if ((this.attacking.position.subtract(this.position)).length() < 75 && !this.attacking.isRanged) { // < 75
+                // ************************************************************************************************
+                // This enemies who are ranged and players who are melee. An effort to continually keep distance.
+                // ************************************************************************************************
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * -2.0); // -2.25
+                this.setVelocityX(direction.x * -1.75); // -2.25 | -2
                 this.setVelocityY(direction.y * -1.25); // -1.5
             } else if (distanceY < 10) { // Between 75 and 225 and within y-distance
                 this.setVelocityX(0);

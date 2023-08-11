@@ -79,7 +79,7 @@ export default function SignUpPage({ handleSignUpOrLogin }: SignUpProps) {
         <Form onSubmit={handleSubmit} className="signup-form">
             <hr className="orange-border" />
             <div className="section-left">
-                <div className="creature-heading">
+                <div className="mt-3" style={{ textAlign: 'center', color: 'gold', fontVariant: 'small-caps' }}>
                     <h1>Signup Form</h1>
                 </div>
                 <svg height="5" width="100%" className="tapered-rule mt-4">
