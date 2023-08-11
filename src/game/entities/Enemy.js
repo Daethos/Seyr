@@ -169,7 +169,7 @@ export default class Enemy extends Entity {
         const paddedHeight = colliderHeight + 2 * paddingHeight;
         let enemyCollider = Bodies.rectangle(this.x, this.y + 10, colliderWidth, colliderHeight, { isSensor: false, label: 'enemyCollider' });
         enemyCollider.boundsPadding = { x: paddedWidth, y: paddedHeight };
-        let enemySensor = Bodies.circle(this.x, this.y + 2, 48, { isSensor: true, label: 'enemySensor' });
+        let enemySensor = Bodies.circle(this.x, this.y + 2, 36, { isSensor: true, label: 'enemySensor' }); // Sensor was 48
         const compoundBody = Body.create({
             parts: [enemyCollider, enemySensor],
             frictionAir: 0.1, 
@@ -199,23 +199,7 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
             callback: other => {
-                if (this.ascean && other.gameObjectB && other.gameObjectB.name === 'player' && this.enemyStatusCheck()) {
-                    // this.attacking = other.gameObjectB;
-                    // this.inCombat = true;
-                    // const newEnemy = this.isNewEnemy(other.gameObjectB);
-                    // if (newEnemy) other.gameObjectB.targets.push(this);
-                    // if (this.healthbar) this.healthbar.setVisible(true);
-                    // this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
-                    // this.stateMachine.setState(States.CHASE); 
-                    // this.actionTarget = other;
-                    // if (!other.gameObjectB.attacking) { // inCombat
-                    //     if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
-                    //     other.gameObjectB.inCombat = true;
-                    //     other.gameObjectB.attacking = this;
-                    //     other.gameObjectB.currentTarget = this;
-                    //     console.log('Computer Engaging Combat: [Collide Start]');
-                    //     this.scene.combatEngaged(true);
-                    // };
+                if (this.ascean && other.gameObjectB && other.gameObjectB.name === 'player' && this.enemyStatusCheck()) { 
                     this.createCombat(other, 'start');
                 } else if (this.playerStatusCheck(other.gameObjectB) && !this.isDead && !this.isAggressive) {
                     const newEnemy = this.isNewEnemy(other.gameObjectB);
@@ -235,25 +219,7 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideActive({
             objectA: [enemySensor],
             callback: other => {
-                if (this.playerStatusCheck(other.gameObjectB) && this.enemyStatusCheck() && !this.isAttacking) {
-                    // this.attacking = other.gameObjectB;
-                    // this.inCombat = true;
-                    // const newEnemy = this.isNewEnemy(other.gameObjectB);
-                    // if (newEnemy) {
-                    //     if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
-                    //     other.gameObjectB.targets.push(this);
-                    // };
-                    // if (this.healthbar) this.healthbar.setVisible(true);
-                    // this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
-                    // this.stateMachine.setState(States.CHASE); 
-                    // this.actionTarget = other;
-                    // other.gameObjectB.inCombat = true;
-                    // other.gameObjectB.attacking = this;
-                    // other.gameObjectB.currentTarget = this;
-                    // if (!other.gameObjectB.attacking) { // !scene.combat || !scene.state.combatEngaged
-                    //     console.log('Computer Engaging Combat: [Collide Active]');
-                    //     this.scene.combatEngaged(true);
-                    // };
+                if (this.playerStatusCheck(other.gameObjectB) && this.enemyStatusCheck() && !this.isAttacking) { 
                     this.createCombat(other, 'during');
                 };
             },
@@ -657,14 +623,15 @@ export default class Enemy extends Entity {
 
     onDodgeEnter = () => {
         this.isDodging = true; 
+        this.wasFlipped = this.flipX; 
         this.body.parts[2].position.y += this.sensorDisp;
         this.body.parts[2].circleRadius = 21;
         this.body.parts[1].vertices[0].y += this.colliderDisp;
         this.body.parts[1].vertices[1].y += this.colliderDisp; 
-        this.body.parts[0].vertices[0].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
-        this.body.parts[1].vertices[1].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
-        this.body.parts[0].vertices[1].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
-        this.body.parts[1].vertices[0].x += this.flipX ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[0].vertices[0].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[1].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[0].vertices[1].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[0].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
         this.handleAnimations();
     };
     onDodgeUpdate = (dt) => {
@@ -672,13 +639,13 @@ export default class Enemy extends Entity {
     };
     onDodgeExit = () => {
         this.body.parts[2].position.y -= this.sensorDisp;
-        this.body.parts[2].circleRadius = 48;
+        this.body.parts[2].circleRadius = 36;
         this.body.parts[1].vertices[0].y -= this.colliderDisp;
         this.body.parts[1].vertices[1].y -= this.colliderDisp; 
-        this.body.parts[0].vertices[0].x -= this.flipX ? this.colliderDisp : -this.colliderDisp;
-        this.body.parts[1].vertices[1].x -= this.flipX ? this.colliderDisp : -this.colliderDisp;
-        this.body.parts[0].vertices[1].x -= this.flipX ? this.colliderDisp : -this.colliderDisp;
-        this.body.parts[1].vertices[0].x -= this.flipX ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[0].vertices[0].x -= this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[1].x -= this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[0].vertices[1].x -= this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
+        this.body.parts[1].vertices[0].x -= this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
     };
 
     onPostureEnter = () => {
@@ -709,7 +676,7 @@ export default class Enemy extends Entity {
     onRollExit = () => { 
         if (this.scene.state.computerAction !== '') this.scene.combatMachine.input('computerAction', '', this.enemyID);   
         this.body.parts[2].position.y -= this.sensorDisp;
-        this.body.parts[2].circleRadius = 48;
+        this.body.parts[2].circleRadius = 36;
         this.body.parts[1].vertices[0].y -= this.colliderDisp;
         this.body.parts[1].vertices[1].y -= this.colliderDisp;
     };

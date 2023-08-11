@@ -4,7 +4,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 import { useDispatch } from 'react-redux';
-import { getEffectTickFetch, getRemoveEffectFetch, setRemoveEffect } from '../reducers/combatState';
+import { getEffectTickFetch, getRemoveEffectFetch } from '../reducers/combatState';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 import { borderColor, getInnerWidth } from './ItemPopover';
 
@@ -27,37 +27,41 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
         'Silence': 'Prevents the enemy from praying.'
     }; 
 
-    const useStatusEffect = (prayer: StatusEffect, ends: number, pause: boolean, timer: number, combatTimer: number, combat: boolean) => {
-        useEffect(() => {
+    const useStatusEffect = (prayer: StatusEffect, prayerEnd: number, pause: boolean, prayerTimer: number, combatTimer: number, inCombat: boolean) => {
+        const tickEffect = () => {
             if (pause) return;
-            if (ends < prayer.endTime) {
+
+            if (canTick(prayer, prayerTimer, combatTimer)) {
+                // console.log('%c Effect Ticking... !', 'color: gold');
+                dispatch(getEffectTickFetch({ effect: prayer, effectTimer: prayerTimer }));
+            };
+            if (prayerEnd < prayer.endTime) {
+                // console.log('%c Effect Refreshing...', 'color: green');
                 setEndTime(prayer.endTime);
-                setEffectTimer((timer: number) => (timer + 6)); // Add 6 seconds to the timer
+                setEffectTimer(prayerTimer => prayerTimer + (prayer.endTime - prayerEnd));
             };
-            const interval = setInterval(() => {
-                setEffectTimer((timer: number) => timer - 1);
-            }, 1000);
-            if (ends === combatTimer || timer <= 0 || !combat) {
-                // dispatch(setRemoveEffect(prayer.id));
-                dispatch(getRemoveEffectFetch(prayer));
-                clearInterval(interval);
-            };
-            if (pause) clearInterval(interval);
-            if (canTick(prayer, timer)) { 
-                console.log('Effect Tick', prayer, timer);
-                dispatch(getEffectTickFetch({ effect: prayer, effectTimer: timer })); // Used to have combatData: state as first arg/obj prop
-            };
+            const expired = prayerTimer <= 0 || !inCombat || prayerEnd <= combatTimer;
             
-            return () => {
-                clearInterval(interval); // Clean up the interval on unmount
+            if (!expired) {
+                setEffectTimer(prayerTimer => prayerTimer - 1);
+            } else {
+                // console.log(`%c Effect end for ${prayer.playerName}'s ${prayer.prayer}`, 'color: red');
+                dispatch(getRemoveEffectFetch(prayer));
             };
-        }, [ends, pause, timer, combat]);
-    };
+        };
+    
+        useEffect(() => {
+            if (!pause) {
+                const timeout = setTimeout(tickEffect, 1000);
+                return () => clearTimeout(timeout);
+            };
+        }, [prayerTimer, pause, inCombat]);
+    }; 
     useStatusEffect(effect, endTime, pauseState, effectTimer, state.combatTimer, state.combatEngaged);
 
     
-    const canTick = (effect: StatusEffect, timer: number): boolean => {
-        if (timer % 3 === 0 && timer !== (effect.endTime - effect.startTime) && (effect.prayer === 'Heal' || effect.prayer === 'Damage')) return true;
+    const canTick = (effect: StatusEffect, eTimer: number, cTimer: number): boolean => {
+        if (eTimer % 3 === 0 && effect.startTime !== cTimer && (effect.prayer === 'Heal' || effect.prayer === 'Damage')) return true;
         return false;
     }; 
 
@@ -77,8 +81,7 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
                     Duration: {effectTimer}s <br />
                     Start: {effect?.startTime}s | End: {effect?.endTime}s <br />
                     {effect?.refreshes ? `Active Refreshes: ${effect?.activeRefreshes}` : `Active Stacks: ${effect?.activeStacks}`}<br />
-                </p>     
-               
+                </p>      
                 <p>Effect(s): <br />
                 { specials.includes(effect.prayer) ? (
                     <>

@@ -63,6 +63,8 @@ let player = {
   traits: null, // Player Traits
   room: null, // Room
 };
+let combatData = {};
+
 io.on("connection", (socket) => {
   // socket.onAny((_eventName, ...args) => {
     // const data = args[0];
@@ -70,10 +72,10 @@ io.on("connection", (socket) => {
     // console.log((size / 1000), "KBs");
   // });
   console.log(`User Connected: ${socket.id}`);
+
   let connectedUsersCount;
   let personalUser = { user: null, ascean: null };
   let newUser = { user: null, room: null, ascean: null, player: null, ready: false };
-  let combatData = {};
   let newMap = {};
   let duelData = { playerOneData: null, playerTwoData: null };
   let playerStateData = {
@@ -221,8 +223,7 @@ io.on("connection", (socket) => {
   };
 
   const removeEffect = async (data) => {
-    let { effect } = data;
-    const res = await gameService.phaserRemoveTick({ combatData, effect });
+    const res = await gameService.phaserRemoveTick({ combatData, statusEffect: data });
     combatData = {
       ...combatData,
       ...res,

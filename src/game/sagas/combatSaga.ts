@@ -210,12 +210,10 @@ function* workGetCombatSetting(action: any): SagaIterator {
     };
 };
 function* workGetEffectTick(action: any): SagaIterator {
-    console.log(action.payload, "Effect Ticking");
     const socket = getSocketInstance();
     socket.emit(SOCKET.EFFECT_TICK, action.payload);
 };
 function* workGetRemoveEffect(action: any): SagaIterator {
-    console.log(action.payload, "Effect Removing");
     const socket = getSocketInstance();
     socket.emit(SOCKET.REMOVE_EFFECT, action.payload);
 };

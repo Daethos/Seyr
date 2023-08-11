@@ -2937,7 +2937,7 @@ const phaserEffectTickSplitter = async (data) => {
 };
 
 const phaserRemoveTickSplitter = async (data) => {
-    const { combatData, effect: statusEffect } = data;
+    const { combatData, statusEffect } = data;
     if (statusEffect.playerName === combatData.player.name) {
         combatData.playerEffects = combatData.playerEffects.filter(effect => {
             if (effect.id !== statusEffect.id) return true; 
@@ -2946,6 +2946,7 @@ const phaserRemoveTickSplitter = async (data) => {
             const matchingDebuffTarget = combatData.computerWeapons.find(weapon => weapon.name === effect.debuffTarget);
             const matchingDebuffTargetIndex = combatData.computerWeapons.indexOf(matchingDebuffTarget);
             if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+                console.log(`Removing Buff Effect from ${effect.playerName}`);
                 for (let key in effect.effect) {
                     if (key in combatData.weapons[matchingWeaponIndex]) {
                         if (key !== 'dodge') {
@@ -2963,6 +2964,7 @@ const phaserRemoveTickSplitter = async (data) => {
                 };
             };
             if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+                console.log(`Removing Debuff Effect from ${effect.playerName} against ${effect.debuffTarget}`);
                 for (let key in effect.effect) {
                     if (matchingDebuffTargetIndex === -1) return false;
                     if (key in combatData.computerWeapons[matchingDebuffTargetIndex]) {
@@ -2990,6 +2992,7 @@ const phaserRemoveTickSplitter = async (data) => {
             const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
             const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
             if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+                console.log(`Removing Buff Effect from ${effect.playerName}`);
                 for (let key in effect.effect) {
                     if (effect.effect[key] && key !== 'dodge') {
                         combatData.computerWeapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
@@ -3007,6 +3010,7 @@ const phaserRemoveTickSplitter = async (data) => {
                 };
             };
             if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+                console.log(`Removing Debuff Effect from ${effect.playerName} against ${effect.debuffTarget}`);
                 for (let key in effect.effect) {
                     if (effect.effect[key] && key !== 'dodge') {
                         combatData.weapons[matchingDebuffTargetIndex][key] += effect.effect[key];

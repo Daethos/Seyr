@@ -89,50 +89,51 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, state, actions, set
         return () => {
             clearTimeout(dialogTimeout);
         }; 
-    }, [gameState?.currentNodeIndex]);
-  
+    }, [gameState?.currentNodeIndex]); 
+
+    const processText = (text: string, context: any): string => {
+        if (!text) return '';
+        return text.replace(/\${(.*?)}/g, (_, g) => {
+            const value = g.split('.').reduce((obj: { [x: string]: any; }, key: string | number) => obj && obj[key], context);
+            return value;
+        });
+    };
+    
+    const processOptions = (options: DialogNodeOption[], context: any): DialogNodeOption[] => {
+        return options
+            .filter(option => !option.conditions || option.conditions.every(condition => {
+                const { key, operator, value } = condition;
+                const optionValue = getOptionKey(ascean, state, key);
+                switch (operator) {
+                    case '>':
+                        return optionValue > value;
+                    case '>=':
+                        return optionValue >= value;
+                    case '<':
+                        return optionValue < value;
+                    case '<=':
+                        return optionValue <= value;
+                    case '=':
+                        return optionValue === value;
+                    default:
+                        return false;
+                }
+            }))
+            .map(option => ({
+                ...option,
+                text: processText(option.text, context),
+            }));
+    };
+    
     useEffect(() => {
         if (gameState?.currentNode) {
-            let newText = gameState?.currentNode?.text;
-            let newOptions: DialogNodeOption[] = [];
-            if (gameState?.currentNode?.text) {
-                newText = gameState?.currentNode?.text?.replace(/\${(.*?)}/g, (_, g) => eval(g));
-            };
-            if (gameState?.currentNode?.options) {
-                newOptions = gameState?.currentNode?.options.filter(option => {
-                    if (option.conditions) {
-                        return option.conditions.every(condition => {
-                            const { key, operator, value } = condition;
-                            const optionValue = getOptionKey(ascean, state, key); // Hopefully this works!
-                            switch (operator) {
-                                case '>':
-                                    return optionValue > value;
-                                case '>=':
-                                    return optionValue >= value;
-                                case '<':
-                                    return optionValue < value;
-                                case '<=':
-                                    return optionValue <= value;
-                                case '=':
-                                    return optionValue === value;
-                                default:
-                                    return false;
-                            };
-                        });
-                    } else {
-                        return true;
-                    };
-                }).map(option => {
-                    const renderedOption = option.text.replace(/\${(.*?)}/g, (_, g) => eval(g));
-                    return {
-                        ...option,
-                        text: renderedOption,
-                    };
-                });
-            };
+            const { text, options } = gameState.currentNode;
+            const newText = processText(text, { ascean, enemy, state });
+            const newOptions = processOptions(options, { ascean, enemy, state });
             dispatch(setRendering({ text: newText, options: newOptions }));
-        };
-    }, [gameState.currentNode]);
+        }
+    }, [dispatch, gameState.currentNode, ascean, enemy, state]);
+    
 
     const getOptionKey = (ascean: Player, state: any, key: string) => {
         const newKey = key === 'mastery' ? ascean[key].toLowerCase() : key;
