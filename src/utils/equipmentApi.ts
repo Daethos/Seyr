@@ -2,20 +2,18 @@ import tokenService from './tokenService';
 const BASE_URL = '/api/equipment/';
 
 export async function index() {
-    console.log('%c We have made it to the Index in the API Utility', 'color: green')
     return fetch(BASE_URL, {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
     })
-    .then((res) => {
+    .then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        })
-    })
-}
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
+};
 
 export async function getLootDrop(level: number) {
     return fetch(BASE_URL + 'lootdrop/' + level, {
@@ -23,14 +21,13 @@ export async function getLootDrop(level: number) {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
     })
-    .then((res) => {
+    .then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        })
-    })
-}
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
+};
 
 export async function upgradeEquipment(data: object) {
     return fetch(BASE_URL + 'upgrade', {
@@ -41,14 +38,13 @@ export async function upgradeEquipment(data: object) {
         },
         body: JSON.stringify(data)
     })
-    .then((res) => {
+    .then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        })
-    })
-}
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
+};
 
 export async function getTestEquipment(equipment: object) {
     return fetch(BASE_URL + 'test/', {
@@ -72,13 +68,12 @@ export async function getMerchantEquipment(level: number) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        })
-    })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
 };
 
 export async function getPhysicalWeaponEquipment(level: number) {
@@ -86,13 +81,12 @@ export async function getPhysicalWeaponEquipment(level: number) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        })
-    })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
 };
 
 export async function getMagicalWeaponEquipment(level: number) {
@@ -100,13 +94,12 @@ export async function getMagicalWeaponEquipment(level: number) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        })
-    })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
 };
 
 export async function getArmorEquipment(level: number) {
@@ -114,13 +107,12 @@ export async function getArmorEquipment(level: number) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        })
-    })
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    });
 };
 
 export async function getClothEquipment(level: number) {
@@ -128,12 +120,11 @@ export async function getClothEquipment(level: number) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        });
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     });
 };
 
@@ -142,12 +133,11 @@ export async function getJewelryEquipment(level: number) {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
         }
-    }).then((res) => {
+    }).then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        });
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     });
 };
 
@@ -160,12 +150,11 @@ export async function deleteEquipment(data: object) {
             Authorization: 'Bearer ' + tokenService.getToken()
         },
     })
-    .then((res) => {
+    .then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        });
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     });
 };
 
@@ -175,12 +164,11 @@ export async function writeEquipment() {
             Authorization: 'Bearer ' + tokenService.getToken()
         },
     })
-    .then((res) => {
+    .then(async (res) => {
         if(res.ok) return res.json();
-        return res.json().then(response => {
-            console.log(response);
-            throw new Error(response.err);
-        });
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
     });
 };
 

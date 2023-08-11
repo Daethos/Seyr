@@ -4,7 +4,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import { StatusEffect } from '../../components/GameCompiler/StatusEffects';
 import { useDispatch } from 'react-redux';
-import { getEffectTickFetch, setRemoveEffect } from '../reducers/combatState';
+import { getEffectTickFetch, getRemoveEffectFetch, setRemoveEffect } from '../reducers/combatState';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 import { borderColor, getInnerWidth } from './ItemPopover';
 
@@ -27,25 +27,34 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
         'Silence': 'Prevents the enemy from praying.'
     }; 
 
-    useEffect(() => {
-        if (pauseState) return;
-        if (endTime < effect.endTime) setEndTime(effect.endTime);
-        const intervalTimer = setInterval(() => {
-            setEffectTimer((effectTimer: number) => effectTimer - 1);
-        }, 1000);
-        if (endTime === state.combatTimer || effectTimer <= 0 || !state.combatEngaged) {
-            dispatch(setRemoveEffect(effect.id));
-            clearInterval(intervalTimer);
-        };
-        if (pauseState) clearInterval(intervalTimer);
-        if (canTick(effect, effectTimer)) { 
-            dispatch(getEffectTickFetch({ effect, effectTimer })); // Used to have combatData: state as first arg/obj prop
-        };
-        
-        return () => {
-            clearInterval(intervalTimer); // Clean up the interval on unmount
-        };
-    }, [effectTimer, pauseState, endTime]);
+    const useStatusEffect = (prayer: StatusEffect, ends: number, pause: boolean, timer: number, combatTimer: number, combat: boolean) => {
+        useEffect(() => {
+            if (pause) return;
+            if (ends < prayer.endTime) {
+                setEndTime(prayer.endTime);
+                setEffectTimer((timer: number) => (timer + 6)); // Add 6 seconds to the timer
+            };
+            const interval = setInterval(() => {
+                setEffectTimer((timer: number) => timer - 1);
+            }, 1000);
+            if (ends === combatTimer || timer <= 0 || !combat) {
+                // dispatch(setRemoveEffect(prayer.id));
+                dispatch(getRemoveEffectFetch(prayer));
+                clearInterval(interval);
+            };
+            if (pause) clearInterval(interval);
+            if (canTick(prayer, timer)) { 
+                console.log('Effect Tick', prayer, timer);
+                dispatch(getEffectTickFetch({ effect: prayer, effectTimer: timer })); // Used to have combatData: state as first arg/obj prop
+            };
+            
+            return () => {
+                clearInterval(interval); // Clean up the interval on unmount
+            };
+        }, [ends, pause, timer, combat]);
+    };
+    useStatusEffect(effect, endTime, pauseState, effectTimer, state.combatTimer, state.combatEngaged);
+
     
     const canTick = (effect: StatusEffect, timer: number): boolean => {
         if (timer % 3 === 0 && timer !== (effect.endTime - effect.startTime) && (effect.prayer === 'Heal' || effect.prayer === 'Damage')) return true;

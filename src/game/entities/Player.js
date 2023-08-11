@@ -510,7 +510,7 @@ export default class Player extends Entity {
     onAttackEnter = () => {
         this.isAttacking = true;
         this.swingReset();
-        this.scene.checkStamina('attack');
+        this.scene.useStamina(25);
     }; 
     onAttackUpdate = (dt) => {
         if (this.frameCount === 16 && !this.isRanged) {
@@ -532,7 +532,7 @@ export default class Player extends Entity {
     onCounterEnter = () => {
         this.isCountering = true;    
         this.swingReset();
-        this.scene.checkStamina('counter');
+        this.scene.useStamina(10);
     };
     onCounterUpdate = (dt) => {
         if (this.frameCount === 5 && !this.isRanged) {
@@ -555,7 +555,7 @@ export default class Player extends Entity {
     onPostureEnter = () => {
         this.isPosturing = true;
         this.swingReset();
-        this.scene.checkStamina('posture');
+        this.scene.useStamina(15);
     };
     onPostureUpdate = (dt) => {
         if (this.frameCount === 11 && !this.isRanged) {
@@ -577,7 +577,7 @@ export default class Player extends Entity {
     onRollEnter = () => {
         this.isRolling = true;
         if (this.inCombat) this.swingReset();
-        this.scene.checkStamina('roll');
+        this.scene.useStamina(15);
         this.body.parts[2].position.y += this.sensorDisp;
         this.body.parts[2].circleRadius = 21;
         this.body.parts[1].vertices[0].y += this.colliderDisp;
@@ -605,7 +605,7 @@ export default class Player extends Entity {
 
     onDodgeEnter = () => {
         this.isDodging = true;
-        this.scene.checkStamina('dodge');
+        this.scene.useStamina(15);
         this.wasFlipped = this.flipX; 
         this.body.parts[2].position.y += this.sensorDisp;
         this.body.parts[2].circleRadius = 21;

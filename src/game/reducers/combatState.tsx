@@ -24,6 +24,7 @@ const combatSlice = createSlice({
         getEnemySetupFetch: (state, _action) => {},
         getNpcSetupFetch: (state, _action) => {},
         getDrainFetch: (state, _action) => {},
+        getRemoveEffectFetch: (state, _action) => {},
 
         // ==================== Combat Setup / Breakdown ==================== \\
 
@@ -278,6 +279,7 @@ const combatSlice = createSlice({
                 playerEffects: action.payload.playerEffects,  
             };
         },
+        // TODO:FIXME: Create an effect ripper that on top of filtering, reverses any effect if warranted i.e. buff / debuff
         setRemoveEffect: (state, action) => {
             const socket = getSocketInstance();
             socket.emit(SOCKET.REMOVE_EFFECT, action.payload);
@@ -458,6 +460,7 @@ export const {
     getEnemySetupFetch,
     getNpcSetupFetch,
     getDrainFetch,
+    getRemoveEffectFetch,
 
     setCombatPlayer,
     setEnemy,

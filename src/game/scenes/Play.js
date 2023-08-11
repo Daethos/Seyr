@@ -164,10 +164,11 @@ export default class Play extends Phaser.Scene {
         this.minimapBorder.setScrollFactor(0);
         this.minimapBorder.setScale(1 / camera.zoom);
 
-        // OR using a dark overlay
+        // Generic Dark Overlay
+
         this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
         const darkOverlay = this.add.graphics();
-        darkOverlay.fillStyle(0x000000, 0.675); // Black with 50% opacity
+        darkOverlay.fillStyle(0x000000, 0.5); // Black with 50% opacity
         darkOverlay.fillRect(0, 0, 4096, 4096);
 
         this.input.keyboard.on('keydown-Z', () => {
@@ -181,13 +182,33 @@ export default class Play extends Phaser.Scene {
         });
 
         // ====================== Lighting ====================== \\
+        // const width = 960 * 2;
+        // const height = 640 * 2;
+        // const rt = this.make.renderTexture({
+        //     width,
+        //     height
+        // }, true);
+        // // const shader = this.add.shader('Light2D', 0, 0, width, height, ['uMainSampler'], rt);
+        // // rt.fill(0x000000, 1);
+        // rt.draw(layer0, 0, 0); 
+        // rt.setTint(0x808080);
 
+        // const vision = this.make.image({
+        //     x: this.player.x,
+        //     y: this.player.y,
+        //     key: 'vision',
+        //     add: false
+        // })
+        // vision.scale = 5;
+        // rt.mask = new Phaser.Display.Masks.BitmapMask(this, vision);
+        // rt.mask.invertAlpha = true;
+        // rt.setScrollFactor(0);
+        // this.vision = vision;
         this.lights.enable();
         this.playerLight = this.add.pointlight(this.player.x, this.player.y, 0xDAA520, 200, 0.0675, 0.0675); // 0xFFD700 || 0xFDF6D8 || 0xDAA520
 
         // ====================== Listeners ====================== \\
 
-        // this.screenShaker = new ScreenShaker(this);
         this.createWelcome(); 
         this.stateListener(); 
         this.staminaListener();
@@ -279,24 +300,26 @@ export default class Play extends Phaser.Scene {
     // addPlayerListener = () => EventEmitter.on('add-player', this.addPlayer);
     // removePlayerListener = () => EventEmitter.on('remove-player', this.removePlayer);
 
-    enemyStateListener = () => {
-        EventEmitter.on('aggressive-enemy', (e) => {
-            this.enemies.forEach(enemy => {
-                if (enemy.enemyID === e.id) {
-                    enemy.isAggressive = e.isAggressive;
-                };
-            });
-        });
-    };
+    // ================== Listeners ================== \\
 
     enemyLootDropListener = () => EventEmitter.on('enemyLootDrop', (e) => { e.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID: e.enemyID, drop }))); });
+    enemyStateListener = () => EventEmitter.on('aggressive-enemy', (e) => { this.enemies.forEach(enemy => enemy.enemyID === e.id ? enemy.isAggressive = e.isAggressive : null ); });
+    staminaListener = async () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e); 
+    stateListener = async () => EventEmitter.on('update-combat-data', (e) => this.state = e); 
 
+    
+    // ============================ Game ============================ \\
+    
     checkPlayerSuccess = () => {
         if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) this.combatMachine.input('action', '');
     };
-
     clearNonAggressiveEnemy = async () => this.dispatch(clearNonAggressiveEnemy()); 
     clearNPC = async () => EventEmitter.emit('clear-npc'); 
+    combatEngaged = async (bool) => {
+        if (bool) { this.combat = true; } else { this.combat = false; };
+        this.dispatch(getCombatFetch(bool));
+    };
+    drinkFlask = () => this.dispatch(getDrinkFirewaterFetch(this.state.player._id));
     setupEnemy = async (enemy) => {
         const data = { id: enemy.enemyID, game: enemy.ascean, enemy: enemy.combatStats, health: enemy.health, isAggressive: enemy.isAggressive, startedAggressive: enemy.startedAggressive, isDefeated: enemy.isDefeated, isTriumphant: enemy.isTriumphant };
         this.dispatch(getEnemySetupFetch(data));
@@ -305,42 +328,13 @@ export default class Play extends Phaser.Scene {
         const data = { id: npc.npcID, game: npc.ascean, enemy: npc.combatStats, health: npc.health, type: npc.npcType };
         this.dispatch(getNpcSetupFetch(data));
     };
-    combatEngaged = async (engagement) => {
-        if (engagement) { this.combat = true; } else { this.combat = false; };
-        this.dispatch(getCombatFetch(engagement));
-    };
-    stateListener = async () => EventEmitter.on('update-combat-data', (e) => this.state = e); 
     showDialog = async (dialog) => EventEmitter.emit('show-dialog', dialog);
-    stalwart = async (update) => this.dispatch(setStalwart(update));
-    caerenic = async (update) => this.dispatch(setCaerenic(update));
-    staminaListener = async () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e); 
- 
-    checkStamina = (value) => {
-        switch (value) {
-            case 'attack':
-                EventEmitter.emit('update-stamina', 25);
-                break;
-            case 'counter':
-                EventEmitter.emit('update-stamina', 10);
-                break;
-            case 'posture':
-                EventEmitter.emit('update-stamina', 15);
-                break;
-            case 'roll':
-                EventEmitter.emit('update-stamina', 15);
-                break;
-            case 'dodge':
-                EventEmitter.emit('update-stamina', 15);
-                break;
-            default:
-                break;
-        };   
-    };
 
-    drinkFlask = () => this.dispatch(getDrinkFirewaterFetch(this.state.player._id));
-    setState = (key, value) => this.dispatch(setCombatInput({ key, value }));
-    setStateAdd = (key, value) => this.state[key] += value;
-    setGameState = async (key, value) => this.gameState[key] = value;
+    // ============================ Player ============================ \\
+
+    caerenic = async (bool) => this.dispatch(setCaerenic(bool));
+    stalwart = async (bool) => this.dispatch(setStalwart(bool));
+    useStamina = (value) => EventEmitter.emit('update-stamina', value);
 
     setOnGround = async (key, value) => {
         if (key === 'player') {
@@ -420,6 +414,7 @@ export default class Play extends Phaser.Scene {
     };
 
     // ================= Joystick ================= \\
+
     startJoystick(pointer) {
         if (pointer.leftButtonDown()) {
             this.player.joystick.isActive = true;
@@ -465,6 +460,7 @@ export default class Play extends Phaser.Scene {
         // this.computerFov();
         this.playerLight.setPosition(this.player.x, this.player.y);
         // this.fpsText.setText('FPS: ' + this.game.loop.actualFps.toFixed(2));
+        // if (this.vision) this.vision.setPosition(this.player.x, this.player.y);
     };
     pause() {
         this.scene.pause();

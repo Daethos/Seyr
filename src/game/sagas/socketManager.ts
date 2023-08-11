@@ -3,7 +3,7 @@ let socketInstance: io.Socket | null = null;
 
 export const connectToSocket = (url: string): io.Socket => {
     if (!socketInstance) {
-        socketInstance = io.connect(url, { transports: ['websocket'] }); // , reconnection: true, reconnectionDelay: 500, reconnectionAttempts: Infinity
+        socketInstance = io.connect(url, { transports: ['websocket'] , reconnection: true, reconnectionDelay: 500, reconnectionAttempts: Infinity }); // , reconnection: true, reconnectionDelay: 500, reconnectionAttempts: Infinity
     };
     return socketInstance;
 };

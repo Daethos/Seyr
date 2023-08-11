@@ -83,6 +83,18 @@ const FIELDS = [
     'trinket'
 ];
 
+const MODELS = {
+    'Equipment': Equipment,
+    'Weapon': Weapon,
+    'Shield': Shield,
+    'Helmet': Helmet,
+    'Chest': Chest,
+    'Legs': Legs,
+    'Ring': Ring,
+    'Amulet': Amulet,
+    'Trinket': Trinket,
+  };
+
 async function recordSedyrist(req, res) {
     try {
         let { asceanID, successes, failures, total, totalValue } = req.body;
@@ -1330,16 +1342,8 @@ async function quickIndex(req, res) {
 
 async function getOneAscean(req, res) {
     try {
-        let ascean = await Ascean.findById({ _id: req.params.id })
-                                 .populate('user')
-                                 .exec(); 
-        const populated = await Promise.all(FIELDS.map(async field => {
-            const item = await determineItemType(ascean[field]);
-            return item ? item : null;
-        }));
-        populated.forEach((item, index) => {
-            ascean[FIELDS[index]] = item;
-        });
+        let ascean = await Ascean.findById({ _id: req.params.id }).populate('user').exec(); 
+        await fetchItems(ascean);
 
         const inventoryPopulated = ascean.inventory.map(async item => {
             const itemType = await determineItemType(item);
@@ -1359,9 +1363,7 @@ async function getOneAscean(req, res) {
 
 async function getOneAsceanLight(req, res) {
     try {
-        const ascean = await Ascean.findById({ _id: req.params.id })
-                                   .populate('user')
-                                   .exec();
+        const ascean = await Ascean.findById({ _id: req.params.id }).populate('user').exec();
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');
@@ -1419,18 +1421,30 @@ async function getAsceanInventory(req, res) {
     };
 };
 
+const fetchItem = async (id, itemType) => {
+    for (const type of itemType) {
+        const item = await MODELS[type].findById(id).exec();
+        if (item) return item;
+    };
+    return null;
+};
+
+const fetchItems = async (ascean) => {
+    const itemFields = FIELDS.map(field => ({ field, itemType: [field.split('_')[0].charAt(0).toUpperCase() + field.split('_')[0].slice(1), 'Equipment'] }));
+    const populated = await Promise.all(itemFields.map(async ({ field, itemType }) => {
+        const item = await fetchItem(ascean[field], itemType);
+        return item ? item : null;
+    }));
+    populated.forEach((item, index) => {
+        ascean[FIELDS[index]] = item;
+    });
+    return ascean;
+};
+
 async function getOneAsceanClean(req, res) {
     try {
-        let ascean = await Ascean.findById({ _id: req.params.id })
-                                 .populate('user')
-                                 .exec(); 
-        const populated = await Promise.all(FIELDS.map(async field => {
-            const item = await determineItemType(ascean[field]);
-            return item ? item : null;
-        }));
-        populated.forEach((item, index) => {
-            ascean[FIELDS[index]] = item;
-        });
+        let ascean = await Ascean.findById({ _id: req.params.id }).populate('user').exec();
+        await fetchItems(ascean); 
         res.status(200).json({ data: ascean });
     } catch (err) {
         console.log(err, 'Error Getting An Ascean');
@@ -1440,27 +1454,19 @@ async function getOneAsceanClean(req, res) {
 
 async function getAsceanStats(req, res) {
     try {
-        let ascean = await Ascean.findById({ _id: req.params.id })
-                                 .populate('user')
-                                 .exec();
+        let ascean = await Ascean.findById({ _id: req.params.id }).populate('user').exec();
         console.log(ascean.name, "Ascean Getting Stats");
-        const populated = await Promise.all(FIELDS.map(async field => {
-            const item = await determineItemType(ascean[field]);
-            return item ? item : null;
-        }));
-        populated.forEach((item, index) => {
-            ascean[FIELDS[index]] = item;
-        });
+        await fetchItems(ascean);
         let data = await asceanService.asceanCompiler(ascean);
         if (ascean.health.current === -10) ascean.health.current = data.data.attributes.healthTotal;
         if (data.data.attributes.healthTotal > ascean.health.total) { // If the Ascean's health has increased, update the Ascean's health
             ascean.health.total = data.data.attributes.healthTotal;
-            ascean.health.current = data.data.attributes.healthTotal;
             data.data.ascean.health.total = data.data.attributes.healthTotal;
-            if (typeof ascean.currency.gold !== 'number') {
-                const currency = { gold: 0, silver: 0 };
-                ascean.currency = currency;
-            };
+            // ascean.health.current = data.data.attributes.healthTotal;
+            // if (typeof ascean.currency.gold !== 'number') {
+            //     const currency = { gold: 0, silver: 0 };
+            //     ascean.currency = currency;
+            // };
             await ascean.save();
         };
         res.status(200).json({ data });

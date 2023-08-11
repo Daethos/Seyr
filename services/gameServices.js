@@ -325,7 +325,6 @@ const criticalCompiler = async (player, critChance, critClearance, weapon, physi
 }; 
 
 const phaserActionConcerns =  (action) => {
-    console.log(action, "Action In Concern");
     if (action === 'attack' || action === 'posture' || action === 'roll') {
         return true;
     };
@@ -333,7 +332,6 @@ const phaserActionConcerns =  (action) => {
 };
 
 const phaserSuccessConcerns = (counterSuccess, rollSuccess, computerCounterSuccess, computerRollSuccess) => {
-    console.log(counterSuccess, rollSuccess, computerCounterSuccess, computerRollSuccess, "Success Concerns");
     if (counterSuccess || rollSuccess || computerCounterSuccess || computerRollSuccess) {
         return true;
     };
@@ -423,13 +421,18 @@ const weatherEffectCheck = async (weapon, magDam, physDam, weather, critical) =>
     return { magicalDamage, physicalDamage };
 };
 
+
+// TODO:FIXME: Convert this infor a forEach or some shit that gets each effect checked by an ultimate effect ripper that figures out what to do with it
+// TODO:FIXME: Or have a traffic payload concept with a quick switch to get various effects knocked out 
+// TODO:FIXME: i.e. buff - add / stack / pop, debuff - add / pop, heal - add / tick / pop, damage - add / stack / tick / pop, others - add / persist / pop
+
 const statusEffectCheck = async (combatData) => {
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.computerWeapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.computerWeapons.indexOf(matchingDebuffTarget);
-        if ((effect.tick.end === combatData.combatRound || combatData.playerWin === true || combatData.computerWin === true) && effect.enemyName === combatData.computer.name) { // The Effect Expires, Now checking for Nmae too
+        if ((effect.tick.end <= combatData.combatRound || combatData.playerWin === true || combatData.computerWin === true) && effect.enemyName === combatData.computer.name) { // The Effect Expires, Now checking for Nmae too
             if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
                 for (let key in effect.effect) {
                     if (key in combatData.weapons[matchingWeaponIndex]) {
@@ -550,7 +553,7 @@ const statusEffectCheck = async (combatData) => {
         const matchingWeaponIndex = combatData.computerWeapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
-        if (effect.tick.end === combatData.combatRound || combatData.playerWin === true || combatData.computerWin === true) { // The Effect Expires
+        if (effect.tick.end <= combatData.combatRound || combatData.playerWin === true || combatData.computerWin === true) { // The Effect Expires
             if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
                 for (let key in effect.effect) {
                     if (effect.effect[key] && key !== 'dodge') {
@@ -673,31 +676,14 @@ const faithModCompiler = async (player, faithOne, weaponOne, faithTwo, weaponTwo
     if (player.faith === 'adherent' && weaponTwo.influences[0] !== 'Daethos') faithTwo += 5;
     
     const addRarity = async (rarity, faith) => {
-        switch (rarity) {
-            case 'Common': {
-                faith += 1;
-                break;
-            };
-            case 'Uncommon': {
-                faith += 2;
-                break;
-            };
-            case 'Rare': {
-                faith += 3;
-                break;
-            };
-            case 'Epic': {
-                faith += 5;
-                break;
-            };
-            case 'Legendary': {
-                faith += 10;
-            };
-            default: {
-                faith += 0;
-                break;
-            };
+        const modifier = {
+            'Common': 1,
+            'Uncommon': 2,
+            'Rare': 3,
+            'Epic': 5,
+            'Legendary': 10
         };
+        faith += modifier[rarity]; 
         return faith;
     };
 
@@ -760,11 +746,8 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
                 combatData.playerEffects.pop();
             };
             combatData.playerInfluenceDescription = existingEffect.description;
-        } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-            existingEffect.tick.end += 2;
-            existingEffect.endTime += 6;
-            existingEffect.activeStacks += 1;
-            existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.playerAttributes, combatData.playerBlessing);
+        } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs 
+            existingEffect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0]);
             combatData.playerInfluenceDescription = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
             switch (existingEffect.prayer) {
                 case 'Buff': {
@@ -788,74 +771,65 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
                     };
                     break;
                 };
-                case 'Damage': {
-                    existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                default:
                     break;
-                };
             };
         } else if (existingEffect.refreshes) {
             existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
             existingEffect.tick.end += existingEffect.duration + 1;
-            existingEffect.endTime += (existingEffect.duration + 1) * 3;
+            existingEffect.endTime += 6;
             existingEffect.activeRefreshes += 1;
             combatData.playerInfluenceDescription = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
         };
     };
-    if (combatData.dualWielding === true) {
-        if (faithNumberTwo > 90) { 
-            combatData.actionData.push('prayer');
-            combatData.prayerData.push(combatData.playerBlessing);
-            combatData.deityData.push(combatData.weapons[1].influences[0]);
-            combatData.religiousSuccess = true;
-            let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[1].influences[0]}` && effect.prayer === combatData.playerBlessing);   
-            if (!existingEffect) {
-                existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[1], combatData.playerAttributes, combatData.playerBlessing);
-                combatData.playerEffects.push(existingEffect);
-                if (existingEffect.prayer === 'Dispel') {
-                    if (combatData.computerEffects.length > 0) await computerDispel(combatData); 
-                    combatData.playerEffects.pop();
-                };
-                combatData.playerInfluenceDescriptionTwo = existingEffect.description;
-            } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-                existingEffect.tick.end += 2;
-                existingEffect.endTime += 6;
-                existingEffect.activeStacks += 1;
-                existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[1], combatData.playerAttributes, combatData.playerBlessing);
-                combatData.playerInfluenceDescriptionTwo = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
-                switch (existingEffect.prayer) {
-                    case 'Buff': {
-                        for (let key in existingEffect.effect) {
-                            if (existingEffect.effect[key] && key !== 'dodge') {
-                                let modifiedValue = existingEffect.effect[key] + combatData.weapons[1][key];
-                                modifiedValue = roundToTwoDecimals(modifiedValue);
-                                combatData.weapons[1][key] = modifiedValue;
-                            } else {
-                                let modifiedValue = existingEffect.effect[key] - combatData.weapons[1][key];
-                                modifiedValue = roundToTwoDecimals(modifiedValue);
-                                combatData.weapons[1][key] = modifiedValue;
-                            };
-                        };
-                        for (let key in combatData.playerDefense) {
-                            if (existingEffect.effect[key]) {
-                                let modifiedValue = existingEffect.effect[key] + combatData.playerDefense[key];
-                                modifiedValue = roundToTwoDecimals(modifiedValue);
-                                combatData.playerDefense[key] = modifiedValue;
-                            };
-                        };
-                        break;
-                    };
-                    case 'Damage': {
-                        existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
-                        break;
-                    };
-                };
-            } else if (existingEffect.refreshes) {
-                existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
-                existingEffect.tick.end += existingEffect.duration + 1;
-                existingEffect.endTime += (existingEffect.duration + 1) * 3;
-                existingEffect.activeRefreshes += 1;
-                combatData.playerInfluenceDescriptionTwo = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+    if (combatData.dualWielding === true && faithNumberTwo > 90) {
+        combatData.actionData.push('prayer');
+        combatData.prayerData.push(combatData.playerBlessing);
+        combatData.deityData.push(combatData.weapons[1].influences[0]);
+        combatData.religiousSuccess = true;
+        let existingEffect = combatData.playerEffects.find(effect => effect.name === `Gift of ${combatData.weapons[1].influences[0]}` && effect.prayer === combatData.playerBlessing);   
+        if (!existingEffect) {
+            existingEffect = new StatusEffect(combatData, combatData.player, combatData.computer, combatData.weapons[1], combatData.playerAttributes, combatData.playerBlessing);
+            combatData.playerEffects.push(existingEffect);
+            if (existingEffect.prayer === 'Dispel') {
+                if (combatData.computerEffects.length > 0) await computerDispel(combatData); 
+                combatData.playerEffects.pop();
             };
+            combatData.playerInfluenceDescriptionTwo = existingEffect.description;
+        } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+            existingEffect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[1]);
+            combatData.playerInfluenceDescriptionTwo = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+            switch (existingEffect.prayer) {
+                case 'Buff': {
+                    for (let key in existingEffect.effect) {
+                        if (existingEffect.effect[key] && key !== 'dodge') {
+                            let modifiedValue = existingEffect.effect[key] + combatData.weapons[1][key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.weapons[1][key] = modifiedValue;
+                        } else {
+                            let modifiedValue = existingEffect.effect[key] - combatData.weapons[1][key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.weapons[1][key] = modifiedValue;
+                        };
+                    };
+                    for (let key in combatData.playerDefense) {
+                        if (existingEffect.effect[key]) {
+                            let modifiedValue = existingEffect.effect[key] + combatData.playerDefense[key];
+                            modifiedValue = roundToTwoDecimals(modifiedValue);
+                            combatData.playerDefense[key] = modifiedValue;
+                        };
+                    };
+                    break;
+                };
+                default: 
+                    break;
+            };
+        } else if (existingEffect.refreshes) {
+            existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
+            existingEffect.tick.end += existingEffect.duration + 1;
+            existingEffect.endTime += 6;
+            existingEffect.activeRefreshes += 1;
+            combatData.playerInfluenceDescriptionTwo = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
         };
     };
 
@@ -868,10 +842,7 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
                 combatData.computerEffects.push(existingEffect);
                 combatData.computerInfluenceDescription = existingEffect.description;
             } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-                existingEffect.tick.end += 2;
-                existingEffect.endTime += 6;
-                existingEffect.activeStacks += 1;
-                existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computerWeapons[0], combatData.computerAttributes, combatData.computerBlessing);
+                existingEffect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computerWeapons[0]);
                 combatData.computerInfluenceDescription = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
                 switch (existingEffect.prayer) {
                     case 'Buff': {
@@ -895,68 +866,59 @@ const faithFinder = async (combatData) => { // The influence will add a chance t
                         };
                         break;
                     };
-                    case 'Damage': {
-                        existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+                    default:
                         break;
-                    };
                 };
             } else if (existingEffect.refreshes) {
                 existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
                 existingEffect.tick.end += existingEffect.duration + 1;
-                existingEffect.endTime += (existingEffect.duration + 1) * 3;
+                existingEffect.endTime += 6;
                 existingEffect.activeRefreshes += 1;
                 combatData.computerInfluenceDescription = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
             };    
         };
-        if (combatData.computerDualWielding === true) {
-            if (computerFaithNumberTwo > 90) {
-                combatData.computerReligiousSuccess = true;
-                let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computerWeapons[1].influences[0]}` && effect.prayer === combatData.computerBlessing);   
-                if (!existingEffect) {
-                    existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computerWeapons[1], combatData.computerAttributes, combatData.computerBlessing);
-                    combatData.computerEffects.push(existingEffect);
-                    combatData.computerInfluenceDescriptionTwo = existingEffect.description;
-                } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-                    existingEffect.tick.end += 2;
-                    existingEffect.endTime += 6;
-                    existingEffect.activeStacks += 1;
-                    existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computerWeapons[1], combatData.computerAttributes, combatData.computerBlessing);
-                    combatData.computerInfluenceDescriptionTwo = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
-                    switch (existingEffect.prayer) {
-                        case 'Buff': {
-                            for (let key in existingEffect.effect) {
-                                if (existingEffect.effect[key] && key !== 'dodge') {
-                                    let modifiedValue = existingEffect.effect[key] + combatData.computerWeapons[1][key];
-                                    modifiedValue = roundToTwoDecimals(modifiedValue);
-                                    combatData.computerWeapons[1][key] = modifiedValue;
-                                } else {
-                                    let modifiedValue = existingEffect.effect[key] - combatData.computerWeapons[1][key];
-                                    modifiedValue = roundToTwoDecimals(modifiedValue);
-                                    combatData.computerWeapons[1][key] = modifiedValue;
-                                };
+        if (combatData.computerDualWielding === true && computerFaithNumberTwo > 90) {
+            combatData.computerReligiousSuccess = true;
+            let existingEffect = combatData.computerEffects.find(effect => effect.name === `Gift of ${combatData.computerWeapons[1].influences[0]}` && effect.prayer === combatData.computerBlessing);   
+            if (!existingEffect) {
+                existingEffect = new StatusEffect(combatData, combatData.computer, combatData.player, combatData.computerWeapons[1], combatData.computerAttributes, combatData.computerBlessing);
+                combatData.computerEffects.push(existingEffect);
+                combatData.computerInfluenceDescriptionTwo = existingEffect.description;
+            } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
+                existingEffect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.computer, combatData.computerWeapons[1]);
+                combatData.computerInfluenceDescriptionTwo = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
+                switch (existingEffect.prayer) {
+                    case 'Buff': {
+                        for (let key in existingEffect.effect) {
+                            if (existingEffect.effect[key] && key !== 'dodge') {
+                                let modifiedValue = existingEffect.effect[key] + combatData.computerWeapons[1][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computerWeapons[1][key] = modifiedValue;
+                            } else {
+                                let modifiedValue = existingEffect.effect[key] - combatData.computerWeapons[1][key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computerWeapons[1][key] = modifiedValue;
                             };
-                            for (let key in combatData.computerDefense) {
-                                if (existingEffect.effect[key]) {
-                                    let modifiedValue = existingEffect.effect[key] + combatData.computerDefense[key];
-                                    modifiedValue = roundToTwoDecimals(modifiedValue);
-                                    combatData.computerDefense[key] = modifiedValue;
-                                };
+                        };
+                        for (let key in combatData.computerDefense) {
+                            if (existingEffect.effect[key]) {
+                                let modifiedValue = existingEffect.effect[key] + combatData.computerDefense[key];
+                                modifiedValue = roundToTwoDecimals(modifiedValue);
+                                combatData.computerDefense[key] = modifiedValue;
                             };
-                            break;
                         };
-                        case 'Damage': {
-                            existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
-                            break;
-                        };
+                        break;
                     };
-                } else if (existingEffect.refreshes) {
-                    existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
-                    existingEffect.tick.end += existingEffect.duration + 1;
-                    existingEffect.endTime += (existingEffect.duration + 1) * 3;
-                    existingEffect.activeRefreshes += 1;
-                    combatData.computerInfluenceDescriptionTwo = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
-                };    
-            };
+                    default:
+                        break;
+                };
+            } else if (existingEffect.refreshes) {
+                existingEffect.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
+                existingEffect.tick.end += existingEffect.duration + 1;
+                existingEffect.endTime += 6;
+                existingEffect.activeRefreshes += 1;
+                combatData.computerInfluenceDescriptionTwo = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
+            };    
         };
     };
 
@@ -1905,7 +1867,7 @@ const actionSplitter = async (combatData) => {
                 await statusEffectCheck(newData);
                 newData.combatRound += 1;
                 newData.sessionRound += 1;
-                return newData
+                return newData;
             } else {
                 newData.computerCounterSuccess = true;
                 newData.computerSpecialDescription = 
@@ -1916,7 +1878,7 @@ const actionSplitter = async (combatData) => {
                 await statusEffectCheck(newData);
                 newData.combatRound += 1;
                 newData.sessionRound += 1;
-                return newData
+                return newData;
             };
         };
         // If the Player Guesses Right and the Computer Guesses Wrong
@@ -1970,7 +1932,7 @@ const actionSplitter = async (combatData) => {
             await statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
-            return newData
+            return newData;
         } else {
             newData.playerSpecialDescription = 
                 `You failed to Counter ${newData.computer.name}'s ${ newData.computerAction === 'attack' ? 'Focused' : newData.computerAction.charAt(0).toUpperCase() + newData.computerAction.slice(1) } Attack. Heartbreaking!`
@@ -1987,7 +1949,7 @@ const actionSplitter = async (combatData) => {
             await statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
-            return newData
+            return newData;
         } else {
             newData.computerSpecialDescription = 
                 `${newData.computer.name} fails to Counter your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack. Heartbreaking!`
@@ -2566,9 +2528,7 @@ const prayerSplitter = async (combatData, prayer) => {
         };
         combatData.playerInfluenceDescription = existingEffect.description;
     } else if (existingEffect.stacks) { // If the effect already exists and it stacks, update the endTick and intensity, for Damage and Buffs
-        existingEffect.tick.end += 2;
-        existingEffect.activeStacks += 1;
-        existingEffect.effect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0], combatData.playerAttributes, combatData.playerBlessing);
+        existingEffect = StatusEffect.updateEffectStack(existingEffect, combatData, combatData.player, combatData.weapons[0]);
         combatData.playerInfluenceDescription = `${existingEffect.description} Stacked ${existingEffect.activeStacks} times.`;
         switch (existingEffect.prayer) {
             case 'Buff': {
@@ -2576,7 +2536,6 @@ const prayerSplitter = async (combatData, prayer) => {
                     if (existingEffect.effect[key] && key !== 'dodge') {
                         let modifiedValue = combatData.weapons[0][key] + existingEffect.effect[key];
                         modifiedValue = roundToTwoDecimals(modifiedValue);
-                        // console.log(modifiedValue, 'modifiedValue');
                         combatData.weapons[0][key] = modifiedValue;
                     } else {
                         let modifiedValue = combatData.weapons[0][key] - existingEffect.effect[key];
@@ -2593,14 +2552,13 @@ const prayerSplitter = async (combatData, prayer) => {
                 };
                 break;
             };
-            case 'Damage': {
-                existingEffect.effect.damage = Math.round(existingEffect.effect.damage * existingEffect.activeStacks);
+            default: 
                 break;
-            };
         };
     } else if (existingEffect.refreshes) {
         existingEffect.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
         existingEffect.tick.end += existingEffect.duration + 1;
+        existingEffect.endTime += 6;
         existingEffect.activeRefreshes += 1;
         combatData.playerInfluenceDescription = `${existingEffect.description} Refreshed ${existingEffect.activeRefreshes} time(s) for ${existingEffect.duration + 1} round(s).`;
     };
@@ -2758,7 +2716,6 @@ const instantEffectCheck = async (combatData) => {
 };
 
 const consumePrayerSplitter = async (combatData) => {
-    console.log(combatData.prayerSacrifice, combatData.prayerSacrificeName, "Prayer Sacrifice"); 
     if (combatData.prayerSacrifice === '') combatData.prayerSacrifice = combatData.playerEffects[0].prayer;
     if (combatData.prayerSacrificeName === '') combatData.prayerSacrificeName = combatData.playerEffects[0].name;
     combatData.actionData.push('consume');
@@ -2772,7 +2729,6 @@ const consumePrayerSplitter = async (combatData) => {
         if (effect.prayer !== combatData.prayerSacrifice || effect.name !== combatData.prayerSacrificeName || effect.enemyName !== combatData.computer.name) return true;
         switch (combatData.prayerSacrifice) {
             case 'Heal':
-                // console.log("Healing for :", effect.effect.healing * 0.165);
                 combatData.newPlayerHealth += effect.effect.healing * 0.165;
                 combatData.currentPlayerHealth += effect.effect.healing * 0.165;
                 if (combatData.currentPlayerHealth > 0 || combatData.newPlayerHealth > 0) {
@@ -2952,6 +2908,8 @@ const phaserEffectTickSplitter = async (data) => {
                 break;
             };
         };
+    } else {
+        return combatData;
     };
 
     if (combatData.playerWin === true || combatData.computerWin === true) await statusEffectCheck(combatData);
@@ -2976,6 +2934,99 @@ const phaserEffectTickSplitter = async (data) => {
         'computerWin': combatData.computerWin,
     };
     return changes;
+};
+
+const phaserRemoveTickSplitter = async (data) => {
+    const { combatData, effect: statusEffect } = data;
+    if (statusEffect.playerName === combatData.player.name) {
+        combatData.playerEffects = combatData.playerEffects.filter(effect => {
+            if (effect.id !== statusEffect.id) return true; 
+            const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
+            const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
+            const matchingDebuffTarget = combatData.computerWeapons.find(weapon => weapon.name === effect.debuffTarget);
+            const matchingDebuffTargetIndex = combatData.computerWeapons.indexOf(matchingDebuffTarget);
+            if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+                for (let key in effect.effect) {
+                    if (key in combatData.weapons[matchingWeaponIndex]) {
+                        if (key !== 'dodge') {
+                            combatData.weapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                            combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
+                        } else {
+                            combatData.weapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                            combatData.weapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.weapons[matchingWeaponIndex][key]);
+                        };
+                    };
+                    if (key in combatData.playerDefense) {
+                        combatData.playerDefense[key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.playerDefense[key] = roundToTwoDecimals(combatData.playerDefense[key]);
+                    };
+                };
+            };
+            if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+                for (let key in effect.effect) {
+                    if (matchingDebuffTargetIndex === -1) return false;
+                    if (key in combatData.computerWeapons[matchingDebuffTargetIndex]) {
+                        if (key !== 'dodge') {
+                            combatData.computerWeapons[matchingDebuffTargetIndex][key] += effect.effect[key] * effect.activeStacks;
+                            combatData.computerWeapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.computerWeapons[matchingDebuffTargetIndex][key]);
+                        } else {
+                            combatData.computerWeapons[matchingDebuffTargetIndex][key] -= effect.effect[key] * effect.activeStacks;
+                            combatData.computerWeapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.computerWeapons[matchingDebuffTargetIndex][key]);
+                        };
+                    };
+                    if (key in combatData.computerDefense) {
+                        combatData.computerDefense[key] += effect.effect[key] * effect.activeStacks;
+                        combatData.computerDefense[key] = roundToTwoDecimals(combatData.computerDefense[key]);
+                    };
+                };
+            };
+            return false;
+        });
+    } else if (statusEffect.playerName === combatData.computer.name) {
+        combatData.computerEffects = combatData.computerEffects.filter(effect => {
+            if (effect.id !== statusEffect.id) return true;
+            const matchingWeapon = combatData.computerWeapons.find(weapon => weapon.name === effect.weapon);
+            const matchingWeaponIndex = combatData.computerWeapons.indexOf(matchingWeapon);
+            const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
+            const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
+            if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
+                for (let key in effect.effect) {
+                    if (effect.effect[key] && key !== 'dodge') {
+                        combatData.computerWeapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.computerWeapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.computerWeapons[matchingWeaponIndex][key]);
+                    } else {
+                        combatData.computerWeapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
+                        combatData.computerWeapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.computerWeapons[matchingWeaponIndex][key]);
+                    };
+                };
+                for (let key in combatData.computerDefense) {
+                    if (effect.effect[key]) {
+                        combatData.computerDefense[key] -= effect.effect[key] * effect.activeStacks;
+                        combatData.computerDefense[key] = roundToTwoDecimals(combatData.computerDefense[key]);
+                    };
+                };
+            };
+            if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
+                for (let key in effect.effect) {
+                    if (effect.effect[key] && key !== 'dodge') {
+                        combatData.weapons[matchingDebuffTargetIndex][key] += effect.effect[key];
+                        combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
+                    } else {
+                        combatData.weapons[matchingDebuffTargetIndex][key] -= effect.effect[key];
+                        combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
+                    };
+                };
+                for (let key in combatData.playerDefense) {
+                    if (effect.effect[key]) {
+                        combatData.playerDefense[key] += effect.effect[key];
+                        combatData.playerDefense[key] = roundToTwoDecimals(combatData.playerDefense[key]);
+                    };
+                };
+            };
+            return false;
+        });
+    };
+    return combatData;
 };
 
 // ================================= CONTROLLER - SERVICE ===================================== \\
@@ -3033,10 +3084,21 @@ const phaserEffectTick = async (data) => {
     };
 };
 
+const phaserRemoveTick = async (data) => {
+    try {
+        const res = await phaserRemoveTickSplitter(data);
+        return res;
+    } catch (err) {
+        console.log(err, 'Error in the Phaser Effect Tick of Game Services');
+        res.status(400).json({ err });
+    };
+};
+
 module.exports = {
     actionCompiler,
     instantActionCompiler,
     consumePrayer,
     phaserActionCompiler,
-    phaserEffectTick
+    phaserEffectTick,
+    phaserRemoveTick
 };

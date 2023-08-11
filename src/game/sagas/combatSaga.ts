@@ -59,6 +59,7 @@ export function* combatSaga(): SagaIterator {
     yield takeEvery('combat/getPlayerActionFetch', workGetPlayerAction);
     yield takeEvery('combat/getEnemyActionFetch', workGetEnemyAction);
     yield takeEvery('combat/getEffectTickFetch', workGetEffectTick);
+    yield takeEvery('combat/getRemoveEffectFetch', workGetRemoveEffect);
     yield takeEvery('combat/getAsceanHealthUpdateFetch', workGetAsceanHealthUpdate);
     yield takeEvery('combat/getCombatStatisticFetch', workGetCombatStatistic);
     yield takeEvery('combat/getCombatTimerFetch', workGetCombatTimer);
@@ -208,9 +209,15 @@ function* workGetCombatSetting(action: any): SagaIterator {
             break;        
     };
 };
-function workGetEffectTick(action: any): void {
+function* workGetEffectTick(action: any): SagaIterator {
+    console.log(action.payload, "Effect Ticking");
     const socket = getSocketInstance();
     socket.emit(SOCKET.EFFECT_TICK, action.payload);
+};
+function* workGetRemoveEffect(action: any): SagaIterator {
+    console.log(action.payload, "Effect Removing");
+    const socket = getSocketInstance();
+    socket.emit(SOCKET.REMOVE_EFFECT, action.payload);
 };
 export function* workTickResponse(load: any): SagaIterator {
     let dec = decompress(load);

@@ -72,6 +72,7 @@ function* effectResEvent(payload: Uint8Array): SagaIterator {
 };
 
 function* socketSaga(): SagaIterator {
+    
     const socket = yield call(connectToSocket, SOCKET.URL);
     const setupChan = yield call(createSocketEventChannel, socket, SOCKET.PLAYER_SETUP);
     const combatChan = yield call(createSocketEventChannel, socket, SOCKET.COMPUTER_COMBAT_RESPONSE);
@@ -80,7 +81,7 @@ function* socketSaga(): SagaIterator {
     const effectChan = yield call(createSocketEventChannel, socket, SOCKET.EFFECT_TICK_RESPONSE);
     const enemyChan = yield call(createSocketEventChannel, socket, SOCKET.ENEMY_COMBAT_RESPONSE);
     const playerChan = yield call(createSocketEventChannel, socket, SOCKET.PLAYER_COMBAT_RESPONSE);
-    
+
     while (true) {
         try {
             yield takeLatest(setupChan, setupResEvent);
@@ -90,6 +91,7 @@ function* socketSaga(): SagaIterator {
             yield takeEvery(invokeChan, prayerResEvent);
             yield takeEvery(prayerChan, prayerResEvent);
             yield takeEvery(effectChan, effectResEvent);
+
         } catch (error) {
             console.error('Socket error:', error);
         };

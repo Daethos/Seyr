@@ -64,11 +64,11 @@ let player = {
   room: null, // Room
 };
 io.on("connection", (socket) => {
-  socket.onAny((_eventName, ...args) => {
-    const data = args[0];
-    const size = data ? JSON.stringify(data).length : 0;
+  // socket.onAny((_eventName, ...args) => {
+    // const data = args[0];
+    // const size = data ? JSON.stringify(data).length : 0;
     // console.log((size / 1000), "KBs");
-  });
+  // });
   console.log(`User Connected: ${socket.id}`);
   let connectedUsersCount;
   let personalUser = { user: null, ascean: null };
@@ -102,13 +102,11 @@ io.on("connection", (socket) => {
     socket.broadcast.emit('playerMoved', players[socket.id]);
   };
   async function onSetup(userData) {
-    console.log("Setting Up");
     personalUser = {
       ...personalUser,
       user: userData,
     };
     socket.join(userData._id);
-    console.log(userData.username, userData._id);
     socket.emit("Connected");
   };
 
@@ -128,7 +126,6 @@ io.on("connection", (socket) => {
       ...combatData,
       phaser: true
     };
-    console.log(player.user._id, player.room, 'Ascean Setup');
 
     rooms.set(parsedData.user._id);
     socket.join(parsedData.user._id);
@@ -136,17 +133,17 @@ io.on("connection", (socket) => {
   };
 
   const computerCombat = async (data) => {
-    console.time('Weapon Combat');
+    // console.time('Weapon Combat');
     combatData = { ...combatData, ...data };
     const res = await gameService.phaserActionCompiler(combatData); // data
     const deflate = zlib.deflateSync(JSON.stringify(res));
     combatData = { ...combatData, ...res };
     io.to(player.room).emit('computerCombatResponse', deflate);
-    console.timeEnd('Weapon Combat');  
+    // console.timeEnd('Weapon Combat');  
   };
 
   const playerBlindCombat = async (data) => {
-    console.time('Player Blind Combat');
+    // console.time('Player Blind Combat');
     const dec = zlib.inflateSync(data).toString();
     const parse = JSON.parse(dec);
     const blind = { ...combatData, ...parse };
@@ -159,7 +156,7 @@ io.on("connection", (socket) => {
       playerEffects: res.playerEffects,
     };
     io.to(player.room).emit('playerCombatResponse', deflate);
-    console.timeEnd('Player Blind Combat');
+    // console.timeEnd('Player Blind Combat');
   };
 
   const enemyCombat = async (data) => {
@@ -223,9 +220,18 @@ io.on("connection", (socket) => {
     io.to(player.room).emit('effectTickResponse', deflateResponse);
   };
 
+  const removeEffect = async (data) => {
+    let { effect } = data;
+    const res = await gameService.phaserRemoveTick({ combatData, effect });
+    combatData = {
+      ...combatData,
+      ...res,
+    };
+    const deflateResponse = zlib.deflateSync(JSON.stringify(res));
+    io.to(player.room).emit('effectTickResponse', deflateResponse);
+  };
+
   const updateCombatData = async (data) => {  
-    const newData = { ...data };
-    console.log(newData, 'Update Combat Data');
     combatData = {
       ...combatData,
       ...data,
@@ -246,7 +252,6 @@ io.on("connection", (socket) => {
     const inf = zlib.inflateSync(data).toString();
     const parse = JSON.parse(inf);
     combatData = { ...parse };
-    console.log('Setup Combat Response');
   };
 
   const setCombat = async () => {
@@ -256,7 +261,6 @@ io.on("connection", (socket) => {
       'combatRound': 1,
       'sessionRound': combatData.sessionRound === 0 ? 1 : combatData.sessionRound,
     };
-    console.log('Combat Engaged');
   };
 
   const clearCombat = async () => {
@@ -326,15 +330,6 @@ io.on("connection", (socket) => {
       ...combatData,
       'isAggressive': data,
       'combatEngaged': data
-    };
-    console.log('Phaser Aggression Set');  
-  };
-
-  const removeEffect = async (data) => {
-    combatData = {
-      ...combatData,
-      'playerEffects': combatData.playerEffects.filter(effect => effect.id !== data),
-      'computerEffects': combatData.computerEffects.filter(effect => effect.id !== data),
     };
   };
 
