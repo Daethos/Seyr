@@ -42,7 +42,7 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
         } else if (!latestMessages.readBy.includes(userId)) {
             return 'gold';
         } else {
-            return '#fdf6d8';
+            return 'darkgoldenrod';
         };
     };
 
@@ -57,18 +57,18 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
                         <h3 style={{ color: 'gold', width: '90%' }}>
                         { !chat.isGroupChat ? (
                             <> 
-                            <img src={chatLogic.getSenderPhoto(user, chat.users)} alt={chatLogic.getSender(user, chat.users)} className='chat-image' />{' '}
+                            <img style={{ boxShadow: '0 0 0.5em ' + getLastMessageColor(chat.latestMessages, user._id), border: '0.075em solid ' + getLastMessageColor(chat.latestMessages, user._id) }} src={chatLogic.getSenderPhoto(user, chat.users)} alt={chatLogic.getSender(user, chat.users)} className='chat-image' />{' '}
                             <div className='chat-name'>{chatLogic.getSender(user, chat.users)}</div>
                             </>
                         ) : (
                             <> 
-                            <img src={user.photoUrl} alt={user.username} className='chat-image' />{' '}
+                            <img style={{ boxShadow: '0 0 0.5em ' + getLastMessageColor(chat.latestMessages, user._id), border: '0.075em solid ' + getLastMessageColor(chat.latestMessages, user._id) }} src={user.photoUrl} alt={user.username} className='chat-image' />{' '}
                             <div className='chat-name'>{chat.chatName}</div>
                             </>
                         ) }
                         </h3>
                         {chat.latestMessages && (
-                            <p style={{ fontSize: '14px', color: getLastMessageColor(chat.latestMessages, user._id), width: '90%' }}>
+                            <p style={{ fontSize: '14px', color: getLastMessageColor(chat.latestMessages, user._id), width: '100%' }}>
                             <b>{chat.latestMessages.sender.username.charAt(0).toUpperCase() + chat.latestMessages.sender.username.slice(1)} : {' '}</b>
                             { chat.latestMessages.content.length > 50
                                 ? chat.latestMessages.content.substring(0, 51) + '...'

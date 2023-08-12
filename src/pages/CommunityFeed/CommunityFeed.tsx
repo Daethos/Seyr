@@ -30,7 +30,7 @@ const CommunityFeed = () => {
     <Container fluid>
         <CommunitySearch ascean={ascean} user={user} /> 
         <Row className="justify-content-center my-2">
-        <CommunityScores highScores={highScores} />
+        {/* <CommunityScores highScores={highScores} /> */}
         {ascean.map((a: any) => {
           return (
             <CommunityAscean ascean={a} key={a._id} loggedUser={user} />

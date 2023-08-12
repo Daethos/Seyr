@@ -25,7 +25,7 @@ const GameLobby = ({ user }: Props) => {
     const [isTyping, setIsTyping] = useState<boolean>(false);
 
     useEffect(() => {
-        socket = io.connect(SOCKET.URL, { transports: ['websocket'] }); // 'https://ascea.herokuapp.com' || 'http://localhost:3001'
+        socket = io.connect(SOCKET.URL, { transports: ['websocket'], reconnection: true, reconnectionDelay: 500, reconnectionAttempts: Infinity }); // 'https://ascea.herokuapp.com' || 'http://localhost:3001'
         socket.emit("setup", user);
         socket.on("Connected", () => setSocketConnected(true));
 

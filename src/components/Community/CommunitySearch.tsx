@@ -36,7 +36,7 @@ const CommunitySearch = ({ ascean, user }: SearchProps) => {
   
     function handleChange(e: any): void {
         e.preventDefault();
-        setSearchText(e.target.value);
+        setSearchText(e.target.value.toLowerCase());
     };
   
     useEffect(() => {
@@ -45,7 +45,7 @@ const CommunitySearch = ({ ascean, user }: SearchProps) => {
               setAllAscean([]);
               return;
           };
-          const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText));        
+          const filteredResults = ascean.filter((a: any) => a['index'].toLowerCase().includes(searchText));        
           filterAscean(filteredResults);
     }, [searchText, ascean]);
 

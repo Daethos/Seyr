@@ -76,12 +76,14 @@ const NewAscean = ({ createSuccess, handleAsceanCreate }: AsceanProps) => {
             {Symbols.space}
             <div className="top-stats">
             <Preference asceanState={asceanState} setAsceanState={setAsceanState} />
+            </div>
+            </div>
+            <div className='section-right'>
             <Mastery asceanState={asceanState} setState={setAsceanState} />
             <AttributesCreate asceanState={asceanState} setAsceanState={setAsceanState} />
-            <Communal editState={asceanState} setEditState={setAsceanState} />
-            <Hardcore asceanState={asceanState} setAsceanState={setAsceanState} />
+            {/* <Communal editState={asceanState} setEditState={setAsceanState} /> */}
+            {/* <Hardcore asceanState={asceanState} setAsceanState={setAsceanState} /> */}
             {Symbols.space}
-            </div>
             { createSuccess ? (
                 <button 
                     className="btn mt-4" 
@@ -93,7 +95,7 @@ const NewAscean = ({ createSuccess, handleAsceanCreate }: AsceanProps) => {
                 <button 
                     className="btn my-2" 
                     value={asceanState} 
-                    style={{ color: 'blueviolet', fontWeight: 600, fontVariant: 'small-caps', fontSize: '28px', marginLeft: "22%" }}
+                    style={{ color: 'gold', fontWeight: 600, fontVariant: 'small-caps', fontSize: '28px', width: '100%', marginLeft: "auto" }}
                     type="submit">
                 Create Ascean</button>
             ) }

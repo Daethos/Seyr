@@ -17,7 +17,7 @@ const Hardcore = ({ asceanState, setAsceanState }: Props) => {
         <>
           <div className='actions'><h3>Permanent Death</h3></div>
           <p style={{ color: '#fdf6d8', fontSize: "14px" }}>
-              Whether or not you journey with a single life, and can extend some essence of yourself in death. This wildly affects the game and is not recommended for new players.
+              Whether or not you journey with a single life, and can extend some essence of yourself in death. This if currently not active.
           </p>
           <Form.Select onChange={handleHardcore} name="hardcore" className="my-3">
               <option value={asceanState?.hardcore}>Select Preference</option>

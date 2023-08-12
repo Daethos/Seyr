@@ -2013,8 +2013,6 @@
   max-height: 100px;
   border-radius: 50%;
   float: left;
-  border: 0.075em solid gold;
-  box-shadow: 0 0 .5em gold;
 }
 .chat-name {
   left: -50px;
