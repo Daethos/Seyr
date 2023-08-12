@@ -11,7 +11,7 @@ export async function getSettings() {
         return await res.json();
     } else {
         throw new Error('Bad Credentials');
-    }
+    };
 };
 
 export async function updateSettings(settings: any) {
@@ -27,7 +27,7 @@ export async function updateSettings(settings: any) {
         return await res.json();
     } else {
         throw new Error('Bad Credentials');
-    }
+    };
 };
 
 export async function createSettings(settings: any) {
@@ -43,7 +43,7 @@ export async function createSettings(settings: any) {
         return await res.json();
     } else {
         throw new Error('Bad Credentials');
-    }
+    };
 };
 
 export async function deleteSettings() {
@@ -57,5 +57,5 @@ export async function deleteSettings() {
         return await res.json();
     } else {
         throw new Error('Bad Credentials');
-    }
+    };
 };

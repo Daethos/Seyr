@@ -15,12 +15,7 @@ const UserListItem = ({ user, accessChat }: Props) => {
                 <img 
                     src={user.photoUrl} 
                     alt={user.username} 
-                    style={{ 
-                        maxWidth: '75px', 
-                        height: '75px',
-                        borderRadius: '50%', 
-                        float: 'left',
-                    }} 
+                    style={{ maxWidth: '75px', height: '75px', borderRadius: '50%', float: 'left' }} 
                     className="friend-pic"
                 />
             </Link>

@@ -146,7 +146,7 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, state, actions, set
         } else {
             let nextNodeIndex = dialogNodes.findIndex((node: { id: string; }) => node.id === nextNodeId);
             if (nextNodeIndex === -1) nextNodeIndex = 0;
-            console.log("Next Node Index: ", nextNodeIndex, "Next Node ID: ", nextNodeId);
+            // console.log("Next Node Index: ", nextNodeIndex, "Next Node ID: ", nextNodeId);
             dispatch(setCurrentNodeIndex(nextNodeIndex));
         };
     };
@@ -278,7 +278,7 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
         } else { 
             enemyPersuasion *= 1.1; 
         };
-        console.log(persuasionTrait, playerPersuasion, enemyPersuasion, "Persuasion");
+        // console.log(persuasionTrait, playerPersuasion, enemyPersuasion, "Persuasion");
         if (playerPersuasion >= enemyPersuasion) {
             dispatch(getPersuasionFetch({ persuasion, id: state.player._id, persuaded: true }));
             const num = Math.floor(Math.random() * 2); 
@@ -324,7 +324,7 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
         } else { 
             enemyLuck *= 1.25; 
         };
-        console.log(playerLuck, enemyLuck, "Luckout");
+        // console.log(playerLuck, enemyLuck, "Luckout");
         if (playerLuck >= enemyLuck) {
             playReligion();
             dispatch(getLuckoutFetch({ luck, id: state.player._id, luckedOut: true }));
@@ -467,7 +467,7 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
 
     const engageCombat = async (): Promise<void> => {
         await checkingLoot();
-        console.log("engageCombat in StoryDialog.tsx");
+        // console.log("engageCombat in StoryDialog.tsx");
         dispatch(setPhaserAggression(true));
         EventEmitter.emit('aggressive-enemy', { id: state.enemyID, isAggressive: true });
         dispatch(setShowDialog(false));
@@ -493,7 +493,7 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
             } else if (type === 'cloth') {
                 res = await eqpAPI.getClothEquipment(state.player.level);
             };
-            console.log(res.data, 'Res!');
+            // console.log(res.data, 'Res!');
             dispatch(setMerchantEquipment(res.data));
         } catch (err) {
             console.log(err, 'Error Getting Loot!');

@@ -62,7 +62,7 @@ const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
   return (
     <Container>
       <HomeSettings ascean={asceans} loggedUser={user} userProfile={true} accordionState={accordionState} accordionChange={accordionChange} />
-        { asceans.length > 0 ? (
+        { asceans.length && (
           asceans.map((ascean: Player, index: number) => {
             return (
               <SolaAscean
@@ -75,7 +75,7 @@ const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
               />
             )
           })
-        ) : ( '' ) }
+        ) }
     </Container>
   );
 };

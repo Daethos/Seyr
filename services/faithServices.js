@@ -32,72 +32,6 @@ class StatusEffect {
         return specials.includes(prayer) ? true : false;
     };
 
-    static getDeity = () => {
-        return this.deity;
-    };
-    static updateEffectStack(statusEffect, combatData, player, weapon) {
-
-        let updatedEffect = statusEffect;
-
-        updatedEffect.tick.end += 2;
-        updatedEffect.endTime += 6;
-        updatedEffect.activeStacks += 1;
-        let playerIntensity = updatedEffect.intensity.initial * updatedEffect.intensity.magnitude;
-        let isEnemy = combatData.computer === undefined ? combatData.enemy : combatData.computer;
-        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : isEnemy.faith;
-        if ((weapon.influences[0] === 'Daethos' && playerFaith === 'devoted') || (weapon.influences[0] !== 'Daethos' && playerFaith === 'adherent')) {
-            playerIntensity *= 1.15;
-        };
-        updatedEffect.intensity.value += playerIntensity;
-        let effectModifiers = {
-            physical_damage: playerIntensity,
-            magical_damage: playerIntensity,
-            physical_penetration: playerIntensity,
-            magical_penetration: playerIntensity,
-            critical_chance: playerIntensity,
-            critical_damage: playerIntensity / 10,
-            physicalDefenseModifier: playerIntensity,
-            magicalDefenseModifier: playerIntensity,
-            physicalPosture: playerIntensity,
-            magicalPosture: playerIntensity,
-            dodge: playerIntensity,
-            roll: playerIntensity,
-            constitution: playerIntensity,
-            strength: playerIntensity,
-            agility: playerIntensity,
-            achre: playerIntensity,
-            caeren: playerIntensity,
-            kyosir: playerIntensity,
-            healing: playerIntensity * 15,
-            damage: playerIntensity * 15,
-            buff: playerIntensity,
-            debuff: playerIntensity,
-        };
-        let potentialModifiers = {};
-        let realizedModifiers = {};
-        let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realizedComputerDamage;
-        let playerDamage = combatData.player.name === player.name ? combatData.realizedPlayerDamage : enemyDamage;
-
-        playerDamage = effectModifiers.damage; 
-        potentialModifiers = StatusEffect.setModifiers(weapon, potentialModifiers, playerDamage, effectModifiers); 
-
-        switch (updatedEffect.prayer) {
-            case "Buff": {
-                realizedModifiers = StatusEffect.buff(potentialModifiers, realizedModifiers);
-                break;
-            };
-            case "Damage": {
-                realizedModifiers = StatusEffect.damage(potentialModifiers, realizedModifiers);
-                break;
-            };
-            default:
-                break;
-        };
-
-        updatedEffect.effect = realizedModifiers;
-        return updatedEffect;
-    };
-    
     static buff(potentialModifiers, realizedModifiers) {
         realizedModifiers.physicalDefenseModifier = potentialModifiers.physicalDefenseModifier ? Math.round(potentialModifiers.physicalDefenseModifier * 100) / 100 : 0;
         realizedModifiers.magicalDefenseModifier = potentialModifiers.magicalDefenseModifier ? Math.round(potentialModifiers.magicalDefenseModifier * 100) / 100 : 0;
@@ -149,6 +83,9 @@ class StatusEffect {
     static heal(potentialModifiers, realizedModifiers) {
         realizedModifiers.healing = potentialModifiers.healing;
         return realizedModifiers;
+    };
+    static getDeity = () => {
+        return this.deity;
     };
     static setModifiers = (weapon, potentialModifiers, playerDamage, effectModifiers) => {
         switch(weapon.influences[0]) {
@@ -348,9 +285,70 @@ class StatusEffect {
         };
         return potentialModifiers;
     };
-    setName(deity) {
-        return this.name = `Gift of ${deity}`;
-    }; 
+    static updateEffectStack(statusEffect, combatData, player, weapon) {
+        let updatedEffect = statusEffect;
+        updatedEffect.tick.end += 2;
+        updatedEffect.endTime += 6;
+        updatedEffect.activeStacks += 1;
+        let playerIntensity = updatedEffect.intensity.initial * updatedEffect.intensity.magnitude;
+        let isEnemy = combatData.computer === undefined ? combatData.enemy : combatData.computer;
+        let playerFaith = combatData.player.name === player.name ? combatData.player.faith : isEnemy.faith;
+        if ((weapon.influences[0] === 'Daethos' && playerFaith === 'devoted') || (weapon.influences[0] !== 'Daethos' && playerFaith === 'adherent')) {
+            playerIntensity *= 1.15;
+        };
+        updatedEffect.intensity.value += playerIntensity;
+        let effectModifiers = {
+            physical_damage: playerIntensity,
+            magical_damage: playerIntensity,
+            physical_penetration: playerIntensity,
+            magical_penetration: playerIntensity,
+            critical_chance: playerIntensity,
+            critical_damage: playerIntensity / 10,
+            physicalDefenseModifier: playerIntensity,
+            magicalDefenseModifier: playerIntensity,
+            physicalPosture: playerIntensity,
+            magicalPosture: playerIntensity,
+            dodge: playerIntensity,
+            roll: playerIntensity,
+            constitution: playerIntensity,
+            strength: playerIntensity,
+            agility: playerIntensity,
+            achre: playerIntensity,
+            caeren: playerIntensity,
+            kyosir: playerIntensity,
+            healing: playerIntensity * 15,
+            damage: playerIntensity * 15,
+            buff: playerIntensity,
+            debuff: playerIntensity,
+        };
+        let potentialModifiers = {};
+        let realizedModifiers = {};
+        let enemyDamage = combatData.computer === undefined ? combatData.realized_enemy_damage : combatData.realizedComputerDamage;
+        let playerDamage = combatData.player.name === player.name ? combatData.realizedPlayerDamage : enemyDamage;
+
+        playerDamage = effectModifiers.damage; 
+        potentialModifiers = StatusEffect.setModifiers(weapon, potentialModifiers, playerDamage, effectModifiers); 
+
+        switch (updatedEffect.prayer) {
+            case "Buff": {
+                realizedModifiers = StatusEffect.buff(potentialModifiers, realizedModifiers);
+                break;
+            };
+            case "Damage": {
+                realizedModifiers = StatusEffect.damage(potentialModifiers, realizedModifiers);
+                break;
+            };
+            default:
+                break;
+        };
+
+        updatedEffect.effect = realizedModifiers;
+        return updatedEffect;
+    };
+
+    setActiveStacks(intensity) {
+        return this.activeStacks = intensity.value / intensity.initial; // Value is the cumulative stacking of the initial intensity. Initial is the base intensity.
+    };
     setDebuffTarget(data, player, prayer) {
         if (prayer !== 'Debuff') return null;
         let enemyWeapon = data.computerWeapons === undefined ? data.enemy_weapons[0].name : data.computerWeapons[0].name;
@@ -364,19 +362,9 @@ class StatusEffect {
         let duration = Math.floor(player.level / 3 + 1) > 6 ? 6 : Math.floor(player.level / 3 + 1);
         return this.duration = duration;
     };
-    setTick(combatData) {
-        return this.tick = {
-            start: combatData.combatRound,
-            end: combatData.combatRound + this.duration,
-        };
+    setImgURL = (weap) => {
+        return this.imgURL = weap.imgURL;
     };
-    setRefreshes(prayer) {
-        return this.refreshes = prayer === 'Heal' || prayer === 'Debuff' || prayer === 'Avarice' || prayer === 'Denial' || prayer === 'Dispel' || prayer === 'Silence' ? true : false;
-    };
-    setStacks(prayer) {
-        return this.stacks = prayer === 'Buff' || prayer === 'Damage' ? true : false;
-    };
-
     setIntensity(weapon, deity, attributes, player) {
         let attribute = 0;
         let type = '';
@@ -435,9 +423,20 @@ class StatusEffect {
             governance: type,
         };
     };
-
-    setActiveStacks(intensity) {
-        return this.activeStacks = intensity.value / intensity.initial; // Value is the cumulative stacking of the initial intensity. Initial is the base intensity.
+    setName(deity) {
+        return this.name = `Gift of ${deity}`;
+    };
+    setTick(combatData) {
+        return this.tick = {
+            start: combatData.combatRound,
+            end: combatData.combatRound + this.duration,
+        };
+    };
+    setRefreshes(prayer) {
+        return this.refreshes = prayer === 'Heal' || prayer === 'Debuff' || prayer === 'Avarice' || prayer === 'Denial' || prayer === 'Dispel' || prayer === 'Silence' ? true : false;
+    };
+    setStacks(prayer) {
+        return this.stacks = prayer === 'Buff' || prayer === 'Damage' ? true : false;
     };
 
     setEffect(combatData, player, weapon, attributes, prayer) {
@@ -512,9 +511,7 @@ class StatusEffect {
         let description = `${weapon.influences[0]} has channeled a gift through their sigil, ${article} ${weapon.name}, ${prayer === 'Debuff' ? `cursing ${enemy.name}` : prayer === 'Heal' ? `renewing ${player.name} for ${Math.round(effect.healing * 0.33)} per round` : prayer === 'Damage' ? `damaging ${enemy.name} for ${Math.round(effect.damage * 0.33)} per round` : `blessing ${player.name}`} for ${duration} combat rounds [Initial].`;
         return this.description = description;
     };
-    setImgURL = (weap) => {
-        return this.imgURL = weap.imgURL;
-    };
+
 };
 
 module.exports = StatusEffect;

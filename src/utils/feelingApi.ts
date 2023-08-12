@@ -5,9 +5,7 @@ export function createFeeling(asceanID: any, feeling: string) {
     console.log('Feeling in API Utility', feeling)
     return fetch (`${BASE_URL}ascean/${asceanID}/feelings/${feeling}`, {
         method: 'POST',
-        // body: JSON.stringify(feeling),
         headers:  {
-            //'Content-Type': 'application/json',
             Authorization: 'Bearer ' + tokenService.getToken()
         }
     })
@@ -15,7 +13,7 @@ export function createFeeling(asceanID: any, feeling: string) {
         if (res.ok) return res.json();
         throw new Error(res.error);
     });
-}
+};
 
 export function removeFeeling(asceanID: any, feeling: string) {
     return fetch(`${BASE_URL}feelings/${asceanID}/${feeling}`, {
@@ -23,11 +21,11 @@ export function removeFeeling(asceanID: any, feeling: string) {
         headers: {
           Authorization: "Bearer " + tokenService.getToken(),
         }
-      }).then((res: any) => {
+    }).then((res: any) => {
         if (res.ok) return res.json();
         throw new Error(res.error);
-      });
-}
+    });
+};
 
 export function updateFeeling(feelingID: any) {
     return fetch (`${BASE_URL}feelings/${feelingID}`, {
@@ -39,5 +37,5 @@ export function updateFeeling(feelingID: any) {
     .then((res: any) => {
         if (res.ok) return res.json();
         throw new Error(res.error);
-    })
-}
+    });
+};

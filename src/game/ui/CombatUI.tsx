@@ -62,7 +62,6 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
     const getInvokeStyle = {
         textShadow: '0 0 1em ' + borderColor(state?.player?.mastery),
         color: borderColor(state?.player?.mastery),
-        // letterSpacing: "0.5px",
     };
 
     return (

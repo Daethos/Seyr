@@ -2,7 +2,6 @@ import tokenService from './tokenService';
 const BASE_URL = '/api/ascean/';
 
 export async function create(ascean: any) {
-    console.log(ascean, '<- ascean in asceanAPI')
     return fetch(BASE_URL, {
         method: "POST",
         body: JSON.stringify(ascean),

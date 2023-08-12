@@ -17,7 +17,7 @@ export async function accessChat(userId: string) {
     });
 }
 
-export function fetchChat() {
+export async function fetchChat() {
     return fetch (BASE_URL, {
         headers: {
             Authorization: 'Bearer ' + tokenService.getToken()
@@ -29,7 +29,7 @@ export function fetchChat() {
     });
 }
 
-export function createGroupChat(groupData: any) {
+export async function createGroupChat(groupData: any) {
     console.log(groupData, 'We are in the chatAPI')
     return fetch (BASE_URL + `group`, {
         method: 'POST',
@@ -45,7 +45,7 @@ export function createGroupChat(groupData: any) {
     });
 }
 
-export function renameGroup(groupName: object) {
+export async function renameGroup(groupName: object) {
     console.log(groupName, 'New group name in chatAPI')
     return fetch (BASE_URL + `rename`, {
         method: 'PUT',
@@ -61,7 +61,7 @@ export function renameGroup(groupName: object) {
     });
 }
 
-export function addToGroup(user: object) {
+export async function addToGroup(user: object) {
     return fetch (BASE_URL + `groupadd`, {
         method: 'PUT',
         body: JSON.stringify(user),
@@ -76,7 +76,7 @@ export function addToGroup(user: object) {
     });
 }
 
-export function removeFromGroup(user: object) {
+export async function removeFromGroup(user: object) {
     return fetch (BASE_URL + `groupremove`, {
         method: 'PUT',
         body: JSON.stringify(user),

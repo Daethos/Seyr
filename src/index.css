@@ -350,8 +350,7 @@ canvas {
 }
 #pvp-chat {
   grid-row-start: 8;
-}
-
+} 
 .Chat-Window p {
   margin: 0;
 }
@@ -363,9 +362,7 @@ canvas {
   border: 2px solid #770089;
   position: relative;
   cursor: pointer;
-  
 }
-
 .Chat-Body {
   width: 100%;
   height: calc(450px - (45px + 70px));
@@ -374,7 +371,6 @@ canvas {
   overflow-y: scroll;
   overflow-x: hidden;
   position: relative;
-  
 }
 #Chat-Body {
   width: 100%;
@@ -411,10 +407,7 @@ canvas {
   overflow-y: scroll;
   overflow-x: hidden;
   scrollbar-width: none;
-}
-#Chat-Body .message-container::-webkit-scrollbar {
-  display: none;
-}
+} 
 #Chat-Body .message .message-meta {
   display: flex;
   font-size: 10px;
@@ -423,6 +416,8 @@ canvas {
   height: auto;
   padding: 10px;
   display: flex;
+  scrollbar-width: none;
+
 }
 .Chat-Window .Chat-Body .message .message-content {
   width: auto;
@@ -436,15 +431,13 @@ canvas {
   padding: 5px;
   overflow-wrap: break-word;
   word-break: break-word;
+  
 }
 .Chat-Window .Chat-Body .message-container {
   width: 100%;
   height: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
-}
-.Chat-Window .Chat-Body .message-container::-webkit-scrollbar {
-  display: none;
 } 
 #you {
   justify-content: flex-end;
@@ -484,13 +477,26 @@ canvas {
 .side-drawer {
   color: #fdf6d8;
 }
+.chat-footer {
+  width: 100%;
+  display: inline-flex;
+  /* position: absolute; */
+  /* position: relative; */
+
+  /* justify-content: space-between; */
+  /* align-items: center; */
+}
+#message-text {
+  position: absolute;
+  background: black;
+  color: #fdf6d8;
+  border: 2px solid #770089;
+}
 #message-button { 
   float: right;
   background: black;
   font-size: 18px;
   color: red;
-  margin-left: 5px;
-  margin-top: -10%;
   border: 2px solid red;
 }
 @media screen and (min-width: 768px) {

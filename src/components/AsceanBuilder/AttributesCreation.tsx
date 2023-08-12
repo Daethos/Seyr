@@ -32,7 +32,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
 
     const conOut = document.getElementById('con-box') as HTMLOutputElement | null;
     useEffect(() => { 
-        console.log(constitutionOutput, '<- New Constitution Point Total');
         if (conOut !== null) {
             conOut!.innerHTML = `${constitutionOutput}`;
         };
@@ -40,7 +39,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
 
     const strOut = document.getElementById('str-box');
     useEffect(() => {
-        console.log(strengthOutput, '<- New Strength Point Total');
         if (strOut !== null) {
             strOut!.innerHTML = `${strengthOutput}`;
         };
@@ -48,7 +46,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
 
     const agiOut = document.getElementById('agi-box');
     useEffect(() => {
-        console.log(agilityOutput, '<- New Agility Point Total');
         if (agiOut !== null) {
             agiOut!.innerHTML = `${agilityOutput}`;
         };
@@ -56,7 +53,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
 
     const achOut = document.getElementById('ach-box');
     useEffect(() => {
-        console.log(achreOutput, '<- New Achre Point Total');
         if (achOut !== null) {
             achOut!.innerHTML = `${achreOutput}`;
         };
@@ -64,7 +60,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
 
     const caerOut = document.getElementById('caer-box');
     useEffect(() => {
-        console.log(caerenOutput, '<- New Caeren Point Total');
         if (caerOut !== null) {
             caerOut!.innerHTML = `${caerenOutput}`;
         };
@@ -72,7 +67,6 @@ const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
 
     const kyoOut = document.getElementById('kyo-box');
     useEffect(() => {
-        console.log(kyosirOutput, '<- New Kyosir Point Total');
         if (kyoOut !== null) {
             kyoOut!.innerHTML = `${kyosirOutput}`;
         };

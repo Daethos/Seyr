@@ -1,10 +1,9 @@
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import Popover from 'react-bootstrap/Popover';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Loading from '../Loading/Loading';
 import { useEffect, useState } from 'react';
-import { Equipment } from '../GameCompiler/GameStore';
+import { getBorderStyle, itemPopover } from '../../game/ui/ItemPopover';
 
 interface Props {
     weapon_one: any;
@@ -33,78 +32,12 @@ const AsceanImageCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet,
     }, [damage]);
 
     useEffect(() => {
-        if (damaged) {
-            setTimeout(() => {
-                setDamaged(false);
-            }, 1500);
-        };
-    }, [damaged]);
-
-    const itemPopover = (item: Equipment) => {
-        return (
-            <Popover className="text-info" id="popover" style={{ zIndex: 9999 }}>
-            <Popover.Header id="popover-header" className="" as="h2">{item?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></span></Popover.Header>
-            <Popover.Body id="popover-body" className="">
-                { item?.name === 'Empty Weapon Slot' || item?.name === 'Empty Shield Slot' || item?.name === 'Empty Amulet Slot' || item?.name === 'Empty Ring Slot' || item?.name === 'Empty Trinket Slot' ? ( '' ) :  
-                    <>
-                    { item?.type && item?.grip ? (
-                        <>
-                        {item?.type} [{item?.grip}] <br />
-                        {item?.attack_type} [{item?.damage_type?.[0]}{item?.damage_type?.[1] ? ' / ' + item.damage_type[1] : '' }{item?.damage_type?.[2] ? ' / ' + item?.damage_type?.[2] : '' }] <br />
-                        </>
-                    ) : item?.type ? (
-                        <>{item.type} <br /></> 
-                    ) : ( '' ) }
-                {item?.constitution > 0 ? 'CON: +' + item?.constitution + ' ' : ( '' )}
-                {item?.strength > 0 ? 'STR: +' + item?.strength + ' ' : ( '' )}
-                {item?.agility > 0 ? 'AGI: +' + item?.agility + ' ' : ( '' )}
-                {item?.achre > 0 ? 'ACH: +' + item?.achre + ' ' : ( '' )}
-                {item?.caeren > 0 ? 'CAER: +' + item?.caeren + ' ' : ( '' )}
-                {item?.kyosir > 0 ? 'KYO: +' + item?.kyosir + ' ' : ( '' )}<br />
-                Damage: {item?.physical_damage} Phys | {item?.magical_damage} Magi <br />
-                { item?.physical_resistance || item?.magical_resistance ? (
-                    <>
-                    Defense: {item?.physical_resistance} Phys | {item?.magical_resistance} Magi <br />
-                    </>
-                ) : ( '' ) }
-                { item?.physical_penetration || item?.magical_penetration ? (
-                    <>
-                    Penetration: {item?.physical_penetration} Phys | {item?.magical_penetration} Magi <br />
-                    </>
-                ) : ( '' ) }
-                Crit Chance: {item?.critical_chance}% <br />
-                Crit Damage: {item?.critical_damage}x <br />
-                Dodge Timer: {item?.dodge}s <br />
-                Roll Chance: {item?.roll}% <br />
-                { item?.influences && item?.influences?.length > 0 ? (
-                    <>Influence: {item?.influences?.[0]}<br /><br /></>
-                ) : ( '' ) }
-                {item?.rarity}
-                </>}
-            </Popover.Body>
-        </Popover>
-        );
-    };
-
-    function getBorderStyle(rarity: string) {
-        switch (rarity) {
-            case 'Common':
-                return '0.15em solid white';
-            case 'Uncommon':
-                return '0.15em solid green';
-            case 'Rare':
-                return '0.15em solid blue';
-            case 'Epic':
-                return '0.15em solid purple';
-            case 'Legendary':
-                return '0.15em solid darkorange';
-            default:
-                return '0.15em solid grey';
-        };
-    };
+        if (damaged) setTimeout(() => setDamaged(false), 1500);
+    }, [damaged]); 
+ 
     const getItemStyle = (rarity: string) => {
         return {
-            border: getBorderStyle(rarity),
+            border: '0.15em solid ' + getBorderStyle(rarity),
             background: 'black',
             boxShadow: '2px 2px 2px black',
             borderRadius: '0px',

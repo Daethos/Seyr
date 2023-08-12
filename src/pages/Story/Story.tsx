@@ -66,7 +66,7 @@ const Story = () => {
     return (
         <div>
         { gameChange && ( 
-            <HostScene assets={assets} setAssets={setAssets}  /> 
+            <HostScene assets={assets} setAssets={setAssets} /> 
         ) }
         </div>
     );

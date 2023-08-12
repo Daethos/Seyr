@@ -36,8 +36,9 @@ export const itemPopover = (item: Equipment, stalwart?: boolean, caerenic?: bool
                 Crit Damage: {item?.critical_damage}x <br />
                 Roll Chance: {item?.roll}% <br />
                 { item?.influences && item?.influences?.length > 0 ? (
-                    <>Influence: {item?.influences?.[0]}<br /><br /></>
+                    <>Influence: {item?.influences?.[0]}<br /></>
                 ) : ( '' ) }
+                <br />
                 <p style={{ color: getBorderStyle(item?.rarity) }}>
                 {item?.rarity}
                 </p>
@@ -47,7 +48,6 @@ export const itemPopover = (item: Equipment, stalwart?: boolean, caerenic?: bool
                         You receive 50% less poise damage. 
                         You receive 10% less damage. 
                         You cannot dodge or roll.
-                        {/*  Perhaps you cannot dodge or roll in the future This slows your movement by 15%. */}
                     </p>
                 ) : ( '' ) } 
                 { caerenic ? (

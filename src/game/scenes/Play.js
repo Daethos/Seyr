@@ -221,7 +221,7 @@ export default class Play extends Phaser.Scene {
         // ====================== Debug ====================== \\
 
         // this.uiContainer = this.add.container(0, 0);
-        // this.fpsText = this.add.text(430, 120, 'FPS: ', { font: '14px Cinzel', fill: '#fdf6d8' });
+        // this.fpsText = this.add.text(430, 110, 'FPS: ', { font: '16px Cinzel', fill: '#fdf6d8' });
         // this.uiContainer.add(this.fpsText);
         // this.uiContainer.setScrollFactor(0);
 

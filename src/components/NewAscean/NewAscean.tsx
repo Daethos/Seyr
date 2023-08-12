@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import './NewAscean.css';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -60,10 +60,7 @@ const NewAscean = ({ createSuccess, handleAsceanCreate }: AsceanProps) => {
             };
         };
         createAscean(); 
-    };
-    useEffect(() => {
-        console.log(asceanState, '<- New Statistics');
-    }, [asceanState]);
+    }; 
 
     return (
         <Row className="justify-content-center my-3" >
