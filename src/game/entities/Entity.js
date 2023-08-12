@@ -333,7 +333,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     checkMeleeOrRanged = (weapon) => {
         this.isRanged = weapon?.attack_type === 'Magic' || weapon?.type === 'Bow' || weapon?.type === 'Greatbow';
-        const gripToSwingTimer = { 'One Hand': 1000, 'Two Hand': 1500 }; // 750, 1250 [old]
+        const gripToSwingTimer = { 'One Hand': 800, 'Two Hand': 1250 }; // 750, 1250 [old]
         this.swingTimer = gripToSwingTimer[weapon?.grip] || 0;
         this.hasBow = this.checkBow(weapon);
     };
@@ -363,9 +363,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         let glowColor = setColor(this.ascean.mastery);
 
         const updateGlow = (time) => {
-            if (glowFilter) {
-                glowFilter.remove(object);
-            };
+            if (glowFilter) glowFilter.remove(object);
 
             const outerStrength = 2 + Math.sin(time * 0.005) * 2; // Adjust the frequency and amplitude as needed
             const innerStrength = 2 + Math.cos(time * 0.005) * 2;
@@ -447,16 +445,13 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 
                 if (this.frameCount === 10) {
                     if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
-                        console.log('Player Counter Success');
                         this.actionSuccess = true;
                         this.attackedTarget = this.triggeredActionAvailable;
                     }; 
                     if (entity === 'enemy' && target && !this.isRanged) {
                         const direction = target.position.subtract(this.position);
                         const distance = direction.length();
-                        if (distance < 51) {
-                            this.actionSuccess = true;
-                        };
+                        if (distance < 51) this.actionSuccess = true;
                     };
                 };
             };
@@ -470,10 +465,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
             };
             if (entity === 'enemy' && this.frameCount === 10 && this.attacking && this.inCombat && this.hasMagic) {
-                // console.log('Creating Roll Effect');
                 this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.currentDamageType);    
             } else if (entity === 'enemy' && this.frameCount === 10 && this.attacking && this.inCombat && this.hasBow) {
-                // console.log('Creating Roll Effect');
                 this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
             };
             this.spriteShield.setVisible(false);
@@ -485,13 +478,13 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             } else if (entity === 'player' && this.hasBow && this.frameCount === 16) {
                 this.particleEffect = this.scene.particleManager.addEffect('attack', this, 'arrow');
             };
+
             if (entity === 'enemy' && this.hasMagic && this.frameCount === 16 && this.attacking) {
-                // if (this.frameCount === 16) console.log('Creating Attack Effect');
                 this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.currentDamageType);
             } else if (entity === 'enemy' && this.hasBow && this.frameCount === 16 && this.attacking) {
-                // if (this.frameCount === 16) console.log('Creating Attack Effect');
                 this.particleEffect = this.scene.particleManager.addEffect('attack', this, 'arrow');
             };
+
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
 
             if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
@@ -546,7 +539,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(45);
                     };
                     if (this.frameCount === 39) {
-                        console.log("Frame Success: Attack");
                         this.spriteWeapon.setAngle(60);
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable) {
                             this.attackedTarget = this.triggeredActionAvailable;
@@ -555,9 +547,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();
-                            if (distance < 51) {
-                                this.actionSuccess = true;
-                            };
+                            if (distance < 51) this.actionSuccess = true;
                         };
                     }; 
                 } else { 
@@ -610,7 +600,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(45);
                     };
                     if (this.frameCount === 39) {
-                        console.log("Frame Success: Attack");
                         this.spriteWeapon.setAngle(30);
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable) {
                             this.actionSuccess = true;
@@ -619,9 +608,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();
-                            if (distance < 51) {
-                                this.actionSuccess = true;
-                            };
+                            if (distance < 51) this.actionSuccess = true;
                         };
                     }; 
                 };
@@ -679,16 +666,13 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(-170);
                         this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
-                            console.log('Player Attack Success');
                             this.actionSuccess = true;
                             this.attackedTarget = this.triggeredActionAvailable;
                         };
                         if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();
-                            if (distance < 51) {
-                                this.actionSuccess = true;
-                            };
+                            if (distance < 51) this.actionSuccess = true;
                         };
                     };
                     if (this.frameCount === 40) {
@@ -753,16 +737,13 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setAngle(90);
                         this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
-                            console.log('Player Attack Success');
                             this.actionSuccess = true;
                             this.attackedTarget = this.triggeredActionAvailable;
                         };
                         if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();
-                            if (distance < 51) {
-                                this.actionSuccess = true;
-                            };
+                            if (distance < 51) this.actionSuccess = true;
                         };
                     };
                     if (this.frameCount === 40) {
@@ -784,10 +765,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
             };
             if (entity === 'enemy' && this.hasMagic && this.frameCount === 11 && this.attacking) {
-                if (this.frameCount === 11) console.log('Creating Posture Effect');
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.currentDamageType);
             } else if (entity === 'enemy' && this.hasBow && this.frameCount === 11 && this.attacking) {
-                if (this.frameCount === 11) console.log('Creating Posture Effect');
                 this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
             };
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
@@ -852,16 +831,13 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteShield.setOrigin(1, 0.15);
                         this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
-                            console.log('Player Posture Success');
                             this.actionSuccess = true;
                             this.attackedTarget = this.triggeredActionAvailable;
                         };
                         if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();
-                            if (distance < 51) {
-                                this.actionSuccess = true;
-                            };
+                            if (distance < 51) this.actionSuccess = true;
                         };
                     }; 
                 } else {
@@ -895,16 +871,13 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteShield.setOrigin(0, 0.15);
                         this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
-                            console.log('Player Posture Success');
                             this.actionSuccess = true; 
                             this.attackedTarget = this.triggeredActionAvailable;
                         };
                         if (entity === 'enemy' && target && !this.isRanged) {
                             const direction = target.position.subtract(this.position);
                             const distance = direction.length();
-                            if (distance < 51) {
-                                this.actionSuccess = true;
-                            };
+                            if (distance < 51) this.actionSuccess = true;
                         };
                     };
                 };
@@ -978,9 +951,6 @@ export const screenShake = (scene, duration = 80, intensity = 0.015) => {
     
     if ("vibrate" in navigator) navigator.vibrate(duration);
     scene.cameras.main.shake(duration, intensity);
-    // pauseGame(scene, 20).then(() => {
-    //     scene.resume();
-    // });
     
     const decayInterval = setInterval(() => {
         totalTrauma -= 1.05 / duration;

@@ -549,7 +549,7 @@ canvas {
   position: absolute;
   display: grid;
   grid-template-columns: repeat(4, 25%);
-  grid-template-rows: repeat(10, 17.5%);
+  grid-template-rows: repeat(100, 17.5%);
   z-index: 9999;
   color: #fdf6d8; 
   height: 100%;

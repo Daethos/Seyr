@@ -16,6 +16,44 @@ import playerAttacksPNG from '../images/player_attacks.png';
 import playerAttacksJSON from '../images/player_attacks_atlas.json';
 import playerAttacksAnim from '../images/player_attacks_anim.json';
 import EventEmitter from "../phaser/EventEmitter";
+
+const PLAYER = {
+    COLLIDER: {
+        DISPLACEMENT: 16,
+        HEIGHT: 36,
+        WIDTH: 20,
+
+    },
+    SPEED: {
+        INITIAL: 1.5, // 1.75
+        ACCELERATION: 0.1,
+        DECELERATION: 0.05,
+        CAERENIC: 0.5,
+    },  
+    SCALE: {
+        SELF: 0.8,
+        SHIELD: 0.6,
+        WEAPON: {
+            ONE: 0.5,
+            TWO: 0.65,
+        },
+    },
+    SENSOR: {
+        COMBAT: 48,
+        DEFAULT: 36,
+        DISPLACEMENT: 12,
+        EVADE: 21,
+    },
+    STAMINA: {
+        ATTACK: 25,
+        COUNTER: 10,
+        DODGE: 15,
+        POSTURE: 15,
+        ROLL: 15,
+        TSHAER: 25,
+        INVOKE: -15,
+    },
+};
  
 export default class Player extends Entity {
     static preload(scene) { 
@@ -36,9 +74,9 @@ export default class Player extends Entity {
         this.playerID = scene.state.player._id;
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteName);
         if (scene?.state?.player?.weapon_one?.grip === 'Two Hand') {
-            this.spriteWeapon.setScale(0.65);
+            this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON.TWO);
         } else {
-            this.spriteWeapon.setScale(0.5);
+            this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON.ONE);
         };
         this.spriteWeapon.setOrigin(0.25, 1);
         this.scene.add.existing(this);
@@ -57,7 +95,7 @@ export default class Player extends Entity {
 
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
-        this.spriteShield.setScale(0.6);
+        this.spriteShield.setScale(PLAYER.SCALE.SHIELD);
         this.spriteShield.setOrigin(0.5, 0.5);
         this.scene.add.existing(this.spriteShield);
         this.spriteShield.setDepth(this + 1);
@@ -65,8 +103,8 @@ export default class Player extends Entity {
 
         this.playerVelocity = new Phaser.Math.Vector2();
         this.speed = this.startingSpeed(scene?.ascean);
-        this.acceleration = 0.1;
-        this.deceleration = 0.05;
+        this.acceleration = PLAYER.SPEED.ACCELERATION;
+        this.deceleration = PLAYER.SPEED.DECELERATION;
         this.dt = this.scene.sys.game.loop.delta;
         this.stateMachine = new StateMachine(this, 'player');
         this.stateMachine
@@ -126,8 +164,8 @@ export default class Player extends Entity {
             })
         
         this.stateMachine.setState(States.NONCOMBAT);
-        this.sensorDisp = 12;
-        this.colliderDisp = 16;
+        this.sensorDisp = PLAYER.SENSOR.DISPLACEMENT;
+        this.colliderDisp = PLAYER.COLLIDER.DISPLACEMENT;
 
         // const helmetName = scene?.state?.player?.helmet.imgURL.split('/')[2].split('.')[0];
         // const chestName = scene?.state?.player?.chest.imgURL.split('/')[2].split('.')[0];
@@ -150,10 +188,10 @@ export default class Player extends Entity {
         // this.spriteChest.setDepth(this + 3);
         // this.scene.add.existing(this.spriteChest);
 
-        this.setScale(0.8);   
+        this.setScale(PLAYER.SCALE.SELF);   
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
-        let playerCollider = Bodies.rectangle(this.x, this.y + 10, 20, 36, { isSensor: false, label: 'playerCollider' }); // Y + 10 For Platformer
-        let playerSensor = Bodies.circle(this.x, this.y + 2, 36, { isSensor: true, label: 'playerSensor' }); // Y + 2 For Platformer
+        let playerCollider = Bodies.rectangle(this.x, this.y + 10, PLAYER.COLLIDER.WIDTH, PLAYER.COLLIDER.HEIGHT, { isSensor: false, label: 'playerCollider' }); // Y + 10 For Platformer
+        let playerSensor = Bodies.circle(this.x, this.y + 2, PLAYER.SENSOR.DEFAULT, { isSensor: true, label: 'playerSensor' }); // Y + 2 For Platformer
         const compoundBody = Body.create({
             parts: [playerCollider, playerSensor],
             frictionAir: 0.35, 
@@ -182,7 +220,7 @@ export default class Player extends Entity {
     }; 
 
     startingSpeed = (player) => {
-        let speed = 1.5; // 1.75
+        let speed = PLAYER.SPEED.INITIAL;
         const helmet = player.helmet.type;
         const chest = player.chest.type;
         const legs = player.legs.type;
@@ -202,11 +240,11 @@ export default class Player extends Entity {
                     modifier -= 0.025;
                     break;
             };
-            // console.log(modifier, "Current Speed Modifier from", item);
         };
         addModifier(helmet);
         addModifier(chest);
         addModifier(legs);
+        console.log(`Speed Modifier: ${modifier}`);
         speed += modifier;
         return speed;
     };
@@ -328,15 +366,15 @@ export default class Player extends Entity {
     
         if (hasAggressiveEnemy) {
             if (!hasRemainingEnemies) {
-                console.log('Player Should Enter Combat');
+                console.log('%c Player Should Enter Combat', 'color: red');
                 return true;
             } else {
-                console.log('Player Already In Combat');
+                console.log('%c Player Already In Combat', 'color: yellow');
                 return false;
             };
         };
     
-        console.log('Player Should Not Enter Combat');
+        console.log('%c Player Should Not Enter Combat', 'color: blue');
         return false;
     }; 
 
@@ -510,7 +548,7 @@ export default class Player extends Entity {
     onAttackEnter = () => {
         this.isAttacking = true;
         this.swingReset();
-        this.scene.useStamina(25);
+        this.scene.useStamina(PLAYER.STAMINA.ATTACK);
     }; 
     onAttackUpdate = (dt) => {
         if (this.frameCount === 16 && !this.isRanged) {
@@ -532,7 +570,7 @@ export default class Player extends Entity {
     onCounterEnter = () => {
         this.isCountering = true;    
         this.swingReset();
-        this.scene.useStamina(10);
+        this.scene.useStamina(PLAYER.STAMINA.COUNTER);
     };
     onCounterUpdate = (dt) => {
         if (this.frameCount === 5 && !this.isRanged) {
@@ -555,7 +593,7 @@ export default class Player extends Entity {
     onPostureEnter = () => {
         this.isPosturing = true;
         this.swingReset();
-        this.scene.useStamina(15);
+        this.scene.useStamina(PLAYER.STAMINA.POSTURE);
     };
     onPostureUpdate = (dt) => {
         if (this.frameCount === 11 && !this.isRanged) {
@@ -577,9 +615,9 @@ export default class Player extends Entity {
     onRollEnter = () => {
         this.isRolling = true;
         if (this.inCombat) this.swingReset();
-        this.scene.useStamina(15);
+        this.scene.useStamina(PLAYER.STAMINA.ROLL);
         this.body.parts[2].position.y += this.sensorDisp;
-        this.body.parts[2].circleRadius = 21;
+        this.body.parts[2].circleRadius = PLAYER.SENSOR.EVADE;
         this.body.parts[1].vertices[0].y += this.colliderDisp;
         this.body.parts[1].vertices[1].y += this.colliderDisp; 
     };
@@ -598,7 +636,7 @@ export default class Player extends Entity {
         this.rollCooldown = 0; 
         if (this.scene.state.action !== '') this.scene.combatMachine.input('action', '');
         this.body.parts[2].position.y -= this.sensorDisp;
-        this.body.parts[2].circleRadius = 36;
+        this.body.parts[2].circleRadius = PLAYER.SENSOR.DEFAULT;
         this.body.parts[1].vertices[0].y -= this.colliderDisp;
         this.body.parts[1].vertices[1].y -= this.colliderDisp;
     };
@@ -608,7 +646,7 @@ export default class Player extends Entity {
         this.scene.useStamina(15);
         this.wasFlipped = this.flipX; 
         this.body.parts[2].position.y += this.sensorDisp;
-        this.body.parts[2].circleRadius = 21;
+        this.body.parts[2].circleRadius = PLAYER.SENSOR.EVADE;
         this.body.parts[1].vertices[0].y += this.colliderDisp;
         this.body.parts[1].vertices[1].y += this.colliderDisp; 
         this.body.parts[0].vertices[0].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
@@ -630,7 +668,7 @@ export default class Player extends Entity {
         this.dodgeCooldown = 0;
         this.isDodging = false;
         this.body.parts[2].position.y -= this.sensorDisp;
-        this.body.parts[2].circleRadius = 36;
+        this.body.parts[2].circleRadius = PLAYER.SENSOR.DEFAULT;
         this.body.parts[1].vertices[0].y -= this.colliderDisp;
         this.body.parts[1].vertices[1].y -= this.colliderDisp; 
         this.body.parts[0].vertices[0].x -= this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
@@ -676,11 +714,13 @@ export default class Player extends Entity {
         if (!this.isCaerenic) this.glow = this.setGlow(this, false);
         this.scene.combatMachine.add({ type: 'Instant', data: this.scene.state.playerBlessing });
         screenShake(this.scene);
+        this.scene.useStamina(PLAYER.STAMINA.INVOKE);
     };
 
     onTshaeralEnter = () => {
         this.isTshaering = true;
         this.attacking.isConsumed = true;
+        this.scene.useStamina(PLAYER.STAMINA.TSHAER);
         screenShake(this.scene);
         if (!this.isCaerenic) {
             this.setGlow(this, true);
@@ -939,28 +979,28 @@ export default class Player extends Entity {
         // ========================= Player Combat Actions ========================= \\
 
         if (this.inCombat && this.attacking) {
-            if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
+            if (this.stamina >= PLAYER.STAMINA.COUNTER && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
                 this.scene.combatMachine.input('counterGuess', 'attack');
                 this.stateMachine.setState(States.COUNTER);           
             };
-            if (this.stamina >= 15 && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
+            if (this.stamina >= PLAYER.STAMINA.COUNTER && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO)) {
                 this.scene.combatMachine.input('counterGuess', 'posture');
                 this.stateMachine.setState(States.COUNTER);
             };
-            if (this.stamina >= 15 && this.movementClear() && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
+            if (this.stamina >= PLAYER.STAMINA.COUNTER && this.movementClear() && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE)) {
                 this.scene.combatMachine.input('counterGuess', 'roll');
                 this.stateMachine.setState(States.COUNTER);
             };
         
-            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= 25 && this.canSwing) {
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE) && this.stamina >= PLAYER.STAMINA.ATTACK && this.canSwing) {
                 this.stateMachine.setState(States.ATTACK);
             };
             
-            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= 15 && this.canSwing) {
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.posture.TWO) && this.stamina >= PLAYER.STAMINA.POSTURE && this.canSwing) {
                 this.stateMachine.setState(States.POSTURE);
             };
 
-            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= 15 && this.canSwing) {
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.counter.FIVE) && this.stamina >= PLAYER.STAMINA.COUNTER && this.canSwing) {
                 this.scene.combatMachine.input('counterGuess', 'counter');
                 this.stateMachine.setState(States.COUNTER);
             };
@@ -980,7 +1020,7 @@ export default class Player extends Entity {
                 };
                 const invokeIntervalId = setInterval(invokeLoop, invokeInterval);
             };
-            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F)) { // this.tshaeralCooldown === 0
+            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F) && this.stamina >= PLAYER.STAMINA.TSHAER) { // this.tshaeralCooldown === 0
                 this.stateMachine.setState(States.TSHAERAL);
                 this.scene.time.addEvent({
                     delay: 2000,
@@ -1001,11 +1041,11 @@ export default class Player extends Entity {
 
         // ========================= Player Movement Actions ========================= \\
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= 15 && this.movementClear()) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.roll.THREE) && this.stamina >= PLAYER.STAMINA.ROLL && this.movementClear()) {
             this.stateMachine.setState(States.ROLL);
         };
 
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= 15 && this.movementClear()) {
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.dodge.FOUR) && this.stamina >= PLAYER.STAMINA.DODGE && this.movementClear()) {
             this.stateMachine.setState(States.DODGE);
         };
 
@@ -1016,11 +1056,11 @@ export default class Player extends Entity {
             if (this.isCaerenic) {
                 this.scene.caerenic(true);
                 this.setGlow(this, true);
-                this.adjustSpeed(0.5);
+                this.adjustSpeed(PLAYER.SPEED.CAERENIC);
             } else {
                 this.scene.caerenic(false);
                 this.setGlow(this, false);
-                this.adjustSpeed(-0.5);
+                this.adjustSpeed(-PLAYER.SPEED.CAERENIC);
             };
         };
 
@@ -1117,9 +1157,9 @@ export default class Player extends Entity {
             this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
             if (this.scene.state.weapons[0].grip === 'Two Hand') {
-                this.spriteWeapon.setScale(0.65);
+                this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON.TWO);
             } else {
-                this.spriteWeapon.setScale(0.5);
+                this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON.ONE);
             };
         };
         if (this.currentShieldSprite !== this.assetSprite(this.scene.state.player.shield)) {
