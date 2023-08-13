@@ -52,7 +52,6 @@ const GameLobby = ({ user }: Props) => {
         try {
             setLoading(true);
             const response = await userService.searchUser(search);
-            console.log(response);
             setLoading(false);
             setSearchResult(response);
         } catch (err: any) {

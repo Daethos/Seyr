@@ -17,21 +17,17 @@ const CommunityAscean = ({ ascean, loggedUser }: Props) => {
             <div className="property-line">
                 <h4>Level</h4>
                 <p> {ascean.level}</p>{' | '}
-                <h4>High Score</h4>
-                <p> {ascean.high_score}</p>
-
+                <h4>Mastery</h4>
+                <p> {ascean.mastery}</p>
             </div>
             <h2>{ascean.description}</h2>
             <Link to={`/CommunityFeed/${ascean._id}`} style={{ textDecoration: 'none' }}>
-                <img 
-                    src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
-                    className='dialog-picture' 
-                />
+                <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.name} className='dialog-picture' />
             </Link>
             <h4 className='my-1' style={{ color: "red", fontFamily: "Cinzel", fontWeight: 700 }}> 
-                {ascean.hardcore ? "Hardcore" : ""}</h4><br />
+                {ascean.hardcore ? "Permament Death" : ""}</h4><br />
             </div> 
-            <div className="actions" style={{ marginTop: -6 + '%', marginBottom: -1 + '%' }}><h3> </h3></div>
+            <div className="actions" style={{ marginTop: '-6%', marginBottom: '-1%' }}><h3> </h3></div>
             <FeelingsCard ascean={ascean} loggedUser={loggedUser} />
             <hr className='orange-border bottom' />
         </Col>

@@ -14,11 +14,10 @@ import Hardcore from '../AsceanBuilder/Hardcore';
 import { Symbols } from '../SolaAscean/SolaAscean';
 
 interface AsceanProps {
-    createSuccess: boolean;
     handleAsceanCreate: (newAscean: Object) => Promise<void>;
 };
 
-const NewAscean = ({ createSuccess, handleAsceanCreate }: AsceanProps) => {
+const NewAscean = ({ handleAsceanCreate }: AsceanProps) => {
     const [originModalShow, setOriginModalShow] = React.useState<boolean>(false);
     const [asceanState, setAsceanState] = useState<any>({
         name: '',
@@ -81,24 +80,12 @@ const NewAscean = ({ createSuccess, handleAsceanCreate }: AsceanProps) => {
             <div className='section-right'>
             <Mastery asceanState={asceanState} setState={setAsceanState} />
             <AttributesCreate asceanState={asceanState} setAsceanState={setAsceanState} />
-            {/* <Communal editState={asceanState} setEditState={setAsceanState} /> */}
+            <Communal editState={asceanState} setEditState={setAsceanState} />
             {/* <Hardcore asceanState={asceanState} setAsceanState={setAsceanState} /> */}
-            {Symbols.space}
-            { createSuccess ? (
-                <button 
-                    className="btn mt-4" 
-                    value={asceanState} 
-                    style={{ color: 'green', fontWeight: 400, fontVariant: 'small-caps', fontSize: '28px', textDecoration: 'none', textAlign: "center" }}
-                    type="submit" disabled>
-                Created {asceanState.name}!</button>
-            ) : ( 
-                <button 
-                    className="btn my-2" 
-                    value={asceanState} 
-                    style={{ color: 'gold', fontWeight: 600, fontVariant: 'small-caps', fontSize: '28px', width: '100%', marginLeft: "auto" }}
-                    type="submit">
-                Create Ascean</button>
-            ) }
+            {Symbols.space} 
+            <button className="btn my-2" value={asceanState} style={{ color: 'gold', fontWeight: 600, fontVariant: 'small-caps', fontSize: '28px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }} type="submit">
+                Create Character
+            </button>
             </div>
             <hr className="orange-border bottom" />
         </Form>

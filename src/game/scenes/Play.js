@@ -14,8 +14,12 @@ import { getDrinkFirewaterFetch } from '../reducers/gameState';
 import CombatMachine from '../phaser/CombatMachine';
 // import ScreenShaker from '../phaser/ScreenShake';
 import { Mrpas } from 'mrpas';
+
 export const { Bodies } = Phaser.Physics.Matter.Matter;
- 
+export const worldToTile = (tile) => Math.floor(tile / 32);
+export const tileToWorld = (tile) => tile * 32 + 16;
+export const alignToGrid = (tile) => tileToWorld(worldToTile(tile));
+
 export default class Play extends Phaser.Scene {
     constructor() {
         super({ key: 'Play', active: false });
@@ -166,7 +170,7 @@ export default class Play extends Phaser.Scene {
 
         // Generic Dark Overlay
 
-        this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
+        // this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
         const darkOverlay = this.add.graphics();
         darkOverlay.fillStyle(0x000000, 0.5); // Black with 50% opacity
         darkOverlay.fillRect(0, 0, 4096, 4096);
@@ -188,8 +192,8 @@ export default class Play extends Phaser.Scene {
         //     width,
         //     height
         // }, true);
-        // // const shader = this.add.shader('Light2D', 0, 0, width, height, ['uMainSampler'], rt);
-        // // rt.fill(0x000000, 1);
+        // const shader = this.add.shader('Light2D', 0, 0, width, height, ['uMainSampler'], rt);
+        // rt.fill(0x000000, 1);
         // rt.draw(layer0, 0, 0); 
         // rt.setTint(0x808080);
 
@@ -469,7 +473,3 @@ export default class Play extends Phaser.Scene {
         this.scene.resume();
     };
 };
-
-export const worldToTile = (tile) => Math.floor(tile / 32);
-export const tileToWorld = (tile) => tile * 32 + 16;
-export const alignToGrid = (tile) => tileToWorld(worldToTile(tile));

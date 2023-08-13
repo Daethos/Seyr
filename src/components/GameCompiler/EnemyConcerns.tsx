@@ -71,4 +71,3 @@ export const fetchNpc = async (e: { enemyID: string; npcType: string; }): Promis
         console.log("Error Getting an NPC");
     };
 }; 
- 
