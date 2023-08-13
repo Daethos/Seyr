@@ -38,3 +38,34 @@ export default class ScreenShaker {
         this.pause().then(() => this.scene.resume());
     };
 };
+
+let totalTrauma = 0;
+ 
+export const screenShake = (scene: Phaser.Scene, duration = 80, intensity = 0.015) => {
+    totalTrauma += 1.05;
+    intensity *= Math.pow(totalTrauma, 2);
+    
+    if ("vibrate" in navigator) navigator.vibrate(duration);
+    scene.cameras.main.shake(duration, intensity);
+    
+    const decayInterval = setInterval(() => {
+        totalTrauma -= 1.05 / duration;
+        if (totalTrauma <= 0) {
+            totalTrauma = 0;
+            clearInterval(decayInterval);
+        };
+    }, 1);
+};
+ 
+// export const pauseGame = (scene: Phaser.Scene, duration: number) => {
+//     scene.pause();
+//     return new Promise((resolve) => {
+//         setTimeout(() => {
+//             resolve();
+//         }, duration);
+//     });
+// };
+  
+export function walk(scene: Phaser.Scene, duration = 48, intensity = 0.0004) { // 32 || 0.0003
+    scene.cameras.main.shake(duration, intensity);
+};

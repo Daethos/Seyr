@@ -3,21 +3,21 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 
 interface GameProps {
     totalPlayerHealth: number;
-    currentPlayerHealth: number;
+    newPlayerHealth: number;
 };
 
-const StoryHealthBar = ({ totalPlayerHealth, currentPlayerHealth }: GameProps) => {
+const StoryHealthBar = ({ totalPlayerHealth, newPlayerHealth }: GameProps) => {
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
 
     useEffect(() => {
-        setPlayerHealthPercentage(Math.round((currentPlayerHealth/totalPlayerHealth) * 100));
-    }, [currentPlayerHealth, totalPlayerHealth]);  
+        setPlayerHealthPercentage(Math.round((newPlayerHealth/totalPlayerHealth) * 100));
+    }, [newPlayerHealth, totalPlayerHealth]);  
 
     return (
         <>
         <ProgressBar variant="info" id='story-health' now={playerHealthPercentage} />
         <div className="story-progress">
-            <p className='story-progress-text'>{`${Math.round(currentPlayerHealth)} / ${totalPlayerHealth} [${playerHealthPercentage}%]`}</p>
+            <p className='story-progress-text'>{`${Math.round(newPlayerHealth)} / ${totalPlayerHealth} [${playerHealthPercentage}%]`}</p>
         </div>
         </>
     );

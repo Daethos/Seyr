@@ -379,7 +379,7 @@ const StoryAscean = ({ ascean, asceanViews }: Props) => {
                     {state.player.name}
                 </div>
                 <div style={{ textAlign: "center", marginBottom: "15%" }}>
-                    <StoryHealthBar totalPlayerHealth={state.playerHealth} currentPlayerHealth={state.newPlayerHealth} />
+                    <StoryHealthBar totalPlayerHealth={state.playerHealth} newPlayerHealth={state.newPlayerHealth} />
                 </div>
                 <AsceanImageCard
                     weapon_one={state.weapons[0]}

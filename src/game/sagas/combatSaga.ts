@@ -105,8 +105,6 @@ function* workGetDrain(action: any): SagaIterator {
         state = {
             ...state,
             newPlayerHealth: newPlayerHealth,
-            currentPlayerHealth: newPlayerHealth,
-            currentComputerHealth: 0,
             newComputerHealth: 0,
             playerWin: true,
         };
@@ -114,14 +112,12 @@ function* workGetDrain(action: any): SagaIterator {
         state = {
             ...state,
             newPlayerHealth: newPlayerHealth,
-            currentPlayerHealth: newPlayerHealth,
-            currentComputerHealth: newComputerHealth,
             newComputerHealth: newComputerHealth,
         };
     };
 
     const socket = getSocketInstance();
-    socket.emit(SOCKET.TSHAERAL_ACTION, { newPlayerHealth, currentPlayerHealth: newPlayerHealth, newComputerHealth, currentComputerHealth: newComputerHealth, playerWin: won });
+    socket.emit(SOCKET.TSHAERAL_ACTION, { newPlayerHealth, newComputerHealth, playerWin: won });
 
     yield put(setCombatResolution(state));
     if (won) {
@@ -150,7 +146,6 @@ function* workGetEnemySetup(action: any): SagaIterator {
     const inject = {
         computer: action.payload.enemy.ascean,
         computerHealth: action.payload.enemy.attributes.healthTotal,
-        currentComputerHealth: action.payload.health,
         newComputerHealth: action.payload.health,
         computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
         computerWeaponOne: action.payload.enemy.combat_weapon_one,
@@ -236,7 +231,6 @@ function* workGetPlayerAction(action: any): SagaIterator {
             computerWeaponOne: combatStats.combat_weapon_one,
             computerWeaponTwo: combatStats.combat_weapon_two,
             computerWeaponThree: combatStats.combat_weapon_three,
-            currentComputerHealth: health,
             newComputerHealth: health,
             computerHealth: combatStats.healthTotal,
             computerDefense: combatStats.defense,
@@ -263,7 +257,6 @@ function* workGetEnemyAction(action: any): SagaIterator {
             computerWeaponOne: combatStats.combat_weapon_one,
             computerWeaponTwo: combatStats.combat_weapon_two,
             computerWeaponThree: combatStats.combat_weapon_three,
-            currentComputerHealth: health,
             newComputerHealth: health,
             computerHealth: combatStats.healthTotal,
             computerDefense: combatStats.defense,
@@ -316,6 +309,7 @@ export function* workGetResponse(load: any, type?: string): SagaIterator {
         } else { 
             yield put(setCombatResolution(dec)); 
         };
+        console.log(dec.realizedPlayerDamage, dec.realizedComputerDamage, 'workGetResponse');
         combat = { ...combat, ...dec };
         if (type === 'enemy' || type === 'combat' || type === 'player') EventEmitter.emit('update-sound', combat);
         EventEmitter.emit('update-combat', combat);

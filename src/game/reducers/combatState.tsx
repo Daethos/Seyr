@@ -33,7 +33,6 @@ const combatSlice = createSlice({
                 ...state,
                 player: action.payload.ascean,
                 playerHealth: action.payload.ascean.health.total,
-                currentPlayerHealth: action.payload.ascean.health.current,
                 newPlayerHealth: action.payload.ascean.health.current,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 weaponOne: action.payload.combat_weapon_one,
@@ -50,7 +49,6 @@ const combatSlice = createSlice({
                 ...state,
                 computer: action.payload.enemy.ascean,
                 computerHealth: action.payload.enemy.attributes.healthTotal,
-                currentComputerHealth: action.payload.health,
                 newComputerHealth: action.payload.health,
                 computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
                 computerWeaponOne: action.payload.enemy.combat_weapon_one,
@@ -75,7 +73,6 @@ const combatSlice = createSlice({
                 ...state,
                 computer: action.payload.enemy.ascean,
                 computerHealth: action.payload.enemy.attributes.healthTotal,
-                currentComputerHealth: action.payload.health,
                 newComputerHealth: action.payload.health,
                 computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
                 computerWeaponOne: action.payload.enemy.combat_weapon_one,
@@ -155,9 +152,7 @@ const combatSlice = createSlice({
             return {
                 ...state,
                 newPlayerHealth: action.payload.newHealth,
-                currentPlayerHealth: action.payload.newHealth,
                 newComputerHealth: state.newComputerHealth - action.payload.drained,
-                currentComputerHealth: state.newComputerHealth - action.payload.drained,
             };
         },
         setRest: (state, action) => {
@@ -168,7 +163,6 @@ const combatSlice = createSlice({
             return {
                 ...state,
                 newPlayerHealth: newHealth,
-                currentPlayerHealth: newHealth,
             };
         },
         setWeather: (state, action) => { 
@@ -236,7 +230,6 @@ const combatSlice = createSlice({
                 playerDamaged: action.payload.playerDamaged,
                 computerDamaged: action.payload.computerDamaged,
                 newPlayerHealth: action.payload.newPlayerHealth,
-                currentPlayerHealth: action.payload.currentPlayerHealth,
                 computerCriticalSuccess: action.payload.computerCriticalSuccess,
                 computerReligiousSuccess: action.payload.computerReligiousSuccess,
                 computerRollSuccess: action.payload.computerRollSuccess,
@@ -269,7 +262,6 @@ const combatSlice = createSlice({
                 realizedComputerDamage: action.payload.realizedComputerDamage,
                 playerDamaged: action.payload.playerDamaged,
                 newPlayerHealth: action.payload.newPlayerHealth,
-                currentPlayerHealth: action.payload.currentPlayerHealth,
                 criticalSuccess: action.payload.criticalSuccess,
                 religiousSuccess: action.payload.religiousSuccess,
                 rollSuccess: action.payload.rollSuccess,
@@ -410,7 +402,6 @@ const combatSlice = createSlice({
                 highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
                 loseStreak: 0,
                 newComputerHealth: 0,
-                currentComputerHealth: 0,
                 playerLuckout: action.payload.playerLuckout,
                 playerTrait: action.payload.playerTrait,
                 playerWin: true,

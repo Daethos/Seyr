@@ -14,22 +14,22 @@ import rootSaga from './game/sagas/rootSaga';
 const saga = createSagaMiddleware();
 const middleware = [saga];
 export const store = configureStore({
-  reducer: {
-    combat: combatReducer,
-    community: communityReducer,
-    user: userReducer,
-    game: gameReducer,
-  },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
+    reducer: {
+        combat: combatReducer,
+        community: communityReducer,
+        user: userReducer,
+        game: gameReducer,
+    },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
 });
 
 saga.run(rootSaga);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <Provider store={store}>
+    <Provider store={store}>
     <Router>
-      <App />
+        <App />
     </Router>
-  </Provider>
+    </Provider>
 );

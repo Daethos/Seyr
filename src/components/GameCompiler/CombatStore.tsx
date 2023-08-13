@@ -7,7 +7,6 @@ export interface CombatData {
     prayerSacrifice: string;
     prayerSacrificeName: string,
     playerHealth: number;
-    currentPlayerHealth: number;
     newPlayerHealth: number;
     weapons: any[];
     weaponOne: any;
@@ -48,7 +47,6 @@ export interface CombatData {
     computerCounterGuess: string;
     computerBlessing: string;
     computerHealth: number;
-    currentComputerHealth: number;
     newComputerHealth: number;
     computerWeapons: any[];
     computerWeaponOne: object;
@@ -194,7 +192,6 @@ export const initialCombatData: CombatData = {
     prayerSacrifice: '',
     prayerSacrificeName: '',
     playerHealth: 0,
-    currentPlayerHealth: 0,
     newPlayerHealth: 0,
     weapons: [],
     weaponOne: {},
@@ -232,7 +229,6 @@ export const initialCombatData: CombatData = {
     computerCounterGuess: '',
     computerBlessing: 'Buff',
     computerHealth: 0,
-    currentComputerHealth: 0,
     newComputerHealth: 0,
     computerWeapons: [],
     computerWeaponOne: {},
@@ -333,7 +329,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 player: action.payload.ascean,
                 playerHealth: action.payload.ascean.health.total,
-                currentPlayerHealth: action.payload.ascean.health.total,
                 newPlayerHealth: action.payload.ascean.health.total,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 weaponOne: action.payload.combat_weapon_one,
@@ -349,7 +344,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 player: action.payload.ascean,
                 playerHealth: action.payload.ascean.health.total,
-                currentPlayerHealth: action.payload.ascean.health.current === -10 ? action.payload.ascean.health.total : action.payload.ascean.health.current,
                 newPlayerHealth: action.payload.ascean.health.current === -10 ? action.payload.ascean.health.total : action.payload.ascean.health.current,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 weaponOne: action.payload.combat_weapon_one,
@@ -383,7 +377,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 computer: action.payload.ascean,
                 computerHealth: action.payload.attributes.healthTotal,
-                currentComputerHealth: action.payload.attributes.healthTotal,
                 newComputerHealth: action.payload.attributes.healthTotal,
                 computerWeapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 computerWeaponOne: action.payload.combat_weapon_one,
@@ -392,7 +385,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 computerDefense: action.payload.defense,
                 computerAttributes: action.payload.attributes,
                 computerDamageType: action.payload.combat_weapon_one.damage_type[0],
-                currentPlayerHealth: action.payload.ascean.health.current === 0 ? action.payload.ascean.health.total * 0.05 : action.payload.ascean.health.current,
                 newPlayerHealth: action.payload.ascean.health.current === 0 ? action.payload.ascean.health.total * 0.05 : action.payload.ascean.health.current,
             };
         case 'SET_DUEL':
@@ -412,9 +404,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'RESET_PLAYER':
             return {
                 ...state,
-                currentPlayerHealth: state.playerHealth,
                 newPlayerHealth: state.playerHealth,
-                currentComputerHealth: state.computerHealth,
                 newComputerHealth: state.computerHealth,
                 combatEngaged: true,
                 gameIsLive: false,
@@ -427,9 +417,7 @@ export const CombatStore = (state: CombatData, action: Action) => {
         case 'RESET_COMPUTER':
             return {
                 ...state,
-                currentPlayerHealth: state.currentPlayerHealth > state.playerHealth ? state.playerHealth : state.currentPlayerHealth,
-                newPlayerHealth: state.currentPlayerHealth > state.playerHealth ? state.playerHealth : state.currentPlayerHealth,
-                currentComputerHealth: state.computerHealth,
+                newPlayerHealth: state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth,
                 newComputerHealth: state.computerHealth,
                 combatEngaged: true,
                 gameIsLive: false,
@@ -443,11 +431,9 @@ export const CombatStore = (state: CombatData, action: Action) => {
             const newHealth = state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth;
             return {
                 ...state,
-                currentPlayerHealth: newHealth,
                 newPlayerHealth: newHealth,
                 computer: action.payload.ascean,
                 computerHealth: action.payload.attributes.healthTotal,
-                currentComputerHealth: action.payload.attributes.healthTotal,
                 newComputerHealth: action.payload.attributes.healthTotal,
                 computerWeapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 computerWeaponOne: action.payload.combat_weapon_one,
@@ -464,7 +450,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state, 
                 computer: action.payload.enemy.ascean,
                 computerHealth: action.payload.enemy.attributes.healthTotal,
-                currentComputerHealth: action.payload.health,
                 newComputerHealth: action.payload.health,
                 computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
                 newPlayerHealth: state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth,
@@ -487,7 +472,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 computer: action.payload.enemy.ascean,
                 computerHealth: action.payload.enemy.attributes.healthTotal,
-                currentComputerHealth: action.payload.health,
                 newComputerHealth: action.payload.health,
                 computerWeapons: [action.payload.enemy.combat_weapon_one, action.payload.enemy.combat_weapon_two, action.payload.enemy.combat_weapon_three],
                 newPlayerHealth: state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth,
@@ -530,7 +514,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 computer: action.payload.ascean,
                 computerHealth: action.payload.attributes.healthTotal,
-                currentComputerHealth: action.payload.attributes.healthTotal,
                 newComputerHealth: action.payload.attributes.healthTotal,
                 computerWeapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 newPlayerHealth: state.newPlayerHealth > state.playerHealth ? state.playerHealth : state.newPlayerHealth === 0 ? state.playerHealth * 0.05 : state.newPlayerHealth,
@@ -664,7 +647,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
                 loseStreak: 0,
                 newComputerHealth: 0,
-                currentComputerHealth: 0,
                 playerLuckout: action.payload.playerLuckout,
                 playerTrait: action.payload.playerTrait,
                 playerWin: true,
@@ -686,7 +668,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 highScore: state.winStreak + 1 > state.highScore ? state.winStreak + 1 : state.highScore,
                 loseStreak: 0,
                 newComputerHealth: 0,
-                currentComputerHealth: 0,
                 playerWin: action.payload,
                 playerGrapplingWin: action.payload,
             };
@@ -783,7 +764,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 playerDamaged: action.payload.playerDamaged,
                 computerDamaged: action.payload.computerDamaged,
                 newPlayerHealth: action.payload.newPlayerHealth,
-                currentPlayerHealth: action.payload.currentPlayerHealth,
                 computerRollSuccess: action.payload.computerRollSuccess,
                 computerCounterSuccess: action.payload.computerCounterSuccess,
                 computerGlancingBlow: action.payload.computerGlancingBlow,
@@ -812,7 +792,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
                 ...state,
                 player: action.payload.ascean,
                 playerHealth: action.payload.attributes.healthTotal,
-                currentPlayerHealth: action.payload.attributes.healthTotal,
                 newPlayerHealth: action.payload.attributes.healthTotal,
                 weapons: [action.payload.combat_weapon_one, action.payload.combat_weapon_two, action.payload.combat_weapon_three],
                 weaponOne: action.payload.combat_weapon_one,
@@ -840,7 +819,6 @@ export const CombatStore = (state: CombatData, action: Action) => {
             console.log('Player Health: ', currentHealth, 'Player Health Healed: ', playerHealthHealed, 'Player Health: ', playerHealth);
             return {
                 ...state,
-                currentPlayerHealth: playerHealth,
                 newPlayerHealth: playerHealth,
             };
         default: 

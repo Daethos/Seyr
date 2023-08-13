@@ -421,6 +421,44 @@ const weatherEffectCheck = async (weapon, magDam, physDam, weather, critical) =>
     return { magicalDamage, physicalDamage };
 };
 
+const damageTick = (data, effect, player) => {
+    if (player) {
+        console.log('Player DoT against Enemy Ticking...');
+        data.newComputerHealth -= effect.effect.damage * 0.33;
+        if (data.newComputerHealth < 0) {
+            data.newComputerHealth = 0;
+            data.computerWin = false;
+            data.playerWin = true;
+        };
+    } else {
+        console.log('Enemy DoT against Player Ticking...');
+        data.newPlayerHealth -= effect.effect.damage * 0.33;
+        if (data.newPlayerHealth < 0) {
+            if (data.playerEffects.find(effect => effect.prayer === 'Denial')) {
+                data.newPlayerHealth = 1;
+                data.playerEffects = data.playerEffects = data.playerEffects.filter(effect => effect.prayer !== 'Denial');
+            } else {
+                data.newPlayerHealth = 0;
+                data.computerWin = true;
+                data.playerWin = false;
+            };
+        };
+    };
+    return data;
+};
+
+const healTick = (data, effect, player) => {
+    if (player) {
+        console.log('Player HoT Ticking...')
+        data.newPlayerHealth += effect.effect.healing * 0.33;
+        if (data.newPlayerHealth > 0) data.computerWin = false;
+    } else {
+        console.log('Enemy HoT Ticking...')
+        data.newComputerHealth += effect.effect.healing * 0.33;
+        if (data.newComputerHealth > 0) data.playerWin = false;
+    };
+    return data;
+};
 
 const statusEffectCheck = async (combatData) => {
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
@@ -441,33 +479,8 @@ const statusEffectCheck = async (combatData) => {
                 combatData.playerDefense = reBuff.defense;
             };
             return false;
-        } else { // The Effect Persists
-            // switch (effect.prayer) {
-            //     case 'Buff': // Buffs are applied on the first tick, and if found via existingEffect proc, they have already been enhanced by the stack.
-            //         if (effect.activeStacks === 1 && effect.startTime === combatData.combatTimer) {
-            //             const buff = applyEffect(effect, combatData.playerDefense, combatData.weapons[matchingWeaponIndex], true);
-            //             combatData.weapons[matchingWeaponIndex] = buff.weapon;
-            //             combatData.playerDefense = buff.defense;
-            //         };
-            //         break;
-            //     case 'Debuff':  // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
-            //         if (effect.activeRefreshes === 0 && effect.startTime === combatData.combatTimer) {
-            //             const debuff = applyEffect(effect, combatData.playerDefense, combatData.weapons[matchingDebuffTargetIndex], false);
-            //             combatData.weapons[matchingDebuffTargetIndex] = debuff.weapon;
-            //             combatData.playerDefense = debuff.defense;
-            //         };
-            //         break;
-            //     case 'Damage': // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
-            //         damageTick(combatData, effect, false);
-            //         break;
-            //     case 'Heal': // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
-            //         healTick(combatData, effect, true);
-            //         break;
-            //     default: 
-            //         break;
-            // };
-            return true;
         };
+        return true;
     });
 
     combatData.computerEffects = combatData.computerEffects.filter(effect => {
@@ -488,40 +501,6 @@ const statusEffectCheck = async (combatData) => {
                 combatData.computerDefense = reBuff.defense;
             };
             return false;
-        } else { // The Effect Persists
-            // switch (effect.prayer) {
-            //     case 'Buff': // Buffs are applied
-            //         if (effect.activeStacks === 1 && effect.startTime === combatData.combatTimer) {
-            //             const buff = applyEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingWeaponIndex], true);
-            //             combatData.computerWeapons[matchingWeaponIndex] = buff.weapon;
-            //             combatData.computerDefense = buff.defense;
-            //         };
-            //         break;
-            //     case 'Debuff': // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
-            //         if (effect.activeRefreshes === 0 && effect.startTime === combatData.combatTimer) {
-            //             const debuff = applyEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingDebuffTargetIndex], false);
-            //             combatData.computerWeapons[matchingDebuffTargetIndex] = debuff.weapon;
-            //             combatData.computerDefense = debuff.defense;
-            //         };
-            //         break;
-            //     case 'Damage': // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
-            //         combatData.newComputerHealth -= effect.effect.damage * 0.33;
-            //         combatData.currentComputerHealth -= effect.effect.damage * 0.33;
-            //         if (combatData.currentComputerHealth < 0 || combatData.newComputerHealth < 0) {
-            //             combatData.newComputerHealth = 0;
-            //             combatData.currentComputerHealth = 0;
-            //             combatData.computerWin = false;
-            //             combatData.playerWin = true;
-            //         };
-            //         break;
-            //     case 'Heal': // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
-            //         combatData.newComputerHealth += effect.effect.healing * 0.33;
-            //         combatData.currentComputerHealth += effect.effect.healing * 0.33;
-            //         if (combatData.currentComputerHealth > 0 || combatData.newComputerHealth > 0) combatData.playerWin = false;
-            //         break;
-            //     default:
-            //         break;
-            // };
         };
         return true;
     });
@@ -537,6 +516,7 @@ const applyEffect = (prayer, defense, weapon, isBuff) => {
     console.log(`${prayer.playerName} applying ${prayer.prayer} to ${isBuff ? prayer.weapon : prayer.debuffTarget}`);
     for (let key in weapon) {
         if (prayer.effect[key]) {
+            // console.log(`Modifying ${key} from ${weapon[key]} by ${prayer.effect[key] * modifier}`)
             let modifiedValue = weapon[key] + prayer.effect[key] * modifier;
             modifiedValue = roundToTwoDecimals(modifiedValue);
             weapon[key] = modifiedValue;
@@ -544,6 +524,7 @@ const applyEffect = (prayer, defense, weapon, isBuff) => {
     };
     for (let key in defense) {
         if (prayer.effect[key]) {
+            // console.log(`Modifying ${key} from ${defense[key]} by ${prayer.effect[key] * modifier}`)
             let modifiedValue = defense[key] + prayer.effect[key] * modifier;
             modifiedValue = roundToTwoDecimals(modifiedValue);
             defense[key] = modifiedValue;
@@ -551,6 +532,7 @@ const applyEffect = (prayer, defense, weapon, isBuff) => {
     };
     return { defense, weapon };
 };
+
 const stripEffect = (prayer, defense, weapon, isDebuff) => {
     const modifier = isDebuff ? 1 : -1;
     console.log(`Stripping ${prayer.prayer} from ${prayer.weapon} of ${isDebuff ? prayer.enemyName : prayer.playerName}`);
@@ -596,7 +578,7 @@ const faithSuccess = async (combatData, name, weapon, index) => {
                 combatData.playerEffects.push(exists);
             };
             if (exists.prayer === 'Buff') {
-                const buff = applyEffect(exists, weapon, combatData.playerDefense, true);
+                const buff = applyEffect(exists, combatData.playerDefense, weapon, true);
                 combatData.playerDefense = buff.defense;
                 weapon = buff.weapon;
             };
@@ -652,7 +634,7 @@ const faithSuccess = async (combatData, name, weapon, index) => {
                 combatData.computerEffects.push(exists);
             };
             if (exists.prayer === 'Buff') {
-                const buff = applyEffect(exists, weapon, combatData.computerDefense, true);
+                const buff = applyEffect(exists, combatData.computerDefense, weapon, true);
                 combatData.computerDefense = buff.defense;
                 weapon = buff.weapon;
             };
@@ -670,7 +652,7 @@ const faithSuccess = async (combatData, name, weapon, index) => {
                 exists = StatusEffect.updateEffectStack(exists, combatData, combatData.computer, weapon);
                 combatData[`computerInfluenceDescription${desc}`] = `${exists.description} Stacked ${exists.activeStacks} times.`;
                 if (exists.prayer === 'Buff') {
-                    const buff = applyEffect(exists, weapon, combatData.computerDefense, true);
+                    const buff = applyEffect(exists, combatData.computerDefense, weapon, true);
                     combatData.computerDefense = buff.defense;
                     weapon = buff.weapon;
                 };
@@ -1002,10 +984,9 @@ const computerDualWieldCompiler = async (combatData, playerPhysicalDefenseMultip
         combatData.realizedComputerDamage *= 1.25;
     };
 
-    combatData.newPlayerHealth = combatData.currentPlayerHealth - combatData.realizedComputerDamage;
-    combatData.currentPlayerHealth = combatData.newPlayerHealth; // Added to persist health totals?
+    combatData.newPlayerHealth -= combatData.realizedComputerDamage;
 
-    if (combatData.newPlayerHealth < 0 || combatData.currentPlayerHealth <= 0) {
+    if (combatData.newPlayerHealth < 0) {
         if (combatData.playerEffects.find(effect => effect.prayer === 'Denial')) {
             combatData.newPlayerHealth = 1;
             combatData.playerEffects = combatData.playerEffects.filter(effect => effect.prayer !== 'Denial');
@@ -1034,6 +1015,7 @@ const computerAttackCompiler = async (combatData, computerAction) => {
         playerPhysicalDefenseMultiplier = 1 - (combatData.playerDefense.physicalPosture / 100);
         playerMagicalDefenseMultiplier = 1 - (combatData.playerDefense.magicalPosture / 100);
     };
+
     if (combatData.computerAction === 'attack') {
         if (combatData.computerWeapons[0].grip === 'One Hand') {
             if (combatData.computerWeapons[0].attack_type === 'Physical') {
@@ -1041,8 +1023,8 @@ const computerAttackCompiler = async (combatData, computerAction) => {
                     if (combatData.computerAttributes.totalAgility + combatData.computerWeapons[0].agility + combatData.computerWeapons[1].agility >= 50) {
                         if (combatData.computerWeapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                            combatData.computerDualWielding = true;
-                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier)
-                            return combatData
+                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
+                            return combatData;
                         } else {
                             computerPhysicalDamage *= 1.3;
                             computerMagicalDamage *= 1.15;
@@ -1061,8 +1043,8 @@ const computerAttackCompiler = async (combatData, computerAction) => {
                     if (combatData.computerAttributes.totalAchre + combatData.computerWeapons[0].achre + combatData.computerWeapons[1].achre >= 50) {
                         if (combatData.computerWeapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                             combatData.computerDualWielding = true;
-                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier)
-                            return combatData
+                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
+                            return combatData;
                         } else {
                             computerPhysicalDamage *= 1.15;
                             computerMagicalDamage *= 1.3;
@@ -1078,13 +1060,13 @@ const computerAttackCompiler = async (combatData, computerAction) => {
             };
         };
         if (combatData.computerWeapons[0].grip === 'Two Hand') {
-            if (combatData.computerWeapons[0].attack_type === 'Physical' && combatData.computerWeapons[0].type !== 'Bow') {
+            if (combatData.computerWeapons[0].attack_type === 'Physical' && combatData.computerWeapons[0].type !== 'Bow' && combatData.computerWeapons[0].type !== 'Greatbow') {
                 if (combatData.computer.mastery === 'Strength' || combatData.computer.mastery === 'Constitution') {
                     if (combatData.computerAttributes.totalStrength + combatData.computerWeapons[0].strength + combatData.computerWeapons[1].strength >= 75) { // Might be a dual-wield compiler instead to take the rest of it
                         if (combatData.computerWeapons[1].type !== 'Bow') {
                             combatData.computerDualWielding = true;
-                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier)
-                            return combatData
+                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
+                            return combatData;
                         } else { // Less than 50 Srength 
                             computerPhysicalDamage *= 1.3;
                             computerMagicalDamage *= 1.15;
@@ -1103,7 +1085,7 @@ const computerAttackCompiler = async (combatData, computerAction) => {
                     if (combatData.computerAttributes.totalCaeren + combatData.computerWeapons[0].caeren + combatData.computerWeapons[1].caeren >= 75) {
                         if (combatData.computerWeapons[1].type !== 'Bow') {
                             combatData.computerDualWielding = true;
-                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier)
+                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
                             return combatData;
                         } else {
                             computerPhysicalDamage *= 1.15;
@@ -1118,14 +1100,9 @@ const computerAttackCompiler = async (combatData, computerAction) => {
                     computerMagicalDamage *= 1.1;
                 };
             };
-            if (combatData.computerWeapons[0].type === 'Bow') {
-                if (combatData.computer.mastery === 'Agility' || combatData.computer.mastery === 'Achre' || combatData.computer.mastery === 'Kyosir' || combatData.computer.mastery === 'Constitution') {
-                    computerPhysicalDamage *= 1.4;
-                    computerMagicalDamage *= 1.4;
-                } else {
-                    computerPhysicalDamage *= 1.1;
-                    computerMagicalDamage *= 1.1;
-                };
+            if (combatData.computerWeapons[0].type === 'Bow' || combatData.computerWeapons[0].type === 'Greatbow') {
+                computerPhysicalDamage *= 1.3;
+                computerMagicalDamage *= 1.3; 
             };
         };
     };
@@ -1168,7 +1145,6 @@ const computerAttackCompiler = async (combatData, computerAction) => {
 
     computerPhysicalDamage *= 1 - ((1 - playerPhysicalDefenseMultiplier) * (1 - (combatData.computerWeapons[0].physical_penetration / 100)));
     computerMagicalDamage *= 1 - ((1 - playerMagicalDefenseMultiplier) * (1 - (combatData.computerWeapons[0].magical_penetration / 100)));
-
     const damageType = await damageTypeCompiler(combatData.computerDamageType, combatData.player, combatData.computerWeapons[0], computerPhysicalDamage, computerMagicalDamage);
     computerPhysicalDamage = damageType.physicalDamage;
     computerMagicalDamage = damageType.magicalDamage;
@@ -1182,7 +1158,6 @@ const computerAttackCompiler = async (combatData, computerAction) => {
         computerTotalDamage = 0;
     };
     combatData.realizedComputerDamage = computerTotalDamage;
-
     if (combatData.action === 'attack') {
         combatData.realizedComputerDamage *= 1.1;
     };
@@ -1202,13 +1177,14 @@ const computerAttackCompiler = async (combatData, computerAction) => {
         combatData.realizedComputerDamage *= 1.25;
     };
 
-    combatData.newPlayerHealth = combatData.currentPlayerHealth - combatData.realizedComputerDamage;
-    combatData.currentPlayerHealth = combatData.newPlayerHealth; // Added to persist health totals?
+
+    combatData.newPlayerHealth -= combatData.realizedComputerDamage;
+
 
     combatData.computerActionDescription = 
         `${combatData.computer.name} attacks you with their ${combatData.computerWeapons[0].name} for ${Math.round(computerTotalDamage)} ${combatData.computerDamageType} ${combatData.computerCriticalSuccess === true ? 'Critical Strike Damage' : combatData.computerGlancingBlow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
-    if (combatData.newPlayerHealth < 0 || combatData.currentPlayerHealth <= 0) {
+    if (combatData.newPlayerHealth < 0) {
         if (combatData.playerEffects.find(effect => effect.prayer === 'Denial')) {
             combatData.newPlayerHealth = 1;
             combatData.playerEffects = combatData.playerEffects.filter(effect => effect.prayer !== 'Denial');
@@ -1353,10 +1329,9 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
         combatData.realizedPlayerDamage *= 1.15;
     };
 
-    combatData.newComputerHealth = combatData.currentComputerHealth - combatData.realizedPlayerDamage;
-    combatData.currentComputerHealth = combatData.newComputerHealth; // Added to persist health totals?
+    combatData.newComputerHealth -= combatData.realizedPlayerDamage;
 
-    if (combatData.newComputerHealth <= 0 || combatData.currentComputerHealth <= 0) {
+    if (combatData.newComputerHealth <= 0) {
         combatData.newComputerHealth = 0;
         combatData.playerWin = true;
     };
@@ -1506,14 +1481,12 @@ const attackCompiler = async (combatData, playerAction) => {
             playerMagicalDamage *= 0.95;
         };
     };
-
     const criticalClearance = Math.floor(Math.random() * 10100) / 100;
     let criticalChance = combatData.weapons[0].critical_chance;
     criticalChance -= combatData.computerAttributes.kyosirMod;
     if (combatData.weather === 'Astralands') criticalChance += 10;
     if (combatData.weather === 'Astralands' && combatData.weapons[0].influences[0] === 'Astra') criticalChance += 10;
     const criticalResult = await criticalCompiler(combatData.player, criticalChance, criticalClearance, combatData.weapons[0], playerPhysicalDamage, playerMagicalDamage, combatData.weather, combatData.glancingBlow, combatData.criticalSuccess);
-
     combatData.criticalSuccess = criticalResult.criticalSuccess;
     combatData.glancingBlow = criticalResult.glancingBlow;
     playerPhysicalDamage = criticalResult.physicalDamage;
@@ -1522,11 +1495,9 @@ const attackCompiler = async (combatData, playerAction) => {
     // If you made it here, your basic attack now resolves itself
     playerPhysicalDamage *= 1 - ((1 - computerPhysicalDefenseMultiplier) * (1 - (combatData.weapons[0].physical_penetration / 100)));
     playerMagicalDamage *=1 - ((1 - computerMagicalDefenseMultiplier) * (1 - (combatData.weapons[0].magical_penetration / 100)));
-
     const damageType = await damageTypeCompiler(combatData.playerDamageType, combatData.computer, combatData.weapons[0], playerPhysicalDamage, playerMagicalDamage);
     playerPhysicalDamage = damageType.physicalDamage;
     playerMagicalDamage = damageType.magicalDamage;
-
     const weatherResult = await weatherEffectCheck(combatData.weapons[0], playerMagicalDamage, playerPhysicalDamage, combatData.weather, combatData.criticalSuccess);
     playerPhysicalDamage = weatherResult.physicalDamage;
     playerMagicalDamage = weatherResult.magicalDamage;
@@ -1544,8 +1515,7 @@ const attackCompiler = async (combatData, playerAction) => {
         combatData.realizedPlayerDamage *= 1.15;
     };
 
-    combatData.newComputerHealth = combatData.currentComputerHealth - combatData.realizedPlayerDamage;
-    combatData.currentComputerHealth = combatData.newComputerHealth; // Added to persist health totals?
+    combatData.newComputerHealth -= combatData.realizedPlayerDamage;
 
     // ==================== STATISTIC LOGIC ====================
     combatData.typeAttackData.push(combatData.weapons[0].attack_type);
@@ -1556,7 +1526,7 @@ const attackCompiler = async (combatData, playerAction) => {
     combatData.playerActionDescription = 
         `You attack ${combatData.computer.name} with your ${combatData.weapons[0].name} for ${Math.round(playerTotalDamage)} ${combatData.playerDamageType} ${combatData.criticalSuccess === true ? 'Critical Strike Damage' : combatData.glancingBlow === true ? 'Damage (Glancing)' : 'Damage'}.`    
 
-    if (combatData.newComputerHealth <= 0 || combatData.currentComputerHealth <= 0) {
+    if (combatData.newComputerHealth <= 0) {
         combatData.newComputerHealth = 0;
         combatData.playerWin = true;
     };
@@ -2155,13 +2125,11 @@ const phaserActionSplitter = async (combatData) => {
         'computerDamaged': cleanData.realizedPlayerDamage > 0,
         
         'newPlayerHealth': cleanData.newPlayerHealth,
-        'currentPlayerHealth': cleanData.currentPlayerHealth,
         'playerDefense': cleanData.playerDefense,
         'playerEffects': cleanData.playerEffects,
         'weapons': cleanData.weapons,
         
         'newComputerHealth': cleanData.newComputerHealth,
-        'currentComputerHealth': cleanData.currentComputerHealth,
         'computerDefense': cleanData.computerDefense,
         'computerEffects': cleanData.computerEffects,
         'computerWeapons': cleanData.computerWeapons,
@@ -2188,6 +2156,7 @@ const phaserActionSplitter = async (combatData) => {
         'playerWin': cleanData.playerWin,
         'computerWin': cleanData.computerWin,
     };
+    console.log(changes.realizedComputerDamage, 'Realized Computer Damage')
     return changes;
 };
 
@@ -2197,7 +2166,7 @@ const newDataCompiler = async (combatData) => {
         action: combatData.action, // The player's action
         playerAction: combatData.action,
         counterGuess: combatData.counterGuess, // The action chosen believed to be 
-        playerHealth: combatData.playerHealth, // Current Player Health
+        playerHealth: combatData.playerHealth, // Total Player Health
         weaponOne: combatData.weaponOne, // Clean Slate of Weapon One
         weaponTwo: combatData.weaponTwo, // Clean Slate of Weapon Two
         weaponThree: combatData.weaponThree, // Clean Slate of Weapon Three
@@ -2233,8 +2202,6 @@ const newDataCompiler = async (combatData) => {
         computerInfluenceDescriptionTwo: '',
         playerDeathDescription: '',
         computerDeathDescription: '',
-        currentPlayerHealth: combatData.newPlayerHealth, // New player health post-combat action
-        currentComputerHealth: combatData.newComputerHealth, // New computer health post-combat action
         newPlayerHealth: combatData.newPlayerHealth, // New player health post-combat action
         newComputerHealth: combatData.newComputerHealth, // New computer health post-combat action
         attackWeight: combatData.attackWeight,
@@ -2300,7 +2267,6 @@ const newDataCompiler = async (combatData) => {
         isEnemy: combatData.isEnemy,
         isAggressive: combatData.isAggressive,
         startedAggressive: combatData.startedAggressive,
-        soundEffects: combatData.soundEffects,
     };
     return newData;
 };
@@ -2331,8 +2297,7 @@ const prayerSplitter = async (combatData, prayer) => {
 const instantDamageSplitter = async (combatData, mastery) => {
     let damage = combatData.player[mastery] * 0.5 + combatData.player.level;
     combatData.realizedPlayerDamage = damage;
-    combatData.newComputerHealth = combatData.currentComputerHealth - combatData.realizedPlayerDamage;
-    combatData.currentComputerHealth = combatData.newComputerHealth; 
+    combatData.newComputerHealth -= combatData.realizedPlayerDamage;
     combatData.computerDamaged = true;
     combatData.playerAction = 'invoke';
     combatData.playerActionDescription = `You attack ${combatData.computer.name}'s Caeren with your ${combatData.player.mastery}'s Invocation of ${combatData.weapons[0].influences[0]} for ${Math.round(damage)} Pure Damage.`;    
@@ -2371,7 +2336,7 @@ const instantActionSplitter = async (combatData) => {
     await instantEffectCheck(combatData);
     combatData.actionData.push('invoke'); 
         
-    if (combatData.newComputerHealth <= 0 || combatData.currentComputerHealth <= 0) {
+    if (combatData.newComputerHealth <= 0) {
         combatData.newComputerHealth = 0;
         combatData.playerWin = true;
     };
@@ -2390,8 +2355,6 @@ const instantActionSplitter = async (combatData) => {
 
         'newPlayerHealth': combatData.newPlayerHealth,
         'newComputerHealth': combatData.newComputerHealth,
-        'currentPlayerHealth': combatData.currentPlayerHealth,
-        'currentComputerHealth': combatData.currentComputerHealth,
         
         'realizedPlayerDamage': combatData.realizedPlayerDamage,
         'computerDamaged': combatData.computerDamaged,
@@ -2445,49 +2408,7 @@ const instantEffectCheck = async (combatData) => {
     };
     return combatData;
 };
-const damageTick = (data, effect, player) => {
-    if (player) {
-        console.log('Player DoT against Enemy Ticking...');
-        data.newComputerHealth -= effect.effect.damage * 0.33;
-        data.currentComputerHealth -= effect.effect.damage * 0.33;
-        if (data.currentComputerHealth < 0 || data.newComputerHealth < 0) {
-            data.newComputerHealth = 0;
-            data.currentComputerHealth = 0;
-            data.computerWin = false;
-            data.playerWin = true;
-        };
-    } else {
-        console.log('Enemy DoT against Player Ticking...');
-        data.newPlayerHealth -= effect.effect.damage * 0.33;
-        data.currentPlayerHealth -= effect.effect.damage * 0.33;
-        if (data.currentPlayerHealth < 0 || data.newPlayerHealth < 0) {
-            if (data.playerEffects.find(effect => effect.prayer === 'Denial')) {
-                data.newPlayerHealth = 1;
-                data.playerEffects = data.playerEffects = data.playerEffects.filter(effect => effect.prayer !== 'Denial');
-            } else {
-                data.newPlayerHealth = 0;
-                data.currentPlayerHealth = 0;
-                data.computerWin = true;
-                data.playerWin = false;
-            };
-        };
-    };
-    return data;
-};
-const healTick = (data, effect, player) => {
-    if (player) {
-        console.log('Player HoT Ticking...')
-        data.newPlayerHealth += effect.effect.healing * 0.33;
-        data.currentPlayerHealth += effect.effect.healing * 0.33;
-        if (data.currentPlayerHealth > 0 || data.newPlayerHealth > 0) data.computerWin = false;
-    } else {
-        console.log('Enemy HoT Ticking...')
-        data.newComputerHealth += effect.effect.healing * 0.33;
-        data.currentComputerHealth += effect.effect.healing * 0.33;
-        if (data.currentComputerHealth > 0 || data.newComputerHealth > 0) data.playerWin = false;
-    };
-    return data;
-};
+
 const consumePrayerSplitter = async (combatData) => {
     if (combatData.prayerSacrifice === '') combatData.prayerSacrifice = combatData.playerEffects[0].prayer;
     if (combatData.prayerSacrificeName === '') combatData.prayerSacrificeName = combatData.playerEffects[0].name;
@@ -2505,14 +2426,12 @@ const consumePrayerSplitter = async (combatData) => {
         switch (combatData.prayerSacrifice) {
             case 'Heal':
                 combatData.newPlayerHealth += effect.effect.healing * 0.165;
-                combatData.currentPlayerHealth += effect.effect.healing * 0.165;
-                if (combatData.currentPlayerHealth > 0 || combatData.newPlayerHealth > 0) combatData.computerWin = false;
+                if (combatData.newPlayerHealth > 0) combatData.computerWin = false;
                 break;
             case 'Buff':
-                combatData.newComputerHealth = combatData.currentComputerHealth - (combatData.realizedPlayerDamage * 0.5);
-                combatData.currentComputerHealth = combatData.newComputerHealth;
+                combatData.newComputerHealth -= (combatData.realizedPlayerDamage * 0.5);
                 combatData.playerActionDescription = `${combatData.weapons[0].influences[0]}'s Tendrils serenade ${combatData.computer.name}, echoing ${Math.round(combatData.realizedPlayerDamage * 0.5)} more damage.`    
-                if (combatData.newComputerHealth <= 0 || combatData.currentComputerHealth <= 0) {
+                if (combatData.newComputerHealth <= 0) {
                     combatData.newComputerHealth = 0;
                     combatData.playerWin = true;
                 };
@@ -2522,18 +2441,16 @@ const consumePrayerSplitter = async (combatData) => {
                 break;
             case 'Damage':
                 combatData.newComputerHealth -= effect.effect.damage * 0.165;
-                combatData.currentComputerHealth -= effect.effect.damage * 0.165;
-                if (combatData.newComputerHealth <= 0 || combatData.currentComputerHealth <= 0) {
+                if (combatData.newComputerHealth <= 0) {
                     combatData.newComputerHealth = 0;
                     combatData.playerWin = true;
                 }; 
                 break;
             case 'Debuff':
-                combatData.newComputerHealth = combatData.currentComputerHealth - (combatData.realizedComputerDamage * 0.5);
-                combatData.currentComputerHealth = combatData.newComputerHealth;
+                combatData.newComputerHealth -= (combatData.realizedComputerDamage * 0.5);
                 combatData.playerActionDescription = `The Hush of ${combatData.weapons[0].influences[0]} wracks ${combatData.computer.name}, wearing for ${Math.round(combatData.realizedComputerDamage * 0.5)} more damage.`;   
             
-                if (combatData.newComputerHealth <= 0 || combatData.currentComputerHealth <= 0) {
+                if (combatData.newComputerHealth <= 0) {
                     combatData.newComputerHealth = 0;
                     combatData.playerWin = true;
                 };
@@ -2565,9 +2482,7 @@ const consumePrayerSplitter = async (combatData) => {
         'computerDefense': combatData.computerDefense,
 
         'newPlayerHealth': combatData.newPlayerHealth,
-        'currentPlayerHealth': combatData.currentPlayerHealth,
         'newComputerHealth': combatData.newComputerHealth,
-        'currentComputerHealth': combatData.currentComputerHealth,
 
         'playerWin': combatData.playerWin,
         'playerActionDescription': combatData.playerActionDescription,
@@ -2620,9 +2535,7 @@ const phaserEffectTickSplitter = async (data) => {
         'computerDefense': combatData.computerDefense,
 
         'newPlayerHealth': combatData.newPlayerHealth,
-        'currentPlayerHealth': combatData.currentPlayerHealth,
         'newComputerHealth': combatData.newComputerHealth,
-        'currentComputerHealth': combatData.currentComputerHealth,
 
         'playerWin': combatData.playerWin,
         'computerWin': combatData.computerWin,

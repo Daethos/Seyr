@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-import Entity, { screenShake, walk } from "./Entity";  
+import Entity from "./Entity";  
+import { screenShake, walk } from "../phaser/ScreenShake";
 import StateMachine, { States } from "../phaser/StateMachine";
 import ScrollingCombatText from "../phaser/ScrollingCombatText";
 import HealthBar from "../phaser/HealthBar";

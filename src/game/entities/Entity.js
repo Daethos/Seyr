@@ -1,4 +1,5 @@
 import Phaser from "phaser"; 
+import { screenShake } from "../phaser/ScreenShake";
 import ScreenShaker from "../phaser/ScreenShake";
 
 // const LEFT = 'left';
@@ -267,9 +268,11 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             callbackScope: this,
             loop: true
         });
-        
+
+        if ("vibrate" in navigator) {
+            navigator.vibrate(40);
+        };
         screenShake(this.scene);
-        // this.scene.screenShaker.shake(); 
     };
     
     knockbackPlayer(other) { 
@@ -317,7 +320,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             navigator.vibrate(40);
         };
         screenShake(this.scene);
-        // this.scene.screenShaker.shake(); 
     };
 
     checkDamageType = (type, concern) => {
@@ -941,35 +943,4 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             if (this.frameCount > 0) this.frameCount = 0;
         };
     };
-};
- 
-let totalTrauma = 0;
- 
-export const screenShake = (scene, duration = 80, intensity = 0.015) => {
-    totalTrauma += 1.05;
-    intensity *= Math.pow(totalTrauma, 2);
-    
-    if ("vibrate" in navigator) navigator.vibrate(duration);
-    scene.cameras.main.shake(duration, intensity);
-    
-    const decayInterval = setInterval(() => {
-        totalTrauma -= 1.05 / duration;
-        if (totalTrauma <= 0) {
-            totalTrauma = 0;
-            clearInterval(decayInterval);
-        };
-    }, 1);
-};
- 
-export const pauseGame = (scene, duration) => {
-    scene.pause();
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve();
-        }, duration);
-    });
-};
-  
-export function walk(scene, duration = 48, intensity = 0.0004) { // 32 || 0.0003
-    scene.cameras.main.shake(duration, intensity);
 };
