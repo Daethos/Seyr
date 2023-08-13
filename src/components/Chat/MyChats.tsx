@@ -4,11 +4,12 @@ import * as chatAPI from "../../utils/chatApi";
 import Loading from '../../components/Loading/Loading';
 import * as chatLogic from '../../config/chatLogics'
 import GroupChatModal from './GroupChatModal';
+import { User } from '../../pages/App/App';
 
 interface Props {
     selectedChat: any;
     setSelectedChat: React.Dispatch<React.SetStateAction<never[]>>;
-    user: any
+    user: User
     chats: any;
     setChats: any;
     fetchAgain: boolean;
@@ -16,12 +17,12 @@ interface Props {
 
 const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAgain }: Props) => {
     const [show, setShow] = useState<boolean>(false);
-    const handleClose = () => setShow(false);
+    const handleClose = (): void => setShow(false);
 
     const fetchChats = async (): Promise<void> => {
         try {
-            const response = await chatAPI.fetchChat();
-            setChats(response.data);
+            const res = await chatAPI.fetchChat();
+            setChats(res.data);
         } catch (err: any) {
             console.log(err.message, 'Error Fetching Chats')
         };
@@ -35,14 +36,23 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
         handleClose();
     }, [selectedChat]);
 
-    const getLastMessageColor = (latestMessages: any, userId: any) => {
+    const getLastMessageColor = (latestMessages: any, userId: any): string | undefined => {
         if (!latestMessages) return;
         if (latestMessages.sender._id === userId) {
             return '#fdf6d8';
         } else if (!latestMessages.readBy.includes(userId)) {
             return 'gold';
         } else {
-            return 'darkgoldenrod';
+            return 'green';
+        };
+    };
+
+    const checkWidth = (): string => {
+        const width = window.innerWidth;
+        if (width < 768) {
+            return '100%';
+        } else {
+            return '90%';
         };
     };
 
@@ -68,7 +78,7 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
                         ) }
                         </h3>
                         {chat.latestMessages && (
-                            <p style={{ fontSize: '14px', color: getLastMessageColor(chat.latestMessages, user._id), width: '100%' }}>
+                            <p style={{ fontSize: '14px', color: getLastMessageColor(chat.latestMessages, user._id), width: checkWidth() }}>
                             <b>{chat.latestMessages.sender.username.charAt(0).toUpperCase() + chat.latestMessages.sender.username.slice(1)} : {' '}</b>
                             { chat.latestMessages.content.length > 50
                                 ? chat.latestMessages.content.substring(0, 51) + '...'

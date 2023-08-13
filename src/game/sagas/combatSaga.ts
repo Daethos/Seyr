@@ -220,7 +220,10 @@ function* workGetRemoveEffect(action: any): SagaIterator {
 export function* workTickResponse(load: any): SagaIterator {
     let dec = decompress(load);
     yield put(setEffectResponse(dec));
-    EventEmitter.emit('update-combat', dec); 
+    EventEmitter.emit('update-combat', dec);
+    const id: string = yield select((state) => state.combat.enemyID);
+    dec = { ...dec, enemyID: id };
+    yield call(workResolveCombat, dec); // Figuring out where this one should go
 };
 function* workGetPlayerAction(action: any): SagaIterator {
     try {

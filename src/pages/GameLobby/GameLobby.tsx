@@ -8,10 +8,11 @@ import userService from "../../utils/userService";
 import Notifications from '../../components/Chat/Notifications';
 import * as chatAPI from '../../utils/chatMessageApi';
 import { SOCKET } from '../../game/sagas/socketSaga';
+import { User } from '../App/App';
 
 let socket: any;
 interface Props {
-    user: any;
+    user: User;
 };
 
 const GameLobby = ({ user }: Props) => {
@@ -35,7 +36,7 @@ const GameLobby = ({ user }: Props) => {
     }, [user]);
 
     useEffect(() => {
-        const fetchChats = async () => {
+        const fetchChats = async (): Promise<void> => {
             try {
                 const res = await chatAPI.allMessagesNotRead();
                 setNotification(res.data);

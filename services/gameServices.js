@@ -429,7 +429,7 @@ const statusEffectCheck = async (combatData) => {
         const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
         
-        if ((effect.tick.end <= combatData.combatRound || combatData.playerWin === true || combatData.computerWin === true)) { // The Effect Expires, Now checking for Nmae too || && effect.enemyName === combatData.computer.name
+        if ((effect.endTime <= combatData.combatTimer || combatData.playerWin === true || combatData.computerWin === true)) { // The Effect Expires, Now checking for Nmae too || && effect.enemyName === combatData.computer.name
             if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
                 const deBuff = stripEffect(effect, combatData.playerDefense, combatData.weapons[matchingWeaponIndex], false);
                 combatData.weapons[matchingWeaponIndex] = deBuff.weapon;
@@ -442,37 +442,30 @@ const statusEffectCheck = async (combatData) => {
             };
             return false;
         } else { // The Effect Persists
-            switch (effect.prayer) {
-                case 'Buff': // Buffs are applied on the first tick, and if found via existingEffect proc, they have already been enhanced by the stack.
-                    if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
-                        const buff = applyEffect(effect, combatData.playerDefense, combatData.weapons[matchingWeaponIndex], true);
-                        combatData.weapons[matchingWeaponIndex] = buff.weapon;
-                        combatData.playerDefense = buff.defense;
-                    };
-                    break;
-                case 'Debuff':  // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
-                    if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
-                        const debuff = applyEffect(effect, combatData.playerDefense, combatData.weapons[matchingDebuffTargetIndex], false);
-                        combatData.weapons[matchingDebuffTargetIndex] = debuff.weapon;
-                        combatData.playerDefense = debuff.defense;
-                    };
-                    break;
-                case 'Damage': // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
-                    combatData.newPlayerHealth -= effect.effect.damage * 0.33;
-                    combatData.currentPlayerHealth -= effect.effect.damage * 0.33;
-                    if (combatData.currentPlayerHealth < 0 || combatData.newPlayerHealth < 0) {
-                        combatData.newPlayerHealth = 0;
-                        combatData.currentPlayerHealth = 0;
-                        combatData.playerWin = false;
-                        combatData.computerWin = true;
-                    };
-                    break;
-                case 'Heal': // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
-                    combatData.newPlayerHealth += effect.effect.healing * 0.33;
-                    combatData.currentPlayerHealth += effect.effect.healing * 0.33;
-                    if (combatData.currentPlayerHealth > 0 || combatData.newPlayerHealth > 0) combatData.computerWin = false;
-                    break;
-            };
+            // switch (effect.prayer) {
+            //     case 'Buff': // Buffs are applied on the first tick, and if found via existingEffect proc, they have already been enhanced by the stack.
+            //         if (effect.activeStacks === 1 && effect.startTime === combatData.combatTimer) {
+            //             const buff = applyEffect(effect, combatData.playerDefense, combatData.weapons[matchingWeaponIndex], true);
+            //             combatData.weapons[matchingWeaponIndex] = buff.weapon;
+            //             combatData.playerDefense = buff.defense;
+            //         };
+            //         break;
+            //     case 'Debuff':  // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
+            //         if (effect.activeRefreshes === 0 && effect.startTime === combatData.combatTimer) {
+            //             const debuff = applyEffect(effect, combatData.playerDefense, combatData.weapons[matchingDebuffTargetIndex], false);
+            //             combatData.weapons[matchingDebuffTargetIndex] = debuff.weapon;
+            //             combatData.playerDefense = debuff.defense;
+            //         };
+            //         break;
+            //     case 'Damage': // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+            //         damageTick(combatData, effect, false);
+            //         break;
+            //     case 'Heal': // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+            //         healTick(combatData, effect, true);
+            //         break;
+            //     default: 
+            //         break;
+            // };
             return true;
         };
     });
@@ -483,7 +476,7 @@ const statusEffectCheck = async (combatData) => {
         const matchingDebuffTarget = combatData.computerWeapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.computerWeapons.indexOf(matchingDebuffTarget);
 
-        if (effect.tick.end <= combatData.combatRound || combatData.playerWin === true || combatData.computerWin === true) { // The Effect Expires
+        if (effect.endTime <= combatData.combatTimer || combatData.playerWin === true || combatData.computerWin === true) { // The Effect Expires
             if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
                 const deBuff = stripEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingWeaponIndex], false);
                 combatData.computerWeapons[matchingWeaponIndex] = deBuff.weapon;
@@ -496,39 +489,39 @@ const statusEffectCheck = async (combatData) => {
             };
             return false;
         } else { // The Effect Persists
-            switch (effect.prayer) {
-                case 'Buff': // Buffs are applied
-                    if (effect.activeStacks === 1 && effect.tick.start === combatData.combatRound) {
-                        const buff = applyEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingWeaponIndex], true);
-                        combatData.computerWeapons[matchingWeaponIndex] = buff.weapon;
-                        combatData.computerDefense = buff.defense;
-                    };
-                    break;
-                case 'Debuff': // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
-                    if (effect.activeRefreshes === 0 && effect.tick.start === combatData.combatRound) {
-                        const debuff = applyEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingDebuffTargetIndex], false);
-                        combatData.computerWeapons[matchingDebuffTargetIndex] = debuff.weapon;
-                        combatData.computerDefense = debuff.defense;
-                    };
-                    break;
-                case 'Damage': // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
-                    combatData.newComputerHealth -= effect.effect.damage * 0.33;
-                    combatData.currentComputerHealth -= effect.effect.damage * 0.33;
-                    if (combatData.currentComputerHealth < 0 || combatData.newComputerHealth < 0) {
-                        combatData.newComputerHealth = 0;
-                        combatData.currentComputerHealth = 0;
-                        combatData.computerWin = false;
-                        combatData.playerWin = true;
-                    };
-                    break;
-                case 'Heal': // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
-                    combatData.newComputerHealth += effect.effect.healing * 0.33;
-                    combatData.currentComputerHealth += effect.effect.healing * 0.33;
-                    if (combatData.currentComputerHealth > 0 || combatData.newComputerHealth > 0) combatData.playerWin = false;
-                    break;
-                default:
-                    break;
-            };
+            // switch (effect.prayer) {
+            //     case 'Buff': // Buffs are applied
+            //         if (effect.activeStacks === 1 && effect.startTime === combatData.combatTimer) {
+            //             const buff = applyEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingWeaponIndex], true);
+            //             combatData.computerWeapons[matchingWeaponIndex] = buff.weapon;
+            //             combatData.computerDefense = buff.defense;
+            //         };
+            //         break;
+            //     case 'Debuff': // Debuffs are applied on the first tick, so they don't need to be reapplied every tick. Refreshes, Not Stackable. Will test for Balance
+            //         if (effect.activeRefreshes === 0 && effect.startTime === combatData.combatTimer) {
+            //             const debuff = applyEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingDebuffTargetIndex], false);
+            //             combatData.computerWeapons[matchingDebuffTargetIndex] = debuff.weapon;
+            //             combatData.computerDefense = debuff.defense;
+            //         };
+            //         break;
+            //     case 'Damage': // Damage Ticks, 33% of the Damage/Tick (Round), Can Stack and experience the enhanced damage if procced this round, Testing if Stacking is Balanced
+            //         combatData.newComputerHealth -= effect.effect.damage * 0.33;
+            //         combatData.currentComputerHealth -= effect.effect.damage * 0.33;
+            //         if (combatData.currentComputerHealth < 0 || combatData.newComputerHealth < 0) {
+            //             combatData.newComputerHealth = 0;
+            //             combatData.currentComputerHealth = 0;
+            //             combatData.computerWin = false;
+            //             combatData.playerWin = true;
+            //         };
+            //         break;
+            //     case 'Heal': // Heal Ticks, 33% of the Heal/Tick (Round), Can Refresh, Testing if Stacking is Balanced
+            //         combatData.newComputerHealth += effect.effect.healing * 0.33;
+            //         combatData.currentComputerHealth += effect.effect.healing * 0.33;
+            //         if (combatData.currentComputerHealth > 0 || combatData.newComputerHealth > 0) combatData.playerWin = false;
+            //         break;
+            //     default:
+            //         break;
+            // };
         };
         return true;
     });
@@ -541,7 +534,7 @@ const statusEffectCheck = async (combatData) => {
 
 const applyEffect = (prayer, defense, weapon, isBuff) => {
     const modifier = isBuff ? 1 : -1; 
-    console.log(isBuff, modifier, 'Applying Effect, Buff or Debuff ?');
+    console.log(`${prayer.playerName} applying ${prayer.prayer} to ${isBuff ? prayer.weapon : prayer.debuffTarget}`);
     for (let key in weapon) {
         if (prayer.effect[key]) {
             let modifiedValue = weapon[key] + prayer.effect[key] * modifier;
@@ -559,8 +552,8 @@ const applyEffect = (prayer, defense, weapon, isBuff) => {
     return { defense, weapon };
 };
 const stripEffect = (prayer, defense, weapon, isDebuff) => {
-    const modifier = isDebuff ? 1 : -1; 
-    console.log(isDebuff, modifier, 'Stripping Effect, Buff or Debuff ?');
+    const modifier = isDebuff ? 1 : -1;
+    console.log(`Stripping ${prayer.prayer} from ${prayer.weapon} of ${isDebuff ? prayer.enemyName : prayer.playerName}`);
     for (let key in weapon) {
         if (prayer.effect[key]) {
             let modifiedValue = weapon[key] + prayer.effect[key] * modifier * prayer.activeStacks;
@@ -581,68 +574,96 @@ const stripEffect = (prayer, defense, weapon, isDebuff) => {
 const faithSuccess = async (combatData, name, weapon, index) => {
     const desc = index === 0 ? '' : 'Two'
     if (name === 'player') {
-        console.log('Player Faith Success');
-        combatData.prayerData.push(combatData.playerBlessing);
+        const blessing = combatData.playerBlessing;
+        console.log(`${combatData.player.name} ${blessing} Success`);
+        combatData.prayerData.push(blessing);
         combatData.deityData.push(weapon.influences[0]);
         combatData.religiousSuccess = true;
+        const negativeEffect = blessing === 'Damage' || blessing === 'Debuff';
         let exists;
-        const negativeEffect = combatData.playerBlessing === 'Damage' || combatData.playerBlessing === 'Debuff';
 
         if (negativeEffect) {
-            exists = combatData.computerEffects.find(effect => effect.name === `Gift of ${weapon.influences[0]}` && effect.prayer === combatData.playerBlessing);
+            exists = combatData.computerEffects.find(effect => effect.name === `Gift of ${weapon.influences[0]}` && effect.prayer === blessing);
         } else {
-            exists = combatData.playerEffects.find(effect => effect.name === `Gift of ${weapon.influences[0]}` && effect.prayer === combatData.playerBlessing);   
+            exists = combatData.playerEffects.find(effect => effect.name === `Gift of ${weapon.influences[0]}` && effect.prayer === blessing);   
         };
 
         if (!exists) {
-            exists = new StatusEffect(combatData, combatData.player, combatData.computer, weapon, combatData.playerAttributes, combatData.playerBlessing);
+            exists = new StatusEffect(combatData, combatData.player, combatData.computer, weapon, combatData.playerAttributes, blessing);
             if (negativeEffect) {
                 combatData.computerEffects.push(exists);
             } else {
                 combatData.playerEffects.push(exists);
             };
+            if (exists.prayer === 'Buff') {
+                const buff = applyEffect(exists, weapon, combatData.playerDefense, true);
+                combatData.playerDefense = buff.defense;
+                weapon = buff.weapon;
+            };
+            if (exists.prayer === 'Damage') damageTick(combatData, exists, true);
             if (exists.prayer === 'Dispel') {
                 if (combatData.computerEffects.length > 0) await computerDispel(combatData); 
                 combatData.playerEffects.pop();
             };
+            if (exists.prayer === 'Debuff') {
+                const debuff = applyEffect(exists, combatData.computerDefense, combatData.computerWeapons[0], false);
+                combatData.computerDefense = debuff.defense;
+                weapon = debuff.weapon;
+            };
+            if (exists.prayer === 'Heal') healTick(combatData, exists, true);
+            
             combatData[`playerInfluenceDescription${desc}`] = exists.description;
         } else {
             if (exists.stacks) {
                 exists = StatusEffect.updateEffectStack(exists, combatData, combatData.player, weapon);
                 combatData[`playerInfluenceDescription${desc}`] = `${exists.description} Stacked ${exists.activeStacks} times.`; 
                 if (exists.prayer === 'Buff') {
-                    const buff = applyEffect(exists, combatData.playerDefense, weapon, true);
+                    const buff = applyEffect(exists, combatData.computerDefense, weapon, true);
                     combatData.playerDefense = buff.defense;
                     weapon = buff.weapon;
                 };
             }; 
             if (exists.refreshes) {
                 exists.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
-                exists.tick.end += exists.duration + 1;
+                exists.tick.end += exists.duration;
                 exists.endTime += 6;
                 exists.activeRefreshes += 1;
-                combatData[`playerInfluenceDescription${desc}`] = `${exists.description} Refreshed ${exists.activeRefreshes} time(s) for ${exists.duration + 1} round(s).`;
+                combatData[`playerInfluenceDescription${desc}`] = `${exists.description} Refreshed ${exists.activeRefreshes} time(s).`;
             };
         };
-    } else { // Computer
-        console.log('Computer Faith Success');
+    } else { // Computer Effect
+        const blessing = combatData.computerBlessing;
+        console.log(`${combatData.computer.name} ${blessing} Success`);
         combatData.computerReligiousSuccess = true;
+        const negativeEffect = blessing === 'Damage' || blessing === 'Debuff';
         let exists;
-        const negativeEffect = combatData.computerBlessing === 'Damage' || combatData.computerBlessing === 'Debuff';
 
         if (negativeEffect) {
-            exists = combatData.playerEffects.find(effect => effect.name === `Gift of ${weapon.influences[0]}` && effect.prayer === combatData.computerBlessing);
+            exists = combatData.playerEffects.find(effect => effect.name === `Gift of ${weapon.influences[0]}` && effect.prayer === blessing);
         } else {
-            exists = combatData.computerEffects.find(effect => effect.name === `Gift of ${weapon.influences[0]}` && effect.prayer === combatData.computerBlessing);   
+            exists = combatData.computerEffects.find(effect => effect.name === `Gift of ${weapon.influences[0]}` && effect.prayer === blessing);   
         };
 
         if (!exists) {
-            exists = new StatusEffect(combatData, combatData.computer, combatData.player, weapon, combatData.computerAttributes, combatData.computerBlessing);
+            exists = new StatusEffect(combatData, combatData.computer, combatData.player, weapon, combatData.computerAttributes, blessing);
             if (negativeEffect) {
                 combatData.playerEffects.push(exists);
             } else {
                 combatData.computerEffects.push(exists);
             };
+            if (exists.prayer === 'Buff') {
+                const buff = applyEffect(exists, weapon, combatData.computerDefense, true);
+                combatData.computerDefense = buff.defense;
+                weapon = buff.weapon;
+            };
+            if (exists.prayer === 'Damage') damageTick(combatData, exists, false);
+            if (exists.prayer === 'Debuff') {
+                const debuff = applyEffect(exists, combatData.playerDefense, combatData.weapons[0], false);
+                combatData.computerDefense = debuff.defense;
+                weapon = debuff.weapon;
+            };
+            if (exists.prayer === 'Heal') healTick(combatData, exists, false);
+            
             combatData[`computerInfluenceDescription${desc}`] = exists.description;
         } else {
             if (exists.stacks) {
@@ -652,18 +673,17 @@ const faithSuccess = async (combatData, name, weapon, index) => {
                     const buff = applyEffect(exists, weapon, combatData.computerDefense, true);
                     combatData.computerDefense = buff.defense;
                     weapon = buff.weapon;
-                }; 
+                };
             };
             if (exists.refreshes) {
                 exists.duration = Math.floor(combatData.computer.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.computer.level / 3 + 1);
-                exists.tick.end += exists.duration + 1;
+                exists.tick.end += exists.duration;
                 exists.endTime += 6;
                 exists.activeRefreshes += 1;
                 combatData[`computerInfluenceDescription${desc}`] = `${exists.description} Refreshed ${exists.activeRefreshes} time(s) for ${exists.duration + 1} round(s).`;
             };
         };
     };
-
     return combatData;
 };
 
@@ -1378,18 +1398,18 @@ const attackCompiler = async (combatData, playerAction) => {
                         if (combatData.weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                             combatData.dualWielding = true;
                             await dualWieldCompiler(combatData);
-                            return combatData
+                            return combatData;
                         } else {
-                            playerPhysicalDamage *= 1.3;
-                            playerMagicalDamage *= 1.15;
+                            playerPhysicalDamage *= 1.3; // DAMAGE_**_HIGH
+                            playerMagicalDamage *= 1.15; // DAMAGE_**_MID
                         };
                     } else {
-                        playerPhysicalDamage *= 1.3;
-                        playerMagicalDamage *= 1.15;
+                        playerPhysicalDamage *= 1.3; // DAMAGE_**_HIGH
+                        playerMagicalDamage *= 1.15; // DAMAGE_**_MID
                     };
                 } else {
-                    playerPhysicalDamage *= 1.1;
-                    playerMagicalDamage *= 1.1;
+                    playerPhysicalDamage *= 1.1; // DAMAGE_**_LOW
+                    playerMagicalDamage *= 1.1; // DAMAGE_**_LOW
                 };
             };
             if (combatData.weapons[0].attack_type === 'Magic') {
@@ -1414,13 +1434,13 @@ const attackCompiler = async (combatData, playerAction) => {
             };
         };
         if (combatData.weapons[0].grip === 'Two Hand') { // Weapon is TWO HAND
-            if (combatData.weapons[0].attack_type === 'Physical' && combatData.weapons[0].type !== 'Bow') {
+            if (combatData.weapons[0].attack_type === 'Physical' && combatData.weapons[0].type !== 'Bow' && combatData.weapons[0].type !== 'Greatbow') {
                 if (combatData.player.mastery === 'Strength' || combatData.player.mastery === 'Constitution') {
                     if (combatData.playerAttributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 75) { // Might be a dual-wield compiler instead to take the rest of it
                         if (combatData.weapons[1].type !== 'Bow') {
                             combatData.dualWielding = true;
-                            await dualWieldCompiler(combatData)
-                            return combatData
+                            await dualWieldCompiler(combatData);
+                            return combatData;
                         } else { // Less than 40 Srength 
                             playerPhysicalDamage *= 1.3;
                             playerMagicalDamage *= 1.15;
@@ -1439,8 +1459,8 @@ const attackCompiler = async (combatData, playerAction) => {
                     if (combatData.playerAttributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 75) {
                         if (combatData.weapons[1].type !== 'Bow') {
                             combatData.dualWielding = true;
-                            await dualWieldCompiler(combatData)
-                            return combatData
+                            await dualWieldCompiler(combatData);
+                            return combatData;
                         } else {
                             playerPhysicalDamage *= 1.15;
                             playerMagicalDamage *= 1.3;
@@ -1454,14 +1474,9 @@ const attackCompiler = async (combatData, playerAction) => {
                     playerMagicalDamage *= 1.1;
                 };
             };
-            if (combatData.weapons[0].type === 'Bow') {
-                if (combatData.player.mastery === 'Agility' || combatData.player.mastery === 'Achre' || combatData.player.mastery === 'Kyosir' || combatData.player.mastery === 'Constitution') {
-                    playerPhysicalDamage *= 1.4;
-                    playerMagicalDamage *= 1.4;
-                } else {
-                    playerPhysicalDamage *= 1.1;
-                    playerMagicalDamage *= 1.1;
-                };
+            if (combatData.weapons[0].type === 'Bow' || combatData.weapons[0].type !== 'Greatbow') {
+                playerPhysicalDamage *= 1.3;
+                playerMagicalDamage *= 1.3;
             };
         }; 
     };
@@ -2077,7 +2092,7 @@ const phaserActionSplitter = async (combatData) => {
             'computerDualWielding': cleanData.computerDualWielding, 
         };
     } else if (playerActionLive && !computerActionLive) {
-        console.log(cleanData.player.name, "Player Attacking");
+        // console.log(cleanData.player.name, "Player Attacking");
         await computerActionCompiler(cleanData, cleanData.action, cleanData.computerAction, cleanData.computerCounterGuess);
         await attackCompiler(cleanData, cleanData.action);
         changes = {
@@ -2097,7 +2112,7 @@ const phaserActionSplitter = async (combatData) => {
             'dualWielding': cleanData.dualWielding,
         };
     } else if (!playerActionLive && computerActionLive) {
-        console.log(cleanData.computer.name, "Computer Attacking");
+        // console.log(cleanData.computer.name, "Computer Attacking");
         await computerWeaponMaker(cleanData);
         await computerAttackCompiler(cleanData, cleanData.computerAction);
         changes = {
@@ -2291,45 +2306,15 @@ const newDataCompiler = async (combatData) => {
 };
 
 const computerDispel = async (combatData) => {
-    const effect = combatData.computerEffects.pop();
+    const effect = combatData.computerEffects.find(effect => (effect.prayer !== 'Debuff' || effect.prayer !== 'Damage'));
     const matchingWeapon = combatData.computerWeapons.find(weapon => weapon.name === effect.weapon);
     const matchingWeaponIndex = combatData.computerWeapons.indexOf(matchingWeapon);
-    const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
-    const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
-    if (effect.prayer === 'Buff') { // Reverses the Buff Effect to the magnitude of the stack to the proper weapon
-        for (let key in effect.effect) {
-            if (effect.effect[key] && key !== 'dodge') {
-                combatData.computerWeapons[matchingWeaponIndex][key] -= effect.effect[key] * effect.activeStacks;
-                combatData.computerWeapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.computerWeapons[matchingWeaponIndex][key]);
-            } else {
-                combatData.computerWeapons[matchingWeaponIndex][key] += effect.effect[key] * effect.activeStacks;
-                combatData.computerWeapons[matchingWeaponIndex][key] = roundToTwoDecimals(combatData.computerWeapons[matchingWeaponIndex][key]);
-            };
-        };
-        for (let key in combatData.computerDefense) {
-            if (effect.effect[key]) {
-                combatData.computerDefense[key] -= effect.effect[key] * effect.activeStacks;
-                combatData.computerDefense[key] = roundToTwoDecimals(combatData.computerDefense[key]);
-            };
-        };
+    if (effect.prayer === 'Buff') {
+        const deBuff = stripEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingWeaponIndex], false);
+        combatData.computerDefense = deBuff.defense;
+        combatData.computerWeapons[matchingWeaponIndex] = deBuff.weapon; 
     };
-    if (effect.prayer === 'Debuff') { // Revereses the Debuff Effect to the proper weapon
-        for (let key in effect.effect) {
-            if (effect.effect[key] && key !== 'dodge') {
-                combatData.weapons[matchingDebuffTargetIndex][key] += effect.effect[key];
-                combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
-            } else {
-                combatData.weapons[matchingDebuffTargetIndex][key] -= effect.effect[key];
-                combatData.weapons[matchingDebuffTargetIndex][key] = roundToTwoDecimals(combatData.weapons[matchingDebuffTargetIndex][key]);
-            };
-        };
-        for (let key in combatData.playerDefense) {
-            if (effect.effect[key]) {
-                combatData.playerDefense[key] += effect.effect[key];
-                combatData.playerDefense[key] = roundToTwoDecimals(combatData.playerDefense[key]);
-            };
-        };
-    };
+    combatData.computerEffects = combatData.computerEffects.filter(prayer => prayer.id !== effect.id);
     return combatData;
 };
 
@@ -2338,7 +2323,7 @@ const computerDispel = async (combatData) => {
 const prayerSplitter = async (combatData, prayer) => {
     let originalPrayer = combatData.playerBlessing;
     combatData.playerBlessing = prayer; 
-    await faithSuccess(combatData, 'player', combatData.weapons[0], 0); 
+    await faithSuccess(combatData, 'player', combatData.weapons[0], 0);
     combatData.playerBlessing = originalPrayer;
     return combatData;
 };
@@ -2418,26 +2403,20 @@ const instantActionSplitter = async (combatData) => {
 };
 
 const instantEffectCheck = async (combatData) => {
-    const computer = combatData.player.mastery === 'Kyosir' || combatData.playerBlessing === 'Damage' || combatData.playerBlesing === 'Debuff';
-    console.log(`Are these instant effects concerned with the computer? ${computer}`);
+    const computer = combatData.player.mastery === 'Kyosir' || combatData.playerBlessing === 'Damage' || combatData.playerBlessing === 'Debuff';
+    console.log(`Are these instant effects concerned with the computer? ${computer}: InstantEffectCheck`);
     if (computer) {
         combatData.computerEffects = combatData.computerEffects.filter(effect => { 
-            if (effect.tick.start !== combatData.combatRound) return true;
-            const matchingDebuffTarget = combatData.computerWeapons.find(weapon => weapon.name === effect.weapon);
+            console.log(effect.prayer, "Prayer in computerEffects", effect.startTime, "Start Time", effect.endTime, "End Time", combatData.combatTimer, "Combat Timer");
+            if (effect.startTime !== combatData.combatTimer) return true;
+            const matchingDebuffTarget = combatData.computerWeapons.find(weapon => weapon.name === effect.debuffTarget); // weapon might be wrong
             const matchingDebuffTargetIndex = combatData.computerWeapons.indexOf(matchingDebuffTarget);
             switch (effect.prayer) {
                 case 'Damage':
-                    combatData.newComputerHealth -= effect.effect.damage * 0.33;
-                    combatData.currentComputerHealth -= effect.effect.damage * 0.33;
-                    if (combatData.currentComputerHealth < 0 || combatData.newComputerHealth < 0) {
-                        combatData.newComputerHealth = 0;
-                        combatData.currentComputerHealth = 0;
-                        combatData.computerWin = false;
-                        combatData.playerWin = true;
-                    };
+                    damageTick(combatData, effect, true);
                     break;
                 case 'Debuff':
-                    const debuff = applyEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingDebuffTargetIndex]);
+                    const debuff = applyEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingDebuffTargetIndex], false);
                     combatData.computerDefense = debuff.defense;
                     combatData.computerWeapons[matchingDebuffTargetIndex] = debuff.weapon;
                     break;
@@ -2447,19 +2426,17 @@ const instantEffectCheck = async (combatData) => {
         });
     } else {
         combatData.playerEffects = combatData.playerEffects.filter(effect => {
-            if (effect.tick.start !== combatData.combatRound) return true;
+            if (effect.startTime !== combatData.combatTimer) return true;
             const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
             const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
             switch (effect.prayer) {
                 case 'Buff': 
-                    const buff = applyEffect(effect, combatData.playerDefense, combatData.weapons[matchingWeaponIndex]);
+                    const buff = applyEffect(effect, combatData.playerDefense, combatData.weapons[matchingWeaponIndex], true);
                     combatData.playerDefense = buff.defense;
                     combatData.weapons[matchingWeaponIndex] = buff.weapon;
                     break;
                 case 'Heal':
-                    combatData.newPlayerHealth += effect.effect.healing * 0.33;
-                    combatData.currentPlayerHealth += effect.effect.healing * 0.33;
-                    if (combatData.currentPlayerHealth > 0 || combatData.newPlayerHealth > 0) combatData.computerWin = false;
+                    healTick(combatData, effect, true);
                     break;
                 default: break;
             };
@@ -2468,7 +2445,49 @@ const instantEffectCheck = async (combatData) => {
     };
     return combatData;
 };
-
+const damageTick = (data, effect, player) => {
+    if (player) {
+        console.log('Player DoT against Enemy Ticking...');
+        data.newComputerHealth -= effect.effect.damage * 0.33;
+        data.currentComputerHealth -= effect.effect.damage * 0.33;
+        if (data.currentComputerHealth < 0 || data.newComputerHealth < 0) {
+            data.newComputerHealth = 0;
+            data.currentComputerHealth = 0;
+            data.computerWin = false;
+            data.playerWin = true;
+        };
+    } else {
+        console.log('Enemy DoT against Player Ticking...');
+        data.newPlayerHealth -= effect.effect.damage * 0.33;
+        data.currentPlayerHealth -= effect.effect.damage * 0.33;
+        if (data.currentPlayerHealth < 0 || data.newPlayerHealth < 0) {
+            if (data.playerEffects.find(effect => effect.prayer === 'Denial')) {
+                data.newPlayerHealth = 1;
+                data.playerEffects = data.playerEffects = data.playerEffects.filter(effect => effect.prayer !== 'Denial');
+            } else {
+                data.newPlayerHealth = 0;
+                data.currentPlayerHealth = 0;
+                data.computerWin = true;
+                data.playerWin = false;
+            };
+        };
+    };
+    return data;
+};
+const healTick = (data, effect, player) => {
+    if (player) {
+        console.log('Player HoT Ticking...')
+        data.newPlayerHealth += effect.effect.healing * 0.33;
+        data.currentPlayerHealth += effect.effect.healing * 0.33;
+        if (data.currentPlayerHealth > 0 || data.newPlayerHealth > 0) data.computerWin = false;
+    } else {
+        console.log('Enemy HoT Ticking...')
+        data.newComputerHealth += effect.effect.healing * 0.33;
+        data.currentComputerHealth += effect.effect.healing * 0.33;
+        if (data.currentComputerHealth > 0 || data.newComputerHealth > 0) data.playerWin = false;
+    };
+    return data;
+};
 const consumePrayerSplitter = async (combatData) => {
     if (combatData.prayerSacrifice === '') combatData.prayerSacrifice = combatData.playerEffects[0].prayer;
     if (combatData.prayerSacrificeName === '') combatData.prayerSacrificeName = combatData.playerEffects[0].name;
@@ -2476,12 +2495,12 @@ const consumePrayerSplitter = async (combatData) => {
     combatData.prayerData.push(combatData.prayerSacrifice);
 
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
+        if (effect.prayer !== combatData.prayerSacrifice || effect.name !== combatData.prayerSacrificeName) return true; // || effect.enemyName !== combatData.computer.name
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
         const matchingDebuffTarget = combatData.weapons.find(weapon => weapon.name === effect.debuffTarget);
         const matchingDebuffTargetIndex = combatData.weapons.indexOf(matchingDebuffTarget);
 
-        if (effect.prayer !== combatData.prayerSacrifice || effect.name !== combatData.prayerSacrificeName) return true; // || effect.enemyName !== combatData.computer.name
         console.log(`Sacrificing: ${combatData.prayerSacrifice}`);
         switch (combatData.prayerSacrifice) {
             case 'Heal':
@@ -2568,57 +2587,23 @@ const phaserEffectTickSplitter = async (data) => {
     let { combatData, effect, effectTimer } = data;
 
     if (effect.playerName === combatData.player.name) { 
-        switch (effect.prayer) { 
-            case 'Damage': 
-                combatData.newComputerHealth -= effect.effect.damage * 0.33;
-                combatData.currentComputerHealth -= effect.effect.damage * 0.33; 
-                if (combatData.currentComputerHealth < 0 || combatData.newComputerHealth < 0) {
-                    combatData.newComputerHealth = 0;
-                    combatData.currentComputerHealth = 0;
-                    combatData.computerWin = false;
-                    combatData.playerWin = true;
-                };
-                if (combatData.combatTimer >= effect.endTime || effectTimer === 0) combatData.computerEffects = combatData.computerEffects.filter(compEffect => compEffect.id !== effect.id);
-                break;
-            case 'Heal': 
-                combatData.newPlayerHealth += effect.effect.healing * 0.33;
-                combatData.currentPlayerHealth += effect.effect.healing * 0.33;
-                if (combatData.currentPlayerHealth > 0 || combatData.newPlayerHealth > 0) combatData.computerWin = false;
-                if (combatData.combatTimer >= effect.endTime || effectTimer === 0) combatData.playerEffects = combatData.playerEffects.filter(playerEffect => playerEffect.id !== effect.id);
-                break;
-            default: break;
+        if (effect.prayer === 'Damage') { 
+            damageTick(combatData, effect, true);
+            if (combatData.combatTimer >= effect.endTime || effectTimer === 0) combatData.computerEffects = combatData.computerEffects.filter(compEffect => compEffect.id !== effect.id);
+        };
+        if (effect.prayer === 'Heal') { 
+            healTick(combatData, effect, true);
+            if (combatData.combatTimer >= effect.endTime || effectTimer === 0) combatData.playerEffects = combatData.playerEffects.filter(playerEffect => playerEffect.id !== effect.id);
         };  
     } else if (effect.playerName === combatData.computer.name) {
-        switch (effect.prayer) {
-            case 'Damage': 
-                combatData.newPlayerHealth -= effect.effect.damage * 0.33;
-                combatData.currentPlayerHealth -= effect.effect.damage * 0.33;
-                if (combatData.currentPlayerHealth < 0 || combatData.newPlayerHealth < 0) {
-                    if (combatData.playerEffects.find(effect => effect.prayer === 'Denial')) {
-                        combatData.newPlayerHealth = 1;
-                        combatData.playerEffects = combatData.playerEffects = combatData.playerEffects.filter(effect => effect.prayer !== 'Denial');
-                    } else {
-                        combatData.newPlayerHealth = 0;
-                        combatData.currentPlayerHealth = 0;
-                        combatData.computerWin = true;
-                        combatData.playerWin = false;
-                    };
-                };
-                if (combatData.combatTimer >= effect.endTime || effectTimer === 0) {
-                    combatData.playerEffects = combatData.playerEffects.filter(playEffect => playEffect.id !== effect.id);
-                };
-                break;
-            
-            case 'Heal': 
-                combatData.newComputerHealth += effect.effect.healing * 0.33;
-                combatData.currentComputerHealth += effect.effect.healing * 0.33;
-                if (combatData.currentComputerHealth > 0 || combatData.newComputerHealth > 0) combatData.playerWin = false;
-                if (combatData.combatTimer >= effect.endTime || effectTimer === 0) combatData.computerEffects = combatData.computerEffects.filter(computerEffect => computerEffect.id !== effect.id);
-                break;
-            default: break;
+        if (effect.prayer === 'Damage') {
+            damageTick(combatData, effect, false);
+            if (combatData.combatTimer >= effect.endTime || effectTimer === 0) combatData.playerEffects = combatData.playerEffects.filter(playEffect => playEffect.id !== effect.id);
         };
-    } else {
-        return combatData;
+        if (effect.prayer === 'Heal') { 
+            healTick(combatData, effect, false);
+            if (combatData.combatTimer >= effect.endTime || effectTimer === 0) combatData.computerEffects = combatData.computerEffects.filter(computerEffect => computerEffect.id !== effect.id);
+        };
     };
 
     if (combatData.playerWin === true || combatData.computerWin === true) await statusEffectCheck(combatData);
