@@ -191,10 +191,12 @@ export default class Enemy extends Entity {
         this.enemySensor = enemySensor;
         this.enemyCollision(enemySensor);
     };
+
     enemyStateListener() {
         EventEmitter.on('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
         EventEmitter.on('update-combat', this.combatDataUpdate); 
     };
+    
     combatDataUpdate = (e) => {
         if (this.enemyID !== e.enemyID) {
             if (this.inCombat) this.currentRound = e.combatRound;
@@ -202,6 +204,9 @@ export default class Enemy extends Entity {
             return;
         };
         if (this.currentRound !== e.combatRound) this.currentRound = e.combatRound;
+        if (!this.inCombat) {
+            this.jumpIntoCombat();
+        };
         if (this.health > e.newComputerHealth) { 
             const damage = Math.round(this.health - e.newComputerHealth);
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.criticalSuccess);
@@ -228,6 +233,7 @@ export default class Enemy extends Entity {
         if (e.newPlayerHealth <= 0) this.clearCombat();
         this.checkMeleeOrRanged(e.computerWeapons?.[0]);
     };
+    
     enemyCollision = (enemySensor) => {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
@@ -278,6 +284,18 @@ export default class Enemy extends Entity {
 
     isNewEnemy = (player) => {
         return !player.targets.some(obj => obj.enemyID === this.enemyID);
+    };
+
+    jumpIntoCombat = () => {
+        const newEnemy = this.isNewEnemy(this.scene.player);
+        if (newEnemy) {
+            this.scene.player.targets.push(this);
+            this.attacking = this.scene.player;
+            this.inCombat = true;
+            if (this.healthbar) this.healthbar.setVisible(true);
+            this.originPoint = new Phaser.Math.Vector2(this.x, this.y).clone();
+            this.stateMachine.setState(States.CHASE); 
+        };
     };
 
     playerStatusCheck = (other) => {
@@ -824,7 +842,7 @@ export default class Enemy extends Entity {
             };
         };
 
-        if (!this.isRanged) this.knockback(this.actionTarget)
+        // if (!this.isRanged) this.knockback(this.actionTarget)
         screenShake(this.scene);
     };
 

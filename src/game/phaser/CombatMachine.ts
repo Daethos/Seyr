@@ -37,7 +37,16 @@ export default class CombatMachine {
     private listener = () => EventEmitter.on('update-combat-data', (e: CombatData) => (this.state = e));
 
     private actionHandlers: { [key: string]: ActionHandler } = {
-        Weapon: (data: KVI) => Dispatcher.weaponAction(this.dispatch, data),
+        Weapon: (data: KVI) => {
+            const { key, value, id } = data;
+            if (key === 'action' && value === 'counter' && this.state.computerAction === '') {
+                return; // Don't allow counter if computer hasn't acted yet. Null action.
+            };
+            if (key === 'computerAction' && value === 'counter' && this.state.action === '') {
+                return; // Don't allow counter if player hasn't acted yet. Null action.
+            };
+            Dispatcher.weaponAction(this.dispatch, data);
+        },
         Instant: (data: string) => Dispatcher.instantAction(this.dispatch, data),
         Consume: (data: StatusEffect[]) => Dispatcher.prayerAction(this.dispatch, data),
         Tshaeral: (_data: KVI) => Dispatcher.tshaeralAction(this.dispatch),

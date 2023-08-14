@@ -26,20 +26,22 @@ const Delete = ({ ascean, deleteAscean }: Props) => {
             id="modal-delete"
         >
         <Modal.Body id="modal-delete" className="equipment-modal">
-            Do you wish to Delete {ascean.name} ?
+            <p>
+            Do you wish to rein {ascean.name} ?
+            </p>
             <button 
                 className="btn" 
                 value={ascean._id} 
                 onClick={deleteAscean}
-                style={{ color: 'red', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
-                    <h3><>Delete </>
+                style={{ color: 'red', fontWeight: 400, fontVariant: 'small-caps', fontSize: '25px' }}>
             <img 
               src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
               alt={ascean.origin + ascean.sex} 
-              style={{ width: 100 + 'px', height: 100 + 'px', borderRadius: 50 + '%', border: 2 + 'px solid purple' }}
+              style={{ width: '100px', height: '100px', borderRadius: '50%', border: '2px solid purple' }}
               /> 
-            <> {ascean.name}</>
-              </h3>
+            <h3>
+                Aenservaesai
+            </h3>
             </button>
         </Modal.Body>
         </Modal>

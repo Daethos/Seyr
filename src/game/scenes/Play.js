@@ -222,12 +222,12 @@ export default class Play extends Phaser.Scene {
         // this.removePlayerListener();
         // this.multiplayerListeners();
 
-        // ====================== Debug ====================== \\
+        // ====================== FPS ====================== \\
 
-        this.uiContainer = this.add.container(0, 0);
-        this.fpsText = this.add.text(430, 110, 'FPS: ', { font: '16px Cinzel', fill: '#fdf6d8' });
-        this.uiContainer.add(this.fpsText);
-        this.uiContainer.setScrollFactor(0);
+        // this.uiContainer = this.add.container(0, 0);
+        // this.fpsText = this.add.text(430, 110, 'FPS: ', { font: '16px Cinzel', fill: '#fdf6d8' });
+        // this.uiContainer.add(this.fpsText);
+        // this.uiContainer.setScrollFactor(0);
 
     };
 
@@ -463,7 +463,7 @@ export default class Play extends Phaser.Scene {
         this.combatMachine.processor();
         // this.computerFov();
         this.playerLight.setPosition(this.player.x, this.player.y);
-        this.fpsText.setText('FPS: ' + this.game.loop.actualFps.toFixed(2));
+        // this.fpsText.setText('FPS: ' + this.game.loop.actualFps.toFixed(2));
         // if (this.vision) this.vision.setPosition(this.player.x, this.player.y);
     };
     pause() {

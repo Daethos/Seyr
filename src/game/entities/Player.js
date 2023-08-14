@@ -86,7 +86,7 @@ export default class Player extends Entity {
         this.spriteWeapon.setAngle(-195);
         this.currentWeaponSprite = spriteName;
         this.currentDamageType = scene?.state?.player?.weapon_one?.damage_type[0].toLowerCase();
-        this.targetIndex = 0;
+        this.targetIndex = 1;
         this.currentTarget = null;
         this.stamina = scene?.state?.playerAttributes?.stamina;
         this.isMoving = false;
@@ -721,58 +721,58 @@ export default class Player extends Entity {
     onTshaeralEnter = () => {
         this.isTshaering = true;
         this.attacking.isConsumed = true;
-        this.tshaeringGraphic = this.scene.add.graphics();
-        const setColor = (mastery) => {
-            switch (mastery) {
-                case 'Constitution': return 0xFDF6D8;
-                case 'Strength': return 0xFF0000;
-                case 'Agility': return 0x00FF00;
-                case 'Achre': return 0x0000FF;
-                case 'Caeren': return 0x800080;
-                case 'Kyosir': return 0xFFD700;
-                default: return 0xFFFFFF;
-            };
-        }; 
-        let graphicColor = setColor(this.ascean.mastery);
-        console.log(this.ascean.mastery, graphicColor);
-        this.tshaeringGraphic.clear();
-        this.tshaeringGraphic.lineStyle(2, graphicColor, 1);
-        this.tshaeringGraphic.setDepth(1);
+        // this.tshaeringGraphic = this.scene.add.graphics();
+        // const setColor = (mastery) => {
+        //     switch (mastery) {
+        //         case 'Constitution': return 0xFDF6D8;
+        //         case 'Strength': return 0xFF0000;
+        //         case 'Agility': return 0x00FF00;
+        //         case 'Achre': return 0x0000FF;
+        //         case 'Caeren': return 0x800080;
+        //         case 'Kyosir': return 0xFFD700;
+        //         default: return 0xFFFFFF;
+        //     };
+        // }; 
+        // let graphicColor = setColor(this.ascean.mastery);
+        // console.log(this.ascean.mastery, graphicColor);
+        // this.tshaeringGraphic.clear();
+        // this.tshaeringGraphic.lineStyle(2, graphicColor, 1);
+        // this.tshaeringGraphic.setDepth(1);
 
-        const glowFilter = this.scene.plugins.get('rexGlowFilterPipeline');
+        // const glowFilter = this.scene.plugins.get('rexGlowFilterPipeline');
 
-        const updateBeam = (time) => {
-            if (!this.isTshaering || !this.attacking) return;
-            if (glowFilter) glowFilter.remove(this.tshaeringGraphic);
+        // const updateBeam = (time) => {
+        //     if (!this.isTshaering || !this.attacking) return;
+        //     if (glowFilter) glowFilter.remove(this.tshaeringGraphic);
 
-            const outerStrength = 2 + Math.sin(time * 0.005) * 2;
-            const innerStrength = 2 + Math.cos(time * 0.005) * 2;
-            const intensity = 0.25;
+        //     const outerStrength = 2 + Math.sin(time * 0.005) * 2;
+        //     const innerStrength = 2 + Math.cos(time * 0.005) * 2;
+        //     const intensity = 0.25;
 
-            glowFilter.add(this.tshaeringGraphic, {
-                outerStrength,
-                innerStrength,
-                glowColor: graphicColor,
-                intensity,
-                knockout: true
-            });
+        //     glowFilter.add(this.tshaeringGraphic, {
+        //         outerStrength,
+        //         innerStrength,
+        //         glowColor: graphicColor,
+        //         intensity,
+        //         knockout: true
+        //     }); 
 
-            this.tshaeringGraphic.clear();
-            this.tshaeringGraphic.lineStyle(Phaser.Math.Between(3, 6), graphicColor, 1);
-            this.tshaeringGraphic.beginPath();
-            this.tshaeringGraphic.moveTo(this.x, this.y);
-            this.tshaeringGraphic.lineTo(this.attacking.x, this.attacking.y);
-            this.tshaeringGraphic.strokePath();
-        };
+        //     this.tshaeringGraphic.clear();
+        //     this.tshaeringGraphic.lineStyle(Phaser.Math.Between(3, 6), graphicColor, 1);
+        //     this.tshaeringGraphic.beginPath();
+        //     this.tshaeringGraphic.moveTo(this.x, this.y);
+        //     this.tshaeringGraphic.lineTo(this.attacking.x, this.attacking.y);
+        //     this.tshaeringGraphic.strokePath();
+        // };
         
-        updateBeam(this.scene.time.now);
+        // updateBeam(this.scene.time.now);
 
-        this.beamTimer = this.scene.time.addEvent({
-            delay: 250, // Adjust the delay as needed
-            callback: () => updateBeam(this.scene.time.now),
-            callbackScope: this,
-            repeat: 8,
-        });
+        // this.beamTimer = this.scene.time.addEvent({
+        //     delay: 500,
+        //     callback: () => updateBeam(this.scene.time.now),
+        //     callbackScope: this,
+        //     repeat: 8,
+        // });
 
         this.scene.useStamina(PLAYER.STAMINA.TSHAER);
         screenShake(this.scene);
@@ -785,7 +785,7 @@ export default class Player extends Entity {
             callback: () => {
                 if (!this.isTshaering || this.scene.state.playerWin || this.scene.state.newComputerHealth <= 0) return;
                 this.scene.combatMachine.add({ type: 'Tshaeral', data: '' });
-                updateBeam(this.scene.time.now);
+                // updateBeam(this.scene.time.now);
             },
             callbackScope: this,
             repeat: 8,
@@ -805,15 +805,15 @@ export default class Player extends Entity {
             this.tshaeringTimer.remove(false);
             this.tshaeringTimer = null;
         };
-        if (this.beamTimer) {
-            this.beamTimer.remove();
-            this.beamTimer = null;
-        };
+        // if (this.beamTimer) {
+        //     this.beamTimer.remove();
+        //     this.beamTimer = null;
+        // };
         if (!this.isCaerenic) {
             this.setGlow(this, false);
         } 
-        this.tshaeringGraphic.destroy();
-        this.tshaeringGraphic = null;
+        // this.tshaeringGraphic.destroy();
+        // this.tshaeringGraphic = null;
         screenShake(this.scene);
     };
 
