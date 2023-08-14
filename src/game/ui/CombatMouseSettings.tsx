@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCombatSettingFetch } from '../reducers/combatState';
 import useGameSounds from '../../components/GameCompiler/Sounds';
 import { useKeyEvent } from '../../pages/Story/Story';
-import { setScrollEnabled } from '../reducers/gameState';
+import { setScrollEnabled, setSelectedDamageTypeIndex, setSelectedHighlight, setSelectedPrayerIndex, setSelectedWeaponIndex } from '../reducers/gameState';
+import { borderColor } from './ItemPopover';
 
 interface CombatMouseSettingsProps {
     damageType: any[];
@@ -19,12 +20,12 @@ const highlightCycle = {
 const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) => {
     const dispatch = useDispatch();
     const scrollEnabled = useSelector((state: any) => state.game.scrollEnabled);
+    const selectedWeaponIndex = useSelector((state: any) => state.game.selectedWeaponIndex);
+    const selectedDamageTypeIndex = useSelector((state: any) => state.game.selectedDamageTypeIndex);
+    const selectedPrayerIndex = useSelector((state: any) => state.game.selectedPrayerIndex);
+    const selectedHighlight = useSelector((state: any) => state.game.selectedHighlight);
     const { playWO } = useGameSounds(0.25);
     const [prayers, setPrayers] = useState([ 'Buff', 'Heal', 'Debuff', 'Damage', 'Avarice', 'Denial', 'Dispel', 'Silence']);
-    const [selectedWeaponIndex, setSelectedWeaponIndex] = useState<number>(0);
-    const [selectedDamageTypeIndex, setSelectedDamageTypeIndex] = useState<number>(0);
-    const [selectedPrayerIndex, setSelectedPrayerIndex] = useState<number>(0);
-    const [selectedHighlight, setSelectedHighlight] = useState<string>('Weapon');
   
     const handleWheelRotation = (event: WheelEvent): void => {
         if (!scrollEnabled) return;
@@ -32,24 +33,24 @@ const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) 
     
         if (selectedHighlight === 'Prayer') {
             const newIndex = (selectedPrayerIndex + direction + prayers.length) % prayers.length;
-            setSelectedPrayerIndex(newIndex);
+            dispatch(setSelectedPrayerIndex(newIndex));
             dispatch(getCombatSettingFetch({ loadout: prayers[newIndex], type: 'Prayer' }));
-            setSelectedHighlight('Prayer');
+            dispatch(setSelectedHighlight('Prayer'));
         } else if (selectedHighlight === 'Damage') {
             const newIndex = (selectedDamageTypeIndex + direction + damageType.length) % damageType.length;
-            setSelectedDamageTypeIndex(newIndex);
+            dispatch(setSelectedDamageTypeIndex(newIndex));
             dispatch(getCombatSettingFetch({ loadout: damageType[newIndex], type: 'Damage' }));
-            setSelectedHighlight('Damage');
+            dispatch(setSelectedHighlight('Damage'));
         } else if (selectedHighlight === 'Weapon') {
             let newIndex = (selectedWeaponIndex + direction + weapons.length) % weapons.length;
             newIndex = direction === 1 ? 2 : 1;
             if (!weapons[newIndex]) return;
-            setSelectedWeaponIndex(newIndex);
+            dispatch(setSelectedWeaponIndex(newIndex));
             let one: any[] = [];
             if (weapons.length === 3) one = [weapons?.[newIndex], weapons?.[0], weapons?.[2]._id === weapons?.[newIndex]._id ? weapons?.[1] : weapons?.[2]];
             if (weapons.length === 2) one = [weapons?.[newIndex], weapons?.[0]];
             dispatch(getCombatSettingFetch({ loadout: one, type: 'Weapon' }));
-            setSelectedHighlight('Weapon');
+            dispatch(setSelectedHighlight('Weapon'));
         };
         
         playWO();
@@ -57,7 +58,7 @@ const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) 
 
     const handleShiftKey = (event: KeyboardEvent): void => {
         event.preventDefault();
-        if (event.shiftKey) setSelectedHighlight(highlightCycle[selectedHighlight as keyof typeof highlightCycle]); 
+        if (event.shiftKey) dispatch(setSelectedHighlight(highlightCycle[selectedHighlight as keyof typeof highlightCycle])); 
     };
 
     const handleToggleScroll = () => dispatch(setScrollEnabled(!scrollEnabled));
@@ -66,8 +67,9 @@ const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) 
         let newTypes: any[] = []; 
         for (let i = 0; i < types.length; i++) {
             newTypes.push(
-                <div key={i} style={{ display: "inline" }}>
-                    {types[i]}{' <-> '}{types[i] === types[types.length - 1] ? types[0] : ''}
+                <div key={i} style={{ display: "inline", color: borderColor(types[i]) }}>
+                    {/* {types[i]}{' <-> '}{types[i] === types[types.length - 1] ? types[0] : ''} */}
+                    {types[i] !== types[types.length - 1] ? `${types[i]} <-> ` : types[i]}
                 </div>
             );
         };

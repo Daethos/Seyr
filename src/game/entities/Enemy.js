@@ -25,7 +25,6 @@ const DISTANCE = {
     THRESHOLD: 75,
     CHASE: 175,
     RANGED_ALIGNMENT: 10,
-    RANGED_MULTIPLIER: (ranged) => ranged ? 3 : 1,
 };
 
 export default class Enemy extends Entity {
@@ -580,12 +579,18 @@ export default class Enemy extends Entity {
     };
 
     onEvasionEnter = () => { 
-        const chance = Phaser.Math.Between(1, 100); 
-        if (chance > 50) {
+        const evade = Phaser.Math.Between(1, 100); 
+        const direction = Phaser.Math.Between(1, 100);
+        if (evade > 50) {
             this.isDodging = true; 
         } else {
             this.isRolling = true; 
         }; 
+        if (direction > 50) {
+            this.evadeUp = true;
+        } else {
+            this.evadeUp = false;
+        };
         this.handleAnimations();
     };
     onEvasionUpdate = (dt) => {
@@ -595,7 +600,7 @@ export default class Enemy extends Entity {
         if (this.isRolling) { 
             this.anims.play('player_roll', true);
         }; 
-        if (this.flipX) {
+        if (this.evadeUp) {
             this.setVelocityY(2); // Was 3
         } else {
             this.setVelocityY(-2); // Was 3
@@ -895,7 +900,9 @@ export default class Enemy extends Entity {
         this.setVelocity(direction.x * 2, direction.y * 2);
     };
 
-
+    rangedDistanceMultiplier = () => {
+        return this.isRanged ? 3 : 1;
+    };
 
     evaluateCombatDistance = () => {
         if (!this.attacking || !this.inCombat) {
@@ -904,8 +911,7 @@ export default class Enemy extends Entity {
         };  
         let direction = this.attacking.position.subtract(this.position);
         const distanceY = Math.abs(direction.y);
-        const multiplier = DISTANCE.RANGED_MULTIPLIER(this.ranged);
-
+        const multiplier = this.rangedDistanceMultiplier();
         if (this.isStunned) {
             this.setVelocity(0);
         } else if (direction.length() >= DISTANCE.CHASE * multiplier) { // > 525
@@ -917,7 +923,6 @@ export default class Enemy extends Entity {
                 direction.normalize();
                 this.setVelocityY(direction.y * 4);
             };
-
             if (rangedDirection.length() > DISTANCE.THRESHOLD * multiplier) { // 225-525
                 this.anims.play('player_running', true);
                 direction.normalize();
@@ -928,7 +933,6 @@ export default class Enemy extends Entity {
                 // ******************************************************************
                 // Contiually Keeping Distance for RANGED ENEMIES and MELEE PLAYERS.
                 // ******************************************************************
-                
                 this.anims.play('player_running', true);
                 direction.normalize();
                 this.setVelocityX(direction.x * -1.75); // -2.25 | -2

@@ -2133,6 +2133,7 @@ const phaserActionSplitter = async (combatData) => {
         'computerDefense': cleanData.computerDefense,
         'computerEffects': cleanData.computerEffects,
         'computerWeapons': cleanData.computerWeapons,
+        'computerBlessing': cleanData.computerBlessing,
         
         'actionData': cleanData.actionData,
         'typeAttackData': cleanData.typeAttackData,

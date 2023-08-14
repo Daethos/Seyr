@@ -30,6 +30,10 @@ export const gameSlice = createSlice({
         renderedOptions: [],
         renderedText: '',
         scrollEnabled: false,
+        selectedWeaponIndex: 0,
+        selectedDamageTypeIndex: 0,
+        selectedPrayerIndex: 0,
+        selectedHighlight: 'Weapon',
         showDialog: false,
         showInventory: false,
         showLootIds: [] as string[],
@@ -193,6 +197,18 @@ export const gameSlice = createSlice({
         setTutorialContent: (state, action) => {
             return { ...state, tutorial: action.payload };
         },
+        setSelectedWeaponIndex: (state, action) => {
+            return { ...state, selectedWeaponIndex: action.payload };
+        },
+        setSelectedDamageTypeIndex: (state, action) => {
+            return { ...state, selectedDamageTypeIndex: action.payload };
+        },
+        setSelectedPrayerIndex: (state, action) => {
+            return { ...state, selectedPrayerIndex: action.payload };
+        },
+        setSelectedHighlight: (state, action) => {
+            return { ...state, selectedHighlight: action.payload };
+        },
 
         // ==================== Loot Drops ==================== \\
 
@@ -304,6 +320,10 @@ export const {
     setCurrentIntent, 
     setCurrentNodeIndex, 
     setRendering, 
+    setSelectedWeaponIndex,
+    setSelectedDamageTypeIndex,
+    setSelectedPrayerIndex,
+    setSelectedHighlight,
 
 } = gameSlice.actions;
 
