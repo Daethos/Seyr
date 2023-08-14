@@ -204,15 +204,16 @@ export default class Enemy extends Entity {
             return;
         };
         if (this.currentRound !== e.combatRound) this.currentRound = e.combatRound;
-        if (!this.inCombat) {
-            this.jumpIntoCombat();
-        };
+
         if (this.health > e.newComputerHealth) { 
             const damage = Math.round(this.health - e.newComputerHealth);
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.criticalSuccess);
             console.log(`%c ${e.player.name} Dealt ${damage} Damage To ${this.ascean.name}`, 'color: #00ff00');
             if (!this.stateMachine.isCurrentState(States.CONSUMED)) this.stateMachine.setState(States.HURT);
             if (this.isStunned) this.isStunned = false;
+            if (!this.inCombat && !this.isDefeated) {
+                this.jumpIntoCombat();
+            };
             if (e.newComputerHealth <= 0) this.stateMachine.setState(States.DEFEATED);
         };
         if (this.health < e.newComputerHealth) { 
