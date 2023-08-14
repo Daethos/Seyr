@@ -152,7 +152,7 @@ export default class Play extends Phaser.Scene {
         // ====================== Camera ====================== \\
           
         let camera = this.cameras.main;
-        camera.zoom = 1.25;
+        camera.zoom = 1.5;
         camera.startFollow(this.player);
         camera.setLerp(0.1, 0.1);
         camera.setBounds(0, 0, 4096, 4096);  
@@ -168,9 +168,6 @@ export default class Play extends Phaser.Scene {
         this.minimapBorder.setScrollFactor(0);
         this.minimapBorder.setScale(1 / camera.zoom);
 
-        // Generic Dark Overlay
-
-        // this.cameras.main.setBackgroundColor(0x000000); // Set the background color to black
         const darkOverlay = this.add.graphics();
         darkOverlay.fillStyle(0x000000, 0.5); // Black with 50% opacity
         darkOverlay.fillRect(0, 0, 4096, 4096);
@@ -186,6 +183,7 @@ export default class Play extends Phaser.Scene {
         });
 
         // ====================== Lighting ====================== \\
+
         // const width = 960 * 2;
         // const height = 640 * 2;
         // const rt = this.make.renderTexture({
