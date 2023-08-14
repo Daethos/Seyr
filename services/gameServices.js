@@ -2112,7 +2112,7 @@ const phaserActionSplitter = async (combatData) => {
     cleanData.computerAction = '';
     cleanData.combatRound += 1;
     cleanData.sessionRound += 1;
-
+    
     if (cleanData.playerWin === true || cleanData.computerWin === true) await statusEffectCheck(cleanData);
 
     changes = {

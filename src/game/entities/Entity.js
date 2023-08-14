@@ -385,7 +385,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.glowTimer = this.scene.time.addEvent({
             delay: 125, // Adjust the delay as needed
             callback: () => updateGlow(this.scene.time.now),
-            loop: true
+            loop: true,
+            callbackScope: this
         });
 
     };
