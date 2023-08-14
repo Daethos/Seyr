@@ -15,7 +15,7 @@ const SmallHud = ({ ascean, dialogTag }: Props) => {
     const dispatch = useDispatch();
     const showPlayer = useSelector((state: any) => state.game.showPlayer);
     const showDialog = useSelector((state: any) => state.game.showDialog);
-    const [experience, setExperience] = useState<number>(0);
+    const [experience, setExperience] = useState<number>(ascean.experience);
     const [experienceAlert, setExperienceAlert] = useState({ title: '', content: '' });
     const [experienceGained, setExperienceGained] = useState<boolean>(false);
     const expCallback = useCallback(() => {
