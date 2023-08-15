@@ -10,7 +10,6 @@ import { SOCKET } from "./socketSaga";
 import * as asceanAPI from '../../utils/asceanApi';
 import * as equipmentAPI from '../../utils/equipmentApi';
 import * as settingsAPI from '../../utils/settingsApi';
-import Tutorial from "../../components/GameCompiler/Tutorial";
 
 const checkStatisticalValue = (rarity: string) => {
     switch (rarity) {

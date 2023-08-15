@@ -52,7 +52,7 @@
             "key": "player_attack_3",
             "type": "frames",
             "repeat": 0,
-            "frameRate": 12,
+            "frameRate": 8,
             "frames": [
                 {
                     "key": "player_attacks",

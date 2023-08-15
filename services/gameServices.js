@@ -604,12 +604,17 @@ const faithSuccess = async (combatData, name, weapon, index) => {
                     combatData.playerDefense = buff.defense;
                     weapon = buff.weapon;
                 };
+                
+                if (exists.prayer === 'Damage') damageTick(combatData, exists, true);
             }; 
             if (exists.refreshes) {
                 exists.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
                 exists.tick.end += exists.duration;
                 exists.endTime += 6;
                 exists.activeRefreshes += 1;
+                
+                if (exists.prayer === 'Heal') healTick(combatData, exists, true);
+                
                 combatData[`playerInfluenceDescription${desc}`] = `${exists.description} Refreshed ${exists.activeRefreshes} time(s).`;
             };
         };
@@ -2334,7 +2339,8 @@ const instantActionSplitter = async (combatData) => {
             break;
     };
 
-    await instantEffectCheck(combatData);
+    // await instantEffectCheck(combatData);
+
     combatData.actionData.push('invoke'); 
         
     if (combatData.newComputerHealth <= 0) {
@@ -2390,7 +2396,7 @@ const instantEffectCheck = async (combatData) => {
         });
     } else {
         combatData.playerEffects = combatData.playerEffects.filter(effect => {
-            if (effect.startTime !== combatData.combatTimer) return true;
+            if (effect.startTime !== combatData.combatTimer) return true; // !== Means it has been existing.
             const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
             const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
             switch (effect.prayer) {
@@ -2674,5 +2680,5 @@ module.exports = {
     consumePrayer,
     phaserActionCompiler,
     phaserEffectTick,
-    phaserRemoveTick
+    phaserRemoveTick,
 };

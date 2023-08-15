@@ -60,16 +60,11 @@ class Particle {
                     if (player.name === 'player') {
                         player.attackedTarget = other.gameObjectB;
                         if (this.scene.state.action !== effect.action) {
-                            // console.log("Action " + effect.action + "Success Due to Collision Success For PLAYER");
                             this.scene.combatMachine.input('action', effect.action);
                         };
                     } else if (player.name === 'enemy') {
                         if (player.isCurrentTarget && this.scene.state.computerAction !== effect.action) {
-                            // console.log("Action " + effect.action + "Success Due to Collision Success For TARGETED ENEMY");
                             this.scene.combatMachine.input('computerAction', effect.action, player.enemyID);
-                        } else if (!player.isCurrentTarget && player.currentAction !== effect.action) {
-                            // console.log("Action " + effect.action + " Success Due to Collision Success For NON TARGETED ENEMY");
-                            // player.currentAction = effect.action;
                         };
                     };
                     if (player.particleEffect && this.scene.particleManager.particles.find((particle) => particle.id === player.particleEffect.id)) player.particleEffect.success = true;
@@ -98,23 +93,14 @@ class Particle {
             callback: () => {
                 this.scene.particleManager.removeEffect(id);
             },
-            loop: false
+            callbackScope: this.scene,
+            loop: false,
         })
     };
 
     setVelocity(action) {
-        switch (action) {
-            case 'attack':
-                return 7.5;
-            case 'counter':
-                return 9;
-            case 'posture':
-                return 6;
-            case 'roll':
-                return 6;
-            default:
-                return 6;
-        };
+        const velocity = { attack: 7.5, counter: 9, posture: 6, roll: 6 };
+        return velocity[action];
     };
 
     spriteMaker(scene, player, key) {
@@ -191,19 +177,6 @@ export default class ParticleManager extends Phaser.Scene {
 
     update(player) { 
         if (!player.particleEffect) return;
-        switch (player.particleEffect.action) {
-            case 'attack':
-                if (player.frameCount < 16) return;
-                break;
-            case 'counter':
-                if (player.frameCount < 3) return;
-                break;
-            case 'posture':
-                if (player.frameCount < 11) return;
-                break; 
-            default:
-                break;
-        };
         if (!player.particleEffect.effect.visible) player.particleEffect.effect.setVisible(true); 
         if (!player.flipX && !player.particleEffect.effect.flipX) player.particleEffect.effect.flipX = true;
         if (player.particleEffect && player.particleEffect.effect && this.particles.find((particle) => particle.id === player.particleEffect.id)) {

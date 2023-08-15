@@ -176,16 +176,10 @@ const combatSlice = createSlice({
             return { ...state, [key]: value };
         },
         setDamageType: (state, action) => {
-            return {
-                ...state,
-                playerDamageType: action.payload,
-            };
+            return { ...state, playerDamageType: action.payload };
         }, 
         setPlayerBlessing: (state, action) => {
-            return {
-                ...state,
-                playerBlessing: action.payload,
-            };
+            return { ...state, playerBlessing: action.payload };
         },
         setPrayerSacrifice: (state, action) => {
             return {
@@ -271,7 +265,6 @@ const combatSlice = createSlice({
                 playerEffects: action.payload.playerEffects,  
             };
         },
-        // TODO:FIXME: Create an effect ripper that on top of filtering, reverses any effect if warranted i.e. buff / debuff
         setRemoveEffect: (state, action) => {
             const socket = getSocketInstance();
             socket.emit(SOCKET.REMOVE_EFFECT, action.payload);
@@ -300,10 +293,7 @@ const combatSlice = createSlice({
         setCombatTimer: (state, action) => {
             const socket = getSocketInstance();
             socket.emit(SOCKET.UPDATE_COMBAT_DATA, { combatTimer: action.payload });
-            return {
-                ...state,
-                combatTimer: action.payload,
-            };
+            return { ...state, combatTimer: action.payload };
         }, 
 
         // ==================== Combat Resolution Concerns ==================== \\
@@ -351,7 +341,6 @@ const combatSlice = createSlice({
         clearCombat: (state) => {
             return {
                 ...state,
-                // computer: null,
                 playerWin: false,
                 computerWin: false,
                 combatEngaged: false,

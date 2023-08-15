@@ -1,14 +1,20 @@
 import Phaser from "phaser"; 
 import { screenShake } from "../phaser/ScreenShake";
-import ScreenShaker from "../phaser/ScreenShake";
 
-// const LEFT = 'left';
-// const RIGHT = 'right';
+export const FRAME_COUNT = {
+    ATTACK_LIVE: 16,
+    ATTACK_SUCCESS: 39,
+    
+    COUNTER_LIVE: 5,
+    COUNTER_SUCCESS: 10,
 
-// const ATTACK_FRAME_COUNT = 16;
-// const COUNTER_FRAME_COUNT = 5;
-// const POSTURE_FRAME_COUNT = 11;
-// const ROLL_FRAME_COUNT = 10;
+    POSTURE_LIVE: 16, // 11 for frameRate: 12
+    POSTURE_SUCCESS: 17, // 11 for frameRate: 12
+    
+    ROLL_LIVE: 10,
+    ROLL_SUCCESS: 10,
+    
+};
 
 // // Define weapon angles for different actions
 // const actionAngles = {
@@ -69,8 +75,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.hasBow = false;
 
         this.actionAvailable = false;
-        this.actionCounterable = false;
-        this.actionCountered = false;
         this.actionSuccess = false;
         this.actionTarget = null;
         this.dodgeCooldown = 0;
@@ -105,6 +109,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.interruptCondition = false;
         this.scrollingCombatText = null;
         this.winningCombatText = null;
+        this.specialCombatText = null;
 
         this.path = [];
         this.nextPoint = {};
@@ -274,53 +279,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         };
         screenShake(this.scene);
     };
-    
-    knockbackPlayer(other) { 
-        if (!other.pair.gameObjectB || !other.pair.gameObjectB.body) return;
-        let bodyPosition = other.gameObjectB.body.position;
-        let body = other.pair.gameObjectB.body; 
-        let offset = Phaser.Physics.Matter.Matter.Vector.mult(other.pair.collision.normal, other.pair.collision.depth); 
-        let collisionPoint = Phaser.Physics.Matter.Matter.Vector.add(offset, bodyPosition);
-        this.knockbackDirection = this.flipX ? Phaser.Physics.Matter.Matter.Vector.sub(collisionPoint, bodyPosition) : Phaser.Physics.Matter.Matter.Vector.sub(bodyPosition, collisionPoint);
-        this.knockbackDirection = Phaser.Physics.Matter.Matter.Vector.normalise(this.knockbackDirection);
- 
-        const accelerationFrames = 12; 
-        const accelerationStep = this.knockbackForce / accelerationFrames; 
-        const dampeningFactor = 0.9; 
-        const knockbackDuration = 12; 
-        const knockbackInterval = 16;
-        let currentForce = 0; 
-        let elapsedTime = 0; 
-        
-        const knockbackLoop = () => {
-            if (elapsedTime >= knockbackDuration) { 
-                knockbackEvent.remove();
-                return;
-            };
-            
-            if (currentForce < this.knockbackForce) currentForce += accelerationStep; 
-            const forceX = (this.knockbackDirection.x * currentForce) * (this.flipX ? -5 : 5);
-            const forceY = (this.knockbackDirection.y * currentForce) * (this.flipX ? -5 : 5);
-            Phaser.Physics.Matter.Matter.Body.applyForce(body, bodyPosition, {
-                x: forceX,
-                y: forceY
-            });
-            currentForce *= dampeningFactor;
-            elapsedTime++;
-        };
-          
-        const knockbackEvent = this.scene.time.addEvent({
-            delay: knockbackInterval,
-            callback: knockbackLoop,
-            callbackScope: this,
-            loop: true
-        });
-    
-        if ("vibrate" in navigator) {
-            navigator.vibrate(40);
-        };
-        screenShake(this.scene);
-    };
 
     checkDamageType = (type, concern) => {
         const types = { 'magic': ['earth', 'fire', 'frost', 'lightning', 'righteous', 'spooky', 'sorcery', 'wild', 'wind'], 'physical': ['blunt', 'pierce', 'slash'] };
@@ -393,7 +351,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     weaponRotation = (entity, target) => {  
         if (!this.isPosturing && !this.isStrafing && !this.isStalwart && this.spriteShield) this.spriteShield.setVisible(false);
-        if (this.isDodging) this.spriteShield.setVisible(false);
+        if (this.isDodging || this.isRolling) this.spriteShield.setVisible(false);
+        if (this.isDodging || this.isRolling) this.spriteWeapon.setVisible(false);
         if (this.isStalwart && !this.isRolling && !this.isDodging) this.spriteShield.setVisible(true);
         if (this.isPraying || this.isHealing) {
             if (this.spriteWeapon.depth < 3) this.spriteWeapon.setDepth(3);
@@ -418,15 +377,11 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             this.frameCount += 1;
         } else if (this.isCountering) { 
-            if (entity === 'player' && this.hasMagic && this.frameCount === 5) {
-                this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.currentDamageType);
-                if (this.flipX) {
-                    this.particleEffect.effect.setOrigin(2, 0.5);
-                } else {
-                    this.particleEffect.effect.setOrigin(-1, 0.5);
+            if (this.frameCount === FRAME_COUNT.COUNTER_LIVE) {
+                if (entity === 'player' && this.inCombat && this.isRanged) {
+                    if (this.hasMagic) this.particleEffect = this.scene.particleManager.addEffect('counter', this, this.currentDamageType);
+                    if (this.hasBow) this.particleEffect = this.scene.particleManager.addEffect('counter', this, 'arrow');
                 };
-            } else if (entity === 'player' && this.hasBow && this.frameCount === 5) {
-                this.particleEffect = this.scene.particleManager.addEffect('counter', this, 'arrow');
             };
             
             if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
@@ -446,7 +401,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     this.spriteWeapon.setAngle(45);
                 }; 
                 
-                if (this.frameCount === 10) {
+                if (this.frameCount === FRAME_COUNT.COUNTER_SUCCESS) {
                     if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
                         this.actionSuccess = true;
                         this.attackedTarget = this.triggeredActionAvailable;
@@ -462,30 +417,28 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.frameCount += 1; 
 
         } else if (this.isRolling) {
-            if (entity === 'player' && this.frameCount === 10 && this.inCombat && this.hasMagic) {
-                this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.currentDamageType);
-            } else if (entity === 'player' && this.frameCount === 10 && this.inCombat && this.hasBow) {
-                this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
-            };
-            if (entity === 'enemy' && this.frameCount === 10 && this.attacking && this.inCombat && this.hasMagic) {
-                this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.currentDamageType);    
-            } else if (entity === 'enemy' && this.frameCount === 10 && this.attacking && this.inCombat && this.hasBow) {
-                this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
-            };
-            this.spriteShield.setVisible(false);
-            this.spriteWeapon.setVisible(false);
-            this.frameCount += 1;
-        } else if (this.isAttacking) {
-            if (entity === 'player' && this.hasMagic && this.frameCount === 16) {
-                this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.currentDamageType);
-            } else if (entity === 'player' && this.hasBow && this.frameCount === 16) {
-                this.particleEffect = this.scene.particleManager.addEffect('attack', this, 'arrow');
+            if (this.frameCount == FRAME_COUNT.ROLL_LIVE) {
+                if (entity === 'player' && this.inCombat && this.isRanged) {
+                    if (this.hasMagic) this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.currentDamageType);
+                    if (this.hasBow) this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
+                };
+                if (entity === 'enemy' && this.attacking && this.inCombat && this.isRanged) {
+                    if (this.hasMagic) this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.currentDamageType);
+                    if (this.hasBow) this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
+                };
             };
 
-            if (entity === 'enemy' && this.hasMagic && this.frameCount === 16 && this.attacking) {
-                this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.currentDamageType);
-            } else if (entity === 'enemy' && this.hasBow && this.frameCount === 16 && this.attacking) {
-                this.particleEffect = this.scene.particleManager.addEffect('attack', this, 'arrow');
+            this.frameCount += 1;
+        } else if (this.isAttacking) {
+            if (this.frameCount === FRAME_COUNT.ATTACK_LIVE) {
+                if (entity === 'player' && this.inCombat && this.isRanged) {
+                    if (this.hasMagic) this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.currentDamageType);
+                    if (this.hasBow) this.particleEffect = this.scene.particleManager.addEffect('attack', this, 'arrow');
+                };
+                if (entity === 'enemy' && this.attacking && this.inCombat && this.isRanged) {
+                    if (this.hasMagic) this.particleEffect = this.scene.particleManager.addEffect('attack', this, this.currentDamageType);
+                    if (this.hasBow) this.particleEffect = this.scene.particleManager.addEffect('attack', this, 'arrow');
+                };
             };
 
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
@@ -514,7 +467,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     };
                     if (this.frameCount === 16) {
                         this.spriteWeapon.setAngle(250);
-                        this.actionCounterable = true;
                     };
                     if (this.frameCount === 18) {
                         this.spriteWeapon.setOrigin(0.5, 0.5);
@@ -575,7 +527,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     };
                     if (this.frameCount === 16) {
                         this.spriteWeapon.setAngle(-120);
-                        this.actionCounterable = true;
                     };
                     if (this.frameCount === 18) {
                         this.spriteWeapon.setOrigin(0, 0.5);
@@ -638,7 +589,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     };
                     if (this.frameCount === 16) {
                         this.spriteWeapon.setAngle(-90);
-                        this.actionCounterable = true;
                     };
                     if (this.frameCount === 18) {
                         this.spriteWeapon.setOrigin(0.5, 0.75);
@@ -667,7 +617,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     };
                     if (this.frameCount === 39) {
                         this.spriteWeapon.setAngle(-170);
-                        this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
                             this.actionSuccess = true;
                             this.attackedTarget = this.triggeredActionAvailable;
@@ -709,7 +658,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     };
                     if (this.frameCount === 16) {
                         this.spriteWeapon.setAngle(30);
-                        this.actionCounterable = true;
                     };
                     if (this.frameCount === 18) {
                         this.spriteWeapon.setOrigin(-0.25, 0.75);
@@ -738,7 +686,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     };
                     if (this.frameCount === 39) {
                         this.spriteWeapon.setAngle(90);
-                        this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
                             this.actionSuccess = true;
                             this.attackedTarget = this.triggeredActionAvailable;
@@ -762,18 +709,19 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             };
             this.frameCount += 1;
         } else if (this.isPosturing) {
-            if (entity === 'player' && this.hasMagic && this.frameCount === 11) {
-                this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.currentDamageType);
-            } else if (entity === 'player' && this.hasBow && this.frameCount === 11) {
-                this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
-            };
-            if (entity === 'enemy' && this.hasMagic && this.frameCount === 11 && this.attacking) {
-                this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.currentDamageType);
-            } else if (entity === 'enemy' && this.hasBow && this.frameCount === 11 && this.attacking) {
-                this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
-            };
+            if (this.frameCount === FRAME_COUNT.POSTURE_LIVE) {
+                if (entity === 'player' && this.inCombat && this.isRanged) {
+                    if (this.hasMagic) this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.currentDamageType);
+                    if (this.hasBow) this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
+                };
+                if (entity === 'enemy' && this.attacking && this.inCombat && this.isRanged) {
+                    if (this.hasMagic && this.attacking) this.particleEffect = this.scene.particleManager.addEffect('posture', this, this.currentDamageType);
+                    if (this.hasBow && this.attacking) this.particleEffect = this.scene.particleManager.addEffect('posture', this, 'arrow');
+                };
+            }; 
             if (this.spriteWeapon.depth !== 1) this.spriteWeapon.setDepth(1);
             this.spriteShield.setVisible(true);
+
             if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
                 this.spriteWeapon.setDepth(3);
                 this.spriteShield.setVisible(false);
@@ -782,10 +730,10 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setOrigin(0.75, 0);
                         this.spriteWeapon.setAngle(235);
                     };
-                    if (this.frameCount === 3) {
+                    if (this.frameCount === 5) {
                         this.spriteWeapon.setAngle(155);
                     };
-                    if (this.frameCount === 5) {
+                    if (this.frameCount === 8) {
                         this.spriteWeapon.setOrigin(0, 0.25);
                         this.spriteWeapon.setAngle(135);
                     };  
@@ -794,45 +742,43 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         this.spriteWeapon.setOrigin(0, 0.5);
                         this.spriteWeapon.setAngle(-165);
                     };
-                    if (this.frameCount === 3) {
+                    if (this.frameCount === 5) {
                         this.spriteWeapon.setAngle(-90);
                     };
-                    if (this.frameCount === 5) {
+                    if (this.frameCount === 8) {
                         this.spriteWeapon.setOrigin(0.25, 0);
                         this.spriteWeapon.setAngle(-45);
                     };  
                 };
             } else { 
                 if (this.flipX) {
-                    if (this.frameCount === 0) {
+                    if (this.frameCount === 0) { // 0
                         this.spriteWeapon.setOrigin(0.25, 1.1);
                         this.spriteWeapon.setAngle(55);
                         this.spriteShield.setOrigin(1, 0.15);
-                        this.actionCounterable = true;
                     };
-                    if (this.frameCount === 3) {
+                    if (this.frameCount === 5) { // 3
                         this.spriteWeapon.setOrigin(0.5, 0.75);
                         this.spriteWeapon.setAngle(40);
                         this.spriteShield.setOrigin(1.05, 0.15)
                     };
-                    if (this.frameCount === 5) {
+                    if (this.frameCount === 8) { // 5
                         this.spriteWeapon.setAngle(25);
                         this.spriteShield.setOrigin(1.1, 0.15);
                     }; 
-                    if (this.frameCount === 7) {
+                    if (this.frameCount === 11) { // 7
                         this.spriteWeapon.setOrigin(0, 1.2);
                         this.spriteWeapon.setAngle(-220);
                         this.spriteShield.setOrigin(1.15, 0.15);
                     };
-                    if (this.frameCount === 9) {
+                    if (this.frameCount === 14) { // 9
                         this.spriteWeapon.setOrigin(0, 1.4);
                         this.spriteWeapon.setAngle(-235);
                         this.spriteShield.setOrigin(1.2, 0.15);
-                    };
-                    if (this.frameCount === 11) {
+                    }; 
+                    if (this.frameCount === 17) { // 11
                         this.spriteWeapon.setAngle(-250);
                         this.spriteShield.setOrigin(1, 0.15);
-                        this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
                             this.actionSuccess = true;
                             this.attackedTarget = this.triggeredActionAvailable;
@@ -844,35 +790,33 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                         };
                     }; 
                 } else {
-                    if (this.frameCount === 0) {
+                    if (this.frameCount === 0) { // 0
                         this.spriteWeapon.setOrigin(0, 0.5);
                         this.spriteWeapon.setAngle(-165);
                         this.spriteShield.setOrigin(0, 0.25);
-                        this.actionCounterable = true;
                     };
-                    if (this.frameCount === 3) {
+                    if (this.frameCount === 5) { // 3
                         this.spriteWeapon.setOrigin(0, 1);
                         this.spriteWeapon.setAngle(-45);
                         this.spriteShield.setOrigin(-0.05, 0.15);
                     };
-                    if (this.frameCount === 5) {
+                    if (this.frameCount === 8) { // 5
                         this.spriteWeapon.setOrigin(-0.25, 1.1);
                         this.spriteWeapon.setAngle(15);
                         this.spriteShield.setOrigin(-0.1, 0.15);
                     }; 
-                    if (this.frameCount === 7) {
+                    if (this.frameCount === 11) { // 7
                         this.spriteWeapon.setOrigin(-0.1, 1.2);
                         this.spriteWeapon.setAngle(-205);
                         this.spriteShield.setOrigin(-0.15, 0.15);
                     };
-                    if (this.frameCount === 9) {
+                    if (this.frameCount === 14) { // 9
                         this.spriteWeapon.setAngle(-190);
                         this.spriteShield.setOrigin(-0.2, 0.15);
                     };
-                    if (this.frameCount === 11) {
+                    if (this.frameCount === 17) { // 11
                         this.spriteWeapon.setAngle(-175);
                         this.spriteShield.setOrigin(0, 0.15);
-                        this.actionCounterable = false;
                         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable && !this.isRanged) {
                             this.actionSuccess = true; 
                             this.attackedTarget = this.triggeredActionAvailable;
@@ -885,6 +829,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     };
                 };
             };
+            // console.log(`Posture Frame Count: ${this.frameCount}`);
             this.frameCount += 1;
         } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isRolling && !this.flipX) {
             if (this.isStrafing || this.isStalwart) {
@@ -899,7 +844,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.spriteWeapon.setOrigin(-0.25, 0.5);
                 this.spriteWeapon.setAngle(107.5);
             };
-            if (this.actionCountered) this.actionCountered = false;
             if (this.frameCount > 0) this.frameCount = 0;
         } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isRolling && this.flipX) { 
             if (this.isStrafing || this.isStalwart) {
@@ -914,7 +858,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.spriteWeapon.setOrigin(0.5, 1.2);
                 this.spriteWeapon.setAngle(-194.5);
             };
-            if (this.actionCountered) this.actionCountered = false;
             if (this.frameCount > 0) this.frameCount = 0;
         } else if (this.flipX) { // X Origin More Right
             if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
@@ -928,7 +871,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.spriteWeapon.setOrigin(-0.25, 1.2);
                 this.spriteWeapon.setAngle(-250);
             };
-            if (this.actionCountered) this.actionCountered = false;
             if (this.frameCount > 0) this.frameCount = 0;
         } else {
             if ((entity === 'player' && this.hasBow) || (entity === 'enemy' && this.hasBow)) {
@@ -940,7 +882,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 this.spriteWeapon.setOrigin(-0.15, 1.3);
                 this.spriteWeapon.setAngle(-195);
             };
-            if (this.actionCountered) this.actionCountered = false;
             if (this.frameCount > 0) this.frameCount = 0;
         };
     };

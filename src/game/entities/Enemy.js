@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import Entity from "./Entity"; 
+import Entity, { FRAME_COUNT } from "./Entity"; 
 import { screenShake } from "../phaser/ScreenShake";
 import StateMachine, { States } from "../phaser/StateMachine";
 import HealthBar from "../phaser/HealthBar";
@@ -203,6 +203,7 @@ export default class Enemy extends Entity {
             if (this.inCombat && this.attacking && e.newPlayerHealth <= 0 && e.computerWin) this.clearCombat();
             return;
         };
+        if (e.counterSuccess && !this.stateMachine.isCurrentState(States.STUN) && this.currentRound !== e.combatRound) this.setStun();
         if (this.currentRound !== e.combatRound) this.currentRound = e.combatRound;
 
         if (this.health > e.newComputerHealth) { 
@@ -230,7 +231,6 @@ export default class Enemy extends Entity {
         this.setWeapon(e.computerWeapons[0]); 
         this.checkDamage(e.computerDamageType.toLowerCase()); 
         
-        if (e.counterSuccess && !this.stateMachine.isCurrentState(States.STUN)) this.setStun();        
         if (e.newPlayerHealth <= 0) this.clearCombat();
         this.checkMeleeOrRanged(e.computerWeapons?.[0]);
     };
@@ -350,21 +350,7 @@ export default class Enemy extends Entity {
         this.spriteWeapon.setOrigin(0.25, 1);
         this.scene.add.existing(this.spriteWeapon);
         this.spriteWeapon.setAngle(-195);
-    };
-
-    attackInterval() {
-        if (this.currentWeapon) {
-            const weapon = this.currentWeapon;
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
-        } else if (this.currentWeaponSprite !== '') {
-            const weapons = [this.ascean.weapon_one, this.ascean.weapon_two, this.ascean.weapon_three];
-            const weapon = weapons.find(weapon => weapon.imgURL.split('/')[2].split('.')[0] === this.currentWeaponSprite);
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
-        } else {
-            const weapon = this.ascean.weapon_one;
-            return weapon.attack_type === 'Magic' || weapon.type === 'Bow' || weapon.type === 'Greatbow' ? 1000 : weapon.grip === 'Two Hand' ? 750 : 500;
-        };
-    };
+    }; 
 
     clearCombat = () => {
         console.log(`${this.ascean.name} Has Defeated ${this.scene.state.player.name}`);
@@ -408,7 +394,7 @@ export default class Enemy extends Entity {
 
     setStun = () => {
         console.log("%c Player Counter Success, Enemy Is Now Stunned", 'color: #00ff00');
-        this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 2500, 'effect', true);
+        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 2500, 'effect', true);
         this.isStunned = true;
     };
 
@@ -509,7 +495,7 @@ export default class Enemy extends Entity {
         this.setVelocity(this.patrolVelocity.x, this.patrolVelocity.y);
     };
     onPatrolExit = () => {
-        this.anims.stop('player_running');
+        // this.anims.stop('player_running');
         this.patrolTimer.destroy();
     };
 
@@ -551,7 +537,7 @@ export default class Enemy extends Entity {
         }); 
     }; 
     onChaseUpdate = (dt) => {
-        const rangeMultiplier = this.isRanged ? 1.75 : 1;
+        const rangeMultiplier = this.rangedDistanceMultiplier(1.75);
         const direction = this.attacking.position.subtract(this.position);
         const distance = direction.length();
         if (Math.abs(this.originPoint.x - this.position.x) > 750 * rangeMultiplier || Math.abs(this.originPoint.y - this.position.y) > 750 * rangeMultiplier || !this.inCombat || distance > 750 * rangeMultiplier) {
@@ -581,7 +567,7 @@ export default class Enemy extends Entity {
     onCombatEnter = () => {
         this.anims.play('player_running', true);
         this.attackTimer = this.scene.time.addEvent({
-            delay: this.attackInterval(),
+            delay: this.swingTimer,
             callback: () => {
                 this.combat(this.attacking);
             },
@@ -598,18 +584,18 @@ export default class Enemy extends Entity {
     };
 
     onEvasionEnter = () => { 
-        const evade = Phaser.Math.Between(1, 100); 
         const direction = Phaser.Math.Between(1, 100);
-        if (evade > 50) {
-            this.isDodging = true; 
-        } else {
-            this.isRolling = true; 
-        }; 
+        const evade = Phaser.Math.Between(1, 100); 
         if (direction > 50) {
             this.evadeUp = true;
         } else {
             this.evadeUp = false;
         };
+        if (evade > 50) {
+            this.isDodging = true; 
+        } else {
+            this.isRolling = true; 
+        }; 
         this.handleAnimations();
     };
     onEvasionUpdate = (dt) => {
@@ -633,7 +619,7 @@ export default class Enemy extends Entity {
         this.attack();
     };
     onAttackUpdate = (dt) => {
-        if (this.frameCount === 16 && !this.isRanged) this.scene.combatMachine.input('computerAction', 'attack', this.enemyID);
+        if (this.frameCount === FRAME_COUNT.ATTACK_LIVE && !this.isRanged) this.scene.combatMachine.input('computerAction', 'attack', this.enemyID);
         if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isAttacking) this.evaluateCombatDistance(); 
     };
@@ -646,7 +632,7 @@ export default class Enemy extends Entity {
         this.counter();
     };
     onCounterUpdate = (dt) => {
-        if (this.frameCount === 5 && !this.isRanged) this.scene.combatMachine.input('computerAction', 'counter', this.enemyID);
+        if (this.frameCount === FRAME_COUNT.COUNTER_LIVE && !this.isRanged) this.scene.combatMachine.input('computerAction', 'counter', this.enemyID);
         if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isCountering) this.evaluateCombatDistance();
     };
@@ -687,7 +673,7 @@ export default class Enemy extends Entity {
         this.posture();
     };
     onPostureUpdate = (dt) => {
-        if (this.frameCount === 11 && !this.isRanged) this.scene.combatMachine.input('computerAction', 'posture', this.enemyID);
+        if (this.frameCount === FRAME_COUNT.POSTURE_LIVE && !this.isRanged) this.scene.combatMachine.input('computerAction', 'posture', this.enemyID);
         if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isPosturing) this.evaluateCombatDistance();
     };
@@ -704,7 +690,7 @@ export default class Enemy extends Entity {
         this.handleAnimations();
     };
     onRollUpdate = (dt) => { 
-        if (this.frameCount === 10 && !this.isRanged) this.scene.combatMachine.input('computerAction', 'roll', this.enemyID);
+        if (this.frameCount === FRAME_COUNT.ROLL_LIVE && !this.isRanged) this.scene.combatMachine.input('computerAction', 'roll', this.enemyID);
         if (!this.isRolling) this.evaluateCombatDistance();
     };
     onRollExit = () => { 
@@ -919,8 +905,8 @@ export default class Enemy extends Entity {
         this.setVelocity(direction.x * 2, direction.y * 2);
     };
 
-    rangedDistanceMultiplier = () => {
-        return this.isRanged ? 3 : 1;
+    rangedDistanceMultiplier = (num) => {
+        return this.isRanged ? num : 1;
     };
 
     evaluateCombatDistance = () => {
@@ -930,25 +916,23 @@ export default class Enemy extends Entity {
         };  
         let direction = this.attacking.position.subtract(this.position);
         const distanceY = Math.abs(direction.y);
-        const multiplier = this.rangedDistanceMultiplier();
+        const multiplier = this.rangedDistanceMultiplier(3);
         if (this.isStunned) {
             this.setVelocity(0);
         } else if (direction.length() >= DISTANCE.CHASE * multiplier) { // > 525
             this.stateMachine.setState(States.CHASE);
         } else if (this.isRanged) {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
-            const rangedDirection = this.attacking.position.subtract(this.position);
             if (distanceY > DISTANCE.RANGED_ALIGNMENT) {
                 direction.normalize();
                 this.setVelocityY(direction.y * 4);
             };
-            if (rangedDirection.length() > DISTANCE.THRESHOLD * multiplier) { // 225-525
+            if (this.attacking.position.subtract(this.position).length() > DISTANCE.THRESHOLD * multiplier) { // 225-525
                 this.anims.play('player_running', true);
                 direction.normalize();
                 this.setVelocityX(direction.x * 2.25); // 2.5
-                this.setVelocityY(direction.y * 2.25); // 2.5
-                
-            } else if (rangedDirection.length() < DISTANCE.THRESHOLD && !this.attacking.isRanged) { // < 75
+                this.setVelocityY(direction.y * 2.25); // 2.5          
+            } else if (this.attacking.position.subtract(this.position).length() < DISTANCE.THRESHOLD && !this.attacking.isRanged) { // < 75
                 // ******************************************************************
                 // Contiually Keeping Distance for RANGED ENEMIES and MELEE PLAYERS.
                 // ******************************************************************
@@ -1059,6 +1043,7 @@ export default class Enemy extends Entity {
 
         if (this.healthbar) this.healthbar.update(this);
         if (this.scrollingCombatText) this.scrollingCombatText.update(this);
+        if (this.specialCombatText) this.specialCombatText.update(this);
         if (this.attacking) {
             if (this.isUnderRangedAttack()) {
                 console.log(`%c ${this.ascean.name} Evading Ranged Attack`, 'color: gold');

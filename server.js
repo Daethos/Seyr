@@ -63,6 +63,7 @@ let player = {
     traits: null, // Player Traits
     room: null, // Room
 };
+
 let combatData = {};
 
 io.on("connection", (socket) => {

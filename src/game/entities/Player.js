@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import Entity from "./Entity";  
+import Entity, { FRAME_COUNT } from "./Entity";  
 import { screenShake, walk } from "../phaser/ScreenShake";
 import StateMachine, { States } from "../phaser/StateMachine";
 import ScrollingCombatText from "../phaser/ScrollingCombatText";
@@ -23,7 +23,6 @@ const PLAYER = {
         DISPLACEMENT: 16,
         HEIGHT: 36,
         WIDTH: 20,
-
     },
     SPEED: {
         INITIAL: 1.5, // 1.75
@@ -34,10 +33,8 @@ const PLAYER = {
     SCALE: {
         SELF: 0.8,
         SHIELD: 0.6,
-        WEAPON: {
-            ONE: 0.5,
-            TWO: 0.65,
-        },
+        WEAPON_ONE: 0.5,
+        WEAPON_TWO: 0.65,
     },
     SENSOR: {
         COMBAT: 48,
@@ -75,9 +72,9 @@ export default class Player extends Entity {
         this.playerID = scene.state.player._id;
         this.spriteWeapon = new Phaser.GameObjects.Sprite(this.scene, 0, 0, spriteName);
         if (scene?.state?.player?.weapon_one?.grip === 'Two Hand') {
-            this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON.TWO);
+            this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON_TWO);
         } else {
-            this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON.ONE);
+            this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON_ONE);
         };
         this.spriteWeapon.setOrigin(0.25, 1);
         this.scene.add.existing(this);
@@ -240,6 +237,8 @@ export default class Player extends Entity {
                 case 'Plate-Mail':
                     modifier -= 0.025;
                     break;
+                default:
+                    break;
             };
         };
         addModifier(helmet);
@@ -301,16 +300,16 @@ export default class Player extends Entity {
             if (e.computerCounterSuccess) {
                 this.stateMachine.setState(States.STUN);
                 this.scene.combatMachine.input('computerCounterSuccess', false);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Counter', 1500, 'damage', e.computerCriticalSuccess);    
+                this.specialCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Counter', 1500, 'damage', e.computerCriticalSuccess);    
             };
             if (e.rollSuccess) {
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll', 1500, 'heal', e.criticalSuccess);
+                this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll', 1500, 'heal', e.criticalSuccess);
             };
             if (e.counterSuccess) {
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter', 1500, 'heal', e.criticalSuccess);
+                this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter', 1500, 'heal', e.criticalSuccess);
             };
             if (e.computerRollSuccess) {
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Roll', 1500, 'damage', e.computerCriticalSuccess);
+                this.specialCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Roll', 1500, 'damage', e.computerCriticalSuccess);
             };
             if (e.newComputerHealth <= 0 && e.playerWin) {
                 if (this.isTshaering) this.isTshaering = false;
@@ -552,7 +551,7 @@ export default class Player extends Entity {
         this.scene.useStamina(PLAYER.STAMINA.ATTACK);
     }; 
     onAttackUpdate = (dt) => {
-        if (this.frameCount === 16 && !this.isRanged) {
+        if (this.frameCount === FRAME_COUNT.ATTACK_LIVE && !this.isRanged) {
             this.scene.combatMachine.input('action', 'attack');
             console.log("Attack LIVE");
         };
@@ -574,7 +573,7 @@ export default class Player extends Entity {
         this.scene.useStamina(PLAYER.STAMINA.COUNTER);
     };
     onCounterUpdate = (dt) => {
-        if (this.frameCount === 5 && !this.isRanged) {
+        if (this.frameCount === FRAME_COUNT.COUNTER_LIVE && !this.isRanged) {
             this.scene.combatMachine.input('action', 'counter');
             console.log("Counter LIVE");
         };
@@ -597,7 +596,7 @@ export default class Player extends Entity {
         this.scene.useStamina(PLAYER.STAMINA.POSTURE);
     };
     onPostureUpdate = (dt) => {
-        if (this.frameCount === 11 && !this.isRanged) {
+        if (this.frameCount === FRAME_COUNT.POSTURE_LIVE && !this.isRanged) { //
             this.scene.combatMachine.input('action', 'posture');
             console.log("Posture LIVE");
         };
@@ -623,7 +622,7 @@ export default class Player extends Entity {
         this.body.parts[1].vertices[1].y += this.colliderDisp; 
     };
     onRollUpdate = (dt) => {
-        if (this.frameCount === 10 && !this.isRanged) this.scene.combatMachine.input('action', 'roll');
+        if (this.frameCount === FRAME_COUNT.ROLL_LIVE && !this.isRanged) this.scene.combatMachine.input('action', 'roll');
         if (!this.isRolling) { 
             if (this.inCombat) {
                 this.stateMachine.setState(States.COMBAT); 
@@ -1218,9 +1217,9 @@ export default class Player extends Entity {
             this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
             if (this.scene.state.weapons[0].grip === 'Two Hand') {
-                this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON.TWO);
+                this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON_TWO);
             } else {
-                this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON.ONE);
+                this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON_ONE);
             };
         };
         if (this.currentShieldSprite !== this.assetSprite(this.scene.state.player.shield)) {
@@ -1230,6 +1229,7 @@ export default class Player extends Entity {
         if (this.healthbar) this.healthbar.update(this);
         if (this.scrollingCombatText) this.scrollingCombatText.update(this);
         if (this.winningCombatText) this.winningCombatText.update(this);
+        if (this.specialCombatText) this.specialCombatText.update(this);
     };
     handleMovement = () => {
         // =================== MOVEMENT VARIABLES ================== \\

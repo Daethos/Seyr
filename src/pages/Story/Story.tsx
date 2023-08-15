@@ -27,17 +27,20 @@ export const useKeyEvent = (event: string, callback: any) => {
 
 const Story = () => {
     const { asceanID } = useParams();
-    const [assets, setAssets] = useState([]);
+    const [assets, setAssets] = useState<any>([]);
+    const [loaded, setLoaded] = useState<boolean>(false);
     const dispatch = useDispatch();
     const gameChange = useSelector((state: any) => state.game.gameChange); 
 
     useEffect(() => {
+        console.log(gameChange, loaded, "<- Game Change and Loaded");
         const fetchData = async (): Promise<void> => {
             try {
                 dispatch(getGameFetch(asceanID));
-                const assetResponse = await eqpAPI.index();
-                const sanitizedAssets = await sanitizeAssets(assetResponse.data);
-                setAssets(sanitizedAssets);
+                const res = await eqpAPI.index();
+                const sanitized = await sanitizeAssets(res.data);
+                setAssets(sanitized);
+                setLoaded(true);
                 dispatch(setGameChange(true));
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
@@ -48,20 +51,20 @@ const Story = () => {
 
     const sanitizeAssets = async (assets: any): Promise<[]> => {
         const fields = ['weapons', 'shields', 'helmets', 'chests', 'legs', 'rings', 'amulets', 'trinkets'];
-        const newAssets: any = [];
+        const array: any = [];
         const imageSprite = async (url: string): Promise<string> => url.split('/')[2].split('.')[0];
 
         await Promise.all(fields.map(async (field: string) => {
             await Promise.all(assets[field].map(async (item: any) => {
                 const sprite = await imageSprite(item.imgURL);
-                newAssets.push({
+                array.push({
                     sprite: sprite,
                     imgURL: item.imgURL,
                 });
             })); 
         })); 
-        return newAssets;
-    }; 
+        return array;
+    };  
         
     return (
         <div>

@@ -38,7 +38,7 @@ export default class CombatMachine {
 
     private actionHandlers: { [key: string]: ActionHandler } = {
         Weapon: (data: KVI) => {
-            const { key, value, id } = data;
+            const { key, value } = data;
             if (key === 'action' && value === 'counter' && this.state.computerAction === '') {
                 return; // Don't allow counter if computer hasn't acted yet. Null action.
             };
@@ -62,7 +62,6 @@ export default class CombatMachine {
 
         while (this.clearQueue.length) {
             const _id = this.clearQueue.shift()!;
-            console.log(`Clearing ${_id} from queues.`);
             this.inputQueue = this.inputQueue.filter(({ id }) => id !== _id);
             this.actionQueue = this.actionQueue.filter(({ id }) => id !== _id);
         };

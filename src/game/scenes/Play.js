@@ -9,10 +9,9 @@ import base from '../images/base.png';
 import ParticleManager from '../phaser/ParticleManager';
 import LootDrop from '../matter/LootDrop';
 import EventEmitter from '../phaser/EventEmitter';
-import { getCombatFetch, setStalwart, getNpcSetupFetch, getEnemySetupFetch, clearNonAggressiveEnemy, setCombatInput, setCaerenic } from '../reducers/combatState';
+import { getCombatFetch, setStalwart, getNpcSetupFetch, getEnemySetupFetch, clearNonAggressiveEnemy, setCaerenic } from '../reducers/combatState';
 import { getDrinkFirewaterFetch } from '../reducers/gameState';
 import CombatMachine from '../phaser/CombatMachine';
-// import ScreenShaker from '../phaser/ScreenShake';
 import { Mrpas } from 'mrpas';
 
 export const { Bodies } = Phaser.Physics.Matter.Matter;
@@ -182,7 +181,7 @@ export default class Play extends Phaser.Scene {
             };
         });
 
-        // ====================== Lighting ====================== \\
+        // =========================== Lighting =========================== \\
 
         // const width = 960 * 2;
         // const height = 640 * 2;
@@ -209,7 +208,7 @@ export default class Play extends Phaser.Scene {
         this.lights.enable();
         this.playerLight = this.add.pointlight(this.player.x, this.player.y, 0xDAA520, 200, 0.0675, 0.0675); // 0xFFD700 || 0xFDF6D8 || 0xDAA520
 
-        // ====================== Listeners ====================== \\
+        // =========================== Listeners =========================== \\
 
         this.createWelcome(); 
         this.stateListener(); 
@@ -220,7 +219,7 @@ export default class Play extends Phaser.Scene {
         // this.removePlayerListener();
         // this.multiplayerListeners();
 
-        // ====================== FPS ====================== \\
+        // =========================== FPS =========================== \\
 
         // this.uiContainer = this.add.container(0, 0);
         // this.fpsText = this.add.text(430, 110, 'FPS: ', { font: '16px Cinzel', fill: '#fdf6d8' });
@@ -229,7 +228,7 @@ export default class Play extends Phaser.Scene {
 
     };
 
-    // ================== Camera ================== \\
+    // ============================ Camera ============================ \\
 
     // computerFov = () => {
     //     if (!this.fov || !this.map || !this.player || !this.groundLayer) return;
@@ -238,7 +237,7 @@ export default class Play extends Phaser.Scene {
     //         this.map.worldToTileX(camera.worldView.x) - 1,
     //         this.map.worldToTileY(camera.worldView.y) - 1,
     //         this.map.worldToTileX(camera.worldView.width) + 2,
-    //         this.map.worldToTileY(camera.worldView.height) + 3
+    //         this.map.worldToTileY(camera.worldView.height) + 2 // 3
     //     );
 
     //     for (let y = bounds.y; y < bounds.y + bounds.height; y++) {
@@ -313,7 +312,7 @@ export default class Play extends Phaser.Scene {
     // ============================ Game ============================ \\
     
     checkPlayerSuccess = () => {
-        if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== '')) this.combatMachine.input('action', '');
+        if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== 'roll' && this.state.action !== '')) this.combatMachine.input('action', '');
     };
     clearNonAggressiveEnemy = async () => this.dispatch(clearNonAggressiveEnemy()); 
     clearNPC = async () => EventEmitter.emit('clear-npc'); 
