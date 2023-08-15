@@ -127,8 +127,27 @@ export default class Enemy extends Entity {
             .addState(States.DEFEATED, {
                 onEnter: this.onDefeatedEnter.bind(this),
             })
-
+        
         this.stateMachine.setState(States.IDLE);
+        this.metaMachine = new StateMachine(this, 'enemy');
+        this.metaMachine
+            .addState(States.CLEAN, {
+                onEnter: this.onCleanEnter.bind(this),
+                onExit: this.onCleanExit.bind(this),
+            })
+            .addState(States.ROOT, {
+                onEnter: this.onRootEnter.bind(this),
+                onUpdate: this.onRootUpdate.bind(this),
+                onExit: this.onRootExit.bind(this),
+            })
+            .addState(States.SNARE, {
+                onEnter: this.onSnareEnter.bind(this),
+                onUpdate: this.onSnareUpdate.bind(this),
+                onExit: this.onSnareExit.bind(this),
+            })
+
+        this.metaMachine.setState(States.CLEAN);
+        
         this.setScale(0.8);
         this.isAttacking = false;
         this.isCountering = false;
@@ -314,6 +333,7 @@ export default class Enemy extends Entity {
         this.combatStats = e.combat; 
         this.weapons = [e.combat.combat_weapon_one, e.combat.combat_weapon_two, e.combat.combat_weapon_three];
         
+        this.speed = this.startingSpeed(e.game);
         this.createWeapon(e.game.weapon_one); 
         this.createShield(e.game.shield);
 
@@ -546,11 +566,11 @@ export default class Enemy extends Entity {
         };  
         if (distance >= 175 * rangeMultiplier) {
             if (this.path && this.path.length > 1) {
-                this.setVelocity(this.pathDirection.x * 2.5, this.pathDirection.y * 2.5);
+                this.setVelocity(this.pathDirection.x * (this.speed + 0.75), this.pathDirection.y * (this.speed + 0.75)); // 2.5
             } else {
                 if (this.isPathing) this.isPathing = false;
                 direction.normalize();
-                this.setVelocity(direction.x * 2.5, direction.y * 2.5);
+                this.setVelocity(direction.x * (this.speed + 0.75), direction.y * (this.speed + 0.75)); // 2.5
             };
         } else {
             this.stateMachine.setState(States.COMBAT);
@@ -606,9 +626,9 @@ export default class Enemy extends Entity {
             this.anims.play('player_roll', true);
         }; 
         if (this.evadeUp) {
-            this.setVelocityY(2); // Was 3
+            this.setVelocityY(this.speed); // Was 2
         } else {
-            this.setVelocityY(-2); // Was 3
+            this.setVelocityY(-this.speed); // Was 2
         };
         if (!this.isDodging && !this.isRolling) this.evaluateCombatDistance();
     }; 
@@ -746,11 +766,11 @@ export default class Enemy extends Entity {
         
         if (direction.length() >= 10) {
             if (this.path && this.path.length > 1) {
-                this.setVelocity(this.pathDirection.x * 2.5, this.pathDirection.y * 2.5);
+                this.setVelocity(this.pathDirection.x * (this.speed + 0.75), this.pathDirection.y * (this.speed + 0.75)); // 2.5
             } else {
                 if (this.isPathing) this.isPathing = false;
                 direction.normalize();
-                this.setVelocity(direction.x * 2.5, direction.y * 2.5);
+                this.setVelocity(direction.x * (this.speed + 0.75), direction.y * (this.speed + 0.75)); // 2.5
             };
         } else {
             this.stateMachine.setState(States.IDLE);
@@ -774,7 +794,7 @@ export default class Enemy extends Entity {
                 if (this.attacking) {
                     const direction = this.attacking.position.subtract(this.position);
                     direction.normalize();
-                    this.setVelocity(direction.x * 0.75, direction.y * 0.75);
+                    this.setVelocity(direction.x * (this.speed / 2), direction.y * (this.speed / 2)); // 0.75
                 };
             },
             callbackScope: this,
@@ -809,6 +829,61 @@ export default class Enemy extends Entity {
         this.setStatic(false);
     };
 
+    onCleanEnter = () => {
+        console.log('Clean Meta Concerns');
+    };
+    onCleanExit = () => {
+        console.log('Meta Concern Incoming');
+    };
+    onRootEnter = () => {
+        console.log('Rooted!');
+        this.anims.play('player_idle', true);
+        this.rootDuration = 3000;
+        this.setTint(0x888888);
+        this.setStatic(true);
+        this.scene.time.addEvent({
+            delay: this.rootDuration,
+            callback: () => {
+                this.isRooted = false;
+                this.metaMachine.setState(States.CLEAN);
+            },
+            callbackScope: this,
+            loop: false,
+        });
+    };
+    onRootUpdate = (dt) => {
+        this.evaluateCombatDistance();
+    };
+    onRootExit = () => { 
+        console.log('Root Ended!');
+        this.clearTint();
+        this.setStatic(false);
+    };
+    onSnareEnter = () => {
+        console.log('Snared!');
+        this.anims.play('player_running', true);
+        this.snareDuration = 3000;
+        this.setTint(0x888888);
+        this.adjustSpeed(-1.5);
+        this.scene.time.addEvent({
+            delay: this.snareDuration,
+            callback: () => {
+                this.isSnared = false;
+                this.metaMachine.setState(States.CLEAN);
+            },
+            callbackScope: this,
+            loop: false,
+        });
+    };
+    onSnareUpdate = (dt) => {
+        this.evaluateCombatDistance();
+    };
+    onSnareExit = () => { 
+        console.log('Snare Ended!');
+        this.clearTint();
+        this.adjustSpeed(1.5);
+    };
+
     enemyActionSuccess = () => {
         if (this.isRanged) this.scene.checkPlayerSuccess();
         if (this.particleEffect) {
@@ -829,7 +904,6 @@ export default class Enemy extends Entity {
             };
         };
 
-        // if (!this.isRanged) this.knockback(this.actionTarget)
         screenShake(this.scene);
     };
 
@@ -925,35 +999,35 @@ export default class Enemy extends Entity {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
             if (distanceY > DISTANCE.RANGED_ALIGNMENT) {
                 direction.normalize();
-                this.setVelocityY(direction.y * 4);
+                this.setVelocityY(direction.y * this.speed * 2); // 4
             };
             if (this.attacking.position.subtract(this.position).length() > DISTANCE.THRESHOLD * multiplier) { // 225-525
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * 2.25); // 2.5
-                this.setVelocityY(direction.y * 2.25); // 2.5          
+                this.setVelocityX(direction.x * (this.speed + 0.5)); // 2.25
+                this.setVelocityY(direction.y * (this.speed + 0.5)); // 2.25          
             } else if (this.attacking.position.subtract(this.position).length() < DISTANCE.THRESHOLD && !this.attacking.isRanged) { // < 75
                 // ******************************************************************
                 // Contiually Keeping Distance for RANGED ENEMIES and MELEE PLAYERS.
                 // ******************************************************************
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * -1.75); // -2.25 | -2
-                this.setVelocityY(direction.y * -1.25); // -1.5
+                this.setVelocityX(direction.x * -this.speed); // -2.25 | -2 | -1.75
+                this.setVelocityY(direction.y * -this.speed); // -1.5 | -1.25
             } else if (distanceY < 10) { // Comfy
                 this.setVelocity(0);
                 this.anims.play('player_idle', true);
             } else { // Between 75 and 225 and outside y-distance
                 direction.normalize();
-                this.setVelocityY(direction.y * 2.25); // 2.5
+                this.setVelocityY(direction.y * (this.speed + 0.5)); // 2.25
             };
         } else { // Melee
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
             if (direction.length() > DISTANCE.ATTACK) { 
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * 2.5); // 2.75
-                this.setVelocityY(direction.y * 2.5); // 2.75
+                this.setVelocityX(direction.x * (this.speed + 0.75)); // 2.5
+                this.setVelocityY(direction.y * (this.speed + 0.75)); // 2.5
             } else { // Inside melee range
                 this.setVelocityX(0);
                 this.setVelocityY(0);
@@ -1034,6 +1108,14 @@ export default class Enemy extends Entity {
             this.stateMachine.setState(States.CONSUMED);
             return;
         };
+        if (this.isRooted && !this.metaMachine.isCurrentState(States.ROOT)) {
+            this.metaMachine.setState(States.ROOT);
+            return;
+        };
+        if (this.isSnared && !this.metaMachine.isCurrentState(States.SNARE)) {
+            this.metaMachine.setState(States.SNARE);
+            return;
+        };
         if (this.actionSuccess) {
             this.actionSuccess = false;
             this.enemyActionSuccess();
@@ -1085,7 +1167,8 @@ export default class Enemy extends Entity {
  
     update() {
         this.evaluateEnemyState(); 
-        this.stateMachine.update(this.scene.sys.game.loop.delta);   
+        this.stateMachine.update(this.scene.sys.game.loop.delta);
+        this.metaMachine.update(this.scene.sys.game.loop.delta);   
     };
 
     combat = (target) => { 

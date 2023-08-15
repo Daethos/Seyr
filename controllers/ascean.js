@@ -93,7 +93,9 @@ const MODELS = {
     'Ring': Ring,
     'Amulet': Amulet,
     'Trinket': Trinket,
-  };
+};
+
+const itemFields = FIELDS.map(field => ({ field, itemType: [field.split('_')[0].charAt(0).toUpperCase() + field.split('_')[0].slice(1), 'Equipment'] }));
 
 async function recordSedyrist(req, res) {
     try {
@@ -793,8 +795,8 @@ async function imprintEquipment(inventory) {
     item = await models[type].findOne({ name: inventory.name, rarity: rarity }).exec();
     await seedDB([item], rarity);
     return item;
-}
-
+};
+ 
 async function determineItemType(id) {
     const models = {
         Equipment: Equipment,
@@ -1312,17 +1314,10 @@ async function create(req, res) {
 
 async function index(req, res) {
     try {
-        let asceanCrew = await Ascean.find({ user: req.user._id, alive: true }); 
+        let asceanCrew = await Ascean.find({ user: req.user._id, alive: true }).populate('user').exec();
         asceanCrew = asceanCrew.slice(-10) // Needs to be the last 10 characters        
         for await (let ascean of asceanCrew) {
-            const populated = await Promise.all(FIELDS.map(async field => {
-                const item = await determineItemType(ascean[field]);
-                return item ? item : null;
-            }));
-            populated.forEach((item, index) => {
-                ascean[FIELDS[index]] = item;
-            });
-            await Ascean.populate(ascean, { path: 'user' });
+            await fetchItems(ascean);
         };
         res.status(200).json({ data: asceanCrew });
     } catch (err) {
@@ -1373,9 +1368,7 @@ async function getOneAsceanLight(req, res) {
 
 async function getAsceanAndInventory(req, res) {
     try {
-        let ascean = await Ascean.findById({ _id: req.params.id })
-                                    .populate('user')
-                                    .exec(); 
+        let ascean = await Ascean.findById({ _id: req.params.id }).populate('user').exec(); 
         const populated = await Promise.all(FIELDS.map(async field => {
             const item = await determineItemType(ascean[field]);
             return item ? item : null;
@@ -1430,7 +1423,6 @@ const fetchItem = async (id, itemType) => {
 };
 
 const fetchItems = async (ascean) => {
-    const itemFields = FIELDS.map(field => ({ field, itemType: [field.split('_')[0].charAt(0).toUpperCase() + field.split('_')[0].slice(1), 'Equipment'] }));
     const populated = await Promise.all(itemFields.map(async ({ field, itemType }) => {
         const item = await fetchItem(ascean[field], itemType);
         return item ? item : null;
@@ -1459,10 +1451,9 @@ async function getAsceanStats(req, res) {
         await fetchItems(ascean);
         let data = await asceanService.asceanCompiler(ascean);
         if (ascean.health.current === -10) ascean.health.current = data.data.attributes.healthTotal;
-        if (data.data.attributes.healthTotal > ascean.health.total) { // If the Ascean's health has increased, update the Ascean's health
-            ascean.health.total = data.data.attributes.healthTotal;
+        if (data.data.attributes.healthTotal > ascean.health.total) {  
+            ascean.health.total = data.data.attributes.healthTotal; 
             data.data.ascean.health.total = data.data.attributes.healthTotal;
-            // ascean.health.current = data.data.attributes.healthTotal;
             // if (typeof ascean.currency.gold !== 'number') {
             //     const currency = { gold: 0, silver: 0 };
             //     ascean.currency = currency;

@@ -63,6 +63,7 @@ export default class StateMachine {
 };
 
 export const States = {
+    CLEAN: "clean",
     DEATH: "death",
     IDLE: "idle",
     PATROL: "patrol",
@@ -79,6 +80,8 @@ export const States = {
     NONCOMBAT: "noncombat",
     HEAL: "heal",
     HURT: "hurt",
+    ROOT: "root",
+    SNARE: "snare",
     STUN: "stun",
     INVOKE: "invoke",
     DEFEATED: "defeated",

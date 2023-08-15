@@ -57,93 +57,73 @@ async function createGuestToken(req, res) {
   const guestUser = { id: "guest", isGuest: true };
   const guestToken = createJWT(guestUser);
   res.json({ token: guestToken });
-}
-
-
-async function getModelType(id) { 
-  const itemTypes = ['Weapon', 'Shield', 'Helmet', 'Chest', 'Legs', 'Ring', 'Amulet', 'Trinket', 'Equipment'];
-  for (const itemType of itemTypes) {
-      const item = await MODELS[itemType].findById(id).exec();
-      if (item) {
-          return item.itemType;
-      };
-  };
-  return null;
 };
 
 async function profile(req, res) {
-  try {
-    const user = await User.findOne({ username: req.params.username });
-    if (!user) return res.status(404).json({ error: "User not found" });
-
-    const asceanCrew = await Ascean.find({ user: user._id
-      // , visibility: 'public' 
-    })
-
-    for await (let ascean of asceanCrew) {
-      const populateOptions = await Promise.all([
-        'weapon_one',
-        'weapon_two',
-        'weapon_three',
-        'shield',
-        'helmet',
-        'chest',
-        'legs',
-        'ring_one',
-        'ring_two',
-        'amulet',
-        'trinket'
-        ].map(async field => ({ path: field, model: await getModelType(ascean[field]._id) })));
+    try {
+        const user = await User.findOne({ username: req.params.username });
+        if (!user) return res.status(404).json({ error: "User not found" });
+        console.log(user.username, " <- user.username");
+        const asceanCrew = await Ascean.find({ user: user._id
+        // , visibility: 'public' 
+        }).populate('user').exec();
         
-      await Ascean.populate(ascean, [
-        { path: 'user' },
-        ...populateOptions
-      ]);
+        const itemFields = FIELDS.map(field => ({ field, itemType: [field.split('_')[0].charAt(0).toUpperCase() + field.split('_')[0].slice(1), 'Equipment'] }));
+        for await (let ascean of asceanCrew) {
+            
+            const populated = await Promise.all(itemFields.map(async ({ field, itemType }) => {
+                const item =  await determineItemType(ascean[field], itemType);
+                return item ? item : null;  
+            }));
+        
+            populated.forEach((item, index) => {
+                ascean[FIELDS[index]] = item;
+            });
+        };
+                                    
+        res.status(200).json({
+        data: {
+            user: user,
+            ascean: asceanCrew,
+        }
+        });
+    } catch (err) {
+        console.log(err.message, " <- profile controller");
+        res.status(400).json({ error: "Something went wrong" });
     };
-                                
-    res.status(200).json({
-      data: {
-        user: user,
-        ascean: asceanCrew,
-      }
-    });
-  } catch (err) {
-    console.log(err.message, " <- profile controller");
-    res.status(400).json({ error: "Something went wrong" });
-  };
 }; 
 
 async function determineItemType(id, itemType) {
-  for (const type of itemType) {
-    const item = await MODELS[type].findById(id).exec();
-    if (item) return item;
-  };
-  return null;
-}
+    for (const type of itemType) {
+        const item = await MODELS[type].findById(id).exec();
+        if (item) return item;
+    };
+    return null;
+};
 
 
 async function profileCharacter(req, res) {
   try {
-    let ascean = await Ascean.aggregate([
-      { $match: { user: mongoose.Types.ObjectId(req.body.username), level: { $gte: req.body.minLevel, $lte: req.body.maxLevel } } },
-      { $sample: { size: 1 } }
-    ]);
-    const itemFields = FIELDS.map(field => ({ field, itemType: [field.split('_')[0].charAt(0).toUpperCase() + field.split('_')[0].slice(1), 'Equipment'] }));
-    const populated = await Promise.all(itemFields.map(async ({ field, itemType }) => {
-      const item =  await determineItemType(ascean[0][field], itemType);
-      return item ? item : null;  
-    }));
+        let ascean = await Ascean.aggregate([
+            { $match: { user: mongoose.Types.ObjectId(req.body.username), level: { $gte: req.body.minLevel, $lte: req.body.maxLevel } } },
+            { $sample: { size: 1 } }
+        ]);
+        const itemFields = FIELDS.map(field => ({ field, itemType: [field.split('_')[0].charAt(0).toUpperCase() + field.split('_')[0].slice(1), 'Equipment'] }));
+        const populated = await Promise.all(itemFields.map(async ({ field, itemType }) => {
+            const item =  await determineItemType(ascean[0][field], itemType);
+            return item ? item : null;  
+        }));
 
-    populated.forEach((item, index) => {
-      ascean[0][FIELDS[index]] = item;
-    });
+        populated.forEach((item, index) => {
+            ascean[0][FIELDS[index]] = item;
+        });
 
-    const data = await asceanService.asceanCompiler(ascean[0]);
-    res.status(200).json(data);
-  } catch (err) {
-    console.log(err.message, " <- Error fetching Character from Profile");
-    res.status(400).json(err);
-  };
+        const data = await asceanService.asceanCompiler(ascean[0]);
+        res.status(200).json(data);
+    } catch (err) {
+        console.log(err.message, " <- Error fetching Character from Profile");
+        res.status(400).json(err);
+    };
 };
 
 async function deadEnemy(req, res) {

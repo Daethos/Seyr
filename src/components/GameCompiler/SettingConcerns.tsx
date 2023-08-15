@@ -170,10 +170,10 @@ export const ControlSettings = () => {
                 *Parry-Action
             </p>
             <p style={{ color: '#fdf6d8' }}>
-                General - C: Character - x: mini-switch, T: Drink Flask, V: Dialog, Z: Minimap
+                General - C: Character - x: tab-switch, T: Drink Flask, Shift-C: Dialog, Z: Minimap
             </p>
             <p style={{ color: 'gold' }}>
-                Specials - G: Stalwart, Shift-G: Caerenic, R: Invoke, F: Consume, Shift-F: Tshaering
+                Specials - G: Stalwart, Shift-G: Caerenic, R: Invoke, F: Consume, Shift-F: Tshaering, V: Snare, Shift-V: Root
             </p>
             <p style={{ color: '#fdf6d8' }}>
                 Tactics - Tilda, Shift to Switch Inset: Weapons, Damage, Prayers. Middle Mouse Wheel to Scroll Between Options.

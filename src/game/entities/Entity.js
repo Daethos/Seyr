@@ -1,5 +1,6 @@
 import Phaser from "phaser"; 
 import { screenShake } from "../phaser/ScreenShake";
+import { PLAYER } from './Player';
 
 export const FRAME_COUNT = {
     ATTACK_LIVE: 16,
@@ -100,7 +101,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.currentWeaponSprite = '';
         this.particleEffect = null;
         this.stunTimer = null;
-        this.stunDuration = 1500;
+        this.stunDuration = 2500;
         
         this.currentDamageType = null;
         this.currentRound = 0; 
@@ -121,6 +122,9 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.swingTimer = 0; 
         this.glowing = false;
         this.glowTimer = null;
+        this.speed = 0;
+        this.isSnared = false;
+        this.isRooted = false;
     };
 
     get position() {
@@ -130,6 +134,41 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     get velocity() {
         return this.body.velocity;
+    };
+
+    startingSpeed = (player) => {
+        let speed = PLAYER.SPEED.INITIAL;
+        const helmet = player.helmet.type;
+        const chest = player.chest.type;
+        const legs = player.legs.type;
+        let modifier = 0;
+        const addModifier = (item) => {
+            switch (item) {
+                case 'Leather-Cloth':
+                    modifier += 0.05;
+                    break;
+                case 'Leather-Mail':
+                    modifier += 0.025;
+                    break;
+                case 'Chain-Mail':
+                    modifier += 0.0;
+                    break;
+                case 'Plate-Mail':
+                    modifier -= 0.025;
+                    break;
+                default:
+                    break;
+            };
+        };
+        addModifier(helmet);
+        addModifier(chest);
+        addModifier(legs);
+        speed += modifier;
+        return speed;
+    };
+
+    adjustSpeed = (speed) => {
+        return this.speed += speed;
     };
 
     attack = () => {
@@ -417,7 +456,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
             this.frameCount += 1; 
 
         } else if (this.isRolling) {
-            if (this.frameCount == FRAME_COUNT.ROLL_LIVE) {
+            if (this.frameCount === FRAME_COUNT.ROLL_LIVE) {
                 if (entity === 'player' && this.inCombat && this.isRanged) {
                     if (this.hasMagic) this.particleEffect = this.scene.particleManager.addEffect('roll', this, this.currentDamageType);
                     if (this.hasBow) this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');

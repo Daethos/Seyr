@@ -89,14 +89,9 @@ export default class Play extends Phaser.Scene {
         const layer4 = map.createLayer('Tile Layer 4 - Primes', decorations, 0, 0);
         const layer5 = map.createLayer('Tile Layer 5 - Snags', decorations, 0, 0);
         const layer6 = map.createLayer('Tile Layer 6 - Camps', camps, 0, 0);
-        // this.groundLayer = layer0;
         layer0.setCollisionByProperty({ collides: true });
         layer1.setCollisionByProperty({ collides: true });
         layerC.setCollisionByProperty({ collides: true });
-        // layer2.setCollisionByProperty({ collides: true });
-        // layer3.setCollisionByProperty({ collides: true });
-        // layer4.setCollisionByProperty({ collides: true });
-        // layer5.setCollisionByProperty({ collides: true });  
         this.matter.world.convertTilemapLayer(layer0);
         this.matter.world.convertTilemapLayer(layer1);
         this.matter.world.convertTilemapLayer(layerC);
@@ -104,23 +99,25 @@ export default class Play extends Phaser.Scene {
         // this.matter.world.convertTilemapLayer(layer3);
         // this.matter.world.convertTilemapLayer(layer4);
         // this.matter.world.convertTilemapLayer(layer5); 
+        // this.matter.world.createDebugGraphic(); 
+
         const objectLayer = map.getObjectLayer('navmesh');
         const navMesh = this.navMeshPlugin.buildMeshFromTiled("navmesh", objectLayer, 32);
         this.navMesh = navMesh;
         const debugGraphics = this.add.graphics().setAlpha(0.75);
         this.navMesh.enableDebug(debugGraphics); 
-        this.matter.world.createDebugGraphic(); 
         this.matter.world.setBounds(0, 0, 4096, 4096); // Top Down
+
         // this.fov = new Mrpas(this.map.width, this.map.height, (x, y) => {
         //     const tile = this.groundLayer.getTileAt(x, y);
         //     return tile 
         //     // && !tile.collides;
         // });
 
-        this.player = new Player({scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0'});
-        // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
+        this.player = new Player({ scene: this, x: 200, y: 200, texture: 'player_actions', frame: 'player_idle_0' });
         this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
         this.map.getObjectLayer('Npcs').objects.forEach(npc => this.npcs.push(new NPC({ scene: this, x: npc.x, y: npc.y, texture: 'player_actions', frame: 'player_idle_0' })));
+        // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
 
         // ====================== Combat Machine ====================== \\
 
@@ -145,6 +142,7 @@ export default class Play extends Phaser.Scene {
             firewater: this.input.keyboard.addKeys('T'),
             twist: this.input.mousePointer.rightButtonDown(), 
             target: this.input.keyboard.addKeys('TAB'),
+            snare: this.input.keyboard.addKeys('V'),
             stalwart: this.input.keyboard.addKeys('G'),
         }; 
 
@@ -205,6 +203,7 @@ export default class Play extends Phaser.Scene {
         // rt.mask.invertAlpha = true;
         // rt.setScrollFactor(0);
         // this.vision = vision;
+
         this.lights.enable();
         this.playerLight = this.add.pointlight(this.player.x, this.player.y, 0xDAA520, 200, 0.0675, 0.0675); // 0xFFD700 || 0xFDF6D8 || 0xDAA520
 
@@ -221,11 +220,8 @@ export default class Play extends Phaser.Scene {
 
         // =========================== FPS =========================== \\
 
-        // this.uiContainer = this.add.container(0, 0);
-        // this.fpsText = this.add.text(430, 110, 'FPS: ', { font: '16px Cinzel', fill: '#fdf6d8' });
-        // this.uiContainer.add(this.fpsText);
-        // this.uiContainer.setScrollFactor(0);
-
+        this.fpsText = this.add.text(430, 110, 'FPS: ', { font: '16px Cinzel', fill: '#fdf6d8' });
+        this.fpsText.setScrollFactor(0);
     };
 
     // ============================ Camera ============================ \\
@@ -309,6 +305,17 @@ export default class Play extends Phaser.Scene {
     stateListener = async () => EventEmitter.on('update-combat-data', (e) => this.state = e); 
 
     
+    // ============================ Combat ============================ \\
+
+    root = (id) => {
+        let enemy = this.enemies.find(enemy => enemy.enemyID === id);
+        enemy.isRooted = true;
+    };
+    snare = (id) => {
+        let enemy = this.enemies.find(enemy => enemy.enemyID === id);
+        enemy.isSnared = true;
+    };
+
     // ============================ Game ============================ \\
     
     checkPlayerSuccess = () => {
@@ -458,9 +465,11 @@ export default class Play extends Phaser.Scene {
         this.enemies.forEach((enemy) => enemy.update());
         this.npcs.forEach((npc) => npc.update());
         this.combatMachine.processor();
-        // this.computerFov();
+
         this.playerLight.setPosition(this.player.x, this.player.y);
-        // this.fpsText.setText('FPS: ' + this.game.loop.actualFps.toFixed(2));
+        this.fpsText.setText('FPS: ' + this.game.loop.actualFps.toFixed(2));
+
+        // this.computerFov();
         // if (this.vision) this.vision.setPosition(this.player.x, this.player.y);
     };
     pause() {

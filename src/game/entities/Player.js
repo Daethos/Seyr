@@ -18,7 +18,7 @@ import playerAttacksJSON from '../images/player_attacks_atlas.json';
 import playerAttacksAnim from '../images/player_attacks_anim.json';
 import EventEmitter from "../phaser/EventEmitter";
 
-const PLAYER = {
+export const PLAYER = {
     COLLIDER: {
         DISPLACEMENT: 16,
         HEIGHT: 36,
@@ -90,6 +90,8 @@ export default class Player extends Entity {
         this.targetID = null;
         this.attackedTarget = null;
         this.triggeredActionAvailable = null;
+        this.rootCooldown = 0;
+        this.snareCooldown = 0;
 
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
@@ -216,42 +218,6 @@ export default class Player extends Entity {
         this.checkLootdropCollision(playerSensor);
         this.checkNpcCollision(playerSensor);
     }; 
-
-    startingSpeed = (player) => {
-        let speed = PLAYER.SPEED.INITIAL;
-        const helmet = player.helmet.type;
-        const chest = player.chest.type;
-        const legs = player.legs.type;
-        let modifier = 0;
-        const addModifier = (item) => {
-            switch (item) {
-                case 'Leather-Cloth':
-                    modifier += 0.05;
-                    break;
-                case 'Leather-Mail':
-                    modifier += 0.025;
-                    break;
-                case 'Chain-Mail':
-                    modifier += 0.0;
-                    break;
-                case 'Plate-Mail':
-                    modifier -= 0.025;
-                    break;
-                default:
-                    break;
-            };
-        };
-        addModifier(helmet);
-        addModifier(chest);
-        addModifier(legs);
-        console.log(`Speed Modifier: ${modifier}`);
-        speed += modifier;
-        return speed;
-    };
-
-    adjustSpeed = (speed) => {
-        return this.speed += speed;
-    };
 
     highlightTarget(sprite) {
         this.highlight.setVisible(true);
@@ -843,6 +809,25 @@ export default class Player extends Entity {
         this.setStatic(false);
     };
 
+    setTimeEvent = (cooldown, limit = 30000) => {
+        this[cooldown] = limit;
+        const interval = 1000;
+        let time = 0;
+        const timer = this.scene.time.addEvent({
+            delay: interval,
+            callback: () => {
+                time += interval;
+                if (time >= limit || !this.inCombat) {
+                    this[cooldown] = 0;
+                    timer.remove(false);
+                    timer.destroy();
+                };
+            },
+            callbackScope: this,
+            loop: true,
+        });
+    };
+
     swingReset = () => {
         this.canSwing = false;
         this.scene.time.delayedCall(this.swingTimer, () => {
@@ -1064,21 +1049,19 @@ export default class Player extends Entity {
                 this.scene.combatMachine.input('counterGuess', 'counter');
                 this.stateMachine.setState(States.COUNTER);
             };
-
+            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.snare.V) && this.rootCooldown === 0) {
+                this.scene.root(this.attacking.enemyID);
+                this.setTimeEvent('rootCooldown');
+                screenShake(this.scene);
+            };
+            if (Phaser.Input.Keyboard.JustDown(this.inputKeys.snare.V) && this.snareCooldown === 0) {
+                this.scene.snare(this.attacking.enemyID);
+                this.setTimeEvent('snareCooldown', 10000);
+            };
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && this.invokeCooldown === 0) {
                 if (this.scene.state.playerBlessing === '') return;
+                this.setTimeEvent('invokeCooldown');
                 this.stateMachine.setState(States.INVOKE);
-                const invokeInterval = 1000;
-                let elapsedTime = 0;
-                const invokeLoop = () => {
-                    if (elapsedTime >= this.invokeCooldown || !this.inCombat) {
-                        clearInterval(invokeIntervalId);
-                        this.invokeCooldown = 0;
-                        return;
-                    };
-                    elapsedTime++;
-                };
-                const invokeIntervalId = setInterval(invokeLoop, invokeInterval);
             };
             if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F) && this.stamina >= PLAYER.STAMINA.TSHAER) { // this.tshaeralCooldown === 0
                 this.stateMachine.setState(States.TSHAERAL);

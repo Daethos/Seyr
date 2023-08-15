@@ -28,19 +28,16 @@ export const useKeyEvent = (event: string, callback: any) => {
 const Story = () => {
     const { asceanID } = useParams();
     const [assets, setAssets] = useState<any>([]);
-    const [loaded, setLoaded] = useState<boolean>(false);
     const dispatch = useDispatch();
     const gameChange = useSelector((state: any) => state.game.gameChange); 
 
     useEffect(() => {
-        console.log(gameChange, loaded, "<- Game Change and Loaded");
         const fetchData = async (): Promise<void> => {
             try {
                 dispatch(getGameFetch(asceanID));
                 const res = await eqpAPI.index();
                 const sanitized = await sanitizeAssets(res.data);
                 setAssets(sanitized);
-                setLoaded(true);
                 dispatch(setGameChange(true));
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')

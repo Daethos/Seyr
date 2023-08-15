@@ -309,7 +309,6 @@ export function* workGetResponse(load: any, type?: string): SagaIterator {
         } else { 
             yield put(setCombatResolution(dec)); 
         };
-        console.log(dec.realizedPlayerDamage, dec.realizedComputerDamage, 'workGetResponse');
         combat = { ...combat, ...dec };
         if (type === 'enemy' || type === 'combat' || type === 'player') EventEmitter.emit('update-sound', combat);
         EventEmitter.emit('update-combat', combat);

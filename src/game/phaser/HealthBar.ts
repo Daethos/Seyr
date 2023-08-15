@@ -17,8 +17,8 @@ export default class HealthBar extends Phaser.GameObjects.Container {
         this.value = value;
         this.barWidth = 50;
         this.barHeight = 6;
-        this.borderColor = 0x000000;
-        this.fillColor = context ? 0x00CCFF : 0x008000;
+        this.borderColor = 0x000000; 
+        this.fillColor = context ? 0x00CCFF : 0x008000; 
         this.p = new Phaser.GameObjects.Graphics(scene);
         this.p.fillStyle(0xFF0000); 
         this.p.fillRect(-this.barWidth / 2, -this.barHeight / 2, this.barWidth, this.barHeight);

@@ -89,10 +89,10 @@ const HostScene = ({ assets, setAssets }: Props) => {
         };
     };
 
-    const gameHud = (e: { preventDefault: () => void; key: string; keyCode: number }): void => {
+    const gameHud = (e: { preventDefault: () => void; key: string; keyCode: number; shiftKey: string; }): void => {
         e.preventDefault();
-        if (e.key === 'v' || e.key === 'V') dispatch(setShowDialog(!gameState.showDialog));
-        if (e.key === 'c' || e.key === 'C') dispatch(setShowPlayer(!gameState.showPlayer));
+        if (e.shiftKey && (e.key === 'c' || e.key === 'C')) dispatch(setShowDialog(!gameState.showDialog)); // (e.key === 'v' || e.key === 'V')
+        if (!e.shiftKey && (e.key === 'c' || e.key === 'C')) dispatch(setShowPlayer(!gameState.showPlayer));
         if (e.key === 'x' || e.key === 'X') {
             const nextView = viewCycleMap[gameState.asceanViews as keyof typeof viewCycleMap];
             if (nextView) dispatch(setAsceanViews(nextView));
