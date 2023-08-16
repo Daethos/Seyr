@@ -1,35 +1,14 @@
 import Phaser from "phaser";
 import Entity from "./Entity"; 
 import StateMachine, { States } from "../phaser/StateMachine";
-import HealthBar from "../phaser/HealthBar"; 
-import playerActionsOnePNG from '../images/player_actions.png';
-import playerActionsOneJSON from '../images/player_actions_atlas.json';
-import playerActionsOneAnim from '../images/player_actions_anim.json';
-import playerActionsTwoPNG from '../images/player_actions_two.png';
-import playerActionsTwoJSON from '../images/player_actions_two_atlas.json';
-import playerActionsTwoAnim from '../images/player_actions_two_anim.json';
-import playerActionsThreePNG from '../images/player_actions_three.png';
-import playerActionsThreeJSON from '../images/player_actions_three_atlas.json';
-import playerActionsThreeAnim from '../images/player_actions_three_anim.json';
-import playerAttacksPNG from '../images/player_attacks.png';
-import playerAttacksJSON from '../images/player_attacks_atlas.json';
-import playerAttacksAnim from '../images/player_attacks_anim.json'; 
+import HealthBar from "../phaser/HealthBar";  
 import { v4 as uuidv4 } from 'uuid';
 import EventEmitter from "../phaser/EventEmitter";
 
 let idCount = 0;
+if (idCount === 8) idCount = 0;
 
-export default class NPC extends Entity {
-    static preload(scene) { 
-        scene.load.atlas(`player_actions`, playerActionsOnePNG, playerActionsOneJSON);
-        scene.load.animation(`player_actions_anim`, playerActionsOneAnim);
-        scene.load.atlas(`player_actions_two`, playerActionsTwoPNG, playerActionsTwoJSON);
-        scene.load.animation(`player_actions_two_anim`, playerActionsTwoAnim);
-        scene.load.atlas(`player_actions_three`, playerActionsThreePNG, playerActionsThreeJSON);
-        scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
-        scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
-        scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
-    };
+export default class NPC extends Entity { 
 
     constructor(data) {
         let { scene } = data;

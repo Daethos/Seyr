@@ -1,15 +1,15 @@
 import { SagaIterator } from "redux-saga";
 import { takeEvery, select, put, call } from "redux-saga/effects";
-import { getAsceanTraits } from "../../components/GameCompiler/PlayerTraits";
-import EventEmitter from "../phaser/EventEmitter";
-import { setCombatPlayer, setPhaser, setRest } from "../reducers/combatState";
-import { setPlayer, setInitialAsceanState, setSettings, setTraits, setPlayerLevelUp, setAsceanState, setFirewater, setExperience, setCurrency, setInventory, setLootDrops, setShowLoot, setStatistics, setTutorialContent } from "../reducers/gameState";
+import { getAsceanTraits } from "../components/GameCompiler/PlayerTraits";
+import EventEmitter from "../game/phaser/EventEmitter";
+import { setCombatPlayer, setPhaser, setRest } from "../game/reducers/combatState";
+import { setPlayer, setInitialAsceanState, setSettings, setTraits, setPlayerLevelUp, setAsceanState, setFirewater, setExperience, setCurrency, setInventory, setLootDrops, setShowLoot, setStatistics, setTutorialContent } from "../game/reducers/gameState";
 import { compress, workGetCombatStatistic } from "./combatSaga";
 import { getSocketInstance } from "./socketManager";
 import { SOCKET } from "./socketSaga";
-import * as asceanAPI from '../../utils/asceanApi';
-import * as equipmentAPI from '../../utils/equipmentApi';
-import * as settingsAPI from '../../utils/settingsApi';
+import * as asceanAPI from '../utils/asceanApi';
+import * as equipmentAPI from '../utils/equipmentApi';
+import * as settingsAPI from '../utils/settingsApi';
 
 const checkStatisticalValue = (rarity: string) => {
     switch (rarity) {
@@ -39,37 +39,37 @@ export function* gameSaga(): SagaIterator {
 };
 
 function* workGetGameFetch(action: any): SagaIterator {
-    const gameResponse = yield call(asceanAPI.getOneAscean, action.payload);
-    const combatResponse = yield call(asceanAPI.getAsceanStats, action.payload);
-    const settingsResponse = yield call(settingsAPI.getSettings);
-    const traitResponse = yield call(getAsceanTraits, gameResponse.data);
+    const gameRes = yield call(asceanAPI.getOneAscean, action.payload);
+    const combatRes = yield call(asceanAPI.getAsceanStats, action.payload);
+    const settingsRes = yield call(settingsAPI.getSettings);
+    const traitRes = yield call(getAsceanTraits, gameRes.data);
     const asceanState = yield select((state) => state.game.asceanState);
     const data = { 
         user: yield select((state) => state.user.user),
-        ascean: gameResponse.data, 
-        stats: combatResponse.data.data, 
-        settings: settingsResponse,
+        ascean: gameRes.data, 
+        stats: combatRes.data.data, 
+        settings: settingsRes,
         temp: { 
             ...asceanState, 
-            'ascean': gameResponse.data,
-            'currentHealth': gameResponse.data.health.current,
-            'level': gameResponse.data.level,
-            'experience': gameResponse.data.experience,
-            'experienceNeeded': gameResponse.data.level * 1000,
-            'mastery': gameResponse.data.mastery,
-            'faith': gameResponse.data.faith, 
+            'ascean': gameRes.data,
+            'currentHealth': gameRes.data.health.current,
+            'level': gameRes.data.level,
+            'experience': gameRes.data.experience,
+            'experienceNeeded': gameRes.data.level * 1000,
+            'mastery': gameRes.data.mastery,
+            'faith': gameRes.data.faith, 
         },
-        traits: traitResponse, 
+        traits: traitRes, 
     };
     const press = yield call(compress, data);
     const socket = getSocketInstance();
     socket.emit(SOCKET.SETUP_PLAYER, press);
 
-    yield put(setPlayer(gameResponse.data));
-    yield put(setCombatPlayer(combatResponse.data.data));
-    yield put(setInitialAsceanState(combatResponse.data.data));
-    yield put(setSettings(settingsResponse));
-    yield put(setTraits(traitResponse));
+    yield put(setPlayer(gameRes.data));
+    yield put(setCombatPlayer(combatRes.data.data));
+    yield put(setInitialAsceanState(combatRes.data.data));
+    yield put(setSettings(settingsRes));
+    yield put(setTraits(traitRes));
     yield put(setPhaser(true)); 
 }; 
 function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
@@ -128,12 +128,12 @@ export function* workGetGainExperienceFetch(action: any): SagaIterator {
     const totalExp = asceanState.ascean.experience + opponentExp;
     
     asceanState = {
-      ...asceanState,
-      'opponent': combatState.computer.level,
-      'opponentExp': opponentExp,
-      'currentHealth': combatState.newPlayerHealth,
-      'experience': Math.min(totalExp, asceanState.experienceNeeded),
-      'avarice': hasAvaricePrayer ? true : false,
+        ...asceanState,
+        'opponent': combatState.computer.level,
+        'opponentExp': opponentExp,
+        'currentHealth': combatState.newPlayerHealth,
+        'experience': Math.min(totalExp, asceanState.experienceNeeded),
+        'avarice': hasAvaricePrayer ? true : false,
     };
 
     const res = yield call(asceanAPI.saveExperience, asceanState);

@@ -1,6 +1,18 @@
 import Phaser from "phaser"; 
 import { screenShake } from "../phaser/ScreenShake";
 import { PLAYER } from './Player';
+import playerActionsOnePNG from '../images/player_actions.png';
+import playerActionsOneJSON from '../images/player_actions_atlas.json';
+import playerActionsOneAnim from '../images/player_actions_anim.json';
+import playerActionsTwoPNG from '../images/player_actions_two.png';
+import playerActionsTwoJSON from '../images/player_actions_two_atlas.json';
+import playerActionsTwoAnim from '../images/player_actions_two_anim.json';
+import playerActionsThreePNG from '../images/player_actions_three.png';
+import playerActionsThreeJSON from '../images/player_actions_three_atlas.json';
+import playerActionsThreeAnim from '../images/player_actions_three_anim.json';
+import playerAttacksPNG from '../images/player_attacks.png';
+import playerAttacksJSON from '../images/player_attacks_atlas.json';
+import playerAttacksAnim from '../images/player_attacks_anim.json'; 
 
 export const FRAME_COUNT = {
     ATTACK_LIVE: 16,
@@ -15,29 +27,21 @@ export const FRAME_COUNT = {
     ROLL_LIVE: 10,
     ROLL_SUCCESS: 10,
     
-};
-
-// // Define weapon angles for different actions
-// const actionAngles = {
-//     attack: {
-//         left: -250,
-//         right: 30,
-//     },
-//     counter: {
-//         left: -90,
-//         right: -90,
-//     },
-//     posture: {
-//         left: -250,
-//         right: 55,
-//     },
-//     roll: {
-//         left: -220,
-//         right: -205,
-//     },
-// };
+}; 
 
 export default class Entity extends Phaser.Physics.Matter.Sprite {
+
+    static preload(scene) { 
+        scene.load.atlas(`player_actions`, playerActionsOnePNG, playerActionsOneJSON);
+        scene.load.animation(`player_actions_anim`, playerActionsOneAnim);
+        scene.load.atlas(`player_actions_two`, playerActionsTwoPNG, playerActionsTwoJSON);
+        scene.load.animation(`player_actions_two_anim`, playerActionsTwoAnim);
+        scene.load.atlas(`player_actions_three`, playerActionsThreePNG, playerActionsThreeJSON);
+        scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
+        scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
+        scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
+    };
+
     constructor (data) {
         let { scene, x, y, texture, frame, depth, name, ascean, health } = data;
         super (scene.matter.world, x, y, texture, frame);

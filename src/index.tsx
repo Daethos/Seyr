@@ -9,7 +9,7 @@ import combatReducer from './game/reducers/combatState';
 import communityReducer from './game/reducers/communityState';
 import gameReducer from './game/reducers/gameState';
 import userReducer from './game/reducers/userState';
-import rootSaga from './game/sagas/rootSaga';
+import rootSaga from './sagas/rootSaga';
 
 const saga = createSagaMiddleware();
 const middleware = [saga];

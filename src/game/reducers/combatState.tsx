@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { initialCombatData } from '../../components/GameCompiler/CombatStore';
-import { getSocketInstance } from '../sagas/socketManager';
-import { SOCKET } from '../sagas/socketSaga';
+import { getSocketInstance } from '../../sagas/socketManager';
+import { SOCKET } from '../../sagas/socketSaga';
 
 const combatSlice = createSlice({
     name: 'combat',

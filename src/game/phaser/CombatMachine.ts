@@ -34,8 +34,6 @@ export default class CombatMachine {
         this.listener();
     };
     
-    private listener = () => EventEmitter.on('update-combat-data', (e: CombatData) => (this.state = e));
-
     private actionHandlers: { [key: string]: ActionHandler } = {
         Weapon: (data: KVI) => {
             const { key, value } = data;
@@ -53,6 +51,8 @@ export default class CombatMachine {
         Player: (data: any) => Dispatcher.playerAction(this.dispatch, data),
         Enemy: (data: any) => Dispatcher.enemyAction(this.dispatch, data),
     };
+
+    private listener = () => EventEmitter.on('update-combat-data', (e: CombatData) => (this.state = e));
 
     private process = (): void => {
         if (this.state.computerWin) {
@@ -83,7 +83,7 @@ export default class CombatMachine {
     };
 
     public add = (action: Action): number => this.actionQueue.push(action);
-    public input = (key: string, value: string | number | boolean, id?: string): number => this.inputQueue.push({key, value, id}); 
     public clear = (id: string): number => this.clearQueue.push(id); 
+    public input = (key: string, value: string | number | boolean, id?: string): number => this.inputQueue.push({key, value, id}); 
     public processor = (): void => this.process();
 };

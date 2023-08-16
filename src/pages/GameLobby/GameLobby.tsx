@@ -7,7 +7,7 @@ import ChatBox from '../../components/Chat/ChatBox';
 import userService from "../../utils/userService";
 import Notifications from '../../components/Chat/Notifications';
 import * as chatAPI from '../../utils/chatMessageApi';
-import { SOCKET } from '../../game/sagas/socketSaga';
+import { SOCKET } from '../../sagas/socketSaga';
 import { User } from '../App/App';
 
 let socket: any;

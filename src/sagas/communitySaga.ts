@@ -1,8 +1,8 @@
 import { SagaIterator } from "redux-saga";
 import { takeEvery, put, call } from "redux-saga/effects";
-import { getCommunityAsceanSuccess, getFocusAsceanSuccess } from "../reducers/communityState";
-import * as communityAPI from '../../utils/communityApi';
-import { Player } from "../../components/GameCompiler/GameStore";
+import { getCommunityAsceanSuccess, getFocusAsceanSuccess } from "../game/reducers/communityState";
+import * as communityAPI from '../utils/communityApi';
+import { Player } from "../components/GameCompiler/GameStore";
 
 export function* communitySaga(): SagaIterator {
     yield takeEvery('community/getCommunityAsceanFetch', workGetAsceanAllFetch);
@@ -10,8 +10,8 @@ export function* communitySaga(): SagaIterator {
 };
 
 function* workGetAsceanAllFetch(): SagaIterator {
-    const response = yield call(communityAPI.getEveryone);
-    const ascean = response.data.reverse();
+    const res = yield call(communityAPI.getEveryone);
+    const ascean = res.data.reverse();
     const scores = yield ascean.map((a: Player, i: number) => {
         let arr: any = [];
         if (a.hardcore) {
@@ -25,8 +25,8 @@ function* workGetAsceanAllFetch(): SagaIterator {
 };
 function* workGetAsceanFocusFetch(action: any): SagaIterator {
     const focusID = action.payload;
-    const response = yield call(communityAPI.getOneAscean, focusID);
-    const ascean = response.data;
+    const res = yield call(communityAPI.getOneAscean, focusID);
+    const ascean = res.data;
     yield put(getFocusAsceanSuccess(ascean));
 };
 

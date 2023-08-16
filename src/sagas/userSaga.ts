@@ -1,8 +1,8 @@
 import { SagaIterator } from "redux-saga";
 import { takeEvery, put, call } from "redux-saga/effects";
-import userService from "../../utils/userService";
-import { getUserSuccess, getUserLogout, getUserAsceanSuccess } from "../reducers/userState";
-import * as asceanAPI from '../../utils/asceanApi';
+import userService from "../utils/userService";
+import { getUserSuccess, getUserLogout, getUserAsceanSuccess } from "../game/reducers/userState";
+import * as asceanAPI from '../utils/asceanApi';
 
 export function* userSaga(): SagaIterator {
     yield takeEvery('user/getUserFetch', workGetUserFetch);

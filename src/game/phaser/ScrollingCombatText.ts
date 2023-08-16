@@ -33,7 +33,7 @@ export default class ScrollingCombatText extends Phaser.GameObjects.Container {
         });
     };
 
-    setColor = (context: string) => {
+    private setColor = (context: string) => {
         switch (context) {
             case 'damage':
                 return 'red';
@@ -46,7 +46,7 @@ export default class ScrollingCombatText extends Phaser.GameObjects.Container {
         };
     };
 
-    update(player: any) {
+    public update(player: any) {
         if (!this.visible) this.setVisible(true);
         this.timerTime += 1;
         this.setPosition(player.x, player.y - 25 - this.timerTime);

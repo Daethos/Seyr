@@ -1,13 +1,12 @@
 import Phaser from "phaser";
 import NewText from '../phaser/NewText' 
-import Player from "../entities/Player";
-import Enemy from '../entities/Enemy';
-import Treasure from '../matter/Treasure';
+// import Treasure from '../matter/Treasure';
 import ParticleManager from "../phaser/ParticleManager";
 import ascean_test from '../images/ascean_test.json';
 import AncientForestDecorative from '../images/AncientForestDecorative.png';
 import AncientForestMain from '../images/AncientForestMainLev.png';
 import Camp_Graves from '../images/Camp_Graves.png';
+import Entity from "../entities/Entity";
 
 export default class Preload extends Phaser.Scene {
     constructor() {
@@ -31,8 +30,7 @@ export default class Preload extends Phaser.Scene {
         this.bg.fillStyle('0x000000', 1);
         this.bg.fillRect(0, 0, this.game.config.width, this.game.config.height);
         ParticleManager.preload(this);
-        Player.preload(this);
-        Enemy.preload(this);
+        Entity.preload(this);
         // Treasure.preload(this);
 
         this.load.tilemapTiledJSON('ascean_test', ascean_test);
@@ -73,7 +71,6 @@ export default class Preload extends Phaser.Scene {
             'preload',
             0.5
         );
-        // this.border = this.createTextBorder(this.title.obj);
         this.txt_progress = new NewText(
             this,
             this.centerX,
@@ -98,6 +95,7 @@ export default class Preload extends Phaser.Scene {
         this.load.on('progress', this.onProgress, this);
         this.load.on('fileprogress', this.onFileProgress, this);
     };
+
     onProgress(val) {
         this.progress.clear();
         this.progress.fillStyle('0xFDF6D8', 1);
@@ -113,20 +111,8 @@ export default class Preload extends Phaser.Scene {
 
         this.txt_progress.setText(Math.round(val * 100) + '%');
     };
+
     onFileProgress(file) {
         this.txt_file.setText(`Loading: ${file.key}`);
-    };
-    createTextBorder(text) {
-        const border = this.add.graphics();
-        border.lineStyle(3, 0xFDF6D8, 1);
-        border.strokeRect(
-            text.x - text.width * text.originX - 1.5, // Subtract half of the border width and the x origin from the x position
-            text.y - text.height * text.originY - 1.5, // Subtract half of the border width and the y origin from the y position
-            text.width + 3, // Add the border width to the width of the text
-            text.height + 3 // Add the border width to the height of the text
-        );
-          
-        this.add.existing(border);
-        return border;
-    };
+    }; 
 };
