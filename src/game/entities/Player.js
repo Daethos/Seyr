@@ -92,6 +92,7 @@ export default class Player extends Entity {
         this.triggeredActionAvailable = null;
         this.rootCooldown = 0;
         this.snareCooldown = 0;
+        this.isStealthing = false;
 
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
@@ -162,8 +163,23 @@ export default class Player extends Entity {
                 onUpdate: this.onTshaeralUpdate.bind(this),
                 onExit: this.onTshaeralExit.bind(this),
             })
-        
+
         this.stateMachine.setState(States.NONCOMBAT);
+
+        this.metaMachine = new StateMachine(this, 'player');
+        this.metaMachine
+                .addState(States.CLEAN, {
+                    onEnter: this.onCleanEnter.bind(this),
+                    onExit: this.onCleanExit.bind(this),
+                })
+            .addState(States.STEALTH, {
+                onEnter: this.onStealthEnter.bind(this),
+                onUpdate: this.onStealthUpdate.bind(this),
+                onExit: this.onStealthExit.bind(this),
+            })
+
+        this.metaMachine.setState(States.CLEAN);
+        
         this.sensorDisp = PLAYER.SENSOR.DISPLACEMENT;
         this.colliderDisp = PLAYER.COLLIDER.DISPLACEMENT;
 
@@ -344,6 +360,19 @@ export default class Player extends Entity {
         return false;
     }; 
 
+    enterCombat = (other) => {
+        console.log('Setting Up Enemy');
+        this.scene.setupEnemy(other.gameObjectB);
+        this.actionTarget = other;
+        console.log('Setting Up Attack Target');
+        this.attacking = other.gameObjectB;
+        this.currentTarget = other.gameObjectB;
+        this.targetID = other.gameObjectB.enemyID;
+        this.scene.combatEngaged(true);
+        console.log('Entering Combat');
+        this.inCombat = true;
+    };
+
     isAttackTarget = (enemy) => {
         if (this.attacking?.enemyID === enemy.enemyID) {
             return true;
@@ -378,14 +407,15 @@ export default class Player extends Entity {
                     const isNewEnemy = this.isNewEnemy(other.gameObjectB);
                     if (!isNewEnemy) return;
                     if (this.shouldPlayerEnterCombat(other.gameObjectB)) {
-                        console.log("Engaging Combat in Start Collision Sensor");
-                        this.scene.setupEnemy(other.gameObjectB);
-                        this.actionTarget = other;
-                        this.attacking = other.gameObjectB;
-                        this.currentTarget = other.gameObjectB;
-                        this.targetID = other.gameObjectB.enemyID;
-                        this.scene.combatEngaged(true);
-                        this.inCombat = true;
+                        console.log("%c Engaging Combat in Start Collision Sensor", 'color: red');
+                        // this.scene.setupEnemy(other.gameObjectB);
+                        // this.actionTarget = other;
+                        // this.attacking = other.gameObjectB;
+                        // this.currentTarget = other.gameObjectB;
+                        // this.targetID = other.gameObjectB.enemyID;
+                        // this.scene.combatEngaged(true);
+                        // this.inCombat = true;
+                        this.enterCombat(other);
                     };
                     this.touching.push(other.gameObjectB);
                     this.checkTargets();
@@ -683,6 +713,51 @@ export default class Player extends Entity {
         this.scene.useStamina(PLAYER.STAMINA.INVOKE);
     };
 
+    onCleanEnter = () => {};
+    onCleanExit = () => {};
+
+    onStealthEnter = () => {
+        this.isStealthing = true; 
+        this.stealthEffect(true);    
+    };
+    onStealthUpdate = (dt) => {
+        if (!this.isStealthing) this.metaMachine.setState(States.CLEAN); 
+    };
+    onStealthExit = () => { 
+        this.stealthEffect(false);
+    };
+
+    stealthEffect(stealth) {
+        if (stealth) {
+            const getStealth = (object) => {
+                object.setAlpha(0.7);
+                object.setBlendMode(Phaser.BlendModes.SCREEN);
+                this.scene.tweens.add({
+                    targets: object,
+                    // scaleX: 1,
+                    // scaleY: 1,
+                    tint: 0x00AAFF,
+                    duration: 500,
+                    yoyo: true,
+                    repeat: -1,
+                }); 
+            };
+            getStealth(this);
+            getStealth(this.spriteWeapon);
+            getStealth(this.spriteShield);
+        } else {
+            const clearStealth = (object) => {
+                this.scene.tweens.killTweensOf(object);
+                object.setAlpha(1);
+                object.clearTint();
+                object.setBlendMode(Phaser.BlendModes.NORMAL);
+            };
+            clearStealth(this);
+            clearStealth(this.spriteWeapon);
+            clearStealth(this.spriteShield);
+        };
+    };
+
     onTshaeralEnter = () => {
         this.isTshaering = true;
         this.attacking.isConsumed = true;
@@ -856,7 +931,7 @@ export default class Player extends Entity {
             // console.log("Engaging Combat in Targets Array Check: [someInCombat, !playerCombat]");
             this.scene.combatEngaged(true);
             this.inCombat = true;
-        } else if (!someInCombat && playerCombat) {
+        } else if (!someInCombat && playerCombat && !this.isStealthing) {
             // console.log("Disengaging Combat in Targets Array Check: [!someInCombat, playerCombat]");
             this.scene.clearNonAggressiveEnemy();
             this.scene.combatEngaged(false);
@@ -992,7 +1067,7 @@ export default class Player extends Entity {
     handleActions = () => {
         // ========================= Tab Targeting ========================= \\
         
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.targets.length > 1) { // was > 1 More than 1 i.e. worth tabbing
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.targets.length) { // was > 1 More than 1 i.e. worth tabbing
             if (this.currentTarget) {
                 this.currentTarget.clearTint();
             }; 
@@ -1022,7 +1097,7 @@ export default class Player extends Entity {
         };
 
         // ========================= Player Combat Actions ========================= \\
-
+        
         if (this.inCombat && this.attacking) {
             if (this.stamina >= PLAYER.STAMINA.COUNTER && this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.attack.ONE)) {
                 this.scene.combatMachine.input('counterGuess', 'attack');
@@ -1118,6 +1193,14 @@ export default class Player extends Entity {
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.firewater.T)) {
             this.stateMachine.setState(States.HEAL);
+        };
+
+        if (this.inputKeys.shift.SHIFT.isDown &&  Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R)) {
+            if (this.isStealthing) {
+                this.isStealthing = false;
+            } else {
+                this.metaMachine.setState(States.STEALTH);
+            };
         };
 
     };
@@ -1298,6 +1381,7 @@ export default class Player extends Entity {
     update() {
         this.handleConcerns();
         this.stateMachine.update(this.dt);
+        this.metaMachine.update(this.dt);
         this.handleActions();
         this.handleAnimations();
         this.handleMovement();

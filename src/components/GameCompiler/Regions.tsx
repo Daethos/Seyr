@@ -24,7 +24,6 @@ export const regionInformation = {
 
 export const ProvincialWhispersButtons = ({ options, handleRegion }: { options: any, handleRegion: any }) => {
     const buttons = Object.keys(options).map((o: any, i: number) => {
-        console.log(o, 'Options in ProvincialWhispersButtons');
         return (
             <Button variant='' className='dialog-buttons' key={i} onClick={() => handleRegion(o)}>{o}</Button>
         );

@@ -6,30 +6,36 @@ export interface StateInterface {
 };
 
 export const States = {
-    CLEAN: "clean",
+    DEFEATED: "defeated",
     DEATH: "death",
-    IDLE: "idle",
-    PATROL: "patrol",
+    
     AWARE: "aware",
     CHASE: "chase",
-    COMBAT: "combat",
-    EVADE: "evade",
+    IDLE: "idle",
     LEASH: "leash",
+    PATROL: "patrol",
+    
+    COMBAT: "combat",
+    NONCOMBAT: "noncombat",
+    
+    EVADE: "evade",
     ATTACK: "attack",
     COUNTER: "counter",
     DODGE: "dodge",
     POSTURE: "posture",
     ROLL: "roll",
-    NONCOMBAT: "noncombat",
     HEAL: "heal",
     HURT: "hurt",
+    INVOKE: "invoke",
+    STEALTH: "stealth",
+
+    CONSUMED: "consumed",
+    TSHAERAL: "tshaeral",
+    
+    CLEAN: "clean",
     ROOT: "root",
     SNARE: "snare",
     STUN: "stun",
-    INVOKE: "invoke",
-    DEFEATED: "defeated",
-    CONSUMED: "consumed",
-    TSHAERAL: "tshaeral",
 };
 
 let idCount = 0;

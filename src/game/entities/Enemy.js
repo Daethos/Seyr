@@ -187,6 +187,14 @@ export default class Enemy extends Entity {
         this.isConsumed = false;
         this.sensorDisp = 12;
         this.colliderDisp = 16;
+
+        this.highlight = this.scene.add.graphics()
+            .lineStyle(1, 0xFF0000)
+            .strokeCircle(0, 0, 10); 
+        this.scene.plugins.get('rexGlowFilterPipeline').add(this.highlight, {
+            intensity: 0.02,
+        });
+
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         const colliderWidth = 20; 
         const colliderHeight = 36; 
@@ -258,7 +266,7 @@ export default class Enemy extends Entity {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [enemySensor],
             callback: other => {
-                if (this.ascean && other.gameObjectB && other.gameObjectB.name === 'player' && this.enemyStatusCheck()) { 
+                if (this.ascean && other.gameObjectB && other.gameObjectB.name === 'player' && !other.gameObjectB.isStealthing && this.enemyStatusCheck()) { 
                     this.createCombat(other, 'start');
                 } else if (this.playerStatusCheck(other.gameObjectB) && !this.isDead && !this.isAggressive) {
                     const newEnemy = this.isNewEnemy(other.gameObjectB);
@@ -302,6 +310,15 @@ export default class Enemy extends Entity {
         });
     };
 
+    highlightTarget(sprite) {
+        this.highlight.setVisible(true);
+        this.highlight.setPosition(sprite.x, sprite.y + sprite.displayHeight / 2.25);
+    };
+
+    removeHighlight() {
+        this.highlight.setVisible(false);
+    };
+
     isNewEnemy = (player) => {
         return !player.targets.some(obj => obj.enemyID === this.enemyID);
     };
@@ -319,7 +336,7 @@ export default class Enemy extends Entity {
     };
 
     playerStatusCheck = (other) => {
-        return (this.ascean && other && other.name === 'player' && !other.inCombat);
+        return (this.ascean && other && other.name === 'player' && !other.inCombat && !other.isStealthing);
     };
 
     enemyStatusCheck = () => {
@@ -835,6 +852,7 @@ export default class Enemy extends Entity {
         console.log('Rooted!');
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Rooted', 1500, 'effect', true);
         this.anims.play('player_idle', true);
+        this.highlightTarget(this);
         this.rootDuration = 3000;
         this.setTint(0x888888);
         this.setStatic(true);
@@ -853,6 +871,7 @@ export default class Enemy extends Entity {
     };
     onRootExit = () => { 
         console.log('Root Ended!');
+        this.removeHighlight();
         this.clearTint();
         this.setStatic(false);
     };
