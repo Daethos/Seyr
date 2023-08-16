@@ -204,11 +204,11 @@ function* workGetCombatSetting(action: any): SagaIterator {
             break;        
     };
 };
-function* workGetEffectTick(action: any): SagaIterator {
+function workGetEffectTick(action: any): void {
     const socket = getSocketInstance();
     socket.emit(SOCKET.EFFECT_TICK, action.payload);
 };
-function* workGetRemoveEffect(action: any): SagaIterator {
+function workGetRemoveEffect(action: any): void {
     const socket = getSocketInstance();
     socket.emit(SOCKET.REMOVE_EFFECT, action.payload);
 };

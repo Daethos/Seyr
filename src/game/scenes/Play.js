@@ -124,6 +124,33 @@ export default class Play extends Phaser.Scene {
         this.combatMachine = new CombatMachine(this, this.dispatch);
         this.particleManager = new ParticleManager(this);
 
+
+        // ====================== Input Keys ====================== \\
+
+        this.player.holdingBothMouseButtons = false;
+        
+        this.input.on('pointerdown', (pointer) => {
+            if (pointer.rightButtonDown()) {
+                this.player.holdingBothMouseButtons = true;
+                this.player.angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, pointer.worldX, pointer.worldY);
+            };
+        });
+
+        this.input.on('pointermove', (pointer) => {
+            if (this.player.holdingBothMouseButtons) { 
+                this.player.angle = Phaser.Math.Angle.Between(this.player.x, this.player.y, pointer.worldX, pointer.worldY);
+            };
+        });
+        
+        this.input.on('pointerup', (pointer) => {
+            if (!pointer.rightButtonDown()) this.player.holdingBothMouseButtons = false;
+        });
+          
+        // Disable the default context menu when right-clicking on the Phaser canvas
+        this.game.canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+  
         this.player.inputKeys = {
             up: this.input.keyboard.addKeys('W,UP'),
             down: this.input.keyboard.addKeys('S,DOWN'),
@@ -140,7 +167,6 @@ export default class Play extends Phaser.Scene {
             strafe: this.input.keyboard.addKeys('E,Q'),
             shift: this.input.keyboard.addKeys('SHIFT'),
             firewater: this.input.keyboard.addKeys('T'),
-            twist: this.input.mousePointer.rightButtonDown(), 
             target: this.input.keyboard.addKeys('TAB'),
             snare: this.input.keyboard.addKeys('V'),
             stalwart: this.input.keyboard.addKeys('G'),

@@ -515,7 +515,6 @@ export default class Enemy extends Entity {
         this.setVelocity(this.patrolVelocity.x, this.patrolVelocity.y);
     };
     onPatrolExit = () => {
-        // this.anims.stop('player_running');
         this.patrolTimer.destroy();
     };
 
@@ -829,14 +828,12 @@ export default class Enemy extends Entity {
         this.setStatic(false);
     };
 
-    onCleanEnter = () => {
-        console.log('Clean Meta Concerns');
-    };
-    onCleanExit = () => {
-        console.log('Meta Concern Incoming');
-    };
+    onCleanEnter = () => {};
+    onCleanExit = () => {};
+
     onRootEnter = () => {
         console.log('Rooted!');
+        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Rooted', 1500, 'effect', true);
         this.anims.play('player_idle', true);
         this.rootDuration = 3000;
         this.setTint(0x888888);
@@ -861,7 +858,7 @@ export default class Enemy extends Entity {
     };
     onSnareEnter = () => {
         console.log('Snared!');
-        this.anims.play('player_running', true);
+        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Snared', 1500, 'effect', true);
         this.snareDuration = 3000;
         this.setTint(0x888888);
         this.adjustSpeed(-1.5);
@@ -998,6 +995,7 @@ export default class Enemy extends Entity {
         } else if (this.isRanged) {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
             if (distanceY > DISTANCE.RANGED_ALIGNMENT) {
+                this.anims.play('player_running', true);
                 direction.normalize();
                 this.setVelocityY(direction.y * this.speed * 2); // 4
             };

@@ -5,6 +5,33 @@ export interface StateInterface {
     onExit?: () => void;
 };
 
+export const States = {
+    CLEAN: "clean",
+    DEATH: "death",
+    IDLE: "idle",
+    PATROL: "patrol",
+    AWARE: "aware",
+    CHASE: "chase",
+    COMBAT: "combat",
+    EVADE: "evade",
+    LEASH: "leash",
+    ATTACK: "attack",
+    COUNTER: "counter",
+    DODGE: "dodge",
+    POSTURE: "posture",
+    ROLL: "roll",
+    NONCOMBAT: "noncombat",
+    HEAL: "heal",
+    HURT: "hurt",
+    ROOT: "root",
+    SNARE: "snare",
+    STUN: "stun",
+    INVOKE: "invoke",
+    DEFEATED: "defeated",
+    CONSUMED: "consumed",
+    TSHAERAL: "tshaeral",
+};
+
 let idCount = 0;
 
 export default class StateMachine {
@@ -60,31 +87,4 @@ export default class StateMachine {
         };
         if (this.currentState && this.currentState.onUpdate) this.currentState?.onUpdate?.(dt);
     }; 
-};
-
-export const States = {
-    CLEAN: "clean",
-    DEATH: "death",
-    IDLE: "idle",
-    PATROL: "patrol",
-    AWARE: "aware",
-    CHASE: "chase",
-    COMBAT: "combat",
-    EVADE: "evade",
-    LEASH: "leash",
-    ATTACK: "attack",
-    COUNTER: "counter",
-    DODGE: "dodge",
-    POSTURE: "posture",
-    ROLL: "roll",
-    NONCOMBAT: "noncombat",
-    HEAL: "heal",
-    HURT: "hurt",
-    ROOT: "root",
-    SNARE: "snare",
-    STUN: "stun",
-    INVOKE: "invoke",
-    DEFEATED: "defeated",
-    CONSUMED: "consumed",
-    TSHAERAL: "tshaeral",
 };

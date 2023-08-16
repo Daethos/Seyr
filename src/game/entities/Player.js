@@ -1180,6 +1180,7 @@ export default class Player extends Entity {
         // this.spriteLegs.setPosition(this.x, this.y);
         // this.spriteChest.setPosition(this.x, this.y);
     };
+
     handleConcerns = () => {
         if (this.actionSuccess) {
             this.actionSuccess = false;
@@ -1214,6 +1215,7 @@ export default class Player extends Entity {
         if (this.winningCombatText) this.winningCombatText.update(this);
         if (this.specialCombatText) this.specialCombatText.update(this);
     };
+
     handleMovement = () => {
         // =================== MOVEMENT VARIABLES ================== \\
         const acceleration = this.acceleration;
@@ -1249,6 +1251,14 @@ export default class Player extends Entity {
         if (this.inputKeys.strafe.Q.isDown) {
             this.playerVelocity.x = -speed; // 1.75
             if (this.flipX) this.flipX = false;
+        };
+
+        // ========================= Twisting ========================= \\
+
+        if (this.holdingBothMouseButtons) {
+            this.flipX = this.body.velocity.x < 0;
+            this.playerVelocity.x += Math.cos(this.angle) + acceleration;
+            this.playerVelocity.y += Math.sin(this.angle) + acceleration; 
         };
 
         // =================== DECELERATION ================== \\
