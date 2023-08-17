@@ -1111,6 +1111,11 @@ export default class Player extends Entity {
                 this.scene.snare(this.attacking.enemyID);
                 this.setTimeEvent('snareCooldown', 10000);
             };
+            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R)) { // && this.polymorphCooldown === 0
+                // this.setTimeEvent('polymorphCooldown');
+                this.scene.polymorph(this.attacking.enemyID);
+                screenShake(this.scene);
+            };
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && this.invokeCooldown === 0) {
                 if (this.scene.state.playerBlessing === '') return;
                 this.setTimeEvent('invokeCooldown');

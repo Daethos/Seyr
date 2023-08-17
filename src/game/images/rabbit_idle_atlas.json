@@ -1,0 +1,216 @@
+{
+    "frames": [
+        {
+            "filename": "rabbit_idle_0",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 1,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_1",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 34,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_2",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 1,
+                "y": 38
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_3",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 34,
+                "y": 38
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_4",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 67,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_5",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 67,
+                "y": 38
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_6",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 1,
+                "y": 75
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_7",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 34,
+                "y": 75
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_8",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 67,
+                "y": 75
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_9",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 100,
+                "y": 1
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_10",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 100,
+                "y": 38
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_11",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 100,
+                "y": 75
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_12",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 1,
+                "y": 112
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_13",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 34,
+                "y": 112
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_14",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 67,
+                "y": 112
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "rabbit_idle_15",
+            "frame": {
+                "w": 32,
+                "h": 36,
+                "x": 100,
+                "y": 112
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}

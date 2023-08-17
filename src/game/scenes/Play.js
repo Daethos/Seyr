@@ -333,6 +333,10 @@ export default class Play extends Phaser.Scene {
     
     // ============================ Combat ============================ \\
 
+    polymorph = (id) => {
+        let enemy = this.enemies.find(enemy => enemy.enemyID === id);
+        enemy.isPolymorphed = true;
+    };
     root = (id) => {
         let enemy = this.enemies.find(enemy => enemy.enemyID === id);
         enemy.isRooted = true;

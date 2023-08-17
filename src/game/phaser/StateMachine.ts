@@ -33,6 +33,7 @@ export const States = {
     TSHAERAL: "tshaeral",
     
     CLEAN: "clean",
+    POLYMORPH: "polymorph",
     ROOT: "root",
     SNARE: "snare",
     STUN: "stun",

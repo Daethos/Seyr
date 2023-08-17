@@ -1,6 +1,5 @@
 import Phaser from "phaser"; 
 import { screenShake } from "../phaser/ScreenShake";
-import { PLAYER } from './Player';
 import playerActionsOnePNG from '../images/player_actions.png';
 import playerActionsOneJSON from '../images/player_actions_atlas.json';
 import playerActionsOneAnim from '../images/player_actions_anim.json';
@@ -13,6 +12,13 @@ import playerActionsThreeAnim from '../images/player_actions_three_anim.json';
 import playerAttacksPNG from '../images/player_attacks.png';
 import playerAttacksJSON from '../images/player_attacks_atlas.json';
 import playerAttacksAnim from '../images/player_attacks_anim.json'; 
+
+import rabbitIdlePng from '../images/rabbit_idle.png';
+import rabbitIdleJSON from '../images/rabbit_idle_atlas.json';
+import rabbitIdleAnim from '../images/rabbit_idle_anim.json';
+import rabbitMovementPng from '../images/rabbit_movement.png';
+import rabbitMovementJSON from '../images/rabbit_movement_atlas.json';
+import rabbitMovementAnim from '../images/rabbit_movement_anim.json';
 
 export const FRAME_COUNT = {
     ATTACK_LIVE: 16,
@@ -40,6 +46,10 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
         scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
         scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
+        scene.load.atlas(`rabbit_idle`, rabbitIdlePng, rabbitIdleJSON);
+        scene.load.animation(`rabbit_idle_anim`, rabbitIdleAnim);
+        scene.load.atlas(`rabbit_movement`, rabbitMovementPng, rabbitMovementJSON);
+        scene.load.animation(`rabbit_movement_anim`, rabbitMovementAnim);
     };
 
     constructor (data) {
@@ -127,8 +137,9 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.glowing = false;
         this.glowTimer = null;
         this.speed = 0;
-        this.isSnared = false;
+        this.isPolymorphed = false;
         this.isRooted = false;
+        this.isSnared = false;
     };
 
     get position() {
@@ -140,11 +151,11 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         return this.body.velocity;
     };
 
-    startingSpeed = (player) => {
-        let speed = PLAYER.SPEED.INITIAL;
-        const helmet = player.helmet.type;
-        const chest = player.chest.type;
-        const legs = player.legs.type;
+    startingSpeed = (entity) => {
+        let speed = 1.5; // PLAYER.SPEED.INITIAL
+        const helmet = entity.helmet.type;
+        const chest = entity.chest.type;
+        const legs = entity.legs.type;
         let modifier = 0;
         const addModifier = (item) => {
             switch (item) {

@@ -83,6 +83,11 @@ export default class Enemy extends Entity {
                 onUpdate: this.onRollUpdate.bind(this),
                 onExit: this.onRollExit.bind(this),    
             })
+            .addState(States.POLYMORPH, {
+                onEnter: this.onPolymorphEnter.bind(this),
+                onUpdate: this.onPolymorphUpdate.bind(this),
+                onExit: this.onPolymorphExit.bind(this),
+            })
             .addState(States.STUN, {
                 onEnter: this.onStunEnter.bind(this),
                 onUpdate: this.onStunUpdate.bind(this),
@@ -146,6 +151,7 @@ export default class Enemy extends Entity {
         this.patrolReverse = null;
         this.patrolWait = 500;
         this.patrolVelocity = 1;
+        this.polymorphVelocity = { x: 0, y: 0 };
         this.attackSensor = null;
         this.attackTimer = null;
         this.combatThreshold = 0;
@@ -166,7 +172,9 @@ export default class Enemy extends Entity {
 
         this.highlight = this.scene.add.graphics()
             .lineStyle(1, 0xFF0000)
-            .strokeCircle(0, 0, 10); 
+            .strokeCircle(0, 0, 10)
+            .setVisible(false);
+
         this.scene.plugins.get('rexGlowFilterPipeline').add(this.highlight, {
             intensity: 0.02,
         });
@@ -804,6 +812,89 @@ export default class Enemy extends Entity {
         this.setGlow(this, false);
     };
 
+    clearAnimations = () => {
+        if (this.anims.currentAnim) {
+            console.log(this.anims.currentAnim, 'Current Animatin')
+            this.anims.stop(this.anims.currentAnim.key);
+        };
+    
+        // Reset animation-related flags
+        this.isAttacking = false;
+        this.isCountering = false;
+        this.isPosturing = false;
+        this.isRolling = false;
+        this.currentAction = '';
+    };
+
+    onPolymorphEnter = () => {
+        console.log(`%c ${this.ascean.name} Has Been Polymorphed`, 'color: #0000ff');
+        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Polymorphed', 1500, 'effect', true);
+        this.clearAnimations();
+        this.anims.pause();
+        this.anims.play('rabbit_idle_down', true);
+        this.anims.resume();
+        this.spriteWeapon.setVisible(false);
+        this.spriteShield.setVisible(false);
+        this.polymorphDirection = 'down';
+        this.polymorphMovement = 'idle';
+        this.polymorphVelocity = { x: 0, y: 0 };
+        let iteration = 0;
+        const randomDirection = () => {  
+            const move = Phaser.Math.Between(1, 100);
+            const directions = ['up', 'down', 'left', 'right'];
+            const direction = directions[Phaser.Math.Between(0, 3)];
+            if (move > 50) {
+                if (direction === 'up') {
+                    this.polymorphVelocity = { x: 0, y: -1 };
+                } else if (direction === 'down') {
+                    this.polymorphVelocity = { x: 0, y: 1 };
+                } else if (direction === 'right') {
+                    this.polymorphVelocity = { x: -1, y: 0 };
+                } else if (direction === 'left') {
+                    this.polymorphVelocity = { x: 1, y: 0 };
+                };
+                this.polymorphMovement = 'move';
+            } else {
+                this.polymorphVelocity = { x: 0, y: 0 };
+                this.polymorphMovement = 'idle';                
+            };
+            this.polymorphDirection = direction;
+
+            console.log(`%c ${this.ascean.name} Polymorphed: [${this.polymorphMovement} ${this.polymorphDirection}]`, 'color: #00ffff')
+        };
+
+
+        this.polymorphTimer = this.scene.time.addEvent({
+            delay: 2000,
+            callback: () => {
+                iteration++;
+                console.log(iteration, 'Polymorph iteration');
+                if (iteration === 5) {
+                    iteration = 0;
+                    this.isPolymorphed = false;
+                } else {   
+                    randomDirection();
+                };
+            },
+            callbackScope: this,
+            repeat: 5,
+        }); 
+
+    };
+    onPolymorphUpdate = (dt) => {
+        if (!this.isPolymorphed) this.evaluateCombatDistance();
+        this.anims.play(`rabbit_${this.polymorphMovement}_${this.polymorphDirection}`, true);
+        this.setVelocity(this.polymorphVelocity.x, this.polymorphVelocity.y);
+    };
+    onPolymorphExit = () => { 
+        this.anims.play('player_idle', true);
+        this.spriteWeapon.setVisible(true);
+        if (this.polymorphTimer) {
+            this.polymorphTimer.destroy();
+            this.polymorphTimer = null;
+        };
+    };
+
     onStunEnter = () => {
         this.stunDuration = 2500;
         this.setTint(0x888888); 
@@ -825,7 +916,6 @@ export default class Enemy extends Entity {
     onCleanExit = () => {};
 
     onRootEnter = () => {
-        console.log('Rooted!');
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Rooted', 1500, 'effect', true);
         this.anims.play('player_idle', true);
         this.highlightTarget(this);
@@ -846,13 +936,11 @@ export default class Enemy extends Entity {
         this.evaluateCombatDistance();
     };
     onRootExit = () => { 
-        console.log('Root Ended!');
         this.removeHighlight();
         this.clearTint();
         this.setStatic(false);
     };
     onSnareEnter = () => {
-        console.log('Snared!');
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Snared', 1500, 'effect', true);
         this.snareDuration = 3000;
         this.setTint(0x888888);
@@ -871,7 +959,6 @@ export default class Enemy extends Entity {
         this.evaluateCombatDistance();
     };
     onSnareExit = () => { 
-        console.log('Snare Ended!');
         this.clearTint();
         this.adjustSpeed(1.5);
     };
@@ -1093,6 +1180,10 @@ export default class Enemy extends Entity {
     };
 
     evaluateEnemyState = () => {
+        if (this.isPolymorphed && !this.stateMachine.isCurrentState(States.POLYMORPH)) {
+            this.stateMachine.setState(States.POLYMORPH);
+            return;
+        };
         if (this.isStunned && !this.stateMachine.isCurrentState(States.STUN)) {
             this.stateMachine.setState(States.STUN);
             return;
@@ -1103,11 +1194,9 @@ export default class Enemy extends Entity {
         };
         if (this.isRooted && !this.metaMachine.isCurrentState(States.ROOT)) {
             this.metaMachine.setState(States.ROOT);
-            return;
         };
         if (this.isSnared && !this.metaMachine.isCurrentState(States.SNARE)) {
-            this.metaMachine.setState(States.SNARE);
-            return;
+            this.metaMachine.setState(States.SNARE); 
         };
         if (this.actionSuccess) {
             this.actionSuccess = false;

@@ -1,0 +1,100 @@
+{
+    "anims": [
+        {
+            "key": "rabbit_move_up",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_12"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_13"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_14"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_15"
+                }
+            ]
+        },
+        {
+            "key": "rabbit_move_right",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_8"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_9"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_10"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_11"
+                }
+            ]
+        },
+        {
+            "key": "rabbit_move_left",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_4"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_5"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_6"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_7"
+                }
+            ]
+        },
+        {
+            "key": "rabbit_move_down",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_0"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_1"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_2"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_3"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,100 @@
+{
+    "anims": [
+        {
+            "key": "rabbit_idle_up",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_12"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_13"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_14"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_15"
+                }
+            ]
+        },
+        {
+            "key": "rabbit_idle_right",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_8"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_9"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_10"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_11"
+                }
+            ]
+        },
+        {
+            "key": "rabbit_idle_left",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_4"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_5"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_6"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_7"
+                }
+            ]
+        },
+        {
+            "key": "rabbit_idle_down",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_0"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_1"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_2"
+                },
+                {
+                    "key": "rabbit_idle",
+                    "frame": "rabbit_idle_3"
+                }
+            ]
+        }
+    ]
+}
