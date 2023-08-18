@@ -10,7 +10,7 @@ const roundToTwoDecimals = (num) => {
     return roundedNum;
 };
 
-const damageTypeCompiler = async (damageType, enemy, weapon, physicalDamage, magicalDamage) => {
+const damageTypeCompiler = (damageType, enemy, weapon, physicalDamage, magicalDamage) => {
     if (damageType === 'Blunt' || damageType === 'Fire' || damageType === 'Earth' || damageType === 'Spooky') {
         if (weapon.attack_type === 'Physical') {
             if (enemy.helmet.type === 'Plate-Mail') {
@@ -250,7 +250,7 @@ const damageTypeCompiler = async (damageType, enemy, weapon, physicalDamage, mag
     return { physicalDamage, magicalDamage };
 };
 
-const criticalCompiler = async (player, critChance, critClearance, weapon, physicalDamage, magicalDamage, weather, glancingBlow, criticalSuccess) => {
+const criticalCompiler = (player, critChance, critClearance, weapon, physicalDamage, magicalDamage, weather, glancingBlow, criticalSuccess) => {
     if (weather === 'Alluring Isles') critChance -= 10;
     if (weather === 'Astralands') critChance += 10;
     if (weather === 'Kingdom') critChance += 5;
@@ -338,7 +338,7 @@ const phaserSuccessConcerns = (counterSuccess, rollSuccess, computerCounterSucce
     return false;
 };
 
-const weatherEffectCheck = async (weapon, magDam, physDam, weather, critical) => {
+const weatherEffectCheck = (weapon, magDam, physDam, weather, critical) => {
     let magicalDamage = magDam;
     let physicalDamage = physDam;
     switch (weather) {
@@ -460,7 +460,7 @@ const healTick = (data, effect, player) => {
     return data;
 };
 
-const statusEffectCheck = async (combatData) => {
+const statusEffectCheck = (combatData) => {
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
@@ -553,7 +553,7 @@ const stripEffect = (prayer, defense, weapon, isDebuff) => {
     return { defense, weapon };
 };
 
-const faithSuccess = async (combatData, name, weapon, index) => {
+const faithSuccess = (combatData, name, weapon, index) => {
     const desc = index === 0 ? '' : 'Two'
     if (name === 'player') {
         const blessing = combatData.playerBlessing;
@@ -584,7 +584,7 @@ const faithSuccess = async (combatData, name, weapon, index) => {
             };
             if (exists.prayer === 'Damage') damageTick(combatData, exists, true);
             if (exists.prayer === 'Dispel') {
-                if (combatData.computerEffects.length > 0) await computerDispel(combatData); 
+                if (combatData.computerEffects.length > 0) computerDispel(combatData); 
                 combatData.playerEffects.pop();
             };
             if (exists.prayer === 'Debuff') {
@@ -676,13 +676,13 @@ const faithSuccess = async (combatData, name, weapon, index) => {
     return combatData;
 };
 
-const faithModCompiler = async (player, faithOne, weaponOne, faithTwo, weaponTwo, amuletInfluence, trinketInfluence) => {
+const faithModCompiler = (player, faithOne, weaponOne, faithTwo, weaponTwo, amuletInfluence, trinketInfluence) => {
     if (player.faith === 'devoted' && weaponOne.influences[0] === 'Daethos') faithOne += 5;
     if (player.faith === 'adherent' && weaponOne.influences[0] !== 'Daethos') faithOne += 5;
     if (player.faith === 'devoted' && weaponTwo.influences[0] === 'Daethos') faithTwo += 5;
     if (player.faith === 'adherent' && weaponTwo.influences[0] !== 'Daethos') faithTwo += 5;
     
-    const addRarity = async (rarity, faith) => {
+    const addRarity = (rarity, faith) => {
         const modifier = {
             'Common': 1,
             'Uncommon': 2,
@@ -694,24 +694,24 @@ const faithModCompiler = async (player, faithOne, weaponOne, faithTwo, weaponTwo
         return faith;
     };
 
-    faithOne = await addRarity(weaponOne.rarity, faithOne);
-    faithTwo = await addRarity(weaponTwo.rarity, faithTwo); 
+    faithOne = addRarity(weaponOne.rarity, faithOne);
+    faithTwo = addRarity(weaponTwo.rarity, faithTwo); 
     if (weaponOne.influences[0] === amuletInfluence) {
-        faithOne = await addRarity(player.amulet.rarity, faithOne); 
+        faithOne = addRarity(player.amulet.rarity, faithOne); 
     };
     if (weaponTwo.influences[0] === amuletInfluence) {
-        faithTwo = await addRarity(player.amulet.rarity, faithTwo); 
+        faithTwo = addRarity(player.amulet.rarity, faithTwo); 
     }; 
     if (weaponOne.influences[0] === trinketInfluence) {
-        faithOne = await addRarity(player.trinket.rarity, faithOne); 
+        faithOne = addRarity(player.trinket.rarity, faithOne); 
     };
     if (weaponTwo.influences[0] === trinketInfluence) {
-        faithTwo = await addRarity(player.trinket.rarity, faithTwo); 
+        faithTwo = addRarity(player.trinket.rarity, faithTwo); 
     };
     return { faithOne, faithTwo };
 };
 
-const faithCompiler = async (combatData) => { // The influence will add a chance to have a special effect occur
+const faithCompiler = (combatData) => { // The influence will add a chance to have a special effect occur
     if (combatData.playerWin === true || combatData.computerWin === true || combatData.playerBlessing === '') return;
     
     let faithNumber = Math.floor(Math.random() * 101);
@@ -731,29 +731,29 @@ const faithCompiler = async (combatData) => { // The influence will add a chance
     combatData.computerWeapons[1].critical_chance = Number(combatData.computerWeapons[1].critical_chance);
     combatData.computerWeapons[1].critical_damage = Number(combatData.computerWeapons[1].critical_damage);
 
-    const playerFaith = await faithModCompiler(combatData.player, faithNumber, combatData.weapons[0], faithNumberTwo, combatData.weapons[1], combatData.player.amulet.influences[0], combatData.player.trinket.influences[0]);
+    const playerFaith = faithModCompiler(combatData.player, faithNumber, combatData.weapons[0], faithNumberTwo, combatData.weapons[1], combatData.player.amulet.influences[0], combatData.player.trinket.influences[0]);
     faithNumber = playerFaith.faithOne;
     faithNumberTwo = playerFaith.faithTwo;
 
-    const computerFaith = await faithModCompiler(combatData.computer, computerFaithNumber, combatData.computerWeapons[0], computerFaithNumberTwo, combatData.computerWeapons[1], combatData.computer.amulet.influences[0], combatData.computer.trinket.influences[0]);
+    const computerFaith = faithModCompiler(combatData.computer, computerFaithNumber, combatData.computerWeapons[0], computerFaithNumberTwo, combatData.computerWeapons[1], combatData.computer.amulet.influences[0], combatData.computer.trinket.influences[0]);
     computerFaithNumber = computerFaith.faithOne;
     computerFaithNumberTwo = computerFaith.faithTwo;
 
     if (faithNumber > 90) {
         combatData.actionData.push('prayer');
-        await faithSuccess(combatData, 'player', combatData.weapons[0], 0);
+        faithSuccess(combatData, 'player', combatData.weapons[0], 0);
     };
     if (combatData.dualWielding === true && faithNumberTwo > 90) {
         combatData.actionData.push('prayer');    
-        await faithSuccess(combatData, 'player', combatData.weapons[1], 1);
+        faithSuccess(combatData, 'player', combatData.weapons[1], 1);
     };
 
     if (!combatData.playerEffects.find(effect => effect.prayer === 'Silence')) {
         if (computerFaithNumber > 90) {
-            await faithSuccess(combatData, 'computer', combatData.computerWeapons[0], 0);
+            faithSuccess(combatData, 'computer', combatData.computerWeapons[0], 0);
         };
         if (combatData.computerDualWielding === true && computerFaithNumberTwo > 90) {
-            await faithSuccess(combatData, 'computer', combatData.computerWeapons[1], 1);
+            faithSuccess(combatData, 'computer', combatData.computerWeapons[1], 1);
         };
     };
 
@@ -762,7 +762,7 @@ const faithCompiler = async (combatData) => { // The influence will add a chance
 
 // ================================= COMPUTER COMPILER FUNCTIONS ================================== \\
 
-const computerActionCompiler = async (newData, playerAction, computerAction, computerCounter) => {
+const computerActionCompiler = (newData, playerAction, computerAction, computerCounter) => {
     if (newData.sessionRound > 50) {
         newData.sessionRound = 0;
         newData.attackWeight = 0;
@@ -885,7 +885,7 @@ const computerActionCompiler = async (newData, playerAction, computerAction, com
     return newData;
 };
 
-const computerDualWieldCompiler = async (combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
+const computerDualWieldCompiler = (combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
     const computer = combatData.computer;
     const weapons = combatData.computerWeapons;
 
@@ -904,7 +904,7 @@ const computerDualWieldCompiler = async (combatData, playerPhysicalDefenseMultip
     let weapTwoCrit = combatData.computerWeapons[1].critical_chance;
     weapOneCrit -= combatData.playerAttributes.kyosirMod;
     weapTwoCrit -= combatData.playerAttributes.kyosirMod;
-    const resultOne = await criticalCompiler(combatData.computer, weapOneCrit, weapOneClearance, combatData.computerWeapons[0], computerWeaponOnePhysicalDamage, computerWeaponOneMagicalDamage, combatData.weather, combatData.computerGlancingBlow, combatData.computerCriticalSuccess);
+    const resultOne = criticalCompiler(combatData.computer, weapOneCrit, weapOneClearance, combatData.computerWeapons[0], computerWeaponOnePhysicalDamage, computerWeaponOneMagicalDamage, combatData.weather, combatData.computerGlancingBlow, combatData.computerCriticalSuccess);
     combatData.computerGlancingBlow = resultOne.glancingBlow;
     combatData.computerCriticalSuccess = resultOne.criticalSuccess;
     computerWeaponOnePhysicalDamage = resultOne.physicalDamage;
@@ -912,7 +912,7 @@ const computerDualWieldCompiler = async (combatData, playerPhysicalDefenseMultip
     if (weapOneCrit >= weapOneClearance) {
         firstWeaponCrit = true;
     };
-    const resultTwo = await criticalCompiler(combatData.computer, weapTwoCrit, weapTwoClearance, combatData.computerWeapons[1], computerWeaponTwoOhysicalDamage, computerWeaponTwoMagicalDamage, combatData.weather, combatData.computerGlancingBlow, combatData.computerCriticalSuccess);
+    const resultTwo = criticalCompiler(combatData.computer, weapTwoCrit, weapTwoClearance, combatData.computerWeapons[1], computerWeaponTwoOhysicalDamage, computerWeaponTwoMagicalDamage, combatData.weather, combatData.computerGlancingBlow, combatData.computerCriticalSuccess);
     combatData.computerGlancingBlow = resultTwo.glancingBlow;
     combatData.computerCriticalSuccess = resultTwo.criticalSuccess;
     computerWeaponTwoOhysicalDamage = resultTwo.physicalDamage;
@@ -927,20 +927,20 @@ const computerDualWieldCompiler = async (combatData, playerPhysicalDefenseMultip
     computerWeaponTwoOhysicalDamage *= 1 - ((1 - playerPhysicalDefenseMultiplier) * (1 - (weapons[1].physical_penetration / 100 )));
     computerWeaponTwoMagicalDamage *= 1 - ((1 - playerMagicalDefenseMultiplier) * (1 - (weapons[1].magical_penetration / 100 )));
 
-    const damageType = await damageTypeCompiler(combatData.computerDamageType, combatData.player, weapons[0], computerWeaponOnePhysicalDamage, computerWeaponOneMagicalDamage);
+    const damageType = damageTypeCompiler(combatData.computerDamageType, combatData.player, weapons[0], computerWeaponOnePhysicalDamage, computerWeaponOneMagicalDamage);
     computerWeaponOnePhysicalDamage = damageType.physicalDamage;
     computerWeaponOneMagicalDamage = damageType.magicalDamage;
 
-    const damageTypeTwo = await damageTypeCompiler(combatData.computerDamageType, combatData.player, weapons[1], computerWeaponTwoOhysicalDamage, computerWeaponTwoMagicalDamage);
+    const damageTypeTwo = damageTypeCompiler(combatData.computerDamageType, combatData.player, weapons[1], computerWeaponTwoOhysicalDamage, computerWeaponTwoMagicalDamage);
     computerWeaponTwoOhysicalDamage = damageTypeTwo.physicalDamage;
     computerWeaponTwoMagicalDamage = damageTypeTwo.magicalDamage;
 
     // =============== WEATHER EFFECTS ================ \\
-    const weatherResult = await weatherEffectCheck(weapons[0], computerWeaponOneMagicalDamage, computerWeaponOnePhysicalDamage, combatData.weather, firstWeaponCrit);
+    const weatherResult = weatherEffectCheck(weapons[0], computerWeaponOneMagicalDamage, computerWeaponOnePhysicalDamage, combatData.weather, firstWeaponCrit);
     computerWeaponOnePhysicalDamage = weatherResult.physicalDamage;
     computerWeaponOneMagicalDamage = weatherResult.magicalDamage;
 
-    const weatherResultTwo = await weatherEffectCheck(weapons[1], computerWeaponTwoMagicalDamage, computerWeaponTwoOhysicalDamage, combatData.weather, secondWeaponCrit);
+    const weatherResultTwo = weatherEffectCheck(weapons[1], computerWeaponTwoMagicalDamage, computerWeaponTwoOhysicalDamage, combatData.weather, secondWeaponCrit);
     computerWeaponTwoOhysicalDamage = weatherResultTwo.physicalDamage;
     computerWeaponTwoMagicalDamage = weatherResultTwo.magicalDamage;
     // =============== WEATHER EFFECTS ================ \\
@@ -1009,7 +1009,7 @@ const computerDualWieldCompiler = async (combatData, playerPhysicalDefenseMultip
     return combatData;
 };
 
-const computerAttackCompiler = async (combatData, computerAction) => {
+const computerAttackCompiler = (combatData, computerAction) => {
     if (combatData.playerWin === true) { return }
     let computerPhysicalDamage = combatData.computerWeapons[0].physical_damage;
     let computerMagicalDamage = combatData.computerWeapons[0].magical_damage;
@@ -1030,7 +1030,7 @@ const computerAttackCompiler = async (combatData, computerAction) => {
                     if (combatData.computerAttributes.totalAgility + combatData.computerWeapons[0].agility + combatData.computerWeapons[1].agility >= 50) {
                         if (combatData.computerWeapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                            combatData.computerDualWielding = true;
-                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
+                            computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
                             return combatData;
                         } else {
                             computerPhysicalDamage *= 1.3;
@@ -1050,7 +1050,7 @@ const computerAttackCompiler = async (combatData, computerAction) => {
                     if (combatData.computerAttributes.totalAchre + combatData.computerWeapons[0].achre + combatData.computerWeapons[1].achre >= 50) {
                         if (combatData.computerWeapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                             combatData.computerDualWielding = true;
-                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
+                            computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
                             return combatData;
                         } else {
                             computerPhysicalDamage *= 1.15;
@@ -1072,7 +1072,7 @@ const computerAttackCompiler = async (combatData, computerAction) => {
                     if (combatData.computerAttributes.totalStrength + combatData.computerWeapons[0].strength + combatData.computerWeapons[1].strength >= 75) { // Might be a dual-wield compiler instead to take the rest of it
                         if (combatData.computerWeapons[1].type !== 'Bow') {
                             combatData.computerDualWielding = true;
-                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
+                            computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
                             return combatData;
                         } else { // Less than 50 Srength 
                             computerPhysicalDamage *= 1.3;
@@ -1092,7 +1092,7 @@ const computerAttackCompiler = async (combatData, computerAction) => {
                     if (combatData.computerAttributes.totalCaeren + combatData.computerWeapons[0].caeren + combatData.computerWeapons[1].caeren >= 75) {
                         if (combatData.computerWeapons[1].type !== 'Bow') {
                             combatData.computerDualWielding = true;
-                            await computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
+                            computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier);
                             return combatData;
                         } else {
                             computerPhysicalDamage *= 1.15;
@@ -1144,7 +1144,7 @@ const computerAttackCompiler = async (combatData, computerAction) => {
     criticalChance -= combatData.playerAttributes.kyosirMod;
     if (combatData.weather === 'Astralands') criticalChance += 10;
 
-    const criticalResult = await criticalCompiler(combatData.computer, criticalChance, criticalClearance, combatData.computerWeapons[0], computerPhysicalDamage, computerMagicalDamage, combatData.weather, combatData.computerGlancingBlow, combatData.computerCriticalSuccess);
+    const criticalResult = criticalCompiler(combatData.computer, criticalChance, criticalClearance, combatData.computerWeapons[0], computerPhysicalDamage, computerMagicalDamage, combatData.weather, combatData.computerGlancingBlow, combatData.computerCriticalSuccess);
     combatData.computerGlancingBlow = criticalResult.glancingBlow;
     combatData.computerCriticalSuccess = criticalResult.criticalSuccess;
     computerPhysicalDamage = criticalResult.physicalDamage;
@@ -1152,11 +1152,11 @@ const computerAttackCompiler = async (combatData, computerAction) => {
 
     computerPhysicalDamage *= 1 - ((1 - playerPhysicalDefenseMultiplier) * (1 - (combatData.computerWeapons[0].physical_penetration / 100)));
     computerMagicalDamage *= 1 - ((1 - playerMagicalDefenseMultiplier) * (1 - (combatData.computerWeapons[0].magical_penetration / 100)));
-    const damageType = await damageTypeCompiler(combatData.computerDamageType, combatData.player, combatData.computerWeapons[0], computerPhysicalDamage, computerMagicalDamage);
+    const damageType = damageTypeCompiler(combatData.computerDamageType, combatData.player, combatData.computerWeapons[0], computerPhysicalDamage, computerMagicalDamage);
     computerPhysicalDamage = damageType.physicalDamage;
     computerMagicalDamage = damageType.magicalDamage;
 
-    const weatherResult = await weatherEffectCheck(combatData.computerWeapons[0], computerMagicalDamage, computerPhysicalDamage, combatData.weather, combatData.computerCriticalSuccess);
+    const weatherResult = weatherEffectCheck(combatData.computerWeapons[0], computerMagicalDamage, computerPhysicalDamage, combatData.weather, combatData.computerCriticalSuccess);
     computerPhysicalDamage = weatherResult.physicalDamage;
     computerMagicalDamage = weatherResult.magicalDamage; 
 
@@ -1211,7 +1211,7 @@ const computerAttackCompiler = async (combatData, computerAction) => {
     return combatData;
 }; 
     
-const computerRollCompiler = async (combatData, playerAction, computerAction) => {
+const computerRollCompiler = (combatData, playerAction, computerAction) => {
     const computerRoll = combatData.computerWeapons[0].roll;
     let rollCatch = Math.floor(Math.random() * 101) + combatData.playerAttributes.kyosirMod;
     if (combatData.weather === 'Alluring Isles') {
@@ -1226,17 +1226,17 @@ const computerRollCompiler = async (combatData, playerAction, computerAction) =>
     if (computerRoll > rollCatch) {
         combatData.computerRollSuccess = true;
         combatData.computerSpecialDescription = `${combatData.computer.name} successfully rolls against you, avoiding your ${playerAction === 'attack' ? 'Focused' : playerAction.charAt(0).toUpperCase() + playerAction.slice(1) } Attack.`
-        await computerAttackCompiler(combatData, computerAction)
+        computerAttackCompiler(combatData, computerAction);
     } else {
         combatData.computerSpecialDescription = `${combatData.computer.name} fails to roll against your ${  playerAction === 'attack' ? 'Focused' : playerAction.charAt(0).toUpperCase() + playerAction.slice(1) } Attack.`
-        return combatData
+        return combatData;
     };
     return combatData;
 };
 
 // ================================== PLAYER COMPILER FUNCTIONS ====================================== \\
 
-const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
+const dualWieldCompiler = (combatData) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
     const computer = combatData.computer;
     const weapons = combatData.weapons;
 
@@ -1258,7 +1258,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     let weapTwoCrit = combatData.weapons[1].critical_chance;
     weapOneCrit -= combatData.computerAttributes.kyosirMod;
     weapTwoCrit -= combatData.computerAttributes.kyosirMod;
-    const resultOne = await criticalCompiler(combatData.player, weapOneCrit, weapOneClearance, combatData.weapons[0], playerWeaponOnePhysicalDamage, playerWeaponOneMagicalDamage, combatData.weather, combatData.glancingBlow, combatData.criticalSuccess);
+    const resultOne = criticalCompiler(combatData.player, weapOneCrit, weapOneClearance, combatData.weapons[0], playerWeaponOnePhysicalDamage, playerWeaponOneMagicalDamage, combatData.weather, combatData.glancingBlow, combatData.criticalSuccess);
     combatData.criticalSuccess = resultOne.criticalSuccess;
     combatData.glancingBlow = resultOne.glancingBlow;
     playerWeaponOnePhysicalDamage = resultOne.physicalDamage;
@@ -1266,7 +1266,7 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     if (weapOneCrit >= weapOneClearance) {
         firstWeaponCrit = true;
     };
-    const resultTwo = await criticalCompiler(combatData.player, weapTwoCrit, weapTwoClearance, combatData.weapons[1], playerWeaponTwoPhysicalDamage, playerWeaponTwoMagicalDamage, combatData.weather, combatData.glancingBlow, combatData.criticalSuccess);
+    const resultTwo = criticalCompiler(combatData.player, weapTwoCrit, weapTwoClearance, combatData.weapons[1], playerWeaponTwoPhysicalDamage, playerWeaponTwoMagicalDamage, combatData.weather, combatData.glancingBlow, combatData.criticalSuccess);
     combatData.criticalSuccess = resultTwo.criticalSuccess;
     combatData.glancingBlow = resultTwo.glancingBlow;
     playerWeaponTwoPhysicalDamage = resultTwo.physicalDamage;
@@ -1281,19 +1281,19 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     playerWeaponTwoPhysicalDamage *= 1 - ((1 - computerPhysicalDefenseMultiplier) * (1 - (weapons[1].physical_penetration / 100)));
     playerWeaponTwoMagicalDamage *= 1 - ((1 - computerMagicalDefenseMultiplier) * (1 - (weapons[1].magical_penetration / 100)));
 
-    const damageType = await damageTypeCompiler(combatData.playerDamageType, combatData.computer, weapons[0], playerWeaponOnePhysicalDamage, playerWeaponOneMagicalDamage);
+    const damageType = damageTypeCompiler(combatData.playerDamageType, combatData.computer, weapons[0], playerWeaponOnePhysicalDamage, playerWeaponOneMagicalDamage);
     playerWeaponOnePhysicalDamage = damageType.physicalDamage;
     playerWeaponOneMagicalDamage = damageType.magicalDamage;
 
-    const damageTypeTwo = await damageTypeCompiler(combatData.playerDamageType, combatData.computer, weapons[1], playerWeaponTwoPhysicalDamage, playerWeaponTwoMagicalDamage);
+    const damageTypeTwo = damageTypeCompiler(combatData.playerDamageType, combatData.computer, weapons[1], playerWeaponTwoPhysicalDamage, playerWeaponTwoMagicalDamage);
     playerWeaponTwoPhysicalDamage = damageTypeTwo.physicalDamage;
     playerWeaponTwoMagicalDamage = damageTypeTwo.magicalDamage;
 
-    const weatherResult = await weatherEffectCheck(combatData.weapons[0], playerWeaponOneMagicalDamage, playerWeaponOnePhysicalDamage, combatData.weather, firstWeaponCrit);
+    const weatherResult = weatherEffectCheck(combatData.weapons[0], playerWeaponOneMagicalDamage, playerWeaponOnePhysicalDamage, combatData.weather, firstWeaponCrit);
     playerWeaponOnePhysicalDamage = weatherResult.physicalDamage;
     playerWeaponOneMagicalDamage = weatherResult.magicalDamage;
 
-    const weatherResultTwo = await weatherEffectCheck(combatData.weapons[1], playerWeaponTwoMagicalDamage, playerWeaponTwoPhysicalDamage, combatData.weather, secondWeaponCrit);
+    const weatherResultTwo = weatherEffectCheck(combatData.weapons[1], playerWeaponTwoMagicalDamage, playerWeaponTwoPhysicalDamage, combatData.weather, secondWeaponCrit);
     playerWeaponTwoPhysicalDamage = weatherResultTwo.physicalDamage;
     playerWeaponTwoMagicalDamage = weatherResultTwo.magicalDamage;
 
@@ -1351,12 +1351,11 @@ const dualWieldCompiler = async (combatData) => { // Triggers if 40+ Str/Caer fo
     
     combatData.playerActionDescription = 
         `You dual-wield attack ${computer.name} with ${weapons[0].name} and ${weapons[1].name} for ${Math.round(combatData.realizedPlayerDamage)} ${combatData.playerDamageType} and ${weapons[1].damage_type[0] ? weapons[1].damage_type[0] : ''} ${firstWeaponCrit === true && secondWeaponCrit === true ? 'Critical Strike Damage' : firstWeaponCrit === true || secondWeaponCrit === true ? 'Partial Crit Damage' : combatData.glancingBlow === true ? 'Damage (Glancing)' : 'Damage'}.`    
-    return (
-        combatData
-    );
+        
+    return combatData;
 };
     
-const attackCompiler = async (combatData, playerAction) => {
+const attackCompiler = (combatData, playerAction) => {
     if (combatData.computerWin === true) return;
     let playerPhysicalDamage = combatData.weapons[0].physical_damage;
     let playerMagicalDamage = combatData.weapons[0].magical_damage;
@@ -1379,7 +1378,7 @@ const attackCompiler = async (combatData, playerAction) => {
                     if (combatData.playerAttributes.totalAgility + combatData.weapons[0].agility + combatData.weapons[1].agility >= 50) {
                         if (combatData.weapons[1].grip === 'One Hand') { // If you're Focusing Attack + 1h + Agi Mastery + 1h in Second Slot
                             combatData.dualWielding = true;
-                            await dualWieldCompiler(combatData);
+                            dualWieldCompiler(combatData);
                             return combatData;
                         } else {
                             playerPhysicalDamage *= 1.3; // DAMAGE_**_HIGH
@@ -1399,8 +1398,8 @@ const attackCompiler = async (combatData, playerAction) => {
                     if (combatData.playerAttributes.totalAchre + combatData.weapons[0].achre + combatData.weapons[0].achre + combatData.weapons[1].achre >= 50) {
                         if (combatData.weapons[1].grip === 'One Hand') { // Might be a dual-wield compiler instead to take the rest of it
                             combatData.dualWielding = true;
-                            await dualWieldCompiler(combatData)
-                            return combatData
+                            dualWieldCompiler(combatData);
+                            return combatData;
                         } else {
                             playerPhysicalDamage *= 1.15;
                             playerMagicalDamage *= 1.3;
@@ -1421,7 +1420,7 @@ const attackCompiler = async (combatData, playerAction) => {
                     if (combatData.playerAttributes.totalStrength + combatData.weapons[0].strength  + combatData.weapons[1].strength >= 75) { // Might be a dual-wield compiler instead to take the rest of it
                         if (combatData.weapons[1].type !== 'Bow') {
                             combatData.dualWielding = true;
-                            await dualWieldCompiler(combatData);
+                            dualWieldCompiler(combatData);
                             return combatData;
                         } else { // Less than 40 Srength 
                             playerPhysicalDamage *= 1.3;
@@ -1441,7 +1440,7 @@ const attackCompiler = async (combatData, playerAction) => {
                     if (combatData.playerAttributes.totalCaeren + combatData.weapons[0].caeren + combatData.weapons[1].caeren >= 75) {
                         if (combatData.weapons[1].type !== 'Bow') {
                             combatData.dualWielding = true;
-                            await dualWieldCompiler(combatData);
+                            dualWieldCompiler(combatData);
                             return combatData;
                         } else {
                             playerPhysicalDamage *= 1.15;
@@ -1493,7 +1492,7 @@ const attackCompiler = async (combatData, playerAction) => {
     criticalChance -= combatData.computerAttributes.kyosirMod;
     if (combatData.weather === 'Astralands') criticalChance += 10;
     if (combatData.weather === 'Astralands' && combatData.weapons[0].influences[0] === 'Astra') criticalChance += 10;
-    const criticalResult = await criticalCompiler(combatData.player, criticalChance, criticalClearance, combatData.weapons[0], playerPhysicalDamage, playerMagicalDamage, combatData.weather, combatData.glancingBlow, combatData.criticalSuccess);
+    const criticalResult = criticalCompiler(combatData.player, criticalChance, criticalClearance, combatData.weapons[0], playerPhysicalDamage, playerMagicalDamage, combatData.weather, combatData.glancingBlow, combatData.criticalSuccess);
     combatData.criticalSuccess = criticalResult.criticalSuccess;
     combatData.glancingBlow = criticalResult.glancingBlow;
     playerPhysicalDamage = criticalResult.physicalDamage;
@@ -1502,10 +1501,10 @@ const attackCompiler = async (combatData, playerAction) => {
     // If you made it here, your basic attack now resolves itself
     playerPhysicalDamage *= 1 - ((1 - computerPhysicalDefenseMultiplier) * (1 - (combatData.weapons[0].physical_penetration / 100)));
     playerMagicalDamage *=1 - ((1 - computerMagicalDefenseMultiplier) * (1 - (combatData.weapons[0].magical_penetration / 100)));
-    const damageType = await damageTypeCompiler(combatData.playerDamageType, combatData.computer, combatData.weapons[0], playerPhysicalDamage, playerMagicalDamage);
+    const damageType = damageTypeCompiler(combatData.playerDamageType, combatData.computer, combatData.weapons[0], playerPhysicalDamage, playerMagicalDamage);
     playerPhysicalDamage = damageType.physicalDamage;
     playerMagicalDamage = damageType.magicalDamage;
-    const weatherResult = await weatherEffectCheck(combatData.weapons[0], playerMagicalDamage, playerPhysicalDamage, combatData.weather, combatData.criticalSuccess);
+    const weatherResult = weatherEffectCheck(combatData.weapons[0], playerMagicalDamage, playerPhysicalDamage, combatData.weather, combatData.criticalSuccess);
     playerPhysicalDamage = weatherResult.physicalDamage;
     playerMagicalDamage = weatherResult.magicalDamage;
 
@@ -1541,7 +1540,7 @@ const attackCompiler = async (combatData, playerAction) => {
     return combatData;
 };
 
-const playerRollCompiler = async (combatData, playerAction, computerAction) => { 
+const playerRollCompiler = (combatData, playerAction, computerAction) => { 
     const playerRoll = combatData.weapons[0].roll;
     let rollCatch = Math.floor(Math.random() * 101) + combatData.computerAttributes.kyosirMod;
     if (combatData.weather === 'Alluring Isles') {
@@ -1557,20 +1556,18 @@ const playerRollCompiler = async (combatData, playerAction, computerAction) => {
         combatData.rollSuccess = true;
         combatData.playerSpecialDescription = 
                 `You successfully roll against ${combatData.computer.name}, avoiding their ${ computerAction === 'attack' ? 'Focused' : computerAction.charAt(0).toUpperCase() + computerAction.slice(1) } Attack.`;
-        await attackCompiler(combatData, playerAction);
+        attackCompiler(combatData, playerAction);
     } else {
         combatData.playerSpecialDescription =
         `You failed to roll against ${combatData.computer.name}'s ${ computerAction === 'attack' ? 'Focused' : computerAction.charAt(0).toUpperCase() + computerAction.slice(1) } Attack.`
          
     };
-    return (
-        combatData
-    );
+    return combatData;
 };
 
 // ================================== COMBAT COMPILER FUNCTIONS ====================================== \\
 
-const doubleRollCompiler = async (combatData, playerInitiative, computerInitiative, playerAction, computerAction) => {
+const doubleRollCompiler = (combatData, playerInitiative, computerInitiative, playerAction, computerAction) => {
     const playerRoll = combatData.weapons[0].roll;
     const computerRoll = combatData.computerWeapons[0].roll;
     let rollCatch = Math.floor(Math.random() * 101) + combatData.computerAttributes.kyosirMod;
@@ -1590,48 +1587,46 @@ const doubleRollCompiler = async (combatData, playerInitiative, computerInitiati
         if (playerRoll > rollCatch) { // The Player Succeeds the Roll
             combatData.playerSpecialDescription = 
                 `You successfully roll against ${combatData.computer.name}, avoiding their ${combatData.computerAction.charAt(0).toUpperCase() + combatData.computerAction.slice(1)} Attack`;
-            await attackCompiler(combatData, playerAction);
+            attackCompiler(combatData, playerAction);
         } else if (computerRoll > rollCatch) { // The Player Fails the Roll and the Computer Succeeds
             combatData.playerSpecialDescription = 
                 `You failed to roll against ${combatData.computer.name}'s ${combatData.computerAction.charAt(0).toUpperCase() + combatData.computerAction.slice(1)} Attack`;
             combatData.computerSpecialDescription = 
                 `${combatData.computer.name} successfully rolls against you, avoiding your ${combatData.playerAction.charAt(0).toUpperCase() + combatData.playerAction.slice(1)} Attack`;
-            await computerAttackCompiler(combatData, computerAction);
+            computerAttackCompiler(combatData, computerAction);
         } else { // Neither Player nor Computer Succeed
             combatData.playerSpecialDescription = 
                 `You failed to roll against ${combatData.computer.name}'s ${combatData.computerAction.charAt(0).toUpperCase() + combatData.computerAction.slice(1)} Attack`;
             combatData.computerSpecialDescription = 
                 `${combatData.computer.name} fails to roll against your ${combatData.playerAction.charAt(0).toUpperCase() + combatData.playerAction.slice(1)} Attack`;
-            await attackCompiler(combatData, playerAction);
-            await computerAttackCompiler(combatData, computerAction);
+            attackCompiler(combatData, playerAction);
+            computerAttackCompiler(combatData, computerAction);
         }
     } else { // The Computer has Higher Initiative
         if (computerRoll > rollCatch) { // The Computer Succeeds the Roll
             combatData.computerSpecialDescription = 
                 `${combatData.computer.name} successfully rolls against you, avoiding your ${combatData.playerAction.charAt(0).toUpperCase() + combatData.playerAction.slice(1)} Attack`;
-            await computerAttackCompiler(combatData, computerAction);
+            computerAttackCompiler(combatData, computerAction);
         } else if (playerRoll > rollCatch) { // The Computer Fails the Roll and the Player Succeeds
             combatData.computerSpecialDescription = 
                 `${combatData.computer.name} fails to roll against your ${combatData.playerAction.charAt(0).toUpperCase() + combatData.playerAction.slice(1)} Attack`;
             combatData.playerSpecialDescription = 
                 `You successfully roll against ${combatData.computer.name}, avoiding their ${combatData.computerAction.charAt(0).toUpperCase() + combatData.computerAction.slice(1)} Attack`;
-            await attackCompiler(combatData, playerAction);
+            attackCompiler(combatData, playerAction);
         } else { // Neither Computer nor Player Succeed
             combatData.computerSpecialDescription = 
                 `${combatData.computer.name} fails to roll against your ${combatData.playerAction.charAt(0).toUpperCase() + combatData.playerAction.slice(1)} Attack`;
             combatData.playerSpecialDescription = 
                 `You failed to roll against ${combatData.computer.name}'s ${combatData.computerAction.charAt(0).toUpperCase() + combatData.computerAction.slice(1)} Attack`;
-            await computerAttackCompiler(combatData, computerAction);
-            await attackCompiler(combatData, playerAction);
+            computerAttackCompiler(combatData, computerAction);
+            attackCompiler(combatData, playerAction);
         };
     };
-    return (
-        combatData
-    );
+    return combatData;
 };
 
-const actionSplitter = async (combatData) => {
-    let newData = await newDataCompiler(combatData);
+const actionSplitter = (combatData) => {
+    let newData = newDataCompiler(combatData);
     newData.actionData.push(newData.action);
     const playerInitiative = newData.playerAttributes.initiative;
     const computerInitiative = newData.computerAttributes.initiative;
@@ -1661,9 +1656,9 @@ const actionSplitter = async (combatData) => {
         newData.playerAction = possibleChoices[newChoice];
         playerAction = possibleChoices[newChoice];
     };
-    await computerWeaponMaker(newData);
+    computerWeaponMaker(newData);
 
-    await computerActionCompiler(newData, playerAction, computerAction, computerCounter);
+    computerActionCompiler(newData, playerAction, computerAction, computerCounter);
     computerCounter = newData.computerCounterGuess;
     computerAction = newData.computerAction;
 
@@ -1680,9 +1675,9 @@ const actionSplitter = async (combatData) => {
                 newData.counterSuccess = true;
                 newData.playerSpecialDescription = 
                     `You successfully Countered ${newData.computer.name}'s Counter-Counter! Absolutely Brutal`;
-                await attackCompiler(newData, playerAction);
-                await faithCompiler(newData); 
-                await statusEffectCheck(newData);
+                attackCompiler(newData, playerAction);
+                faithCompiler(newData); 
+                statusEffectCheck(newData);
                 newData.combatRound += 1;
                 newData.sessionRound += 1;
                 return newData;
@@ -1690,10 +1685,10 @@ const actionSplitter = async (combatData) => {
                 newData.computerCounterSuccess = true;
                 newData.computerSpecialDescription = 
                     `${newData.computer.name} successfully Countered your Counter-Counter! Absolutely Brutal`
-                await computerAttackCompiler(newData, computerAction);
-                await faithCompiler(newData);
+                computerAttackCompiler(newData, computerAction);
+                faithCompiler(newData);
 
-                await statusEffectCheck(newData);
+                statusEffectCheck(newData);
                 newData.combatRound += 1;
                 newData.sessionRound += 1;
                 return newData;
@@ -1704,9 +1699,9 @@ const actionSplitter = async (combatData) => {
             newData.counterSuccess = true;
             newData.playerSpecialDescription = 
                 `You successfully Countered ${newData.computer.name}'s Counter-${computerCounter.charAt(0).toUpperCase() + computerCounter.slice(1)}! Absolutely Brutal`
-            await attackCompiler(newData, playerAction)
-            await faithCompiler(newData);
-            await statusEffectCheck(newData);
+            attackCompiler(newData, playerAction)
+            faithCompiler(newData);
+            statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
             return newData;
@@ -1717,9 +1712,9 @@ const actionSplitter = async (combatData) => {
             newData.computerCounterSuccess = true;
             newData.computerSpecialDescription = 
                 `${newData.computer.name} successfully Countered your Counter-${playerCounter.charAt(0).toUpperCase() + playerCounter.slice(1)}! Absolutely Brutal`
-            await computerAttackCompiler(newData, computerAction);
-            await faithCompiler(newData);
-            await statusEffectCheck(newData);
+            computerAttackCompiler(newData, computerAction);
+            faithCompiler(newData);
+            statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
             return newData;
@@ -1731,11 +1726,11 @@ const actionSplitter = async (combatData) => {
             newData.computerSpecialDescription = 
                 `${newData.computer.name} fails to Counter your Counter! Heartbreaking`
                 if (playerInitiative > computerInitiative) {
-                    await attackCompiler(newData, playerAction);
-                    await computerAttackCompiler(newData, computerAction);
+                    attackCompiler(newData, playerAction);
+                    computerAttackCompiler(newData, computerAction);
                 } else {
-                    await computerAttackCompiler(newData, computerAction);
-                    await attackCompiler(newData, playerAction);
+                    computerAttackCompiler(newData, computerAction);
+                    attackCompiler(newData, playerAction);
                 };
         };
     };
@@ -1745,9 +1740,9 @@ const actionSplitter = async (combatData) => {
             newData.counterSuccess = true;
             newData.playerSpecialDescription = 
                 `You successfully Countered ${newData.computer.name}'s ${ newData.computerAction === 'attack' ? 'Focused' : newData.computerAction.charAt(0).toUpperCase() + newData.computerAction.slice(1) } Attack.`
-            await attackCompiler(newData, playerAction);
-            await faithCompiler(newData);
-            await statusEffectCheck(newData);
+            attackCompiler(newData, playerAction);
+            faithCompiler(newData);
+            statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
             return newData;
@@ -1762,9 +1757,9 @@ const actionSplitter = async (combatData) => {
             newData.computerCounterSuccess = true;
             newData.computerSpecialDescription = 
                 `${newData.computer.name} successfully Countered your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack.`
-            await computerAttackCompiler(newData, computerAction);
-            await faithCompiler(newData);
-            await statusEffectCheck(newData);
+            computerAttackCompiler(newData, computerAction);
+            faithCompiler(newData);
+            statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
             return newData;
@@ -1778,10 +1773,10 @@ const actionSplitter = async (combatData) => {
         if (playerInitiative > computerInitiative) {
             newData.playerSpecialDescription = 
                 `You successfully Dodge ${newData.computer.name}'s ${  newData.computerAction === 'attack' ? 'Focused' : newData.computerAction.charAt(0).toUpperCase() + newData.computerAction.slice(1) } Attack`
-            await attackCompiler(newData, playerAction);
+            attackCompiler(newData, playerAction);
         } else {
             `${newData.computer.name} successfully Dodges your ${  newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
-            await computerAttackCompiler(newData, computerAction);
+            computerAttackCompiler(newData, computerAction);
         };
     };
 
@@ -1789,9 +1784,9 @@ const actionSplitter = async (combatData) => {
     if (playerAction === 'dodge' && computerAction !== 'dodge') {
         newData.playerSpecialDescription = 
             `You successfully Dodge ${newData.computer.name}'s ${ newData.computerAction === 'attack' ? 'Focused' : newData.computerAction.charAt(0).toUpperCase() + newData.computerAction.slice(1) } Attack`
-        await attackCompiler(newData, playerAction);
-        await faithCompiler(newData);
-        await statusEffectCheck(newData);
+        attackCompiler(newData, playerAction);
+        faithCompiler(newData);
+        statusEffectCheck(newData);
         newData.combatRound += 1;
         newData.sessionRound += 1;
         return newData;
@@ -1800,23 +1795,23 @@ const actionSplitter = async (combatData) => {
     // If the Computer Dodges and the Player does not *Counter or Dodge *Checked for success
     if (computerAction === 'dodge' && playerAction !== 'dodge') {
         `${newData.computer.name} successfully Dodges your ${ newData.action === 'attack' ? 'Focused' : newData.action.charAt(0).toUpperCase() + newData.action.slice(1) } Attack`
-        await computerAttackCompiler(newData, computerAction);
-        await faithCompiler(newData);
-        await statusEffectCheck(newData);
+        computerAttackCompiler(newData, computerAction);
+        faithCompiler(newData);
+        statusEffectCheck(newData);
         newData.combatRound += 1;
         newData.sessionRound += 1;
         return newData;
     };
 
     if (playerAction === 'roll' && computerAction === 'roll') { // If both choose Roll
-        await doubleRollCompiler(newData, playerInitiative, computerInitiative, playerAction, computerAction);
+        doubleRollCompiler(newData, playerInitiative, computerInitiative, playerAction, computerAction);
     };
 
     if (playerAction === 'roll' && computerAction !== 'roll') {
-        await playerRollCompiler(newData, playerAction, computerAction);
+        playerRollCompiler(newData, playerAction, computerAction);
         if (newData.rollSuccess === true) {
-            await faithCompiler(newData);
-            await statusEffectCheck(newData);
+            faithCompiler(newData);
+            statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
             return newData;
@@ -1824,10 +1819,10 @@ const actionSplitter = async (combatData) => {
     };
 
     if (computerAction === 'roll' && playerAction !== 'roll') {
-        await computerRollCompiler(newData, playerAction, computerAction);
+        computerRollCompiler(newData, playerAction, computerAction);
         if (newData.computerRollSuccess === true) {
-            await faithCompiler(newData);
-            await statusEffectCheck(newData);
+            faithCompiler(newData);
+            statusEffectCheck(newData);
             newData.combatRound += 1;
             newData.sessionRound += 1;
             return newData;
@@ -1836,16 +1831,16 @@ const actionSplitter = async (combatData) => {
 
     if (playerAction === 'attack' || playerAction === 'posture' || computerAction === 'attack' || computerAction === 'posture') { // If both choose Attack
         if (playerInitiative > computerInitiative) {
-            if (playerAction !== '') await attackCompiler(newData, playerAction);
-            if (computerAction !== '') await computerAttackCompiler(newData, computerAction);
+            if (playerAction !== '') attackCompiler(newData, playerAction);
+            if (computerAction !== '') computerAttackCompiler(newData, computerAction);
         } else {
-            if (computerAction !== '') await computerAttackCompiler(newData, computerAction);
-            if (playerAction !== '') await attackCompiler(newData, playerAction);
+            if (computerAction !== '') computerAttackCompiler(newData, computerAction);
+            if (playerAction !== '') attackCompiler(newData, playerAction);
         };
     };
 
-    await faithCompiler(newData);
-    await statusEffectCheck(newData);
+    faithCompiler(newData);
+    statusEffectCheck(newData);
     
     if (newData.playerWin === true) {
         newData.computerDeathDescription = 
@@ -1856,7 +1851,7 @@ const actionSplitter = async (combatData) => {
         `You have been defeated. Hail ${newData.computer.name}, they have won.`;
     };
     if (newData.playerWin === true || newData.computerWin === true) {
-        await statusEffectCheck(newData);
+        statusEffectCheck(newData);
     };
 
     newData.combatRound += 1;
@@ -1865,7 +1860,16 @@ const actionSplitter = async (combatData) => {
     return newData;
 };
 
-const computerWeaponMaker = async (combatData) => {
+const computerWeaponMaker = (combatData) => {
+    // Possibly add a flag to check if this has been performed for the enemy already. Only needs to set itself up once per combat
+    // combatData.computerWeaponChecked or something TODO:FIXME: It might help cut down on computation time
+    
+    let prayers = ['Buff', 'Damage', 'Debuff', 'Heal'];
+    let newPrayer = Math.floor(Math.random() * prayers.length);
+    combatData.computerBlessing = prayers[newPrayer];
+
+    // if (combatData.computerWeaponChecked) return combatData;
+
     let defenseTypes = {
         "Leather-Cloth": 0,
         "Leather-Mail": 0,
@@ -1895,8 +1899,8 @@ const computerWeaponMaker = async (combatData) => {
         1: [],
         2: [],
     };
-    combatData.computerWeapons.forEach(async (weapon, index) => {
-        weapon.damage_type.forEach(async (type, typeIndex) => {
+    combatData.computerWeapons.forEach((weapon, index) => {
+        weapon.damage_type.forEach((type, _typeIndex) => {
             if (strongTypes[sortedDefenses[0].type].includes(type)) {
                 computerTypes[index].push({ type, rank: 1 });
             } else if (strongTypes[sortedDefenses[1].type].includes(type)) {
@@ -1928,15 +1932,11 @@ const computerWeaponMaker = async (combatData) => {
         };
     };
 
-    let prayers = ['Buff', 'Damage', 'Debuff', 'Heal'];
-    let newPrayer = Math.floor(Math.random() * prayers.length);
-    combatData.computerBlessing = prayers[newPrayer];
-
     return combatData;
 };
 
-const phaserDualActionSplitter = async (combatData) => {
-    let newData = await newDataCompiler(combatData);
+const phaserDualActionSplitter = (combatData) => {
+    let newData = newDataCompiler(combatData);
     newData.actionData.push(newData.action);
     const playerInitiative = newData.playerAttributes.initiative;
     const computerInitiative = newData.computerAttributes.initiative;
@@ -1945,8 +1945,8 @@ const phaserDualActionSplitter = async (combatData) => {
     const computerAction = newData.computerAction;
     const computerCounter = newData.computerCounterGuess;
 
-    await computerWeaponMaker(newData);
-    await computerActionCompiler(newData, playerAction, computerAction, computerCounter);
+    computerWeaponMaker(newData);
+    computerActionCompiler(newData, playerAction, computerAction, computerCounter);
 
     newData.computerStartDescription = 
         `${newData.computer.name} sets to ${computerAction === '' ? 'defend' : computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}${computerCounter ? '-' + computerCounter.charAt(0).toUpperCase() + computerCounter.slice(1) : ''} against you.`
@@ -2006,39 +2006,39 @@ const phaserDualActionSplitter = async (combatData) => {
     };
 
     if (playerAction === 'roll' && computerAction === 'roll') { // If both choose Roll
-        await doubleRollCompiler(newData, playerInitiative, computerInitiative, playerAction, computerAction);
+        doubleRollCompiler(newData, playerInitiative, computerInitiative, playerAction, computerAction);
         return newData;
     };
 
     if (playerAction === 'roll' && computerAction !== 'roll') {
-        await playerRollCompiler(newData, playerAction, computerAction);
+        playerRollCompiler(newData, playerAction, computerAction);
     };
 
     if (computerAction === 'roll' && playerAction !== 'roll') {
-        await computerRollCompiler(newData, playerAction, computerAction);
+        computerRollCompiler(newData, playerAction, computerAction);
     };
 
     if (phaserSuccessConcerns(newData.counterSuccess, newData.rollSuccess, newData.computerCounterSuccess, newData.computerRollSuccess) === false) { // If both choose Attack
         if (playerInitiative > computerInitiative) {
-            if (phaserActionConcerns(newData.action)) await attackCompiler(newData, playerAction);
-            if (phaserActionConcerns(newData.computerAction)) await computerAttackCompiler(newData, computerAction);
+            if (phaserActionConcerns(newData.action)) attackCompiler(newData, playerAction);
+            if (phaserActionConcerns(newData.computerAction)) computerAttackCompiler(newData, computerAction);
         } else {
-            if (phaserActionConcerns(newData.computerAction)) await computerAttackCompiler(newData, computerAction);
-            if (phaserActionConcerns(newData.action)) await attackCompiler(newData, playerAction);
+            if (phaserActionConcerns(newData.computerAction)) computerAttackCompiler(newData, computerAction);
+            if (phaserActionConcerns(newData.action)) attackCompiler(newData, playerAction);
         };
     };
 
     return newData;
 };
 
-const phaserActionSplitter = async (combatData) => {
-    let cleanData = await newDataCompiler(combatData);
+const phaserActionSplitter = (combatData) => {
+    let cleanData = newDataCompiler(combatData);
     let changes = { ...cleanData };
     const playerActionLive = cleanData.action !== '' ? true : false;
     const computerActionLive = cleanData.computerAction !== '' ? true : false;
     if (playerActionLive && computerActionLive) {
         console.log("Dual Actions");
-        cleanData = await phaserDualActionSplitter(cleanData);
+        cleanData = phaserDualActionSplitter(cleanData);
         changes = {
             ...changes,
             'playerSpecialDescription': cleanData.playerSpecialDescription,
@@ -2070,8 +2070,8 @@ const phaserActionSplitter = async (combatData) => {
         };
     } else if (playerActionLive && !computerActionLive) {
         // console.log(cleanData.player.name, "Player Attacking");
-        await computerActionCompiler(cleanData, cleanData.action, cleanData.computerAction, cleanData.computerCounterGuess);
-        await attackCompiler(cleanData, cleanData.action);
+        computerActionCompiler(cleanData, cleanData.action, cleanData.computerAction, cleanData.computerCounterGuess);
+        attackCompiler(cleanData, cleanData.action);
         changes = {
             ...changes,
             'playerSpecialDescription': cleanData.playerSpecialDescription,
@@ -2090,8 +2090,8 @@ const phaserActionSplitter = async (combatData) => {
         };
     } else if (!playerActionLive && computerActionLive) {
         // console.log(cleanData.computer.name, "Computer Attacking");
-        await computerWeaponMaker(cleanData);
-        await computerAttackCompiler(cleanData, cleanData.computerAction);
+        computerWeaponMaker(cleanData);
+        computerAttackCompiler(cleanData, cleanData.computerAction);
         changes = {
             ...changes,
             'computerSpecialDescription': cleanData.computerSpecialDescription,
@@ -2110,7 +2110,7 @@ const phaserActionSplitter = async (combatData) => {
             'computerDualWielding': cleanData.computerDualWielding,    
         };
     };
-    await faithCompiler(cleanData);
+    faithCompiler(cleanData);
     
     if (cleanData.playerWin === true) cleanData.computerDeathDescription = `${cleanData.computer.name} has been defeated. Hail ${cleanData.player.name}, you have won.`;
     if (cleanData.computerWin === true) cleanData.playerDeathDescription = `You have been defeated. Hail ${cleanData.computer.name}, they have won.`;
@@ -2120,7 +2120,7 @@ const phaserActionSplitter = async (combatData) => {
     cleanData.combatRound += 1;
     cleanData.sessionRound += 1;
     
-    if (cleanData.playerWin === true || cleanData.computerWin === true) await statusEffectCheck(cleanData);
+    if (cleanData.playerWin === true || cleanData.computerWin === true) statusEffectCheck(cleanData);
 
     changes = {
         ...changes,
@@ -2164,11 +2164,10 @@ const phaserActionSplitter = async (combatData) => {
         'playerWin': cleanData.playerWin,
         'computerWin': cleanData.computerWin,
     };
-    console.log(changes.realizedComputerDamage, 'Realized Computer Damage')
     return changes;
 };
 
-const newDataCompiler = async (combatData) => {
+const newDataCompiler = (combatData) => {
     const newData = {
         player: combatData.player, // The player's Ascean
         action: combatData.action, // The player's action
@@ -2279,7 +2278,7 @@ const newDataCompiler = async (combatData) => {
     return newData;
 };
 
-const computerDispel = async (combatData) => {
+const computerDispel = (combatData) => {
     const effect = combatData.computerEffects.find(effect => (effect.prayer !== 'Debuff' || effect.prayer !== 'Damage'));
     const matchingWeapon = combatData.computerWeapons.find(weapon => weapon.name === effect.weapon);
     const matchingWeaponIndex = combatData.computerWeapons.indexOf(matchingWeapon);
@@ -2294,15 +2293,15 @@ const computerDispel = async (combatData) => {
 
 // ================================== ACTION - SPLITTERS ===================================== \\
 
-const prayerSplitter = async (combatData, prayer) => {
+const prayerSplitter = (combatData, prayer) => {
     let originalPrayer = combatData.playerBlessing;
     combatData.playerBlessing = prayer; 
-    await faithSuccess(combatData, 'player', combatData.weapons[0], 0);
+    faithSuccess(combatData, 'player', combatData.weapons[0], 0);
     combatData.playerBlessing = originalPrayer;
     return combatData;
 };
 
-const instantDamageSplitter = async (combatData, mastery) => {
+const instantDamageSplitter = (combatData, mastery) => {
     let damage = combatData.player[mastery] * 0.5 + combatData.player.level;
     combatData.realizedPlayerDamage = damage;
     combatData.newComputerHealth -= combatData.realizedPlayerDamage;
@@ -2311,37 +2310,35 @@ const instantDamageSplitter = async (combatData, mastery) => {
     combatData.playerActionDescription = `You attack ${combatData.computer.name}'s Caeren with your ${combatData.player.mastery}'s Invocation of ${combatData.weapons[0].influences[0]} for ${Math.round(damage)} Pure Damage.`;    
 };
 
-const instantActionSplitter = async (combatData) => {
+const instantActionSplitter = (combatData) => {
     switch (combatData.player.mastery) {
         case 'Constitution':
-            await prayerSplitter(combatData, 'Heal');
-            await prayerSplitter(combatData, 'Buff');
+            prayerSplitter(combatData, 'Heal');
+            prayerSplitter(combatData, 'Buff');
             break;
         case 'Strength':
-            await prayerSplitter(combatData, combatData.playerBlessing);
-            await instantDamageSplitter(combatData, 'strength');
+            prayerSplitter(combatData, combatData.playerBlessing);
+            instantDamageSplitter(combatData, 'strength');
             break;
         case 'Agility':
-            await prayerSplitter(combatData, combatData.playerBlessing);
-            await instantDamageSplitter(combatData, 'agility');
+            prayerSplitter(combatData, combatData.playerBlessing);
+            instantDamageSplitter(combatData, 'agility');
             break;
         case 'Achre':
-            await prayerSplitter(combatData, combatData.playerBlessing);
-            await instantDamageSplitter(combatData, 'achre');
+            prayerSplitter(combatData, combatData.playerBlessing);
+            instantDamageSplitter(combatData, 'achre');
             break;
         case 'Caeren':
-            await prayerSplitter(combatData, combatData.playerBlessing);
-            await instantDamageSplitter(combatData, 'caeren');
+            prayerSplitter(combatData, combatData.playerBlessing);
+            instantDamageSplitter(combatData, 'caeren');
             break;
         case 'Kyosir':
-            await prayerSplitter(combatData, 'Damage');
-            await prayerSplitter(combatData, 'Debuff');
+            prayerSplitter(combatData, 'Damage');
+            prayerSplitter(combatData, 'Debuff');
             break;
         default:
             break;
     };
-
-    // await instantEffectCheck(combatData);
 
     combatData.actionData.push('invoke'); 
         
@@ -2349,7 +2346,8 @@ const instantActionSplitter = async (combatData) => {
         combatData.newComputerHealth = 0;
         combatData.playerWin = true;
     };
-    if (combatData.playerWin) await statusEffectCheck(combatData);
+    if (combatData.playerWin) statusEffectCheck(combatData);
+
     const changes = {
         'actionData': combatData.actionData,
         'deityData': combatData.deityData,
@@ -2374,51 +2372,7 @@ const instantActionSplitter = async (combatData) => {
     return changes;
 };
 
-const instantEffectCheck = async (combatData) => {
-    const computer = combatData.player.mastery === 'Kyosir' || combatData.playerBlessing === 'Damage' || combatData.playerBlessing === 'Debuff';
-    console.log(`Are these instant effects concerned with the computer? ${computer}: InstantEffectCheck`);
-    if (computer) {
-        combatData.computerEffects = combatData.computerEffects.filter(effect => { 
-            console.log(effect.prayer, "Prayer in computerEffects", effect.startTime, "Start Time", effect.endTime, "End Time", combatData.combatTimer, "Combat Timer");
-            if (effect.startTime !== combatData.combatTimer) return true;
-            const matchingDebuffTarget = combatData.computerWeapons.find(weapon => weapon.name === effect.debuffTarget); // weapon might be wrong
-            const matchingDebuffTargetIndex = combatData.computerWeapons.indexOf(matchingDebuffTarget);
-            switch (effect.prayer) {
-                case 'Damage':
-                    damageTick(combatData, effect, true);
-                    break;
-                case 'Debuff':
-                    const debuff = applyEffect(effect, combatData.computerDefense, combatData.computerWeapons[matchingDebuffTargetIndex], false);
-                    combatData.computerDefense = debuff.defense;
-                    combatData.computerWeapons[matchingDebuffTargetIndex] = debuff.weapon;
-                    break;
-                default: break;
-            };
-            return true;
-        });
-    } else {
-        combatData.playerEffects = combatData.playerEffects.filter(effect => {
-            if (effect.startTime !== combatData.combatTimer) return true; // !== Means it has been existing.
-            const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
-            const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
-            switch (effect.prayer) {
-                case 'Buff': 
-                    const buff = applyEffect(effect, combatData.playerDefense, combatData.weapons[matchingWeaponIndex], true);
-                    combatData.playerDefense = buff.defense;
-                    combatData.weapons[matchingWeaponIndex] = buff.weapon;
-                    break;
-                case 'Heal':
-                    healTick(combatData, effect, true);
-                    break;
-                default: break;
-            };
-            return true;
-        });
-    };
-    return combatData;
-};
-
-const consumePrayerSplitter = async (combatData) => {
+const consumePrayerSplitter = (combatData) => {
     if (combatData.prayerSacrifice === '') combatData.prayerSacrifice = combatData.playerEffects[0].prayer;
     if (combatData.prayerSacrificeName === '') combatData.prayerSacrificeName = combatData.playerEffects[0].name;
     combatData.actionData.push('consume');
@@ -2477,7 +2431,7 @@ const consumePrayerSplitter = async (combatData) => {
     combatData.prayerSacrificeName = '';
     combatData.action = '';
     if (combatData.prayerSacrifice !== 'Heal' && combatData.realizedPlayerDamage > 0) combatData.computerDamaged = true;
-    if (combatData.playerWin === true) await statusEffectCheck(combatData);
+    if (combatData.playerWin === true) statusEffectCheck(combatData);
 
     const changes = {
         'actionData': combatData.actionData,
@@ -2507,7 +2461,7 @@ const consumePrayerSplitter = async (combatData) => {
     return changes;
 };
 
-const phaserEffectTickSplitter = async (data) => { 
+const phaserEffectTickSplitter = (data) => { 
     let { combatData, effect, effectTimer } = data;
 
     if (effect.playerName === combatData.player.name) { 
@@ -2530,7 +2484,7 @@ const phaserEffectTickSplitter = async (data) => {
         };
     };
 
-    if (combatData.playerWin === true || combatData.computerWin === true) await statusEffectCheck(combatData);
+    if (combatData.playerWin === true || combatData.computerWin === true) statusEffectCheck(combatData);
 
     const changes = {
         'actionData': combatData.actionData,
@@ -2552,7 +2506,7 @@ const phaserEffectTickSplitter = async (data) => {
     return changes;
 };
 
-const phaserRemoveTickSplitter = async (data) => {
+const phaserRemoveTickSplitter = (data) => {
     const { combatData, statusEffect } = data;
     const target = (statusEffect.prayer === 'Damage' || statusEffect.prayer === 'Debuff') ? statusEffect.enemyName : statusEffect.playerName;
     console.log(target, combatData.player.name, combatData.computer.name, 'Removing Tick from Target - Player Name - Computer Name');
@@ -2615,10 +2569,10 @@ const phaserRemoveTickSplitter = async (data) => {
 
 const actionCompiler = async (combatData) => {
     try {
-        let res = await actionSplitter(combatData);
+        let res = actionSplitter(combatData);
         if (res.realizedComputerDamage > 0) res.playerDamaged = true;
         if (res.realizedPlayerDamage > 0) res.computerDamaged = true;
-        if (res.playerWin || res.computerWin) await statusEffectCheck(res);
+        if (res.playerWin || res.computerWin) statusEffectCheck(res);
         return res;
     } catch (err) {
         console.log(err, 'Error in the Action Compiler of Game Services');
@@ -2626,9 +2580,9 @@ const actionCompiler = async (combatData) => {
     };
 };
 
-const instantActionCompiler = async (combatData) => {
+const instantActionCompiler = (combatData) => {
     try {
-        const res = await instantActionSplitter(combatData);
+        const res = instantActionSplitter(combatData);
         return res;
     } catch (err) {
         console.log(err, 'Error in the Instant Action Compiler of Game Services');
@@ -2636,9 +2590,9 @@ const instantActionCompiler = async (combatData) => {
     };
 };
 
-const consumePrayer = async (combatData) => {
+const consumePrayer = (combatData) => {
     try {
-        const res = await consumePrayerSplitter(combatData);
+        const res = consumePrayerSplitter(combatData);
         return res;
     } catch (err) {
         console.log(err, 'Error in the Consume Prayer of Game Services');
@@ -2646,9 +2600,9 @@ const consumePrayer = async (combatData) => {
     };
 };
 
-const phaserActionCompiler = async (combatData) => {
+const phaserActionCompiler = (combatData) => {
     try {
-        const res = await phaserActionSplitter(combatData);
+        const res = phaserActionSplitter(combatData);
         return res;
     } catch (err) {
         console.log(err, 'Error in the Phaser Action Compiler of Game Services');
@@ -2656,9 +2610,9 @@ const phaserActionCompiler = async (combatData) => {
     };
 };
 
-const phaserEffectTick = async (data) => {
+const phaserEffectTick = (data) => {
     try {
-        const res = await phaserEffectTickSplitter(data);
+        const res = phaserEffectTickSplitter(data);
         return res;
     } catch (err) {
         console.log(err, 'Error in the Phaser Effect Tick of Game Services');
@@ -2666,9 +2620,9 @@ const phaserEffectTick = async (data) => {
     };
 };
 
-const phaserRemoveTick = async (data) => {
+const phaserRemoveTick = (data) => {
     try {
-        const res = await phaserRemoveTickSplitter(data);
+        const res = phaserRemoveTickSplitter(data);
         return res;
     } catch (err) {
         console.log(err, 'Error in the Phaser Effect Tick of Game Services');

@@ -1204,7 +1204,7 @@ export default class Player extends Entity {
             this.anims.play('player_slide', true);
             this.spriteWeapon.setVisible(false);
             if (this.dodgeCooldown === 0) this.playerDodge();
-        } else if (this.isRolling && !this.isJumping) { // ROLLING OUTSIDE COMBAT
+        } else if (this.isRolling) { // ROLLING OUTSIDE COMBAT
             this.anims.play('player_roll', true);
             walk(this.scene);
             this.spriteWeapon.setVisible(false);
@@ -1219,8 +1219,8 @@ export default class Player extends Entity {
             this.anims.play('player_attack_1', true).on('animationcomplete', () => {
                 this.isAttacking = false;
             }); 
-        } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1) && !this.isRolling) { // RUNNING
-            walk(this.scene);
+        } else if ((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) { // RUNNING && !this.isRolling
+            // walk(this.scene);
             if (!this.isMoving) this.isMoving = true;
             this.anims.play('player_running', true);
         } else if (this.isConsuming) { // CONSUMING

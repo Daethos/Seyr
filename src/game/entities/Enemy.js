@@ -233,7 +233,8 @@ export default class Enemy extends Entity {
             const damage = Math.round(this.health - e.newComputerHealth);
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.criticalSuccess);
             console.log(`%c ${e.player.name} Dealt ${damage} Damage To ${this.ascean.name}`, 'color: #00ff00')
-            if (!this.stateMachine.isCurrentState(States.CONSUMED)) this.stateMachine.setState(States.HURT);
+
+            if (!this.isConsumed) this.stateMachine.setState(States.HURT);
             if (this.currentRound !== e.combatRound) {
                 if (this.isStunned) this.isStunned = false;
                 if (this.isPolymorphed) this.isPolymorphed = false;
@@ -847,16 +848,7 @@ export default class Enemy extends Entity {
         this.isCountering = false;
         this.isPosturing = false;
         this.isRolling = false;
-        this.currentAction = '';
-
-        if (this.isCurrentTarget && this.health < this.ascean.health.total) {
-            console.log(`%c ${this.ascean.name} is healing from Polymorph`, 'color: orange');
-            this.scene.combatMachine.action({ type: 'Health', data: { key: 'enemy', value: 20 } });
-        } else if (this.health < this.ascean.health.total) {
-            this.health = this.health + (this.ascean.health.total * 0.1);
-            this.updateHealthBar(this.health);
-            this.healthbar.setValue(this.health);
-        };
+        this.currentAction = ''; 
 
         let iteration = 0;
         const randomDirection = () => {  
@@ -915,6 +907,7 @@ export default class Enemy extends Entity {
         this.setVelocity(this.polymorphVelocity.x, this.polymorphVelocity.y);
     };
     onPolymorphExit = () => { 
+        if (this.isPolymorphed) this.isPolymorphed = false;
         this.anims.play('player_idle', true);
         this.spriteWeapon.setVisible(true);
         if (this.polymorphTimer) {

@@ -31,6 +31,5 @@ export const tshaeralAction = (dispatch: React.Dispatch<any>): void => {
 };
 
 export const healthAction = (dispatch: React.Dispatch<any>, data: KVI): void => {
-    console.log('healthAction', data);
     dispatch(getHealthFetch({ key: data.key, value: data.value }));
 };

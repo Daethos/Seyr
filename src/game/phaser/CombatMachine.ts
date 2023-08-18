@@ -45,10 +45,7 @@ export default class CombatMachine {
             };
             Dispatcher.weaponAction(this.dispatch, data);
         },
-        Health: (data: KVI) => {
-            console.log('Health actionHandler', data);
-            Dispatcher.healthAction(this.dispatch, data)
-        },
+        Health: (data: KVI) => Dispatcher.healthAction(this.dispatch, data),
         Instant: (data: string) => Dispatcher.instantAction(this.dispatch, data),
         Consume: (data: StatusEffect[]) => Dispatcher.prayerAction(this.dispatch, data),
         Tshaeral: (_data: KVI) => Dispatcher.tshaeralAction(this.dispatch),

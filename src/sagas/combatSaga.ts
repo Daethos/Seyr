@@ -206,9 +206,7 @@ function* workGetCombatSetting(action: any): SagaIterator {
     };
 };
 function* workGetHeal(action: any): SagaIterator {
-    console.log(action, 'workGetHeal');
     let { key, value } = action.payload;
-    console.log(key, value, 'workGetHeal');
     switch (key) {
         case 'player':
             yield put(setRest(value));
