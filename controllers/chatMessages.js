@@ -41,6 +41,7 @@ async function allMessages(req, res) {
         const messages = await Message.find({ chat: req.params.chatId })
                                         .populate('sender', 'username email photoUrl')
                                         .populate('chat')
+                                        .exec();
 
         res.status(200).json({ data: messages });
     } catch (err) {
@@ -51,7 +52,6 @@ async function allMessages(req, res) {
 async function allMessagesNotRead(req, res) {
     try {
         const userId = req.user._id;
-        console.log(userId, "User ID")
         const chatGroups = await Chat.find({ users: userId });
         const chatIds = chatGroups.map(chat => chat._id);
         let messages = await Message.find({ chat: { $in: chatIds }, readBy: { $nin: [userId] }, sender: { $ne: userId } })

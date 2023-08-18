@@ -173,7 +173,7 @@ export const ControlSettings = () => {
                 General - C: Character - x: tab-switch, T: Drink Flask, Shift-C: Dialog, Z: Minimap
             </p>
             <p style={{ color: 'gold' }}>
-                Specials - G: Stalwart, Shift-G: Caerenic, R: Invoke, F: Consume, Shift-F: Tshaering, V: Snare, Shift-V: Root
+                Specials - G: Stalwart, Shift-G: Caerenic, R: Invoke, Shift-R: Polymorph, F: Consume, Shift-F: Tshaering, V: Snare, Shift-V: Root
             </p>
             <p style={{ color: '#fdf6d8' }}>
                 Tactics - Tilda, Shift to Switch Inset: Weapons, Damage, Prayers. Middle Mouse Wheel to Scroll Between Options.

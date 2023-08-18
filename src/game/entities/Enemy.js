@@ -206,6 +206,19 @@ export default class Enemy extends Entity {
     enemyStateListener() {
         EventEmitter.on('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
         EventEmitter.on('update-combat', this.combatDataUpdate); 
+        EventEmitter.on('personal-update', this.personalUpdate);
+    };
+
+    personalUpdate = (e) => {
+        switch (e.action) {
+            case 'health':
+                this.health = e.payload;
+                this.healthbar.setValue(this.health);
+                this.updateHealthBar(this.health);
+                break;
+            default:
+                break;
+        };
     };
     
     combatDataUpdate = (e) => {
@@ -215,16 +228,18 @@ export default class Enemy extends Entity {
             return;
         };
         if (e.counterSuccess && !this.stateMachine.isCurrentState(States.STUN) && this.currentRound !== e.combatRound) this.setStun();
-        if (this.currentRound !== e.combatRound) this.currentRound = e.combatRound;
 
         if (this.health > e.newComputerHealth) { 
             const damage = Math.round(this.health - e.newComputerHealth);
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.criticalSuccess);
-            console.log(`%c ${e.player.name} Dealt ${damage} Damage To ${this.ascean.name}`, 'color: #00ff00');
+            console.log(`%c ${e.player.name} Dealt ${damage} Damage To ${this.ascean.name}`, 'color: #00ff00')
             if (!this.stateMachine.isCurrentState(States.CONSUMED)) this.stateMachine.setState(States.HURT);
-            if (this.isStunned) this.isStunned = false;
-            if (!this.inCombat && !this.isDefeated) {
-                this.jumpIntoCombat();
+            if (this.currentRound !== e.combatRound) {
+                if (this.isStunned) this.isStunned = false;
+                if (this.isPolymorphed) this.isPolymorphed = false;
+                if (!this.inCombat && !this.isDefeated) {
+                    this.jumpIntoCombat();
+                };
             };
             if (e.newComputerHealth <= 0) this.stateMachine.setState(States.DEFEATED);
         };
@@ -244,6 +259,7 @@ export default class Enemy extends Entity {
         
         if (e.newPlayerHealth <= 0) this.clearCombat();
         this.checkMeleeOrRanged(e.computerWeapons?.[0]);
+        if (this.currentRound !== e.combatRound) this.currentRound = e.combatRound;
     };
     
     enemyCollision = (enemySensor) => {
@@ -374,7 +390,7 @@ export default class Enemy extends Entity {
     }; 
 
     clearCombat = () => {
-        console.log(`${this.ascean.name} Has Defeated ${this.scene.state.player.name}`);
+        console.log(`${this.ascean.name} Has Defeated ${this.scene.state.player.name}`)
         if (!this.stateMachine.isCurrentState(States.LEASH)) this.stateMachine.setState(States.LEASH);
         this.inCombat = false;
         this.attacking = null;
@@ -399,7 +415,7 @@ export default class Enemy extends Entity {
             combat.gameObjectB.attacking = this;
             combat.gameObjectB.currentTarget = this;
             combat.gameObjectB.inCombat = true;
-            console.log(`%c ${this.ascean.name} engaging combat: [Collide ${when}]`, 'color: orange');
+            console.log(`%c ${this.ascean.name} engaging combat: [Collide ${when}]`, 'color: orange')
             this.scene.combatEngaged(true);
         }; 
     };
@@ -414,7 +430,7 @@ export default class Enemy extends Entity {
     }; 
 
     setStun = () => {
-        console.log("%c Player Counter Success, Enemy Is Now Stunned", 'color: #00ff00');
+        console.log("%c Player Counter Success, Enemy Is Now Stunned", 'color: #00ff00')
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 2500, 'effect', true);
         this.isStunned = true;
     };
@@ -722,11 +738,11 @@ export default class Enemy extends Entity {
     };
 
     onLeashEnter = () => {
-        console.log(`Leashing ${this.ascean.name} to Origin Point of Encounter`);
+        console.log(`Leashing ${this.ascean.name} to Origin Point of Encounter`)
         this.anims.play('player_running', true);
         if (this.attacking) {
             if (this.attacking.targets.includes(this)) {
-                console.log("Removing Enemy from Attacking Targets inside ENEMY LEASH");
+                console.log("Removing Enemy from Attacking Targets inside ENEMY LEASH")
                 const index = this.attacking.targets.indexOf(this);
                 this.attacking.targets.splice(index, 1);
             };
@@ -751,7 +767,7 @@ export default class Enemy extends Entity {
                     this.pathDirection.normalize();
                     const distanceToNextPoint = Math.sqrt((this.nextPoint.x - this.position.x) ** 2 + (this.nextPoint.y - this.position.y) ** 2);
                     if (distanceToNextPoint < 10) {
-                        console.log("Enemy Reached Next Point");
+                        console.log("Enemy Reached Next Point")
                         this.path.shift();
                     };
                 };
@@ -787,6 +803,7 @@ export default class Enemy extends Entity {
 
     onConsumedEnter = () => {
         this.consumedDuration = 2000;
+        this.clearAnimations();
         this.setGlow(this, true);
         this.consumedTimer = this.scene.time.addEvent({
             delay: 250,
@@ -802,6 +819,7 @@ export default class Enemy extends Entity {
         });
     };
     onConsumedUpdate = (dt) => {
+        this.anims.play('player_hurt', true);
         this.consumedDuration -= dt;
         if (!this.isConsumed) this.evaluateCombatDistance();
         if (this.consumedDuration <= 0) this.isConsumed = false;
@@ -812,22 +830,8 @@ export default class Enemy extends Entity {
         this.setGlow(this, false);
     };
 
-    clearAnimations = () => {
-        if (this.anims.currentAnim) {
-            console.log(this.anims.currentAnim, 'Current Animatin')
-            this.anims.stop(this.anims.currentAnim.key);
-        };
-    
-        // Reset animation-related flags
-        this.isAttacking = false;
-        this.isCountering = false;
-        this.isPosturing = false;
-        this.isRolling = false;
-        this.currentAction = '';
-    };
-
     onPolymorphEnter = () => {
-        console.log(`%c ${this.ascean.name} Has Been Polymorphed`, 'color: #0000ff');
+        console.log(`%c ${this.ascean.name} Has Been Polymorphed`, 'color: #0000ff')
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Polymorphed', 1500, 'effect', true);
         this.clearAnimations();
         this.anims.pause();
@@ -838,6 +842,22 @@ export default class Enemy extends Entity {
         this.polymorphDirection = 'down';
         this.polymorphMovement = 'idle';
         this.polymorphVelocity = { x: 0, y: 0 };
+
+        this.isAttacking = false;
+        this.isCountering = false;
+        this.isPosturing = false;
+        this.isRolling = false;
+        this.currentAction = '';
+
+        if (this.isCurrentTarget && this.health < this.ascean.health.total) {
+            console.log(`%c ${this.ascean.name} is healing from Polymorph`, 'color: orange');
+            this.scene.combatMachine.action({ type: 'Health', data: { key: 'enemy', value: 20 } });
+        } else if (this.health < this.ascean.health.total) {
+            this.health = this.health + (this.ascean.health.total * 0.1);
+            this.updateHealthBar(this.health);
+            this.healthbar.setValue(this.health);
+        };
+
         let iteration = 0;
         const randomDirection = () => {  
             const move = Phaser.Math.Between(1, 100);
@@ -868,12 +888,20 @@ export default class Enemy extends Entity {
             delay: 2000,
             callback: () => {
                 iteration++;
-                console.log(iteration, 'Polymorph iteration');
+                console.log(iteration, 'Polymorph iteration')
                 if (iteration === 5) {
                     iteration = 0;
                     this.isPolymorphed = false;
                 } else {   
                     randomDirection();
+                    if (this.isCurrentTarget && this.health < this.ascean.health.total) {
+                        console.log(`%c ${this.ascean.name} is healing from Polymorph`, 'color: orange');
+                        this.scene.combatMachine.action({ type: 'Health', data: { key: 'enemy', value: 20 } });
+                    } else if (this.health < this.ascean.health.total) {
+                        this.health = this.health + (this.ascean.health.total * 0.1);
+                        this.updateHealthBar(this.health);
+                        this.healthbar.setValue(this.health);
+                    };
                 };
             },
             callbackScope: this,
@@ -933,6 +961,7 @@ export default class Enemy extends Entity {
         });
     };
     onRootUpdate = (dt) => {
+        this.anims.play('player_idle', true);
         this.evaluateCombatDistance();
     };
     onRootExit = () => { 
@@ -967,9 +996,9 @@ export default class Enemy extends Entity {
         if (this.isRanged) this.scene.checkPlayerSuccess();
         if (this.particleEffect) {
             if (this.isCurrentTarget) {
-                this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'computerAction', value: this.particleEffect.action }, id: this.enemyID });
+                this.scene.combatMachine.action({ type: 'Weapon', data: { key: 'computerAction', value: this.particleEffect.action, id: this.enemyID } });
             } else {
-                this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.particleEffect.action, counter: this.counterAction }, id: this.enemyID}});
+                this.scene.combatMachine.action({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.particleEffect.action, counter: this.counterAction, id: this.enemyID }}});
             };
             this.scene.particleManager.removeEffect(this.particleEffect.id);
             this.particleEffect.effect.destroy();
@@ -977,9 +1006,9 @@ export default class Enemy extends Entity {
         } else {
             if (this.isCurrentTarget) {
                 if (this.scene.state.computerAction === '') return;
-                this.scene.combatMachine.add({ type: 'Weapon', data: { key: 'computerAction', value: this.scene.state.computerAction }, id: this.enemyID });
+                this.scene.combatMachine.action({ type: 'Weapon', data: { key: 'computerAction', value: this.scene.state.computerAction, id: this.enemyID } });
             } else {
-                this.scene.combatMachine.add({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.currentAction, counter: this.counterAction }, id: this.enemyID}});
+                this.scene.combatMachine.action({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.currentAction, counter: this.counterAction, id: this.enemyID }}});
             };
         };
 
@@ -1140,10 +1169,10 @@ export default class Enemy extends Entity {
 
     currentTargetCheck = () => {
         if (this.scene.state.enemyID === this.enemyID && !this.isCurrentTarget) { // attacking.currentTarget?.enemyID
-            console.log("%c Wasn't Current Target, Now Selected as Current Target", 'color: #00ff00');
+            console.log("%c Wasn't Current Target, Now Selected as Current Target", 'color: #00ff00')
             this.isCurrentTarget = true;
         } else if (this.scene.state.enemyID !== this.enemyID && this.isCurrentTarget) {
-            console.log("%c Was Current Target, Now Deselected as Current Target", 'color: #ff0000');    
+            console.log("%c Was Current Target, Now Deselected as Current Target", 'color: #ff0000')
             this.isCurrentTarget = false;
         };
     };
@@ -1209,12 +1238,14 @@ export default class Enemy extends Entity {
         if (this.scrollingCombatText) this.scrollingCombatText.update(this);
         if (this.specialCombatText) this.specialCombatText.update(this);
         if (this.attacking) {
-            if (this.isUnderRangedAttack()) {
-                console.log(`%c ${this.ascean.name} Evading Ranged Attack`, 'color: gold');
-                this.stateMachine.setState(States.EVADE);
-                return;
+            if (!this.isPolymorphed) {
+                if (this.isUnderRangedAttack()) {
+                    console.log(`%c ${this.ascean.name} Evading Ranged Attack`, 'color: gold')
+                    this.stateMachine.setState(States.EVADE);
+                    return;
+                };
+                this.getDirection();
             };
-            this.getDirection();
             this.currentTargetCheck();
         } else if (!this.stateMachine.isCurrentState(States.PATROL)) {
             this.setFlipX(this.velocity.x < 0);
@@ -1249,8 +1280,8 @@ export default class Enemy extends Entity {
  
     update() {
         this.evaluateEnemyState(); 
-        this.stateMachine.update(this.scene.sys.game.loop.delta);
         this.metaMachine.update(this.scene.sys.game.loop.delta);   
+        this.stateMachine.update(this.scene.sys.game.loop.delta);
     };
 
     combat = (target) => { 

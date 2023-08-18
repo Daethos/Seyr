@@ -597,6 +597,7 @@ const faithSuccess = async (combatData, name, weapon, index) => {
             combatData[`playerInfluenceDescription${desc}`] = exists.description;
         } else {
             if (exists.stacks) {
+                console.log(`${name} stacked ${exists.prayer}`);
                 exists = StatusEffect.updateEffectStack(exists, combatData, combatData.player, weapon);
                 combatData[`playerInfluenceDescription${desc}`] = `${exists.description} Stacked ${exists.activeStacks} times.`; 
                 if (exists.prayer === 'Buff') {
@@ -608,6 +609,7 @@ const faithSuccess = async (combatData, name, weapon, index) => {
                 if (exists.prayer === 'Damage') damageTick(combatData, exists, true);
             }; 
             if (exists.refreshes) {
+                console.log(`${name} refreshed ${exists.prayer}`);
                 exists.duration = Math.floor(combatData.player.level / 3 + 1) > 6 ? 6 : Math.floor(combatData.player.level / 3 + 1);
                 exists.tick.end += exists.duration;
                 exists.endTime += 6;

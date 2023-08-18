@@ -6,7 +6,7 @@ import { CombatData, shakeScreen } from "../components/GameCompiler/CombatStore"
 import { getNpcDialog } from "../components/GameCompiler/Dialog";
 import { getNodesForNPC, npcIds } from "../components/GameCompiler/DialogNode";
 import EventEmitter from "../game/phaser/EventEmitter";
-import { setPlayerWin, setEnemyWin, setCombat, clearCombat, setCombatTimer, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatInput, setDamageType, setPlayerBlessing, setWeaponOrder, setEffectResponse, setEnemyActions, setCombatResolution, setEnemyPersuaded, setPlayerLuckout, setInstantStatus, setLuckoutFailure, setPlayerActions } from "../game/reducers/combatState";
+import { setPlayerWin, setEnemyWin, setCombat, clearCombat, setCombatTimer, setEnemy, setNpc, clearNonAggressiveEnemy, clearNpc, setCombatInput, setDamageType, setPlayerBlessing, setWeaponOrder, setEffectResponse, setEnemyActions, setCombatResolution, setEnemyPersuaded, setPlayerLuckout, setInstantStatus, setLuckoutFailure, setPlayerActions, setRest, setRestEnemy } from "../game/reducers/combatState";
 import { setStatistics, setDialog, setShowDialog, setTutorialContent } from "../game/reducers/gameState";
 import { workGetGainExperienceFetch, workGetLootDropFetch } from "./gameSaga";
 import { getSocketInstance } from "./socketManager";
@@ -66,6 +66,7 @@ export function* combatSaga(): SagaIterator {
     yield takeEvery('combat/getPersuasionFetch', workGetPersuasion);
     yield takeEvery('combat/getLuckoutFetch', workGetLuckout);
     yield takeEvery('combat/getDrainFetch', workGetDrain); // Was takeLatest
+    yield takeEvery('combat/getHealthFetch', workGetHeal);
 };
 
 function* workResolveCombat(state: CombatData): SagaIterator {
@@ -202,6 +203,21 @@ function* workGetCombatSetting(action: any): SagaIterator {
             break;
         default:
             break;        
+    };
+};
+function* workGetHeal(action: any): SagaIterator {
+    console.log(action, 'workGetHeal');
+    let { key, value } = action.payload;
+    console.log(key, value, 'workGetHeal');
+    switch (key) {
+        case 'player':
+            yield put(setRest(value));
+            break;
+        case 'enemy':
+            yield put(setRestEnemy(value));
+            break;
+        default:
+            break;
     };
 };
 function workGetEffectTick(action: any): void {

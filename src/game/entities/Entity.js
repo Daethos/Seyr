@@ -65,7 +65,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.stamina = 0;
         this._position = new Phaser.Math.Vector2(this.x, this.y);
         this.scene.add.existing(this);
-
+        this.glowFilter = this.scene.plugins.get('rexGlowFilterPipeline');
         this.isAttacking = false;
         this.isCountering = false;
         this.isDodging = false;
@@ -186,6 +186,13 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         return this.speed += speed;
     };
 
+    clearAnimations = () => {
+        if (this.anims.currentAnim) {
+            console.log(this.anims.currentAnim.key, 'Current Animation')
+            this.anims.stop(this.anims.currentAnim.key);
+        };
+    };
+
     attack = () => {
         this.anims.play(`player_attack_1`, true).on('animationcomplete', () => {
             this.isAttacking = false;
@@ -208,6 +215,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     }; 
 
     hurt = () => {
+        this.clearAnimations();
         this.anims.play('player_hurt', true).on('animationcomplete', () => {
             this.isHurt = false;
         }); 
@@ -341,8 +349,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     checkBow = (weapon) => {
-        if (weapon.type === 'Bow' || weapon.type === 'Greatbow') return true;
-        return false;
+        return weapon.type === 'Bow' || weapon.type === 'Greatbow';
     };
 
     checkMeleeOrRanged = (weapon) => {
@@ -364,26 +371,25 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 default: return 0xFFFFFF;
             };
         }; 
-        const glowFilter = this.scene.plugins.get('rexGlowFilterPipeline');
 
         if (!glow) {
             if (this.glowTimer) {
                 this.glowTimer.remove();
                 this.glowTimer = null;
             };
-            return glowFilter.remove(object); 
+            return this.glowFilter.remove(object); 
         };
 
         let glowColor = setColor(this.ascean.mastery);
 
         const updateGlow = (time) => {
-            if (glowFilter) glowFilter.remove(object);
+            this.glowFilter.remove(object);
 
             const outerStrength = 2 + Math.sin(time * 0.005) * 2; // Adjust the frequency and amplitude as needed
             const innerStrength = 2 + Math.cos(time * 0.005) * 2;
             const intensity = 0.25;
 
-            glowFilter.add(object, {
+            this.glowFilter.add(object, {
                 outerStrength,
                 innerStrength,
                 glowColor,
@@ -883,7 +889,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     };
                 };
             };
-            // console.log(`Posture Frame Count: ${this.frameCount}`);
             this.frameCount += 1;
         } else if (((Math.abs(this.body.velocity.x) > 0.1 || Math.abs(this.body.velocity.y) > 0.1)) && !this.isRolling && !this.flipX) {
             if (this.isStrafing || this.isStalwart) {

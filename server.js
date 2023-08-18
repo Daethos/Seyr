@@ -72,6 +72,7 @@ io.on("connection", (socket) => {
         // const size = data ? JSON.stringify(data).length : 0;
         // console.log((size / 1000), "KBs");
     // });
+    
     console.log(`User Connected: ${socket.id}`);
 
     let connectedUsersCount;

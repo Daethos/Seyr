@@ -45,6 +45,10 @@ export default class CombatMachine {
             };
             Dispatcher.weaponAction(this.dispatch, data);
         },
+        Health: (data: KVI) => {
+            console.log('Health actionHandler', data);
+            Dispatcher.healthAction(this.dispatch, data)
+        },
         Instant: (data: string) => Dispatcher.instantAction(this.dispatch, data),
         Consume: (data: StatusEffect[]) => Dispatcher.prayerAction(this.dispatch, data),
         Tshaeral: (_data: KVI) => Dispatcher.tshaeralAction(this.dispatch),
@@ -61,9 +65,9 @@ export default class CombatMachine {
         };
 
         while (this.clearQueue.length) {
-            const _id = this.clearQueue.shift()!;
-            this.inputQueue = this.inputQueue.filter(({ id }) => id !== _id);
-            this.actionQueue = this.actionQueue.filter(({ id }) => id !== _id);
+            const cId = this.clearQueue.shift()!;
+            this.inputQueue = this.inputQueue.filter(({ id }) => id !== cId);
+            this.actionQueue = this.actionQueue.filter(({ id }) => id !== cId);
         };
 
         while (this.inputQueue.length) {
@@ -82,7 +86,7 @@ export default class CombatMachine {
         };
     };
 
-    public add = (action: Action): number => this.actionQueue.push(action);
+    public action = (act: Action): number => this.actionQueue.push(act);
     public clear = (id: string): number => this.clearQueue.push(id); 
     public input = (key: string, value: string | number | boolean, id?: string): number => this.inputQueue.push({key, value, id}); 
     public processor = (): void => this.process();

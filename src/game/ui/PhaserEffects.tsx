@@ -55,7 +55,7 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
                 const timeout = setTimeout(tickEffect, 1000);
                 return () => clearTimeout(timeout);
             };
-        }, [prayerTimer, pause, inCombat]);
+        }, [prayer, prayerTimer, pause, inCombat]);
     }; 
     useStatusEffect(effect, endTime, pauseState, effectTimer, state.combatTimer, state.combatEngaged);
 

@@ -1,4 +1,4 @@
-import { getCombatStateUpdate, getEnemyActionFetch, getInitiateFetch, getPlayerActionFetch } from "../reducers/combatState";
+import { getCombatStateUpdate, getEnemyActionFetch, getInitiateFetch, getPlayerActionFetch, getHealthFetch } from "../reducers/combatState";
 import { KVI } from "./CombatMachine";
 import { StatusEffect } from "../../components/GameCompiler/StatusEffects";
 
@@ -28,4 +28,9 @@ export const actionInput = (dispatch: React.Dispatch<any>, { key, value }: { key
 
 export const tshaeralAction = (dispatch: React.Dispatch<any>): void => {
     dispatch(getInitiateFetch({ combatData: '', type: 'Tshaeral' }));
+};
+
+export const healthAction = (dispatch: React.Dispatch<any>, data: KVI): void => {
+    console.log('healthAction', data);
+    dispatch(getHealthFetch({ key: data.key, value: data.value }));
 };

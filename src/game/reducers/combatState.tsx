@@ -25,6 +25,7 @@ const combatSlice = createSlice({
         getNpcSetupFetch: (state, _action) => {},
         getDrainFetch: (state, _action) => {},
         getRemoveEffectFetch: (state, _action) => {},
+        getHealthFetch: (state, _action) => {},
 
         // ==================== Combat Setup / Breakdown ==================== \\
 
@@ -163,6 +164,16 @@ const combatSlice = createSlice({
             return {
                 ...state,
                 newPlayerHealth: newHealth,
+            };
+        },
+        setRestEnemy: (state, action) => {
+            const healed = Math.floor(state.newComputerHealth + state.computerHealth * (action.payload / 100)) ;
+            const newHealth = healed > state.computerHealth ? state.computerHealth : healed;
+            const socket = getSocketInstance();
+            socket.emit(SOCKET.UPDATE_COMBAT_DATA, { newComputerHealth: newHealth });
+            return {
+                ...state,
+                newComputerHealth: newHealth,
             };
         },
         setWeather: (state, action) => { 
@@ -441,6 +452,7 @@ export const {
     getNpcSetupFetch,
     getDrainFetch,
     getRemoveEffectFetch,
+    getHealthFetch,
 
     setCombatPlayer,
     setEnemy,
@@ -452,6 +464,7 @@ export const {
     setPhaser,
     setDrain,
     setRest,
+    setRestEnemy,
     setWeather,
     setPhaserAggression,
 
