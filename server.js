@@ -88,19 +88,19 @@ io.on("connection", (socket) => {
     };
     let players = {};
 
-    const addPlayer = (player) => {
+    function addPlayer(player) {
         players[player.id] = player;
         socket.emit('currentPlayers', players);
         socket.broadcast.emit('playerAdded', player);
         // Properties: id, x, y, playerId
     };
 
-    const removePlayer = (player) => {
+    function removePlayer(player) {
         delete players[player.id];
         socket.broadcast.emit('playerRemoved', player.id);
     };
 
-    const playerMovement = (data) => {
+    function playerMovement(data) {
         players[socket.id].x = data.x;
         players[socket.id].y = data.y;
         socket.broadcast.emit('playerMoved', players[socket.id]);
@@ -108,8 +108,8 @@ io.on("connection", (socket) => {
 
     function onSetup(userData) {
         personalUser = {
-        ...personalUser,
-        user: userData,
+            ...personalUser,
+            user: userData,
         };
         socket.join(userData._id);
         socket.emit("Connected");

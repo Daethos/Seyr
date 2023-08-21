@@ -123,7 +123,7 @@ export default class Enemy extends Entity {
             })
             .addState(States.SNARE, {
                 onEnter: this.onSnareEnter.bind(this),
-                onUpdate: this.onSnareUpdate.bind(this),
+                // onUpdate: this.onSnareUpdate.bind(this),
                 onExit: this.onSnareExit.bind(this),
             })
 
@@ -170,14 +170,14 @@ export default class Enemy extends Entity {
         this.sensorDisp = 12;
         this.colliderDisp = 16;
 
-        this.highlight = this.scene.add.graphics()
-            .lineStyle(1, 0xFF0000)
-            .strokeCircle(0, 0, 10)
-            .setVisible(false);
+        // this.highlight = this.scene.add.graphics()
+        //     .lineStyle(1, 0xFF0000)
+        //     .strokeCircle(0, 0, 10)
+        //     .setVisible(false);
 
-        this.scene.plugins.get('rexGlowFilterPipeline').add(this.highlight, {
-            intensity: 0.02,
-        });
+        // this.scene.plugins.get('rexGlowFilterPipeline').add(this.highlight, {
+        //     intensity: 0.02,
+        // });
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         const colliderWidth = 20; 
@@ -518,6 +518,7 @@ export default class Enemy extends Entity {
                     duration: delay,
                     onUpdate: () => {
                         if (this.flipX === wasX) this.flipX = !this.flipX;
+                        this.anims.play('player_running', true);
                     },
                     onComplete: () => { 
                         this.setVelocity(0, 0);
@@ -826,6 +827,7 @@ export default class Enemy extends Entity {
         if (this.consumedDuration <= 0) this.isConsumed = false;
     };
     onConsumedExit = () => {
+        this.clearAnimations();
         this.consumedTimer.destroy();
         this.consumedTimer = null;
         this.setGlow(this, false);
@@ -922,7 +924,7 @@ export default class Enemy extends Entity {
         this.setStatic(true);
     };
     onStunUpdate = (dt) => {
-        this.evaluateCombatDistance();
+        if (!this.isStunned) this.evaluateCombatDistance(); // Wasn't if (!this.isStunned)
         this.stunDuration -= dt;
         if (this.stunDuration <= 0) {
             this.isStunned = false;
@@ -938,8 +940,7 @@ export default class Enemy extends Entity {
 
     onRootEnter = () => {
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Rooted', 1500, 'effect', true);
-        this.anims.play('player_idle', true);
-        this.highlightTarget(this);
+        this.clearAnimations();
         this.rootDuration = 3000;
         this.setTint(0x888888);
         this.setStatic(true);
@@ -954,11 +955,10 @@ export default class Enemy extends Entity {
         });
     };
     onRootUpdate = (dt) => {
-        this.anims.play('player_idle', true);
+        if (!this.checkIfAnimated()) this.anims.play('player_idle', true);
         this.evaluateCombatDistance();
     };
-    onRootExit = () => { 
-        this.removeHighlight();
+    onRootExit = () => {  
         this.clearTint();
         this.setStatic(false);
     };
@@ -977,9 +977,7 @@ export default class Enemy extends Entity {
             loop: false,
         });
     };
-    onSnareUpdate = (dt) => {
-        this.evaluateCombatDistance();
-    };
+    // onSnareUpdate = (dt) => {};
     onSnareExit = () => { 
         this.clearTint();
         this.adjustSpeed(1.5);
@@ -1003,8 +1001,7 @@ export default class Enemy extends Entity {
             } else {
                 this.scene.combatMachine.action({ type: 'Enemy', data: { enemyID: this.enemyID, ascean: this.ascean, damageType: this.currentDamageType, combatStats: this.combatStats, weapons: this.weapons, health: this.health, actionData: { action: this.currentAction, counter: this.counterAction, id: this.enemyID }}});
             };
-        };
-
+        }; 
         screenShake(this.scene);
     };
 
@@ -1131,8 +1128,7 @@ export default class Enemy extends Entity {
                 this.setVelocityX(direction.x * (this.speed + 0.75)); // 2.5
                 this.setVelocityY(direction.y * (this.speed + 0.75)); // 2.5
             } else { // Inside melee range
-                this.setVelocityX(0);
-                this.setVelocityY(0);
+                this.setVelocity(0);
                 this.anims.play('player_idle', true);
             };
         };
@@ -1199,7 +1195,7 @@ export default class Enemy extends Entity {
         } else if (direction.x > 0 && this.flipX) {
             this.setFlipX(false);
         };
-    };
+    }; 
 
     evaluateEnemyState = () => {
         if (this.isPolymorphed && !this.stateMachine.isCurrentState(States.POLYMORPH)) {

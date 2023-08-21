@@ -172,6 +172,9 @@ export default class Play extends Phaser.Scene {
             stalwart: this.input.keyboard.addKeys('G'),
         }; 
 
+        this.target = this.add.sprite(0, 0, "target").setScale(0.2).setVisible(false);
+
+
         // ====================== Camera ====================== \\
           
         let camera = this.cameras.main;
@@ -243,6 +246,10 @@ export default class Play extends Phaser.Scene {
         // this.addPlayerListener();
         // this.removePlayerListener();
         // this.multiplayerListeners();
+
+        // =========================== Music =========================== \\
+        this.music = this.sound.add('background', { volume: this.gameState.soundEffectVolume, loop: true, delay: 5000 });
+        this.music.play();
 
         // =========================== FPS =========================== \\
 
@@ -332,14 +339,70 @@ export default class Play extends Phaser.Scene {
 
     
     // ============================ Combat ============================ \\
-
+    getEnemyDestination = (enemy) => ({
+        x: enemy.x - 5,
+        y: enemy.y + 15,
+    });
     polymorph = (id) => {
         let enemy = this.enemies.find(enemy => enemy.enemyID === id);
         enemy.isPolymorphed = true;
     };
     root = (id) => {
         let enemy = this.enemies.find(enemy => enemy.enemyID === id);
-        enemy.isRooted = true;
+        const { worldX, worldY } = this.input.activePointer;
+        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, worldX, enemy.y + 15);
+        const duration = 2 * distance;
+        const rise = 0.5 * distance;
+
+
+
+        const rootTween = this.add.tween({
+            targets: this.target,
+            props: {
+                // x: { from: this.player.x, to: enemy.x - 5, duration: duration },
+                // y: { from: this.player.y, to: enemy.y + 15, duration: duration },
+                x: { from: this.player.x, to: enemy.x, duration: duration },
+                y: { from: this.player.y, to: enemy.y, duration: duration },
+        
+                z: {
+                    from: 0,
+                    to: -rise,
+                    duration: 0.5 * duration,
+                    ease: 'Quad.easeOut',
+                    yoyo: true
+                },
+                onStart: () => {
+                    this.target.setVisible(true);
+                },    
+                // onUpdate: () => {
+                //     const destination = this.getEnemyDestination(enemy);
+                //     rootTween.updateTo('x', destination.x, true);
+                //     rootTween.updateTo('y', destination.y, true);
+                // },
+                onUpdate: (_tween, target, key, current) => {
+                    if (key !== 'z') return;
+                    target.y += current;
+                    
+                    target.x = enemy.x - 5;
+
+                }, 
+            },
+        });
+        this.time.addEvent({
+            delay: duration,
+            callback: () => {
+                enemy.isRooted = true;
+            },
+            callbackScope: this
+        });
+        this.time.addEvent({
+            delay: 3000,
+            callback: () => {
+                this.target.setVisible(false);
+                rootTween.destroy();
+            },
+            callbackScope: this
+        });
     };
     snare = (id) => {
         let enemy = this.enemies.find(enemy => enemy.enemyID === id);
@@ -504,8 +567,10 @@ export default class Play extends Phaser.Scene {
     };
     pause() {
         this.scene.pause();
+        this.music.pause();
     };
     resume() {
         this.scene.resume();
+        this.music.resume();
     };
 };

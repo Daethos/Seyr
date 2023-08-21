@@ -199,7 +199,8 @@ export default class Player extends Entity {
         this.tshaeringTimer = null;
         // this.setGlow(this.spriteWeapon);
         this.highlight = this.scene.add.graphics()
-            .lineStyle(1, 0xFFD700)
+            .lineStyle(2, 0xFFD700)
+            .setScale(0.4)
             .strokeCircle(0, 0, 10); 
         this.scene.plugins.get('rexGlowFilterPipeline').add(this.highlight, {
             intensity: 0.02,
@@ -215,7 +216,10 @@ export default class Player extends Entity {
 
     highlightTarget(sprite) {
         this.highlight.setVisible(true);
-        this.highlight.setPosition(sprite.x, sprite.y + sprite.displayHeight / 2.25);
+        this.setDepth(10);
+        // this.highlight.setPosition(sprite.x, sprite.y + sprite.displayHeight / 2.25);
+        this.highlight.setPosition(sprite.x, sprite.y);
+
     };
 
     removeHighlight() {
@@ -1046,10 +1050,11 @@ export default class Player extends Entity {
     handleActions = () => {
         // ========================= Tab Targeting ========================= \\
         
-        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.targets.length) { // was > 1 More than 1 i.e. worth tabbing
+        if (Phaser.Input.Keyboard.JustDown(this.inputKeys.target.TAB) && this.targets.length > 0) { // was > 1 More than 1 i.e. worth tabbing
             if (this.currentTarget) {
                 this.currentTarget.clearTint();
-            }; 
+            };
+            console.log(this.targetIndex, 'Tab Index') 
             const newTarget = this.targets[this.targetIndex];
             this.targetIndex = this.targetIndex + 1 === this.targets.length ? 0 : this.targetIndex + 1;
             if (!newTarget) return;
@@ -1105,7 +1110,7 @@ export default class Player extends Entity {
             };
             if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.snare.V) && this.rootCooldown === 0) {
                 this.scene.root(this.attacking.enemyID);
-                this.setTimeEvent('rootCooldown');
+                // this.setTimeEvent('rootCooldown');
                 screenShake(this.scene);
             };
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.snare.V) && this.snareCooldown === 0) {

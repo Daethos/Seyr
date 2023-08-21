@@ -7,6 +7,7 @@ import AncientForestDecorative from '../images/AncientForestDecorative.png';
 import AncientForestMain from '../images/AncientForestMainLev.png';
 import Camp_Graves from '../images/Camp_Graves.png';
 import Entity from "../entities/Entity";
+import Target from '../images/target_1.png';
 
 export default class Preload extends Phaser.Scene {
     constructor() {
@@ -37,9 +38,11 @@ export default class Preload extends Phaser.Scene {
         this.load.plugin('rexvirtualjoystickplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js', true); 
         this.load.plugin('rexglowfilterpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilterpipelineplugin.min.js', true);
 
+        this.load.audio('background', process.env.PUBLIC_URL + '/sounds/background.mp3');
         this.gameData.assets.forEach(asset => {
             this.load.image(asset.sprite,  process.env.PUBLIC_URL + asset.imgURL, { frameWidth: 32, frameHeight: 32 });
         });
+        this.load.image('target', Target);
         this.load.image('AncientForestMain', AncientForestMain);
         this.load.image('AncientForestDecorative', AncientForestDecorative);
         this.load.image('Camp_Graves', Camp_Graves);

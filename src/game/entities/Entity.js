@@ -186,14 +186,22 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         return this.speed += speed;
     };
 
+    checkIfAnimated = () => {
+        if (this.anims.currentAnim) {
+            return true;
+        };
+        return false;
+    };
+
     clearAnimations = () => {
         if (this.anims.currentAnim) {
-            console.log(this.anims.currentAnim.key, 'Current Animation')
+            console.log(`Clearing ${this.anims.currentAnim.key} from ${this.ascean.name}`); 
             this.anims.stop(this.anims.currentAnim.key);
         };
     };
 
     attack = () => {
+        this.clearAnimations();
         this.anims.play(`player_attack_1`, true).on('animationcomplete', () => {
             this.isAttacking = false;
             this.currentAction = '';
@@ -201,6 +209,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     counter = () => {
+        this.clearAnimations();
         this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
             this.isCountering = false; 
             this.currentAction = '';
@@ -208,6 +217,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     posture = () => {
+        this.clearAnimations();
         this.anims.play('player_attack_3', true).on('animationcomplete', () => {
             this.isPosturing = false;
             this.currentAction = '';
@@ -215,6 +225,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     }; 
 
     hurt = () => {
+        console.log('Hurt Triggering');
         this.clearAnimations();
         this.anims.play('player_hurt', true).on('animationcomplete', () => {
             this.isHurt = false;
