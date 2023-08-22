@@ -56,7 +56,7 @@ class Particle {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [sensor],
             callback: (other) => {
-                if (other.gameObjectB && ((other.gameObjectB.name === 'enemy' && player.name === 'player') || (other.gameObjectB.name === 'player' && player.name === 'enemy'))) {
+                if (other.gameObjectB && ((other.gameObjectB.name === 'enemy' && !other.gameObjectB.isDefeated && player.name === 'player') || (other.gameObjectB.name === 'player' && player.name === 'enemy'))) {
                     if (player.name === 'player') {
                         player.attackedTarget = other.gameObjectB;
                         if (this.scene.state.action !== effect.action) {

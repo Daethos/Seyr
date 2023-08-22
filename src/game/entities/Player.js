@@ -210,11 +210,11 @@ export default class Player extends Entity {
         this.tshaeringTimer = null;
         // this.setGlow(this.spriteWeapon);
         this.highlight = this.scene.add.graphics()
-            .lineStyle(2, 0xFFD700)
-            .setScale(0.4)
+            .lineStyle(3, 0xFF0000)
+            .setScale(0.35)
             .strokeCircle(0, 0, 10); 
         this.scene.plugins.get('rexGlowFilterPipeline').add(this.highlight, {
-            intensity: 0.02,
+            intensity: 0.005,
         });
         this.highlight.setVisible(false);
         this.healthbar = new HealthBar(this.scene, this.x, this.y, scene.state.playerHealth, 'player');
@@ -229,7 +229,7 @@ export default class Player extends Entity {
 
     highlightTarget(sprite) {
         this.highlight.setVisible(true);
-        this.setDepth(10);
+        this.setDepth(sprite.depth + 1);
         // this.highlight.setPosition(sprite.x, sprite.y + sprite.displayHeight / 2.25);
         this.highlight.setPosition(sprite.x, sprite.y);
 
@@ -357,14 +357,14 @@ export default class Player extends Entity {
     }; 
 
     enterCombat = (other) => {
-        console.log('Setting Up Enemy')
+        console.log('Setting Up Enemy on Player End')
         this.scene.setupEnemy(other.gameObjectB);
         this.actionTarget = other;
-        console.log('Setting Up Attack Target')
         this.attacking = other.gameObjectB;
         this.currentTarget = other.gameObjectB;
         this.targetID = other.gameObjectB.enemyID;
         this.scene.combatEngaged(true);
+        this.highlightTarget(other.gameObjectB);
         console.log('Entering Combat')
         this.inCombat = true;
     };
@@ -1126,7 +1126,7 @@ export default class Player extends Entity {
                 this.scene.snare(this.attacking.enemyID);
                 this.setTimeEvent('snareCooldown', 10000);
             };
-            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R)) { // && this.polymorphCooldown === 0
+            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && !this.isMoving) { // && this.polymorphCooldown === 0
                 this.stateMachine.setState(States.POLYMORPHING);
             };
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && this.invokeCooldown === 0) {

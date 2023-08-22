@@ -169,16 +169,7 @@ export default class Enemy extends Entity {
         this.originPoint = {}; // For Leashing
         this.isConsumed = false;
         this.sensorDisp = 12;
-        this.colliderDisp = 16;
-
-        // this.highlight = this.scene.add.graphics()
-        //     .lineStyle(1, 0xFF0000)
-        //     .strokeCircle(0, 0, 10)
-        //     .setVisible(false);
-
-        // this.scene.plugins.get('rexGlowFilterPipeline').add(this.highlight, {
-        //     intensity: 0.02,
-        // });
+        this.colliderDisp = 16; 
 
         const { Body, Bodies } = Phaser.Physics.Matter.Matter;
         const colliderWidth = 20; 
@@ -310,16 +301,7 @@ export default class Enemy extends Entity {
             },
             context: this.scene,
         });
-    };
-
-    highlightTarget(sprite) {
-        this.highlight.setVisible(true);
-        this.highlight.setPosition(sprite.x, sprite.y + sprite.displayHeight / 2.25);
-    };
-
-    removeHighlight() {
-        this.highlight.setVisible(false);
-    };
+    }; 
 
     isNewEnemy = (player) => {
         return !player.targets.some(obj => obj.enemyID === this.enemyID);
@@ -413,10 +395,12 @@ export default class Enemy extends Entity {
         };
 
         if (!combat.gameObjectB.attacking || !combat.gameObjectB.inCombat) { // !inCombat
+            console.log('Enemy Engaging Combat')
             if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
             combat.gameObjectB.attacking = this;
             combat.gameObjectB.currentTarget = this;
             combat.gameObjectB.inCombat = true;
+            combat.gameObjectB.highlightTarget(this);
             console.log(`%c ${this.ascean.name} engaging combat: [Collide ${when}]`, 'color: orange')
             this.scene.combatEngaged(true);
         }; 
@@ -910,7 +894,9 @@ export default class Enemy extends Entity {
     };
     onPolymorphExit = () => { 
         if (this.isPolymorphed) this.isPolymorphed = false;
-        this.anims.play('player_idle', true);
+        this.evaluateCombatDistance();
+        this.clearAnimations();
+        this.anims.play('player_running', true);
         this.spriteWeapon.setVisible(true);
         if (this.polymorphTimer) {
             this.polymorphTimer.destroy();
@@ -1114,7 +1100,7 @@ export default class Enemy extends Entity {
                 direction.normalize();
                 this.setVelocityX(direction.x * -this.speed); // -2.25 | -2 | -1.75
                 this.setVelocityY(direction.y * -this.speed); // -1.5 | -1.25
-            } else if (distanceY < 10) { // Comfy
+            } else if (distanceY < 7) { // Comfy
                 this.setVelocity(0);
                 this.anims.play('player_idle', true);
             } else { // Between 75 and 225 and outside y-distance
