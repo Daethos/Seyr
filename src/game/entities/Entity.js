@@ -13,12 +13,12 @@ import playerAttacksPNG from '../images/player_attacks.png';
 import playerAttacksJSON from '../images/player_attacks_atlas.json';
 import playerAttacksAnim from '../images/player_attacks_anim.json'; 
 
-import rabbitIdlePng from '../images/rabbit_idle.png';
-import rabbitIdleJSON from '../images/rabbit_idle_atlas.json';
-import rabbitIdleAnim from '../images/rabbit_idle_anim.json';
-import rabbitMovementPng from '../images/rabbit_movement.png';
-import rabbitMovementJSON from '../images/rabbit_movement_atlas.json';
-import rabbitMovementAnim from '../images/rabbit_movement_anim.json';
+// import rabbitIdlePng from '../images/rabbit_idle.png';
+// import rabbitIdleJSON from '../images/rabbit_idle_atlas.json';
+// import rabbitIdleAnim from '../images/rabbit_idle_anim.json';
+// import rabbitMovementPng from '../images/rabbit_movement.png';
+// import rabbitMovementJSON from '../images/rabbit_movement_atlas.json';
+// import rabbitMovementAnim from '../images/rabbit_movement_anim.json';
 
 export const FRAME_COUNT = {
     ATTACK_LIVE: 16,
@@ -46,10 +46,14 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         scene.load.animation(`player_actions_three_anim`, playerActionsThreeAnim);
         scene.load.atlas(`player_attacks`, playerAttacksPNG, playerAttacksJSON);
         scene.load.animation(`player_attacks_anim`, playerAttacksAnim);   
-        scene.load.atlas(`rabbit_idle`, rabbitIdlePng, rabbitIdleJSON);
-        scene.load.animation(`rabbit_idle_anim`, rabbitIdleAnim);
-        scene.load.atlas(`rabbit_movement`, rabbitMovementPng, rabbitMovementJSON);
-        scene.load.animation(`rabbit_movement_anim`, rabbitMovementAnim);
+        // scene.load.atlas(`rabbit_idle`, rabbitIdlePng, rabbitIdleJSON);
+        // scene.load.animation(`rabbit_idle_anim`, rabbitIdleAnim);
+        // scene.load.atlas(`rabbit_movement`, rabbitMovementPng, rabbitMovementJSON);
+        // scene.load.animation(`rabbit_movement_anim`, rabbitMovementAnim);
+        scene.load.atlas('rabbit_idle', process.env.PUBLIC_URL + '/images/rabbit_idle.png', process.env.PUBLIC_URL + '/images/rabbit_idle_atlas.json');
+        scene.load.animation('rabbit_idle_anim', process.env.PUBLIC_URL + '/images/rabbit_idle_anim.json');
+        scene.load.atlas('rabbit_movement', process.env.PUBLIC_URL + '/images/rabbit_movement.png', process.env.PUBLIC_URL + '/images/rabbit_movement_atlas.json');
+        scene.load.animation('rabbit_movement_anim', process.env.PUBLIC_URL + '/images/rabbit_movement_anim.json');
     };
 
     constructor (data) {
