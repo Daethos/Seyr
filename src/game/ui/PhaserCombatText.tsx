@@ -27,7 +27,7 @@ const PhaserCombatText = () => {
                 value={text()}
                 readOnly>
             </textarea>
-            <img src={messageWindow} alt="message window" style={{ position: 'absolute', top: '100px', transform: 'scale(1.1)' }} />
+            <img src={messageWindow} alt="message window" style={{ position: 'absolute', top: '100px' }} />
         </div>
     );
 };

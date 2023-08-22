@@ -24,107 +24,108 @@ export default class Enemy extends Entity {
         this.stateMachine = new StateMachine(this, 'enemy');
         this.stateMachine
             .addState(States.IDLE, {
-                onEnter: this.onIdleEnter.bind(this),
-                onUpdate: this.onIdleUpdate.bind(this),
-                onExit: this.onIdleExit.bind(this),
+                onEnter: this.onIdleEnter,
+                onUpdate: this.onIdleUpdate,
+                onExit: this.onIdleExit,
             })
             .addState(States.PATROL, {
-                onEnter: this.onPatrolEnter.bind(this),
-                onUpdate: this.onPatrolUpdate.bind(this),
-                onExit: this.onPatrolExit.bind(this),
+                onEnter: this.onPatrolEnter,
+                onUpdate: this.onPatrolUpdate,
+                onExit: this.onPatrolExit,
             })
             .addState(States.AWARE, {
-                onEnter: this.onAwarenessEnter.bind(this),
-                onUpdate: this.onAwarenessUpdate.bind(this),
-                onExit: this.onAwarenessExit.bind(this),
+                onEnter: this.onAwarenessEnter,
+                onUpdate: this.onAwarenessUpdate,
+                onExit: this.onAwarenessExit,
             })
             .addState(States.CHASE, {
-                onEnter: this.onChaseEnter.bind(this),
-                onUpdate: this.onChaseUpdate.bind(this),
-                onExit: this.onChaseExit.bind(this),
+                onEnter: this.onChaseEnter,
+                onUpdate: this.onChaseUpdate,
+                onExit: this.onChaseExit,
             })
             .addState(States.COMBAT, {
-                onEnter: this.onCombatEnter.bind(this),
-                onUpdate: this.onCombatUpdate.bind(this),
-                onExit: this.onCombatExit.bind(this),
+                onEnter: this.onCombatEnter,
+                onUpdate: this.onCombatUpdate,
+                onExit: this.onCombatExit,
             })
             .addState(States.EVADE, {
-                onEnter: this.onEvasionEnter.bind(this),
-                onUpdate: this.onEvasionUpdate.bind(this),
-                onExit: this.onEvasionExit.bind(this),
+                onEnter: this.onEvasionEnter,
+                onUpdate: this.onEvasionUpdate,
+                onExit: this.onEvasionExit,
             })
             .addState(States.LEASH, {
-                onEnter: this.onLeashEnter.bind(this),
-                onUpdate: this.onLeashUpdate.bind(this),
-                onExit: this.onLeashExit.bind(this),
+                onEnter: this.onLeashEnter,
+                onUpdate: this.onLeashUpdate,
+                onExit: this.onLeashExit,
             })
             .addState(States.ATTACK, {
-                onEnter: this.onAttackEnter.bind(this),
-                onUpdate: this.onAttackUpdate.bind(this),
-                onExit: this.onAttackExit.bind(this),
+                onEnter: this.onAttackEnter,
+                onUpdate: this.onAttackUpdate,
+                onExit: this.onAttackExit,
             })
             .addState(States.COUNTER, {
-                onEnter: this.onCounterEnter.bind(this),
-                onUpdate: this.onCounterUpdate.bind(this),
-                onExit: this.onCounterExit.bind(this),
+                onEnter: this.onCounterEnter,
+                onUpdate: this.onCounterUpdate,
+                onExit: this.onCounterExit,
             })
             .addState(States.DODGE, {
-                onEnter: this.onDodgeEnter.bind(this),
-                onUpdate: this.onDodgeUpdate.bind(this),
-                onExit: this.onDodgeExit.bind(this),
+                onEnter: this.onDodgeEnter,
+                onUpdate: this.onDodgeUpdate,
+                onExit: this.onDodgeExit,
             })
             .addState(States.POSTURE, {
-                onEnter: this.onPostureEnter.bind(this),
-                onUpdate: this.onPostureUpdate.bind(this),
-                onExit: this.onPostureExit.bind(this),
+                onEnter: this.onPostureEnter,
+                onUpdate: this.onPostureUpdate,
+                onExit: this.onPostureExit,
             })
             .addState(States.ROLL, {
-                onEnter: this.onRollEnter.bind(this),
-                onUpdate: this.onRollUpdate.bind(this),
-                onExit: this.onRollExit.bind(this),    
+                onEnter: this.onRollEnter,
+                onUpdate: this.onRollUpdate,
+                onExit: this.onRollExit,    
             })
             .addState(States.POLYMORPH, {
-                onEnter: this.onPolymorphEnter.bind(this),
-                onUpdate: this.onPolymorphUpdate.bind(this),
-                onExit: this.onPolymorphExit.bind(this),
+                onEnter: this.onPolymorphEnter,
+                onUpdate: this.onPolymorphUpdate,
+                onExit: this.onPolymorphExit,
             })
             .addState(States.STUN, {
-                onEnter: this.onStunEnter.bind(this),
-                onUpdate: this.onStunUpdate.bind(this),
-                onExit: this.onStunExit.bind(this),
+                onEnter: this.onStunEnter,
+                onUpdate: this.onStunUpdate,
+                onExit: this.onStunExit,
             })
             .addState(States.CONSUMED, {
-                onEnter: this.onConsumedEnter.bind(this),
-                onUpdate: this.onConsumedUpdate.bind(this),
-                onExit: this.onConsumedExit.bind(this),
+                onEnter: this.onConsumedEnter,
+                onUpdate: this.onConsumedUpdate,
+                onExit: this.onConsumedExit,
             })
             .addState(States.HURT, {
-                onEnter: this.onHurtEnter.bind(this),
-                onUpdate: this.onHurtUpdate.bind(this),
+                onEnter: this.onHurtEnter,
+                onUpdate: this.onHurtUpdate,
             })
             .addState(States.DEATH, {
-                onEnter: this.onDeathEnter.bind(this),
+                onEnter: this.onDeathEnter,
             })
             .addState(States.DEFEATED, {
-                onEnter: this.onDefeatedEnter.bind(this),
+                onEnter: this.onDefeatedEnter,
             })
         
         this.stateMachine.setState(States.IDLE);
+
         this.metaMachine = new StateMachine(this, 'enemy');
         this.metaMachine
             .addState(States.CLEAN, {
-                onEnter: this.onCleanEnter.bind(this),
-                onExit: this.onCleanExit.bind(this),
+                onEnter: this.onCleanEnter,
+                onExit: this.onCleanExit,
             })
             .addState(States.ROOT, {
-                onEnter: this.onRootEnter.bind(this),
-                onUpdate: this.onRootUpdate.bind(this),
-                onExit: this.onRootExit.bind(this),
+                onEnter: this.onRootEnter,
+                onUpdate: this.onRootUpdate,
+                onExit: this.onRootExit,
             })
             .addState(States.SNARE, {
-                onEnter: this.onSnareEnter.bind(this),
-                // onUpdate: this.onSnareUpdate.bind(this),
-                onExit: this.onSnareExit.bind(this),
+                onEnter: this.onSnareEnter,
+                // onUpdate: this.onSnareUpdate,
+                onExit: this.onSnareExit,
             })
 
         this.metaMachine.setState(States.CLEAN);
@@ -304,7 +305,7 @@ export default class Enemy extends Entity {
                     } else {
                         this.stateMachine.setState(States.IDLE);
                     };
-                    this.scene.clearNonAggressiveEnemy();
+                    this.scene.clearNAEnemy();
                 };
             },
             context: this.scene,
@@ -743,12 +744,7 @@ export default class Enemy extends Entity {
         console.log(`Leashing ${this.ascean.name} to Origin Point of Encounter`)
         this.anims.play('player_running', true);
         if (this.attacking) {
-            if (this.attacking.targets.includes(this)) {
-                console.log("Removing Enemy from Attacking Targets inside ENEMY LEASH")
-                const index = this.attacking.targets.indexOf(this);
-                this.attacking.targets.splice(index, 1);
-            };
-            this.scene.clearNonAggressiveEnemy();
+            this.attacking.removeTarget(this.enemyID);
             this.attacking = null;
             this.inCombat = false;
         };
@@ -804,6 +800,7 @@ export default class Enemy extends Entity {
     };
 
     onConsumedEnter = () => {
+        console.log('Being consumed')
         this.consumedDuration = 2000;
         this.clearAnimations();
         this.setGlow(this, true);
@@ -823,19 +820,24 @@ export default class Enemy extends Entity {
     onConsumedUpdate = (dt) => {
         this.anims.play('player_hurt', true);
         this.consumedDuration -= dt;
-        if (!this.isConsumed) this.evaluateCombatDistance();
         if (this.consumedDuration <= 0) this.isConsumed = false;
+        if (!this.isConsumed) this.evaluateCombatDistance();
     };
     onConsumedExit = () => {
+        console.log('Exiting consumed')
         this.clearAnimations();
-        this.consumedTimer.destroy();
-        this.consumedTimer = null;
+        if (this.consumedTimer) {
+            this.consumedTimer.destroy();
+            this.consumedTimer = null;
+        };
         this.setGlow(this, false);
+        this.isConsumed = false;
     };
 
     onPolymorphEnter = () => {
-        console.log(`%c ${this.ascean.name} Has Been Polymorphed`, 'color: #0000ff')
-        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Polymorphed', 1500, 'effect', true);
+        console.log(`%c ${this.ascean.name} Has Been Polymorphed`, 'color: #00ccff')
+        this.isPolymorphed = true;
+        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Polymorphed', 1500, 'effect');
         this.clearAnimations();
         this.anims.pause();
         this.anims.play('rabbit_idle_down', true);
@@ -873,10 +875,8 @@ export default class Enemy extends Entity {
                 this.polymorphMovement = 'idle';                
             };
             this.polymorphDirection = direction;
-
             console.log(`%c ${this.ascean.name} Polymorphed: [${this.polymorphMovement} ${this.polymorphDirection}]`, 'color: #00ffff')
         };
-
 
         this.polymorphTimer = this.scene.time.addEvent({
             delay: 2000,
@@ -924,6 +924,7 @@ export default class Enemy extends Entity {
         this.setStatic(true);
     };
     onStunUpdate = (dt) => {
+        this.setVelocity(0);
         if (!this.isStunned) this.evaluateCombatDistance(); // Wasn't if (!this.isStunned)
         this.stunDuration -= dt;
         if (this.stunDuration <= 0) {
@@ -939,8 +940,8 @@ export default class Enemy extends Entity {
     onCleanExit = () => {};
 
     onRootEnter = () => {
-        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Rooted', 1500, 'effect', true);
-        this.clearAnimations();
+        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Rooted', 1500, 'effect');
+        if (!this.isPolymorphed) this.clearAnimations();
         this.rootDuration = 3000;
         this.setTint(0x888888);
         this.setStatic(true);
@@ -955,15 +956,17 @@ export default class Enemy extends Entity {
         });
     };
     onRootUpdate = (dt) => {
-        if (!this.checkIfAnimated()) this.anims.play('player_idle', true);
-        this.evaluateCombatDistance();
+        if (!this.isPolymorphed) {
+            if (!this.checkIfAnimated()) this.anims.play('player_idle', true);
+            this.evaluateCombatDistance();
+        }; 
     };
     onRootExit = () => {  
         this.clearTint();
         this.setStatic(false);
     };
     onSnareEnter = () => {
-        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Snared', 1500, 'effect', true);
+        this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Snared', 1500, 'effect');
         this.snareDuration = 3000;
         this.setTint(0x888888);
         this.adjustSpeed(-1.5);
@@ -1089,9 +1092,7 @@ export default class Enemy extends Entity {
         let direction = this.attacking.position.subtract(this.position);
         const distanceY = Math.abs(direction.y);
         const multiplier = this.rangedDistanceMultiplier(3);
-        if (this.isStunned) {
-            this.setVelocity(0);
-        } else if (direction.length() >= DISTANCE.CHASE * multiplier) { // > 525
+        if (direction.length() >= DISTANCE.CHASE * multiplier) { // > 525
             this.stateMachine.setState(States.CHASE);
         } else if (this.isRanged) {
             if (!this.stateMachine.isCurrentState(States.COMBAT)) this.stateMachine.setState(States.COMBAT);
@@ -1212,9 +1213,11 @@ export default class Enemy extends Entity {
         };
         if (this.isRooted && !this.metaMachine.isCurrentState(States.ROOT)) {
             this.metaMachine.setState(States.ROOT);
+            return;
         };
         if (this.isSnared && !this.metaMachine.isCurrentState(States.SNARE)) {
             this.metaMachine.setState(States.SNARE); 
+            return;    
         };
         if (this.actionSuccess) {
             this.actionSuccess = false;

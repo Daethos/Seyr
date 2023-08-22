@@ -172,7 +172,7 @@ export default class Play extends Phaser.Scene {
             stalwart: this.input.keyboard.addKeys('G'),
         }; 
 
-        this.target = this.add.sprite(0, 0, "target").setScale(0.2).setVisible(false);
+        this.target = this.add.sprite(0, 0, "target").setScale(0.15).setVisible(false);
 
 
         // ====================== Camera ====================== \\
@@ -334,35 +334,28 @@ export default class Play extends Phaser.Scene {
 
     enemyLootDropListener = () => EventEmitter.on('enemyLootDrop', (e) => { e.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID: e.enemyID, drop }))); });
     enemyStateListener = () => EventEmitter.on('aggressive-enemy', (e) => { this.enemies.forEach(enemy => enemy.enemyID === e.id ? enemy.isAggressive = e.isAggressive : null ); });
-    staminaListener = async () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e); 
-    stateListener = async () => EventEmitter.on('update-combat-data', (e) => this.state = e); 
+    staminaListener = () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e); 
+    stateListener = () => EventEmitter.on('update-combat-data', (e) => this.state = e); 
 
-    
-    // ============================ Combat ============================ \\
-    getEnemyDestination = (enemy) => ({
-        x: enemy.x - 5,
-        y: enemy.y + 15,
-    });
+    // ============================ Combat ============================ \\ 
     polymorph = (id) => {
         let enemy = this.enemies.find(enemy => enemy.enemyID === id);
         enemy.isPolymorphed = true;
     };
-    root = (id) => {
-        let enemy = this.enemies.find(enemy => enemy.enemyID === id);
+    root = () => {
         const { worldX, worldY } = this.input.activePointer;
-        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, worldX, enemy.y + 15);
+        const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, worldX, worldY);
         const duration = 2 * distance;
         const rise = 0.5 * distance;
 
-
+        const sensorRadius = 25;
+        const sensorBounds = new Phaser.Geom.Circle(worldX, worldY, sensorRadius);
 
         const rootTween = this.add.tween({
             targets: this.target,
             props: {
-                // x: { from: this.player.x, to: enemy.x - 5, duration: duration },
-                // y: { from: this.player.y, to: enemy.y + 15, duration: duration },
-                x: { from: this.player.x, to: enemy.x, duration: duration },
-                y: { from: this.player.y, to: enemy.y, duration: duration },
+                x: { from: this.player.x, to: worldX, duration: duration },
+                y: { from: this.player.y, to: worldY, duration: duration },
         
                 z: {
                     from: 0,
@@ -374,24 +367,20 @@ export default class Play extends Phaser.Scene {
                 onStart: () => {
                     this.target.setVisible(true);
                 },    
-                // onUpdate: () => {
-                //     const destination = this.getEnemyDestination(enemy);
-                //     rootTween.updateTo('x', destination.x, true);
-                //     rootTween.updateTo('y', destination.y, true);
-                // },
                 onUpdate: (_tween, target, key, current) => {
                     if (key !== 'z') return;
                     target.y += current;
-                    
-                    target.x = enemy.x - 5;
-
                 }, 
             },
         });
         this.time.addEvent({
             delay: duration,
-            callback: () => {
-                enemy.isRooted = true;
+            callback: () => { 
+                this.enemies.forEach(enemy => {
+                    if (Phaser.Geom.Circle.ContainsPoint(sensorBounds, new Phaser.Geom.Point(enemy.x, enemy.y))) {
+                        enemy.isRooted = true;
+                    };
+                });
             },
             callbackScope: this
         });
@@ -414,30 +403,30 @@ export default class Play extends Phaser.Scene {
     checkPlayerSuccess = () => {
         if (!this.player.actionSuccess && (this.state.action !== 'counter' && this.state.action !== 'roll' && this.state.action !== '')) this.combatMachine.input('action', '');
     };
-    clearNonAggressiveEnemy = async () => this.dispatch(clearNonAggressiveEnemy()); 
-    clearNPC = async () => EventEmitter.emit('clear-npc'); 
-    combatEngaged = async (bool) => {
+    clearNAEnemy = () => this.dispatch(clearNonAggressiveEnemy()); 
+    clearNPC = () => EventEmitter.emit('clear-npc'); 
+    combatEngaged = (bool) => {
         if (bool) { this.combat = true; } else { this.combat = false; };
         this.dispatch(getCombatFetch(bool));
     };
     drinkFlask = () => this.dispatch(getDrinkFirewaterFetch(this.state.player._id));
-    setupEnemy = async (enemy) => {
+    setupEnemy = (enemy) => {
         const data = { id: enemy.enemyID, game: enemy.ascean, enemy: enemy.combatStats, health: enemy.health, isAggressive: enemy.isAggressive, startedAggressive: enemy.startedAggressive, isDefeated: enemy.isDefeated, isTriumphant: enemy.isTriumphant };
         this.dispatch(getEnemySetupFetch(data));
     };
-    setupNPC = async (npc) => {
+    setupNPC = (npc) => {
         const data = { id: npc.npcID, game: npc.ascean, enemy: npc.combatStats, health: npc.health, type: npc.npcType };
         this.dispatch(getNpcSetupFetch(data));
     };
-    showDialog = async (dialog) => EventEmitter.emit('show-dialog', dialog);
+    showDialog = (dialog) => EventEmitter.emit('show-dialog', dialog);
 
     // ============================ Player ============================ \\
 
-    caerenic = async (bool) => this.dispatch(setCaerenic(bool));
-    stalwart = async (bool) => this.dispatch(setStalwart(bool));
+    caerenic = (bool) => this.dispatch(setCaerenic(bool));
+    stalwart = (bool) => this.dispatch(setStalwart(bool));
     useStamina = (value) => EventEmitter.emit('update-stamina', value);
 
-    setOnGround = async (key, value) => {
+    setOnGround = (key, value) => {
         if (key === 'player') {
             this.isPlayerOnGround = value;
         } else if (key === 'enemy') {
@@ -445,7 +434,7 @@ export default class Play extends Phaser.Scene {
         };
     };
 
-    setHanging = async (key, value) => {
+    setHanging = (key, value) => {
         if (key === 'player') {
             this.isPlayerHanging = value;
         } else if (key === 'enemy') {
@@ -494,7 +483,7 @@ export default class Play extends Phaser.Scene {
         });
     };
 
-    startCombatTimer = async () => {
+    startCombatTimer = () => {
         this.combatTimer = this.time.addEvent({
             delay: 1000,
             callback: () => {
@@ -507,7 +496,7 @@ export default class Play extends Phaser.Scene {
         });
     };
 
-    stopCombatTimer = async () => {
+    stopCombatTimer = () => {
         this.combatTimer.destroy();
         this.combatTimer = null;
         this.combatTime = 0;

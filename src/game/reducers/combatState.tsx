@@ -109,6 +109,7 @@ const combatSlice = createSlice({
             };
         },
         clearNonAggressiveEnemy: (state) => {
+            console.log('Clearning Non Aggressive Enemy')
             return {
                 ...state,
                 computer: null,

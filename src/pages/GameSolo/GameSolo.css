@@ -203,12 +203,13 @@
 #story-console {
   position: absolute;
   text-align: center;
-  height: 120px;
-  width: 450px;
+  height: 110px;
+  width: 440px;
   font-size: 12px;
   border: none;
   z-index: 1;
-  top: 100px;
+  top: 105px;
+  left: 5px;
   background-color: transparent;
   resize: none;
   color: #fdf6d8;

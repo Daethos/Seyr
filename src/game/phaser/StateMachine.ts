@@ -31,7 +31,8 @@ export const States = {
 
     CONSUMED: "consumed",
     TSHAERAL: "tshaeral",
-    
+    POLYMORPHING: "polymorphing",
+
     CLEAN: "clean",
     POLYMORPH: "polymorph",
     ROOT: "root",

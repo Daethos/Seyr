@@ -195,29 +195,26 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
 
     clearAnimations = () => {
         if (this.anims.currentAnim) {
-            console.log(`Clearing ${this.anims.currentAnim.key} from ${this.ascean.name}`); 
+            // console.log(`Clearing ${this.anims.currentAnim.key} from ${this.ascean.name}`); 
             this.anims.stop(this.anims.currentAnim.key);
         };
     };
 
-    attack = () => {
-        this.clearAnimations();
+    attack = () => { 
         this.anims.play(`player_attack_1`, true).on('animationcomplete', () => {
             this.isAttacking = false;
             this.currentAction = '';
         }); 
     };
 
-    counter = () => {
-        this.clearAnimations();
+    counter = () => { 
         this.anims.play('player_attack_2', true).on('animationcomplete', () => { 
             this.isCountering = false; 
             this.currentAction = '';
         });
     };
 
-    posture = () => {
-        this.clearAnimations();
+    posture = () => { 
         this.anims.play('player_attack_3', true).on('animationcomplete', () => {
             this.isPosturing = false;
             this.currentAction = '';
