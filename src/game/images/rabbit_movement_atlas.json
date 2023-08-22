@@ -1,12 +1,12 @@
 {
     "frames": [
         {
-            "filename": "rabbit_0",
+            "filename": "rabbit_move_0",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 1,
-                "y": 1
+                "x": 0,
+                "y": 0
             },
             "anchor": {
                 "x": 0.5,
@@ -14,12 +14,12 @@
             }
         },
         {
-            "filename": "rabbit_1",
+            "filename": "rabbit_move_1",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 34,
-                "y": 1
+                "x": 32,
+                "y": 0
             },
             "anchor": {
                 "x": 0.5,
@@ -27,12 +27,12 @@
             }
         },
         {
-            "filename": "rabbit_2",
+            "filename": "rabbit_move_2",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 1,
-                "y": 38
+                "x": 0,
+                "y": 36
             },
             "anchor": {
                 "x": 0.5,
@@ -40,12 +40,12 @@
             }
         },
         {
-            "filename": "rabbit_3",
+            "filename": "rabbit_move_3",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 34,
-                "y": 38
+                "x": 32,
+                "y": 36
             },
             "anchor": {
                 "x": 0.5,
@@ -53,12 +53,12 @@
             }
         },
         {
-            "filename": "rabbit_4",
+            "filename": "rabbit_move_4",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 67,
-                "y": 1
+                "x": 64,
+                "y": 0
             },
             "anchor": {
                 "x": 0.5,
@@ -66,12 +66,12 @@
             }
         },
         {
-            "filename": "rabbit_5",
+            "filename": "rabbit_move_5",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 67,
-                "y": 38
+                "x": 64,
+                "y": 36
             },
             "anchor": {
                 "x": 0.5,
@@ -79,12 +79,12 @@
             }
         },
         {
-            "filename": "rabbit_6",
+            "filename": "rabbit_move_6",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 1,
-                "y": 75
+                "x": 0,
+                "y": 72
             },
             "anchor": {
                 "x": 0.5,
@@ -92,12 +92,12 @@
             }
         },
         {
-            "filename": "rabbit_7",
+            "filename": "rabbit_move_7",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 34,
-                "y": 75
+                "x": 32,
+                "y": 72
             },
             "anchor": {
                 "x": 0.5,
@@ -105,12 +105,12 @@
             }
         },
         {
-            "filename": "rabbit_8",
+            "filename": "rabbit_move_8",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 67,
-                "y": 75
+                "x": 64,
+                "y": 72
             },
             "anchor": {
                 "x": 0.5,
@@ -118,12 +118,12 @@
             }
         },
         {
-            "filename": "rabbit_9",
+            "filename": "rabbit_move_9",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 100,
-                "y": 1
+                "x": 96,
+                "y": 0
             },
             "anchor": {
                 "x": 0.5,
@@ -131,12 +131,12 @@
             }
         },
         {
-            "filename": "rabbit_10",
+            "filename": "rabbit_move_10",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 100,
-                "y": 38
+                "x": 96,
+                "y": 36
             },
             "anchor": {
                 "x": 0.5,
@@ -144,12 +144,12 @@
             }
         },
         {
-            "filename": "rabbit_11",
+            "filename": "rabbit_move_11",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 100,
-                "y": 75
+                "x": 96,
+                "y": 72
             },
             "anchor": {
                 "x": 0.5,
@@ -157,12 +157,12 @@
             }
         },
         {
-            "filename": "rabbit_12",
+            "filename": "rabbit_move_12",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 1,
-                "y": 112
+                "x": 0,
+                "y": 108
             },
             "anchor": {
                 "x": 0.5,
@@ -170,12 +170,12 @@
             }
         },
         {
-            "filename": "rabbit_13",
+            "filename": "rabbit_move_13",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 34,
-                "y": 112
+                "x": 32,
+                "y": 108
             },
             "anchor": {
                 "x": 0.5,
@@ -183,12 +183,12 @@
             }
         },
         {
-            "filename": "rabbit_14",
+            "filename": "rabbit_move_14",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 67,
-                "y": 112
+                "x": 64,
+                "y": 108
             },
             "anchor": {
                 "x": 0.5,
@@ -196,12 +196,12 @@
             }
         },
         {
-            "filename": "rabbit_15",
+            "filename": "rabbit_move_15",
             "frame": {
                 "w": 32,
                 "h": 36,
-                "x": 100,
-                "y": 112
+                "x": 96,
+                "y": 108
             },
             "anchor": {
                 "x": 0.5,

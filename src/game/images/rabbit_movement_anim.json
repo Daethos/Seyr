@@ -1,30 +1,6 @@
 {
     "anims": [
         {
-            "key": "rabbit_move_up",
-            "type": "frames",
-            "repeat": -1,
-            "frameRate": 12,
-            "frames": [
-                {
-                    "key": "rabbit_movement",
-                    "frame": "rabbit_12"
-                },
-                {
-                    "key": "rabbit_movement",
-                    "frame": "rabbit_13"
-                },
-                {
-                    "key": "rabbit_movement",
-                    "frame": "rabbit_14"
-                },
-                {
-                    "key": "rabbit_movement",
-                    "frame": "rabbit_15"
-                }
-            ]
-        },
-        {
             "key": "rabbit_move_right",
             "type": "frames",
             "repeat": -1,
@@ -32,19 +8,19 @@
             "frames": [
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_8"
+                    "frame": "rabbit_move_3"
                 },
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_9"
+                    "frame": "rabbit_move_7"
                 },
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_10"
+                    "frame": "rabbit_move_10"
                 },
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_11"
+                    "frame": "rabbit_move_11"
                 }
             ]
         },
@@ -56,19 +32,19 @@
             "frames": [
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_4"
+                    "frame": "rabbit_move_6"
                 },
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_5"
+                    "frame": "rabbit_move_8"
                 },
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_6"
+                    "frame": "rabbit_move_9"
                 },
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_7"
+                    "frame": "rabbit_move_2"
                 }
             ]
         },
@@ -80,19 +56,43 @@
             "frames": [
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_0"
+                    "frame": "rabbit_move_0"
                 },
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_1"
+                    "frame": "rabbit_move_1"
                 },
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_2"
+                    "frame": "rabbit_move_4"
                 },
                 {
                     "key": "rabbit_movement",
-                    "frame": "rabbit_3"
+                    "frame": "rabbit_move_5"
+                }
+            ]
+        },
+        {
+            "key": "rabbit_move_up",
+            "type": "frames",
+            "repeat": -1,
+            "frameRate": 12,
+            "frames": [
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_move_12"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_move_13"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_move_14"
+                },
+                {
+                    "key": "rabbit_movement",
+                    "frame": "rabbit_move_15"
                 }
             ]
         }

@@ -859,21 +859,20 @@ export default class Enemy extends Entity {
                 this.polymorphMovement = 'idle';                
             };
             this.polymorphDirection = direction;
-            console.log(`%c ${this.ascean.name} Polymorphed: [${this.polymorphMovement} ${this.polymorphDirection}]`, 'color: #00ffff')
+            console.log(`%c ${this.ascean.name} Polymorphed: [Movemtn: ${this.polymorphMovement} Direction: ${this.polymorphDirection}]`, 'color: #00ffff')
         };
 
         this.polymorphTimer = this.scene.time.addEvent({
             delay: 2000,
             callback: () => {
                 iteration++;
-                console.log(iteration, 'Polymorph iteration')
                 if (iteration === 5) {
                     iteration = 0;
                     this.isPolymorphed = false;
                 } else {   
                     randomDirection();
                     if (this.isCurrentTarget && this.health < this.ascean.health.total) {
-                        console.log(`%c ${this.ascean.name} is healing from Polymorph`, 'color: orange');
+                        console.log(`%c ${this.ascean.name} is healing for ${this.ascean.health.total * 0.2} from Polymorph`, 'color: orange');
                         this.scene.combatMachine.action({ type: 'Health', data: { key: 'enemy', value: 20 } });
                     } else if (this.health < this.ascean.health.total) {
                         this.health = this.health + (this.ascean.health.total * 0.1);
