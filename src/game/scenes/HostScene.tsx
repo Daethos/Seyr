@@ -179,7 +179,7 @@ const HostScene = ({ assets, setAssets }: Props) => {
                     <div style={{ position: "absolute", zIndex: 1 }}>
                         <CombatUI state={combatState} staminaPercentage={gameState.staminaPercentage} pauseState={gameState.pauseState} />
                         { combatState.combatEngaged && (
-                            <div style={{ position: "absolute", top: "415px", left: "250px", zIndex: 0 }}>
+                            <div style={{ position: "absolute", top: "420px", left: "250px", zIndex: 0 }}>
                                 <PhaserCombatText />
                             </div>
                         ) } 

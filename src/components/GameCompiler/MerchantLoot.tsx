@@ -9,6 +9,7 @@ import Col  from 'react-bootstrap/Col';
 import { getOnlyInventoryFetch, getPurchaseFetch, setMerchantEquipment } from '../../game/reducers/gameState';
 import { useDispatch } from 'react-redux';
 import { getBorderStyle } from '../../game/ui/ItemPopover';
+import useGameSounds from './Sounds';
 
 interface Props {
     item: Equipment;
@@ -31,6 +32,8 @@ interface Props {
 const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, stealItem, thievery }: Props) => {
     const dispatch = useDispatch();
     const location = useLocation();
+    const { playTransaction } = useGameSounds(0.3);
+
     const [purchaseSetting, setPurchaseSetting] = useState({
         ascean: ascean,
         item: item,
@@ -133,6 +136,7 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, stea
             return;
         };
         try {
+            playTransaction();
             if (gameDispatch) {
                 const res = await asceanAPI.purchaseToInventory(purchaseSetting);
                 console.log(res, 'Purchased Item!');
@@ -161,14 +165,14 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, stea
         <Popover className="text-info" id="popover">
             <Popover.Header id="popover-header" className="" as="h2">{item?.name} <span id="popover-image"><img src={process.env.PUBLIC_URL + item?.imgURL} alt={item?.name} /></span></Popover.Header>
             <Popover.Body id="popover-body" className="">
-                { item?.type && item?.grip ?
+                { item?.type && item?.grip ? (
                     <>
                     {item?.type} [{item?.grip}] <br />
                     {item?.attack_type} [{item?.damage_type?.[0]}{item?.damage_type?.[1] ? ' / ' + item?.damage_type[1] : '' }{item?.damage_type?.[2] ? ' / ' + item?.damage_type[2] : '' }]  <br />
                     </>
-                : item?.type ? 
+                ) : item?.type ? (
                     <>{item?.type} <br /></> 
-                : '' }
+                ) : ( '' ) }
                 {item?.constitution > 0 ? 'CON: +' + item?.constitution + ' ' : ''}
                 {item?.strength > 0 ? 'STR: +' + item?.strength + ' ' : ''}
                 {item?.agility > 0 ? 'AGI: +' + item?.agility + ' ' : ''}
@@ -176,25 +180,25 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, stea
                 {item?.caeren > 0 ? 'CAER: +' + item?.caeren + ' ' : ''}
                 {item?.kyosir > 0 ? 'KYO: +' + item?.kyosir + ' ' : ''}<br />
                 Damage: {item?.physical_damage} Physical | {item?.magical_damage} Magical <br />
-                { item?.physical_resistance || item?.magical_resistance ?
+                { item?.physical_resistance || item?.magical_resistance ? (
                     <>
                     Defense: {item?.physical_resistance} Physical | {item?.magical_resistance} Magical <br />
                     </>
-                : '' }
-                { item?.physical_penetration || item?.magical_penetration ?
+                ) : ( '' ) }
+                { item?.physical_penetration || item?.magical_penetration ? (
                     <>
                     Penetration: {item?.physical_penetration} Physical | {item?.magical_penetration} Magical <br />
                     </>
-                : '' }
+                ) : ( '' ) }
                 Critical Chance: {item?.critical_chance}% <br />
                 Critical Damage: {item?.critical_damage}x <br />
                 Dodge Timer: {item?.dodge}s <br />
                 Roll Chance: {item?.roll}% <br />
-                { item?.influences ?
+                { item?.influences ? (
                     <>
                     Influence: {item?.influences} <br />
                     </>
-                : '' }
+                ) : ( '' ) }
                 <br />
                 {item?.rarity}
                 <br />

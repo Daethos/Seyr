@@ -13,11 +13,11 @@ const replaySfx = process.env.PUBLIC_URL + `/sounds/replay-sound.mp3`;
 const religiousSfx = process.env.PUBLIC_URL + `/sounds/religious.mp3`;
 const daethicSfx = process.env.PUBLIC_URL + `/sounds/daethic-magic.mp3`;
 const wildSfx = process.env.PUBLIC_URL + `/sounds/wild-magic.mp3`;
-const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.mp3`;
+const earthSfx = process.env.PUBLIC_URL + `/sounds/earth-magic.wav`;
 const fireSfx = process.env.PUBLIC_URL + `/sounds/fire-magic.mp3`;
 const bowSfx = process.env.PUBLIC_URL + `/sounds/bow-attack.mp3`;
 const frostSfx = process.env.PUBLIC_URL + `/sounds/frost-magic.mp3`;
-const lightningSfx = process.env.PUBLIC_URL + `/sounds/lightning-magic.mp3`;
+const lightningSfx = process.env.PUBLIC_URL + `/sounds/lightning-magic.wav`;
 const sorcerySfx = process.env.PUBLIC_URL + `/sounds/sorcery-magic.mp3`;
 const windSfx = process.env.PUBLIC_URL + `/sounds/wind-magic.mp3`;
 const walk1Sfx = process.env.PUBLIC_URL + `/sounds/walk-1.mp3`;
@@ -32,6 +32,9 @@ const phenomenaSfx = process.env.PUBLIC_URL + `/sounds/phenomena.mp3`;
 const treasureSfx = process.env.PUBLIC_URL + `/sounds/treasure.mp3`;
 const actionButtonSfx = process.env.PUBLIC_URL + `/sounds/action-button.mp3`;
 const combatRoundSfx = process.env.PUBLIC_URL + `/sounds/combat-round.mp3`;
+const transactionSfx = process.env.PUBLIC_URL + '/sounds/buy_sell.wav';
+const equipSfx = process.env.PUBLIC_URL + '/sounds/equip.wav';
+const unequipSfx = process.env.PUBLIC_URL + '/sounds/unequip.wav';
 
 const useGameSounds = (volume: number) => {
     const [playOpponent] = useSound(opponentSfx, { volume });
@@ -66,13 +69,17 @@ const useGameSounds = (volume: number) => {
     const [playTreasure] = useSound(treasureSfx, { volume });
     const [playActionButton] = useSound(actionButtonSfx, { volume });
     const [playCombatRound] = useSound(combatRoundSfx, { volume });
+    const [playTransaction] = useSound(transactionSfx, { volume });
+    const [playEquip] = useSound(equipSfx, { volume });
+    const [playUnequip] = useSound(unequipSfx, { volume });
 
     return { 
         playOpponent, playWO, playCounter, playRoll, playPierce, playSlash, playBlunt, 
         playDeath, playWin, playReplay, playReligion, playDaethic, playWild, playEarth, 
         playFire, playBow, playFrost, playLightning, playSorcery, playWind, 
         playWalk1, playWalk2, playWalk3, playWalk4, playWalk8, playWalk9, 
-        playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound
+        playMerchant, playDungeon, playPhenomena, playTreasure, playActionButton, playCombatRound,
+        playTransaction, playEquip, playUnequip
     };
 };
 

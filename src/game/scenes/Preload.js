@@ -39,6 +39,9 @@ export default class Preload extends Phaser.Scene {
         this.load.plugin('rexglowfilterpipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexglowfilterpipelineplugin.min.js', true);
 
         this.load.audio('background', process.env.PUBLIC_URL + '/sounds/background.mp3');
+        this.load.audio('caerenic', process.env.PUBLIC_URL + '/sounds/caerenic.wav');
+        this.load.audio('stalwart', process.env.PUBLIC_URL + '/sounds/stalwart.mp3');
+        this.load.audio('stealth', process.env.PUBLIC_URL + '/sounds/stealth.mp3');
         this.gameData.assets.forEach(asset => {
             this.load.image(asset.sprite,  process.env.PUBLIC_URL + asset.imgURL, { frameWidth: 32, frameHeight: 32 });
         });

@@ -374,7 +374,6 @@ export default class Enemy extends Entity {
     }; 
 
     clearCombat = () => {
-        console.log(`${this.ascean.name} Has Defeated ${this.scene.state.player.name}`)
         if (!this.stateMachine.isCurrentState(States.LEASH)) this.stateMachine.setState(States.LEASH);
         this.inCombat = false;
         this.attacking = null;
@@ -395,7 +394,6 @@ export default class Enemy extends Entity {
         };
 
         if (!combat.gameObjectB.attacking || !combat.gameObjectB.inCombat) { // !inCombat
-            console.log('Enemy Engaging Combat')
             if (this.scene.state.enemyID !== this.enemyID) this.scene.setupEnemy(this);
             combat.gameObjectB.attacking = this;
             combat.gameObjectB.currentTarget = this;
@@ -619,6 +617,7 @@ export default class Enemy extends Entity {
         } else {
             this.isRolling = true; 
         }; 
+        console.log(`%c ${this.ascean.name} evading ranged attack with ${evade > 50 ? 'Dodge' : 'Roll'}`, 'color: gold')
         this.handleAnimations();
     };
     onEvasionUpdate = (dt) => {
@@ -749,7 +748,6 @@ export default class Enemy extends Entity {
                     this.pathDirection.normalize();
                     const distanceToNextPoint = Math.sqrt((this.nextPoint.x - this.position.x) ** 2 + (this.nextPoint.y - this.position.y) ** 2);
                     if (distanceToNextPoint < 10) {
-                        console.log("Enemy Reached Next Point")
                         this.path.shift();
                     };
                 };
@@ -775,7 +773,7 @@ export default class Enemy extends Entity {
         };
     };
     onLeashExit = () => {
-        console.log(`${this.ascean.name} Leashed to Origin Point of Encounter`)
+        console.log(`%c ${this.ascean.name} Leashed to Origin Point of Encounter`, 'color: #00ccff')
         this.anims.stop('player_running');
         this.setVelocity(0, 0);
         this.leashTimer.destroy();
@@ -784,7 +782,6 @@ export default class Enemy extends Entity {
     };
 
     onConsumedEnter = () => {
-        console.log('Being consumed')
         this.consumedDuration = 2000;
         this.clearAnimations();
         this.setGlow(this, true);
@@ -808,7 +805,6 @@ export default class Enemy extends Entity {
         if (!this.isConsumed) this.evaluateCombatDistance();
     };
     onConsumedExit = () => {
-        console.log('Exiting consumed')
         this.clearAnimations();
         if (this.consumedTimer) {
             this.consumedTimer.destroy();
@@ -871,6 +867,7 @@ export default class Enemy extends Entity {
                     this.isPolymorphed = false;
                 } else {   
                     randomDirection();
+                    this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, '...thump', 1000, 'effect');
                     if (this.isCurrentTarget && this.health < this.ascean.health.total) {
                         console.log(`%c ${this.ascean.name} is healing for ${this.ascean.health.total * 0.2} from Polymorph`, 'color: orange');
                         this.scene.combatMachine.action({ type: 'Health', data: { key: 'enemy', value: 20 } });
@@ -1217,7 +1214,6 @@ export default class Enemy extends Entity {
         if (this.attacking) {
             if (!this.isPolymorphed) {
                 if (this.isUnderRangedAttack()) {
-                    console.log(`%c ${this.ascean.name} Evading Ranged Attack`, 'color: gold')
                     this.stateMachine.setState(States.EVADE);
                     return;
                 };

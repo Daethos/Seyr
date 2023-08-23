@@ -13,6 +13,7 @@ import { getCombatFetch, setStalwart, getNpcSetupFetch, getEnemySetupFetch, clea
 import { getDrinkFirewaterFetch } from '../reducers/gameState';
 import CombatMachine from '../phaser/CombatMachine';
 import { Mrpas } from 'mrpas';
+import ActionButtons from '../phaser/ActionButtons';
 
 export const { Bodies } = Phaser.Physics.Matter.Matter;
 export const worldToTile = (tile) => Math.floor(tile / 32);
@@ -173,7 +174,7 @@ export default class Play extends Phaser.Scene {
         }; 
 
         this.target = this.add.sprite(0, 0, "target").setScale(0.15).setVisible(false);
-
+        this.actionBar = new ActionButtons(this);
 
         // ====================== Camera ====================== \\
           
@@ -195,7 +196,7 @@ export default class Play extends Phaser.Scene {
         this.minimapBorder.setScale(1 / camera.zoom);
 
         const darkOverlay = this.add.graphics();
-        darkOverlay.fillStyle(0x000000, 0.5); // Black with 50% opacity
+        darkOverlay.fillStyle(0x000000, 0.35); // Black with 50% opacity
         darkOverlay.fillRect(0, 0, 4096, 4096);
 
         this.input.keyboard.on('keydown-Z', () => {
@@ -248,7 +249,7 @@ export default class Play extends Phaser.Scene {
         // this.multiplayerListeners();
 
         // =========================== Music =========================== \\
-        this.music = this.sound.add('background', { volume: this.gameState.soundEffectVolume, loop: true, delay: 5000 });
+        this.music = this.sound.add('background', { volume: this.gameState.soundEffectVolume, loop: true });
         this.music.play();
 
         // =========================== FPS =========================== \\
@@ -347,7 +348,6 @@ export default class Play extends Phaser.Scene {
         const distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, worldX, worldY);
         const duration = 2 * distance;
         const rise = 0.5 * distance;
-
         const sensorRadius = 25;
         const sensorBounds = new Phaser.Geom.Circle(worldX, worldY, sensorRadius);
 
@@ -355,8 +355,7 @@ export default class Play extends Phaser.Scene {
             targets: this.target,
             props: {
                 x: { from: this.player.x, to: worldX, duration: duration },
-                y: { from: this.player.y, to: worldY, duration: duration },
-        
+                y: { from: this.player.y, to: worldY, duration: duration }, 
                 z: {
                     from: 0,
                     to: -rise,
@@ -406,7 +405,13 @@ export default class Play extends Phaser.Scene {
     clearNAEnemy = () => this.dispatch(clearNonAggressiveEnemy()); 
     clearNPC = () => EventEmitter.emit('clear-npc'); 
     combatEngaged = (bool) => {
-        if (bool) { this.combat = true; } else { this.combat = false; };
+        if (bool) { 
+            this.combat = true; 
+            this.actionBar.setVisible(true);
+        } else { 
+            this.combat = false; 
+            this.actionBar.setVisible(false);
+        };
         this.dispatch(getCombatFetch(bool));
     };
     drinkFlask = () => this.dispatch(getDrinkFirewaterFetch(this.state.player._id));
@@ -550,6 +555,7 @@ export default class Play extends Phaser.Scene {
 
         this.playerLight.setPosition(this.player.x, this.player.y);
         this.fpsText.setText('FPS: ' + this.game.loop.actualFps.toFixed(2));
+        // this.actionBar.update(this, this.game.loop.delta, this.game.loop.time);
 
         // this.computerFov();
         // if (this.vision) this.vision.setPosition(this.player.x, this.player.y);

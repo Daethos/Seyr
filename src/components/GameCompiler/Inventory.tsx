@@ -14,6 +14,7 @@ import { Draggable } from 'react-beautiful-dnd'
 import { useDispatch } from 'react-redux';
 import { getAsceanAndInventoryFetch, getOnlyInventoryFetch, setCurrency } from '../../game/reducers/gameState';
 import { checkPlayerTrait, checkTraits } from './PlayerTraits';
+import useGameSounds from './Sounds';
 
 interface Props {
     inventory: any;
@@ -34,6 +35,7 @@ interface Props {
 
 const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, gameState, story, compare, setHighlighted, highlighted }: Props) => {
     const dispatch = useDispatch();
+    const { playEquip, playUnequip } = useGameSounds(0.3);
     const [inventoryModalShow, setInventoryModalShow] = useState(false);
     const [removeModalShow, setRemoveModalShow] = useState<boolean>(false);
     const [forgeModalShow, setForgeModalShow] = useState<boolean>(false);
@@ -215,6 +217,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             return;
         };
         try {
+            playUnequip();
             setIsLoading(true);
             setLoadingContent(`Forging A Greater ${inventory?.name}`);
             const matches = bag.filter((item: { name: string; rarity: string; }) => item.name === inventory?.name && item?.rarity === inventory?.rarity);
@@ -238,6 +241,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 dispatch(getOnlyInventoryFetch(ascean._id));
                 dispatch(setCurrency(res.currency));
             };
+            playEquip();
         } catch (err: any) {
             console.log(err.message, '<- Error upgrading item');
         };
@@ -256,6 +260,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             setRemoveModalShow(false);
             setLoadingContent('');
             setIsLoading(false);
+            playUnequip();
             if (gameDispatch) {
                 gameDispatch({ type: GAME_ACTIONS.REMOVE_ITEM, payload: true });
             } else { // Phaser 
@@ -288,6 +293,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
             setInventoryModalShow(false);
             setIsLoading(false);
             setLoadingContent('');
+            playEquip();
             if (gameDispatch) {
                 gameDispatch({ type: GAME_ACTIONS.EQP_SWAP, payload: true });
             } else {

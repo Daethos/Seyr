@@ -55,6 +55,7 @@ export default class NPC extends Entity {
             restitution: 0.3,
             friction: 0.15,
         });
+        
         this.setExistingBody(compoundBody);                                    
         this.setFixedRotation();
         this.npcSensor = npcSensor;

@@ -77,6 +77,8 @@ export default class Player extends Entity {
         this.rootCooldown = 0;
         this.snareCooldown = 0;
         this.isStealthing = false;
+        this.tshaeralCooldown = 0;
+        this.polymorphCooldown = 0;
 
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
@@ -171,6 +173,9 @@ export default class Player extends Entity {
         
         this.sensorDisp = PLAYER.SENSOR.DISPLACEMENT;
         this.colliderDisp = PLAYER.COLLIDER.DISPLACEMENT;
+        this.stealthFx = this.scene.sound.add('stealth', { volume: this.scene.gameState.soundEffectVolume, loop: false });
+        this.caerenicFx = this.scene.sound.add('caerenic', { volume: this.scene.gameState.soundEffectVolume, loop: false });
+        this.stalwartFx = this.scene.sound.add('stalwart', { volume: this.scene.gameState.soundEffectVolume, loop: false });
 
         // const helmetName = scene?.state?.player?.helmet.imgURL.split('/')[2].split('.')[0];
         // const chestName = scene?.state?.player?.chest.imgURL.split('/')[2].split('.')[0];
@@ -357,7 +362,7 @@ export default class Player extends Entity {
     }; 
 
     enterCombat = (other) => {
-        console.log('Setting Up Enemy on Player End')
+        console.log('%c Setting Up Enemy on Player End', 'color: gold')
         this.scene.setupEnemy(other.gameObjectB);
         this.actionTarget = other;
         this.attacking = other.gameObjectB;
@@ -404,13 +409,6 @@ export default class Player extends Entity {
                     if (!isNewEnemy) return;
                     if (this.shouldPlayerEnterCombat(other.gameObjectB)) {
                         console.log("%c Engaging Combat in Start Collision Sensor", 'color: red')
-                        // this.scene.setupEnemy(other.gameObjectB);
-                        // this.actionTarget = other;
-                        // this.attacking = other.gameObjectB;
-                        // this.currentTarget = other.gameObjectB;
-                        // this.targetID = other.gameObjectB.enemyID;
-                        // this.scene.combatEngaged(true);
-                        // this.inCombat = true;
                         this.enterCombat(other);
                     };
                     this.touching.push(other.gameObjectB);
@@ -548,7 +546,7 @@ export default class Player extends Entity {
 
     onAttackEnter = () => {
         this.isAttacking = true;
-        this.swingReset();
+        this.swingReset(States.ATTACK);
         this.scene.useStamina(PLAYER.STAMINA.ATTACK);
     }; 
     onAttackUpdate = (dt) => {
@@ -564,7 +562,7 @@ export default class Player extends Entity {
 
     onCounterEnter = () => {
         this.isCountering = true;    
-        this.swingReset();
+        this.swingReset(States.COUNTER);
         this.scene.useStamina(PLAYER.STAMINA.COUNTER);
     };
     onCounterUpdate = (dt) => {
@@ -581,7 +579,7 @@ export default class Player extends Entity {
 
     onPostureEnter = () => {
         this.isPosturing = true;
-        this.swingReset();
+        this.swingReset(States.POSTURE);
         this.scene.useStamina(PLAYER.STAMINA.POSTURE);
     };
     onPostureUpdate = (dt) => {
@@ -597,7 +595,7 @@ export default class Player extends Entity {
 
     onRollEnter = () => {
         this.isRolling = true;
-        if (this.inCombat) this.swingReset();
+        if (this.inCombat) this.swingReset(States.ROLL);
         this.scene.useStamina(PLAYER.STAMINA.ROLL);
         this.body.parts[2].position.y += this.sensorDisp;
         this.body.parts[2].circleRadius = PLAYER.SENSOR.EVADE;
@@ -717,6 +715,7 @@ export default class Player extends Entity {
             clearStealth(this.spriteWeapon);
             clearStealth(this.spriteShield);
         };
+        this.stealthFx.play();    
     };
 
     onTshaeralEnter = () => {
@@ -840,6 +839,7 @@ export default class Player extends Entity {
     onPolymorphingExit = () => {
         if (this.polymorphSuccess) {
             this.scene.polymorph(this.attacking.enemyID);
+            this.setTimeEvent('polymorphCooldown', 4000);    
             screenShake(this.scene);
             this.polymorphSuccess = false;
         };
@@ -870,13 +870,17 @@ export default class Player extends Entity {
 
     setTimeEvent = (cooldown, limit = 30000) => {
         this[cooldown] = limit;
+        const type = cooldown.split('Cooldown')[0];
         const interval = 1000;
         let time = 0;
+        this.scene.actionBar.setCurrent(time, limit, type);
         const timer = this.scene.time.addEvent({
             delay: interval,
             callback: () => {
                 time += interval;
+                this.scene.actionBar.setCurrent(time, limit, type);
                 if (time >= limit || !this.inCombat) {
+                    if (!this.inCombat) this.scene.actionBar.setCurrent(limit, limit, type);
                     this[cooldown] = 0;
                     timer.remove(false);
                     timer.destroy();
@@ -887,11 +891,27 @@ export default class Player extends Entity {
         });
     };
 
-    swingReset = () => {
+    swingReset = (type) => {
         this.canSwing = false;
         this.scene.time.delayedCall(this.swingTimer, () => {
             this.canSwing = true;
         }, null, this);
+        let time = 0;
+        this.scene.actionBar.setCurrent(time, this.swingTimer, type);
+        const swingTime = this.scene.time.addEvent({
+            delay: this.scene.game.loop.delta,
+            callback: () => {
+                if (time >= this.swingTimer) {
+                    swingTime.remove(false);
+                    swingTime.destroy();
+                    return;
+                };
+                time += this.scene.game.loop.delta; // 16.667ms~ / this.swingTimer ?? 
+                this.scene.actionBar.setCurrent(time, this.swingTimer, type);
+            },
+            callbackScope: this,
+            loop: true,
+        });
     };
 
     checkTargets = () => {
@@ -1119,14 +1139,14 @@ export default class Player extends Entity {
             };
             if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.snare.V) && this.rootCooldown === 0) {
                 this.scene.root();
-                // this.setTimeEvent('rootCooldown');
+                this.setTimeEvent('rootCooldown', 6000);
                 screenShake(this.scene);
             };
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.snare.V) && this.snareCooldown === 0) {
                 this.scene.snare(this.attacking.enemyID);
-                this.setTimeEvent('snareCooldown', 10000);
+                this.setTimeEvent('snareCooldown', 6000);
             };
-            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && !this.isMoving) { // && this.polymorphCooldown === 0
+            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && !this.isMoving && this.polymorphCooldown === 0) { // && this.polymorphCooldown === 0
                 this.stateMachine.setState(States.POLYMORPHING);
             };
             if (Phaser.Input.Keyboard.JustDown(this.inputKeys.pray.R) && this.invokeCooldown === 0) {
@@ -1134,8 +1154,9 @@ export default class Player extends Entity {
                 this.setTimeEvent('invokeCooldown');
                 this.stateMachine.setState(States.INVOKE);
             };
-            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F) && this.stamina >= PLAYER.STAMINA.TSHAER) { // this.tshaeralCooldown === 0
+            if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.consume.F) && this.stamina >= PLAYER.STAMINA.TSHAER && this.tshaeralCooldown === 0) { // this.tshaeralCooldown === 0
                 this.stateMachine.setState(States.TSHAERAL);
+                this.setTimeEvent('tshaeralCooldown', 15000);
                 this.scene.time.addEvent({
                     delay: 2000,
                     callback: () => {
@@ -1167,6 +1188,7 @@ export default class Player extends Entity {
 
         if (this.inputKeys.shift.SHIFT.isDown && Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {
             this.isCaerenic = this.isCaerenic ? false : true;
+            this.caerenicFx.play();
             if (this.isCaerenic) {
                 this.scene.caerenic(true);
                 this.setGlow(this, true);
@@ -1180,6 +1202,7 @@ export default class Player extends Entity {
 
         if (Phaser.Input.Keyboard.JustDown(this.inputKeys.stalwart.G)) {
             this.isStalwart = this.isStalwart ? false : true;
+            this.stalwartFx.play();
             if (this.isStalwart) {
                 this.scene.stalwart(true);
             } else {

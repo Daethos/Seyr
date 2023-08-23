@@ -40,7 +40,7 @@ export const SoundEffects: SoundEffect[] = [
     },
     {
         name: 'Earth',
-        url: process.env.PUBLIC_URL + '/sounds/earth-magic.mp3',
+        url: process.env.PUBLIC_URL + '/sounds/earth-magic.wav',
         volume: 0.3,
     },
     {
@@ -55,7 +55,7 @@ export const SoundEffects: SoundEffect[] = [
     },
     {
         name: 'Lightning',
-        url: process.env.PUBLIC_URL + '/sounds/lightning-magic.mp3',
+        url: process.env.PUBLIC_URL + '/sounds/lightning-magic.wav',
         volume: 0.3,
     },
     {
@@ -113,6 +113,21 @@ export const SoundEffects: SoundEffect[] = [
         url: process.env.PUBLIC_URL + '/sounds/wind-magic.mp3',
         volume: 0.3,
     },
+    {
+        name: 'transaction',
+        url: process.env.PUBLIC_URL + '/sounds/buy_sell.wav',
+        volume: 0.3,
+    },
+    {
+        name: 'equip',
+        url: process.env.PUBLIC_URL + '/sounds/equip.wav',
+        volume: 0.3,
+    },
+    {
+        name: 'unequip',
+        url: process.env.PUBLIC_URL + '/sounds/unequip.wav',
+        volume: 0.3,
+    }
 ];
 
 export const useSoundEffect = (effect: any) => {
