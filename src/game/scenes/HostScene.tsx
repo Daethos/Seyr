@@ -45,29 +45,16 @@ const HostScene = () => {
             dispatch(setCurrentGame(false)); 
             dispatch(setClearGame());
             dispatch(setShowPlayer(!gameState.showPlayer));
-            // gameRef.current.scene.getScene('Play').scene.restart();
-
-            // const scenes = gameRef.current.scene.getScenes(true);
-            // console.log(scenes, 'Scenes')
-            // scenes.forEach((scene: Phaser.Scene) => {
-            //     console.log(scene, 'Scene')
-            //     scene.scene.stop();
-            //     scene.children.each((child: any) => {
-            //         console.log(child, 'Child')
-            //         child.destroy();
-            //     });
-            //     scene.scene.remove();
-            // });
-
             const game = gameRef.current;
-            console.log(game, "Game Being Destroyed")
             const scene = game.scene.getScene('Play');
             for (let i = 0; i < scene.enemies.length; i++) {
                 scene.enemies[i].cleanUp();
             };
+            for (let i = 0; i < scene.npcs.length; i++) {
+                scene.npcs[i].cleanUp();
+            };
             scene.player.cleanUp();
             scene.cleanUp();
-            console.log(scene, "Scene Being Destroyed")
             while (game.firstChild) {
                 game.removeChild(game.firstChild);
             };
@@ -76,7 +63,7 @@ const HostScene = () => {
             dispatch(setPhaserGameChange(true));
             setTimeout(() => {
                 startGame();
-            }, 2000)
+            }, 500)
         } catch (err: any) {
             console.log(err.message, 'Error Restarting Game');
         };

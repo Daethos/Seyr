@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import EventEmitter from "../phaser/EventEmitter";
 
 let idCount = 0;
-if (idCount === 8) idCount = 0;
 
 export default class NPC extends Entity { 
 
@@ -14,6 +13,7 @@ export default class NPC extends Entity {
         let { scene } = data;
         super({ ...data, name: "enemy", ascean: scene.state.computer, health: scene.state.newComputerHealth }); 
         this.scene = scene;
+        if (idCount >= 8) idCount = 0;
         this.id = idCount++;
         this.scene.add.existing(this);
         this.enemyID = uuidv4();
@@ -25,13 +25,13 @@ export default class NPC extends Entity {
         this.stateMachine = new StateMachine(this, 'npc');
         this.stateMachine
             .addState(States.IDLE, {
-                onEnter: this.onIdleEnter.bind(this), 
-                onExit: this.onIdleExit.bind(this),
+                onEnter: this.onIdleEnter, 
+                onExit: this.onIdleExit,
             }) 
             .addState(States.AWARE, {
-                onEnter: this.onAwarenessEnter.bind(this),
-                onUpdate: this.onAwarenessUpdate.bind(this),
-                onExit: this.onAwarenessExit.bind(this),
+                onEnter: this.onAwarenessEnter,
+                onUpdate: this.onAwarenessUpdate,
+                onExit: this.onAwarenessExit,
             }) 
 
         this.stateMachine.setState(States.IDLE);
@@ -62,18 +62,21 @@ export default class NPC extends Entity {
         this.npcCollision(npcSensor); 
     }; 
 
+    cleanUp() {
+        EventEmitter.off('npc-fetched', this.npcFetched);
+    };
+
     createNPC = () => {
-        EventEmitter.on('npc-fetched', this.npcFetchedFinishedListener);
+        EventEmitter.on('npc-fetched', this.npcFetched);
         EventEmitter.emit('fetch-npc', { enemyID: this.enemyID, npcType: this.npcType });
     };
 
-    npcFetchedFinishedListener(e) {
+    npcFetched = (e) => {
         if (this.enemyID !== e.enemyID) return;
         this.ascean = e.game;
         this.health = e.combat.attributes.healthTotal;
         this.combatStats = e.combat;
         this.healthbar = new HealthBar(this.scene, this.x, this.y, this.health);
-        EventEmitter.off('npc-fetched', this.npcFetchedFinishedListener);
     };
 
     npcCollision = (npcSensor) => {

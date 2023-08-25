@@ -196,19 +196,13 @@ export default class Enemy extends Entity {
     };
 
     cleanUp() {
-        EventEmitter.off('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
+        EventEmitter.off('update-combat-data', this.combatDataUpdate);
         EventEmitter.off('update-combat', this.combatDataUpdate); 
         EventEmitter.off('personal-update', this.personalUpdate);    
     };
 
-    // destroy() {
-    //     EventEmitter.off('update-combat-data', this.combatDataUpdate);
-    //     EventEmitter.off('update-combat', this.combatDataUpdate);
-    //     EventEmitter.off('personal-update', this.personalUpdate);
-    // };
-
     enemyStateListener() {
-        EventEmitter.on('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
+        EventEmitter.on('update-combat-data', this.combatDataUpdate);
         EventEmitter.on('update-combat', this.combatDataUpdate); 
         EventEmitter.on('personal-update', this.personalUpdate);
     };

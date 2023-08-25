@@ -334,7 +334,6 @@ export default class Play extends Phaser.Scene {
     // ================== Listeners ================== \\
 
     cleanUp() {
-        console.log('Cleaning Up Play Emitters')
         EventEmitter.off('enemyLootDrop', this.enemyDrops);
         EventEmitter.off('aggressive-enemy', this.enemyAggro);
     };
@@ -434,7 +433,7 @@ export default class Play extends Phaser.Scene {
         this.dispatch(getEnemySetupFetch(data));
     };
     setupNPC = (npc) => {
-        const data = { id: npc.npcID, game: npc.ascean, enemy: npc.combatStats, health: npc.health, type: npc.npcType };
+        const data = { id: npc.id, game: npc.ascean, enemy: npc.combatStats, health: npc.health, type: npc.npcType };
         this.dispatch(getNpcSetupFetch(data));
     };
     showDialog = (dialog) => EventEmitter.emit('show-dialog', dialog);
@@ -563,8 +562,14 @@ export default class Play extends Phaser.Scene {
     // ================== Update ================== \\
     update() {
         this.player.update(); 
-        this.enemies.forEach((enemy) => enemy.update());
-        this.npcs.forEach((npc) => npc.update());
+        for (let i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].update();
+        };
+        for (let i = 0; i < this.npcs.length; i++) {
+            this.npcs[i].update();
+        };
+        // this.enemies.forEach((enemy) => enemy.update());
+        // this.npcs.forEach((npc) => npc.update());
         this.combatMachine.processor();
 
         this.playerLight.setPosition(this.player.x, this.player.y);
