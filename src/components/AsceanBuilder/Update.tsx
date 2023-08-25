@@ -12,7 +12,7 @@ const Update = ({ ascean, symbol }: Props) => {
     const [updateModalShow, setUpdateModalShow] = useState<boolean>(false);
     return (
         <>
-        <Button variant="outline" style={{ color: 'purple', marginLeft: '-8px'}} className='' onClick={() => setUpdateModalShow(true)}>{symbol}</Button>
+        <Button variant="outline" style={{ color: 'blueviolet', marginLeft: '-8px', float: 'right' }} className='' onClick={() => setUpdateModalShow(true)}>{symbol}</Button>
         <Modal show={updateModalShow} onHide={() => setUpdateModalShow(false)} centered aria-labelledby="contained-modal-title-vcenter" id="modal-update">
         <Modal.Body id="modal-update" className="equipment-modal" style={{ color: "gold" }}>
             Do you wish to Update {ascean.name} ?
@@ -20,12 +20,12 @@ const Update = ({ ascean, symbol }: Props) => {
             <button 
             className="btn" 
             value={ascean._id} 
-            style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}>
+            style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '25px' }}>
                 <h3><>Edit </>
                 <img 
                 src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} 
                 alt={ascean.origin + ascean.sex} 
-                style={{ width: 100 + 'px', height: 100 + 'px', borderRadius: 50 + '%', border: 2 + 'px solid purple' }}
+                style={{ width: '100px', height: '100px', borderRadius: '50%', border: '2px solid purple' }}
                 /> 
                 <> {ascean.name}</>
                 </h3>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Phaser from "phaser"; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
 import CombatUI from '../ui/CombatUI';
@@ -37,39 +37,7 @@ const HostScene = () => {
 
     useEffect(() => {
         updateCombatListener(combatState);
-    }, [combatState]);
-
-    window.addEventListener('popstate', () => {
-        clearGame();
-    });
-
-    const clearGame = (): void => {
-        const currentGameRef = gameRef.current; // Store the reference locally
-
-        if (currentGameRef) {
-            const gameDiv = currentGameRef; // You can use currentGameRef directly
-            console.log(gameDiv, 'popstate in HostScene');
-
-            while (gameDiv.firstChild) {
-                gameDiv.removeChild(gameDiv.firstChild);
-            };
-
-            dispatch(setCurrentGame(false));
-            currentGameRef.destroy(true);
-            gameRef.current = null;
-        };
-        // const gameDiv = gameRef.current;
-        // console.log(gameDiv, 'popstate in HostScene');
-        
-        // while (gameDiv && gameDiv.firstChild) {
-        //     gameDiv.removeChild(gameDiv.firstChild);
-        // };
-        // dispatch(setCurrentGame(false));
-        
-        // if (!gameRef.current) return;
-        // gameRef.current.destroy(true);
-        // gameRef.current = null;
-    };
+    }, [combatState]); 
 
     const restartGame = async (): Promise<void> => {
         try {

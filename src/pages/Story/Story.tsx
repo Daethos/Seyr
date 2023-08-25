@@ -2,9 +2,9 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import HostScene from '../../game/scenes/HostScene';
 import { useDispatch, useSelector } from 'react-redux';
-import { getGameFetch, setGameClear } from '../../game/reducers/gameState';
+import { getGameFetch } from '../../game/reducers/gameState';
 import EventEmitter from '../../game/phaser/EventEmitter';
-import { getPhaserAssets, setPhaserGameChange } from '../../game/reducers/phaserState';
+import { getPhaserAssets } from '../../game/reducers/phaserState';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -30,11 +30,6 @@ const Story = () => {
     const dispatch = useDispatch();
     const gameChange = useSelector((state: any) => state.phaser.gameChange); 
 
-    window.addEventListener('popstate', () => {
-        console.log('popstate in Story')
-        dispatch(setGameClear());
-        dispatch(setPhaserGameChange(false));
-    });
 
     useEffect(() => {
         fetchData(); 

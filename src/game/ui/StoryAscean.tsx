@@ -463,14 +463,14 @@ const StoryAscean = ({ ascean, asceanViews, restartGame }: Props) => {
                         Vibration Time ({gameState.vibrationTime})
                         <span style={{ float: "right" }}></span>
                     </h6>
-                    <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} /><br />
-                    <Button variant='' style={{ color: '#fdf6d8', position: 'absolute', marginLeft: '5%' }} onClick={() => setShow(true)}>Reset Game</Button>
+                    <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} /><br /><br />
+                    <Button variant='' style={{ color: 'red', position: 'absolute', marginLeft: '5%' }} onClick={() => setShow(true)}>Reset Scene</Button>
                     <Modal show={show} onHide={() => setShow(false)} style={{ top: '-25%', zIndex: 9999 }} centered>
                         <Modal.Header closeButton>
-                            <Modal.Title style={{ color: 'red' }}>Reset Game</Modal.Title>
+                            <Modal.Title style={{ color: 'red' }}>Reset Scene</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <p>Are you sure you want to reset the game?</p>
+                            <p>Are you sure you want to reset the scene?</p>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant='' style={{ color: 'gold' }} onClick={() => setShow(false)}>No</Button>

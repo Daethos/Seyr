@@ -51,8 +51,8 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
             <>
                 {/* <AsceanModal ascean={ascean} link={'/Solo/'} symbol={Symbols.play} /> */}
                 <AsceanModal ascean={ascean} link={'/Story/'} symbol={Symbols.phaser} />
-                <Update ascean={ascean} symbol={Symbols.update} />
                 <Delete ascean={ascean} deleteAscean={deleteAscean} />
+                <Update ascean={ascean} symbol={Symbols.update} />
                 {Symbols.space}
             </>
         ) : ( '' ) }

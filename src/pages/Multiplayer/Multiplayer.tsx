@@ -35,7 +35,6 @@ interface Props {
 };
 
 const Multiplayer = ({ user }: Props) => {
-    const [assets, setAssets] = useState<any>([]);
     const dispatch = useDispatch();
     const gameChange = useSelector((state: any) => state.game.gameChange);
     const asceans = useSelector((state: any) => state.user.ascean) as Player[];
