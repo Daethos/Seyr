@@ -133,6 +133,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.isPolymorphed = false;
         this.isRooted = false;
         this.isSnared = false;
+
+        // console.log(this.body, this.anims, "Body and Anims")
     };
 
     get position() {
@@ -187,6 +189,8 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     clearAnimations = () => {
+        console.log(this.body, this.anims, 'Clearing Animations')
+        if (!this.anims) return;
         if (this.anims.currentAnim) {
             // console.log(`Clearing ${this.anims.currentAnim.key} from ${this.ascean.name}`); 
             this.anims.stop(this.anims.currentAnim.key);

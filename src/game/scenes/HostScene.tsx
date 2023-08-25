@@ -15,7 +15,7 @@ import { CombatData } from '../../components/GameCompiler/CombatStore';
 import { LootDropUI } from '../ui/LootDropUI';
 import { StoryDialog } from '../ui/StoryDialog';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearNpc, getCombatTimerFetch, setToggleDamaged } from '../reducers/combatState';
+import { clearNpc, getCombatTimerFetch, setClearGame, setToggleDamaged } from '../reducers/combatState';
 import { setShowDialog, setMerchantEquipment, setShowLoot, setGameTimer, setStaminaPercentage, setAsceanViews, setShowPlayer, setDialogTag, setPauseState, setCurrentGame, setScrollEnabled, setCurrentNodeIndex, setGameChange } from '../reducers/gameState';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
 import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
@@ -24,7 +24,7 @@ import { setPhaserGameChange } from '../reducers/phaserState';
 
 const HostScene = () => {
     const dispatch = useDispatch();
-    const gameRef = useRef<any>({}); 
+    const gameRef = useRef<Phaser.Game | null | any>(null); 
     const assets = useSelector((state: any) => state.phaser.assets);
     const combatState = useSelector((state: any) => state.combat);
     const gameState = useSelector((state: any) => state.game);
@@ -43,16 +43,40 @@ const HostScene = () => {
         try {
             dispatch(setPhaserGameChange(false));
             dispatch(setCurrentGame(false)); 
+            dispatch(setClearGame());
             dispatch(setShowPlayer(!gameState.showPlayer));
-            while (gameRef.current.firstChild) {
-                gameRef.current.removeChild(gameRef.current.firstChild);
+            // gameRef.current.scene.getScene('Play').scene.restart();
+
+            // const scenes = gameRef.current.scene.getScenes(true);
+            // console.log(scenes, 'Scenes')
+            // scenes.forEach((scene: Phaser.Scene) => {
+            //     console.log(scene, 'Scene')
+            //     scene.scene.stop();
+            //     scene.children.each((child: any) => {
+            //         console.log(child, 'Child')
+            //         child.destroy();
+            //     });
+            //     scene.scene.remove();
+            // });
+
+            const game = gameRef.current;
+            console.log(game, "Game Being Destroyed")
+            const scene = game.scene.getScene('Play');
+            for (let i = 0; i < scene.enemies.length; i++) {
+                scene.enemies[i].cleanUp();
             };
-            gameRef.current.destroy(true);
+            scene.player.cleanUp();
+            scene.cleanUp();
+            console.log(scene, "Scene Being Destroyed")
+            while (game.firstChild) {
+                game.removeChild(game.firstChild);
+            };
+            game.destroy(true);
             gameRef.current = null;
             dispatch(setPhaserGameChange(true));
             setTimeout(() => {
                 startGame();
-            }, 500)
+            }, 2000)
         } catch (err: any) {
             console.log(err.message, 'Error Restarting Game');
         };

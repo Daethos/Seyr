@@ -195,6 +195,18 @@ export default class Enemy extends Entity {
         this.enemyCollision(enemySensor);
     };
 
+    cleanUp() {
+        EventEmitter.off('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
+        EventEmitter.off('update-combat', this.combatDataUpdate); 
+        EventEmitter.off('personal-update', this.personalUpdate);    
+    };
+
+    // destroy() {
+    //     EventEmitter.off('update-combat-data', this.combatDataUpdate);
+    //     EventEmitter.off('update-combat', this.combatDataUpdate);
+    //     EventEmitter.off('personal-update', this.personalUpdate);
+    // };
+
     enemyStateListener() {
         EventEmitter.on('update-combat-data', this.combatDataUpdate); // Formerly 'update-combat'
         EventEmitter.on('update-combat', this.combatDataUpdate); 
@@ -818,6 +830,7 @@ export default class Enemy extends Entity {
         console.log(`%c ${this.ascean.name} Has Been Polymorphed`, 'color: #00ccff')
         this.isPolymorphed = true;
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Polymorphed', 1500, 'effect');
+        console.log(this.body, this.anims, "Body and Anims getting polymorphed")
         this.clearAnimations();
         this.anims.pause();
         this.anims.play('rabbit_idle_down', true);

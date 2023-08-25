@@ -40,7 +40,7 @@ const WorldMap = require('./services/worldServices');
 const port = process.env.PORT || 3001;
 const server = app.listen(port, function() {
   console.log(`Express app listening on port ${port}`);
-}); // https://ascea.herokuapp.com || http://localhost:3000
+});
 const io = require('socket.io')(server, {
     transports: ['websocket'],
     maxHttpBufferSize: 1e8,

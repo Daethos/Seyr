@@ -23,6 +23,10 @@ export default class LootDrop extends Phaser.Physics.Matter.Image {
         this.setupListener();
     }; 
 
+    cleanUp() {
+        EventEmitter.off('destroy-lootdrop', this.destroyLootDrop);
+    };
+
     private setupCollider = (): void => {
         const circleCollider = Bodies.circle(this.x, this.y, 12, {
           isSensor: false,
@@ -32,16 +36,14 @@ export default class LootDrop extends Phaser.Physics.Matter.Image {
         this.setStatic(true);
     };
 
-    private setupListener = (): void => {
-        EventEmitter.on('destroy-lootdrop', (e) => {
-            if (e === this._id) {
-                this.destroyLootDrop();
-            };
-        });
-    };
+
+    private setupListener = () => EventEmitter.on('destroy-lootdrop', this.destroyLootDrop);
     
-    private destroyLootDrop = (): void => {
-        this.destroy();
+    private destroyLootDrop = (e: any): void => {
+        if (e === this._id) {
+            this.cleanUp();
+            this.destroy();
+        };
     }; 
 };
 

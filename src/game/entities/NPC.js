@@ -63,7 +63,7 @@ export default class NPC extends Entity {
     }; 
 
     createNPC = () => {
-        EventEmitter.on('npc-fetched', this.npcFetchedFinishedListener.bind(this));
+        EventEmitter.on('npc-fetched', this.npcFetchedFinishedListener);
         EventEmitter.emit('fetch-npc', { enemyID: this.enemyID, npcType: this.npcType });
     };
 
@@ -73,7 +73,7 @@ export default class NPC extends Entity {
         this.health = e.combat.attributes.healthTotal;
         this.combatStats = e.combat;
         this.healthbar = new HealthBar(this.scene, this.x, this.y, this.health);
-        EventEmitter.off('npc-fetched', this.npcFetchedFinishedListener.bind(this));
+        EventEmitter.off('npc-fetched', this.npcFetchedFinishedListener);
     };
 
     npcCollision = (npcSensor) => {

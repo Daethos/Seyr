@@ -395,6 +395,26 @@ const combatSlice = createSlice({
 
         // ==================== Noncombat Resolution Concerns ==================== \\
 
+        setClearGame: (state) => {
+            return {
+                ...state,
+                weapons: [state.weaponOne, state.weaponTwo, state.weaponThree],
+                playerDamageType: state.weaponOne.damage_type[0],
+                playerDefense: state.playerDefenseDefault,
+                playerWin: false,
+                computerWin: false,
+                combatEngaged: false,
+                enemyPersuaded: false,
+                instantStatus: false,
+                combatRound: 0,
+                sessionRound: 0,
+                computer: null,
+                isEnemy: false,
+                isStalwart: false,
+                isCaerenic: false,
+            };
+        },
+
         setPlayerLuckout: (state, action) => {
             return {
                 ...state,
@@ -453,7 +473,8 @@ export const {
     getDrainFetch,
     getRemoveEffectFetch,
     getHealthFetch,
-
+    
+    setClearGame,
     setCombatPlayer,
     setEnemy,
     setNpc,

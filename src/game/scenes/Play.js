@@ -333,8 +333,22 @@ export default class Play extends Phaser.Scene {
 
     // ================== Listeners ================== \\
 
-    enemyLootDropListener = () => EventEmitter.on('enemyLootDrop', (e) => { e.drops.forEach(drop => this.lootDrops.push(new LootDrop({ scene:this, enemyID: e.enemyID, drop }))); });
-    enemyStateListener = () => EventEmitter.on('aggressive-enemy', (e) => { this.enemies.forEach(enemy => enemy.enemyID === e.id ? enemy.isAggressive = e.isAggressive : null ); });
+    cleanUp() {
+        console.log('Cleaning Up Play Emitters')
+        EventEmitter.off('enemyLootDrop', this.enemyDrops);
+        EventEmitter.off('aggressive-enemy', this.enemyAggro);
+    };
+
+    enemyLootDropListener = () => EventEmitter.on('enemyLootDrop', this.enemyDrops);
+    enemyDrops = (e) => {
+        e.drops.forEach(drop => this.lootDrops.push( new LootDrop({ scene: this, enemyID: e.enemyID, drop }) ));
+    };
+
+    enemyStateListener = () => EventEmitter.on('aggressive-enemy', this.enemyAggro);
+    enemyAggro = (e) => {
+        this.enemies.forEach(enemy => enemy.enemyID === e.id ? enemy.isAggressive = e.isAggressive : null);
+    };
+
     staminaListener = () => EventEmitter.on('updated-stamina', (e) => this.player.stamina = e); 
     stateListener = () => EventEmitter.on('update-combat-data', (e) => this.state = e); 
 

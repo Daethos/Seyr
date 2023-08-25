@@ -230,7 +230,19 @@ export default class Player extends Entity {
         this.playerStateListener();
         this.checkLootdropCollision(playerSensor);
         this.checkNpcCollision(playerSensor);
+        console.log(this.body, this.anims, "%c Body and Anims Player")
     }; 
+
+    cleanUp() {
+        EventEmitter.off('update-combat-data', this.constantUpdate);
+        EventEmitter.off('update-combat', this.eventUpdate);
+    };
+
+    // destroy() {
+    //     console.log('Destroying Player')
+    //     EventEmitter.off('update-combat-data', this.playerStateListener);
+    //     EventEmitter.off('update-combat', this.playerStateListener);
+    // };
 
     highlightTarget(sprite) {
         this.highlight.setVisible(true);
@@ -249,65 +261,127 @@ export default class Player extends Entity {
     };
 
     playerStateListener = () => {
-        EventEmitter.on('update-combat-data', (e) => {
-            if (this.health > e.newPlayerHealth) {
-                this.isHurt = true;
-                this.clearAnimations();
-                let damage = Math.round(this.health - e.newPlayerHealth);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.computerCriticalSuccess);
-                console.log(`%c ${damage} Damage Taken by ${e?.computer?.name}`, 'color: #ff0000')
-            };
-            if (this.health < e.newPlayerHealth) {
-                let heal = Math.round(e.newPlayerHealth - this.health);
-                this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
-            };
-            if (this.currentRound !== e.combatRound) {
-                this.currentRound = e.combatRound;
-                if (this.targets.length) this.checkTargets(); // Was inside playerWin
-            };
-            this.health = e.newPlayerHealth;
-            this.healthbar.setValue(this.health);
-            if (this.healthbar.getTotal() < e.playerHealth) this.healthbar.setTotal(e.playerHealth);
-            if (e.newPlayerHealth <= 0) {
-                // this.isDead = true;
-                this.inCombat = false;
-                this.attacking = null;
-                this.anims.play('player_pray', true).on('animationcomplete', () => {
-                    this.anims.play('player_idle', true);
-                });
-            };
-            this.checkWeapons(e.weapons[0], e.playerDamageType.toLowerCase());
-        });
+        EventEmitter.on('update-combat-data', this.constantUpdate);
+        // (e) => {
+        //     if (this.health > e.newPlayerHealth) {
+        //         console.log(this, 'Body of the Player')
+        //         this.isHurt = true;
+        //         this.clearAnimations();
+        //         let damage = Math.round(this.health - e.newPlayerHealth);
+        //         this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.computerCriticalSuccess);
+        //         console.log(`%c ${damage} Damage Taken by ${e?.computer?.name}`, 'color: #ff0000')
+        //     };
+        //     if (this.health < e.newPlayerHealth) {
+        //         let heal = Math.round(e.newPlayerHealth - this.health);
+        //         this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
+        //     };
+        //     if (this.currentRound !== e.combatRound) {
+        //         this.currentRound = e.combatRound;
+        //         if (this.targets.length) this.checkTargets(); // Was inside playerWin
+        //     };
+        //     this.health = e.newPlayerHealth;
+        //     this.healthbar.setValue(this.health);
+        //     if (this.healthbar.getTotal() < e.playerHealth) this.healthbar.setTotal(e.playerHealth);
+        //     if (e.newPlayerHealth <= 0) {
+        //         // this.isDead = true;
+        //         this.inCombat = false;
+        //         this.attacking = null;
+        //         this.anims.play('player_pray', true).on('animationcomplete', () => {
+        //             this.anims.play('player_idle', true);
+        //         });
+        //     };
+        //     this.checkWeapons(e.weapons[0], e.playerDamageType.toLowerCase());
+        // });
 
-        EventEmitter.on('update-combat', (e) => {
-            if (e.computerCounterSuccess) {
-                this.stateMachine.setState(States.STUN);
-                this.scene.combatMachine.input('computerCounterSuccess', false);
-                this.specialCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Counter', 1500, 'damage', e.computerCriticalSuccess);    
-            };
-            if (e.rollSuccess) {
-                this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll', 1500, 'heal', e.criticalSuccess);
-            };
-            if (e.counterSuccess) {
-                this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter', 1500, 'heal', e.criticalSuccess);
-            };
-            if (e.computerRollSuccess) {
-                this.specialCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Roll', 1500, 'damage', e.computerCriticalSuccess);
-            };
-            if (e.newComputerHealth <= 0 && e.playerWin) {
-                if (this.isTshaering) this.isTshaering = false;
-                if (this.tshaeringTimer) {
-                    this.tshaeringTimer.remove(false);
-                    this.tshaeringTimer = null;
-                };
+        EventEmitter.on('update-combat', this.eventUpdate);
+        // (e) => {
+        //     if (e.computerCounterSuccess) {
+        //         this.stateMachine.setState(States.STUN);
+        //         this.scene.combatMachine.input('computerCounterSuccess', false);
+        //         this.specialCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Counter', 1500, 'damage', e.computerCriticalSuccess);    
+        //     };
+        //     if (e.rollSuccess) {
+        //         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll', 1500, 'heal', e.criticalSuccess);
+        //     };
+        //     if (e.counterSuccess) {
+        //         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter', 1500, 'heal', e.criticalSuccess);
+        //     };
+        //     if (e.computerRollSuccess) {
+        //         this.specialCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Roll', 1500, 'damage', e.computerCriticalSuccess);
+        //     };
+        //     if (e.newComputerHealth <= 0 && e.playerWin) {
+        //         if (this.isTshaering) this.isTshaering = false;
+        //         if (this.tshaeringTimer) {
+        //             this.tshaeringTimer.remove(false);
+        //             this.tshaeringTimer = null;
+        //         };
                 
-                this.defeatedEnemyCheck(e.enemyID);
+        //         this.defeatedEnemyCheck(e.enemyID);
                 
-                this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Victory', 3000, 'effect', true);    
-            };    
-            // this.checkTargets(); // Was inside playerWin
-        });
+        //         this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Victory', 3000, 'effect', true);    
+        //     };    
+        //     // this.checkTargets(); // Was inside playerWin
+        // });
     }; 
+
+    constantUpdate = (e) => {
+        if (this.health > e.newPlayerHealth) {
+            console.log(this, 'Body of the Player')
+            this.isHurt = true;
+            this.clearAnimations();
+            let damage = Math.round(this.health - e.newPlayerHealth);
+            this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.computerCriticalSuccess);
+            console.log(`%c ${damage} Damage Taken by ${e?.computer?.name}`, 'color: #ff0000')
+        };
+        if (this.health < e.newPlayerHealth) {
+            let heal = Math.round(e.newPlayerHealth - this.health);
+            this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, heal, 1500, 'heal');
+        };
+        if (this.currentRound !== e.combatRound) {
+            this.currentRound = e.combatRound;
+            if (this.targets.length) this.checkTargets(); // Was inside playerWin
+        };
+        this.health = e.newPlayerHealth;
+        this.healthbar.setValue(this.health);
+        if (this.healthbar.getTotal() < e.playerHealth) this.healthbar.setTotal(e.playerHealth);
+        if (e.newPlayerHealth <= 0) {
+            // this.isDead = true;
+            this.inCombat = false;
+            this.attacking = null;
+            this.anims.play('player_pray', true).on('animationcomplete', () => {
+                this.anims.play('player_idle', true);
+            });
+        };
+        this.checkWeapons(e.weapons[0], e.playerDamageType.toLowerCase());
+    };
+
+    eventUpdate = (e) => {
+        if (e.computerCounterSuccess) {
+            this.stateMachine.setState(States.STUN);
+            this.scene.combatMachine.input('computerCounterSuccess', false);
+            this.specialCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Counter', 1500, 'damage', e.computerCriticalSuccess);    
+        };
+        if (e.rollSuccess) {
+            this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Roll', 1500, 'heal', e.criticalSuccess);
+        };
+        if (e.counterSuccess) {
+            this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Counter', 1500, 'heal', e.criticalSuccess);
+        };
+        if (e.computerRollSuccess) {
+            this.specialCombatText = new ScrollingCombatText(this.scene, this.attacking?.position?.x, this.attacking?.position?.y, 'Roll', 1500, 'damage', e.computerCriticalSuccess);
+        };
+        if (e.newComputerHealth <= 0 && e.playerWin) {
+            if (this.isTshaering) this.isTshaering = false;
+            if (this.tshaeringTimer) {
+                this.tshaeringTimer.remove(false);
+                this.tshaeringTimer = null;
+            };
+            
+            this.defeatedEnemyCheck(e.enemyID);
+            
+            this.winningCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Victory', 3000, 'effect', true);    
+        };    
+    };
 
     checkWeapons = (weapon, damage) => {
         this.currentDamageType = damage;    
