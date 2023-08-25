@@ -77,6 +77,63 @@ export const gameSlice = createSlice({
         getThieverySuccessFetch: (state, _action) => {},
         getPurchaseFetch: (state, _action) => {},
 
+        // ==================== Meta Concerns ==================== \\
+
+        setGameClear: (state) => {
+            return {
+                ...state,
+                player: {} as unknown as Player,
+                dialog: {},
+                tutorial: null,
+                asceanViews: 'Settings',
+                checkLoot: false,
+                cityOption: 'Innkeep',
+                combatResolved: false,
+                currentIntent: 'challenge',
+                currentNodeIndex: 0,
+                currentNode: { id: '', text: '', options: [], npcIds: [] },
+                currentGame: false,
+                dialogTag: false,
+                gameTimer: 0,
+                gameChange: false,
+                instantStatus: false,
+                lootDrops: [] as Equipment[],
+                merchantEquipment: [],
+                pauseState: false,
+                renderedOptions: [],
+                renderedText: '',
+                scrollEnabled: false,
+                selectedWeaponIndex: 0,
+                selectedDamageTypeIndex: 0,
+                selectedPrayerIndex: 0,
+                selectedHighlight: 'Weapon',
+                showDialog: false,
+                showInventory: false,
+                showLootIds: [] as string[],
+                showLoot: false,
+                showPlayer: false,
+                traits: null,
+                asceanstate: {
+                    ascean: {},
+                    currentHealth: 0,
+                    constitution: 0,
+                    strength: 0,
+                    agility: 0,
+                    achre: 0,
+                    caeren: 0,
+                    kyosir: 0,
+                    level: 0,
+                    opponent: 0,
+                    opponentExp: 0,
+                    experience: 0,
+                    experienceNeeded: 0,
+                    mastery: '',
+                    faith: '',
+                    avarice: false,
+                }
+            };
+        },
+
         // ==================== Player Concerns ==================== \\
 
         setPlayer: (state, action) => {
@@ -270,6 +327,7 @@ export const {
     getRestoreFirewaterFetch,
     getThieverySuccessFetch,
     
+    setGameClear,
     setPlayer, 
     setSettings, 
     setInitialAsceanState,

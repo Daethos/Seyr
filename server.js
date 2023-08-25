@@ -4,7 +4,6 @@ const path = require('path');
 const logger = require('morgan');
 const favicon = require('serve-favicon');
 const zlib = require('zlib');
-
 require('./config/database');
 
 const app = express();

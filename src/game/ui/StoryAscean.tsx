@@ -4,6 +4,7 @@ import StoryHealthBar from './StoryHealthBar';
 import LevelUpModal from '../../components/GameCompiler/LevelUpModal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
 import ExperienceBar from '../../components/GameCompiler/ExperienceBar';
 import { useEffect, useState } from 'react';
 import PhaserInventoryBag from './PhaserInventoryBag';
@@ -45,9 +46,10 @@ const SETTINGS = {
 interface Props {
     ascean: Player;
     asceanViews: string;
+    restartGame: () => Promise<void>;
 };
 
-const StoryAscean = ({ ascean, asceanViews }: Props) => {
+const StoryAscean = ({ ascean, asceanViews, restartGame }: Props) => {
     const dispatch = useDispatch();
     const asceanState = useSelector((state: any) => state.game.asceanState);
     const gameState = useSelector((state: any) => state.game);
@@ -59,6 +61,7 @@ const StoryAscean = ({ ascean, asceanViews }: Props) => {
     const [playerTraitWrapper, setPlayerTraitWrapper] = useState<any>({});
     const [dragAndDropInventory, setDragAndDropInventory] = useState(ascean.inventory);
     const [highlighted, setHighlighted] = useState({ item: null as any, comparing: false });
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         playerTraits();
@@ -434,7 +437,6 @@ const StoryAscean = ({ ascean, asceanViews }: Props) => {
                     </Button>
                     </h5>
                     <br />
-
                     <h6>
                         <span style={{ float: "left" }}></span>
                         Screenshake Duration ({gameState.shake.duration})
@@ -462,7 +464,19 @@ const StoryAscean = ({ ascean, asceanViews }: Props) => {
                         <span style={{ float: "right" }}></span>
                     </h6>
                     <Form.Range value={gameState.vibrationTime} onChange={handleVibrationChange} min={0} max={1000} step={50} /><br />
-                    
+                    <Button variant='' style={{ color: '#fdf6d8', position: 'absolute', marginLeft: '5%' }} onClick={() => setShow(true)}>Reset Game</Button>
+                    <Modal show={show} onHide={() => setShow(false)} style={{ top: '-25%', zIndex: 9999 }} centered>
+                        <Modal.Header closeButton>
+                            <Modal.Title style={{ color: 'red' }}>Reset Game</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <p>Are you sure you want to reset the game?</p>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant='' style={{ color: 'gold' }} onClick={() => setShow(false)}>No</Button>
+                            <Button variant='' style={{ color: 'red' }} onClick={() => restartGame()}>Yes</Button>
+                        </Modal.Footer>
+                    </Modal>
                     <Button variant='' style={{ color: 'gold', marginTop: '80%' }} onClick={returnHome}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-return-left" viewBox="0 0 16 16">
                     <path fillRule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>

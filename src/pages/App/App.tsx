@@ -19,6 +19,7 @@ import GamePvPLobby from "../GamePvPLobby/GamePvPLobby";
 import Story from "../Story/Story";
 import GameAdmin from "../GameAdmin/GameAdmin";
 import GuestGame from "../GuestGame/GuestGame";
+import Multiplayer from "../Multiplayer/Multiplayer";
 
 export interface User {
     _id: string;
@@ -79,6 +80,7 @@ const App = () => {
                 <Route path="/edit/:asceanID" element={<EditAscean editAscean={editAscean} createSuccess={createSuccess} setCreateSuccess={setCreateSuccess} />} />
                 <Route path="/CommunityFeed" element={<CommunityFeed />} />
                 <Route path="/CommunityFeed/:focusID"  element={<CommunityFocus handleAsceanCreate={handleAsceanCreate} />} />
+                <Route path='/Multiplayer' element={<Multiplayer user={user} />} />
                 <Route path="/:username" element={<ProfilePage user={user} />} />
                 <Route path="/Authorization" element={<AuthPage handleGuest={handleGuest} handleSignUpOrLogin={handleSignUpOrLogin} />} />
             </Routes>

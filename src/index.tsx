@@ -8,6 +8,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import combatReducer from './game/reducers/combatState';
 import communityReducer from './game/reducers/communityState';
 import gameReducer from './game/reducers/gameState';
+import phaserReducer from './game/reducers/phaserState';
 import userReducer from './game/reducers/userState';
 import rootSaga from './sagas/rootSaga';
 
@@ -19,6 +20,7 @@ export const store = configureStore({
         community: communityReducer,
         user: userReducer,
         game: gameReducer,
+        phaser: phaserReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
 });

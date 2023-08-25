@@ -49,7 +49,7 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
         <div className="section-left">
         { userProfile ? ( 
             <>
-                <AsceanModal ascean={ascean} link={'/Solo/'} symbol={Symbols.play} />
+                {/* <AsceanModal ascean={ascean} link={'/Solo/'} symbol={Symbols.play} /> */}
                 <AsceanModal ascean={ascean} link={'/Story/'} symbol={Symbols.phaser} />
                 <Update ascean={ascean} symbol={Symbols.update} />
                 <Delete ascean={ascean} deleteAscean={deleteAscean} />
