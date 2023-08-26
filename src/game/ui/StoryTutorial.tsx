@@ -223,7 +223,7 @@ const Tutorial = ({ player, dispatch, tutorial }: TutorialProps) => {
                 </h6>
             ) : ( '' ) } 
             { tutorial === 'firstPhenomena' ? (
-                <Typewriter stringText={typewriterString} styling={{ position: 'absolute', overflowY: 'auto', opacity: 1, width: '65%', maxHeight: '40vh', margin: '0 auto', zIndex: 99999, scrollbarWidth: 'none' }} performAction={performAction} />
+                <Typewriter stringText={typewriterString} styling={{ position: 'absolute', overflowY: 'auto', opacity: 1, width: '65%', maxHeight: '300px', margin: '0 auto', zIndex: 99999, scrollbarWidth: 'none' }} performAction={performAction} />
             ) : ( '' ) } 
             { tutorial === 'firstShop' ? (
                 <h6 className='overlay-content' style={{ animation: "fade 1s ease-in 0.5s forwards" }}>First Shop

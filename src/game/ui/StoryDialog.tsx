@@ -223,6 +223,7 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
     const [enemyArticle, setEnemyArticle] = useState<any>('');
 
     useEffect(() => { 
+        console.log(state?.computer, "Computer in StoryDialog.tsx");
         checkLuckout();
         checkPersuasion();
         // checkMiniGame();

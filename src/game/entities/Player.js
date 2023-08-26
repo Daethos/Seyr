@@ -686,12 +686,14 @@ export default class Player extends Entity {
     onStealthEnter = () => {
         this.isStealthing = true; 
         this.stealthEffect(true);    
+        EventEmitter.emit('stealth', true);
     };
     onStealthUpdate = (dt) => {
         if (!this.isStealthing || this.currentRound > 1) this.metaMachine.setState(States.CLEAN); 
     };
     onStealthExit = () => { 
         this.stealthEffect(false);
+        EventEmitter.emit('stealth', false);
     };
 
     stealthEffect(stealth) {

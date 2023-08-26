@@ -42,6 +42,7 @@ export const gameSlice = createSlice({
         shake: { duration: 200, intensity: 1 },
         staminaPercentage: 100,
         soundEffectVolume: 0.3,
+        stealth: false,
         tutorial: null,
         vibrationTime: 150,
         asceanState: {
@@ -248,6 +249,10 @@ export const gameSlice = createSlice({
         setShowPlayer: (state, action) => {
             return { ...state, showPlayer: action.payload };
         },
+        setStealth: (state, action) => {
+            console.log(action.payload, '<- Stealth')
+            return { ...state, stealth: action.payload };
+        },
         setTutorial: (state, action) => {
             return { ...state, player: { ...state.player, tutorial: action.payload } };
         },
@@ -346,6 +351,7 @@ export const {
     setInventory, 
     setJournal, 
     setJournalEntry, 
+    setStealth,
     setStatistics, 
     setTraits, 
     setTutorial,

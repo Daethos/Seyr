@@ -6,7 +6,7 @@ import playerPortrait from '../images/player-portrait.png';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PhaserEffects from './PhaserEffects';
 import ItemPopover, { getBorderStyle, itemPopover } from './ItemPopover';
 import { setInstantStatus } from '../reducers/combatState';
@@ -19,6 +19,7 @@ interface CombatUIProps {
 
 const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
     const dispatch = useDispatch();
+    const stealth = useSelector((state: any) => state.game.stealth);
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
     const [invokeModal, setInvokeModal] = useState<boolean>(false);
     const [prayerModal, setPrayerModal] = useState<boolean>(false);
@@ -125,7 +126,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
             ) }
             <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '150px', height: '40px' }} />
             <p className='story-name'>{state.player.name}</p>
-            <ProgressBar variant="info" now={playerHealthPercentage} className='story-health-bar' />
+            <ProgressBar variant={stealth ? "black" : "info"} now={playerHealthPercentage} className='story-health-bar' />
             <p className='story-portrait'>{`${Math.round(state.newPlayerHealth)} / ${state.playerHealth} [${playerHealthPercentage}%]`}</p>
             <img src ={playerPortrait} alt="Player Portrait" className='player-portrait' />
             <ProgressBar variant="success" now={staminaPercentage} className='story-stamina-bubble'  />

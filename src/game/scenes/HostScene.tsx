@@ -16,7 +16,7 @@ import { LootDropUI } from '../ui/LootDropUI';
 import { StoryDialog } from '../ui/StoryDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearNpc, getCombatTimerFetch, setClearGame, setToggleDamaged } from '../reducers/combatState';
-import { setShowDialog, setMerchantEquipment, setShowLoot, setGameTimer, setStaminaPercentage, setAsceanViews, setShowPlayer, setDialogTag, setPauseState, setCurrentGame, setScrollEnabled, setCurrentNodeIndex, setGameChange } from '../reducers/gameState';
+import { setShowDialog, setMerchantEquipment, setShowLoot, setGameTimer, setStaminaPercentage, setAsceanViews, setShowPlayer, setDialogTag, setPauseState, setCurrentGame, setScrollEnabled, setCurrentNodeIndex, setGameChange, setStealth } from '../reducers/gameState';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
 import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
 import { config } from './Config';
@@ -189,6 +189,7 @@ const HostScene = () => {
     usePhaserEvent('show-dialog', showDialog);
     usePhaserEvent('interacting-loot', interactingLoot);
     usePhaserEvent('launch-game', launchGame);
+    usePhaserEvent('stealth', (e: boolean) => dispatch(setStealth(e)));
     usePhaserEvent('update-stamina', updateStamina);
     usePhaserEvent('update-combat-timer', updateCombatTimer);
     usePhaserEvent('update-sound', soundEffects);
