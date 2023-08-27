@@ -258,7 +258,6 @@ export default class Player extends Entity {
 
     constantUpdate = (e) => {
         if (this.health > e.newPlayerHealth) {
-            console.log(this, 'Body of the Player')
             this.isHurt = true;
             this.clearAnimations();
             let damage = Math.round(this.health - e.newPlayerHealth);
@@ -353,22 +352,14 @@ export default class Player extends Entity {
         const hasAggressiveEnemy = enemy?.isAggressive;
         const hasRemainingEnemies = this.scene.combat && this.scene.state.combatEngaged && this.inCombat;
     
-        if (hasAggressiveEnemy) {
-            if (!hasRemainingEnemies) {
-                console.log('%c Player Should Enter Combat', 'color: red')
-                return true;
-            } else {
-                console.log('%c Player Already In Combat', 'color: yellow')
-                return false;
-            };
+        if (hasAggressiveEnemy && !hasRemainingEnemies) {
+            return true;
         };
     
-        console.log('%c Player Should Not Enter Combat', 'color: blue')
         return false;
     }; 
 
     enterCombat = (other) => {
-        console.log('%c Setting Up Enemy on Player End', 'color: gold')
         this.scene.setupEnemy(other.gameObjectB);
         this.actionTarget = other;
         this.attacking = other.gameObjectB;
@@ -376,7 +367,6 @@ export default class Player extends Entity {
         this.targetID = other.gameObjectB.enemyID;
         this.scene.combatEngaged(true);
         this.highlightTarget(other.gameObjectB);
-        console.log('Entering Combat')
         this.inCombat = true;
     };
 
@@ -414,7 +404,6 @@ export default class Player extends Entity {
                     const isNewEnemy = this.isNewEnemy(other.gameObjectB);
                     if (!isNewEnemy) return;
                     if (this.shouldPlayerEnterCombat(other.gameObjectB)) {
-                        console.log("%c Engaging Combat in Start Collision Sensor", 'color: red')
                         this.enterCombat(other);
                     };
                     this.touching.push(other.gameObjectB);
@@ -448,7 +437,6 @@ export default class Player extends Entity {
             callback: (other) => {
                 this.touching = this.touching.filter(obj => obj?.enemyID !== other?.gameObjectB?.enemyID);
                 if (this.isValidEnemyCollision(other) && !this.touching.length) {
-                    console.log("No Longer Touching Any Enemy, Clearing Action Available and Triggered Action Available")
                     this.actionAvailable = false;
                     this.triggeredActionAvailable = null;
                     this.checkTargets(); // Was outside of if statement
@@ -558,7 +546,6 @@ export default class Player extends Entity {
     onAttackUpdate = (dt) => {
         if (this.frameCount === FRAME_COUNT.ATTACK_LIVE && !this.isRanged) {
             this.scene.combatMachine.input('action', 'attack');
-            console.log("Attack LIVE")
         };
         this.combatChecker(this.isAttacking);
     }; 
@@ -574,7 +561,6 @@ export default class Player extends Entity {
     onCounterUpdate = (dt) => {
         if (this.frameCount === FRAME_COUNT.COUNTER_LIVE && !this.isRanged) {
             this.scene.combatMachine.input('action', 'counter');
-            console.log("Counter LIVE")
         };
         this.combatChecker(this.isCountering);
     };
@@ -591,7 +577,6 @@ export default class Player extends Entity {
     onPostureUpdate = (dt) => {
         if (this.frameCount === FRAME_COUNT.POSTURE_LIVE && !this.isRanged) { //
             this.scene.combatMachine.input('action', 'posture');
-            console.log("Posture LIVE")
         };
         this.combatChecker(this.isPosturing);
     };
@@ -692,6 +677,7 @@ export default class Player extends Entity {
         if (!this.isStealthing || this.currentRound > 1) this.metaMachine.setState(States.CLEAN); 
     };
     onStealthExit = () => { 
+        this.isStealthing = false;
         this.stealthEffect(false);
         EventEmitter.emit('stealth', false);
     };
@@ -926,34 +912,30 @@ export default class Player extends Entity {
         const playerCombat = this.isPlayerInCombat();
         this.targets = this.targets.filter(gameObject => {
             if (gameObject.isDead || !gameObject.inCombat) { // && playerCombat
-                // console.log("Removing from targets array: [isDead || !inCombat]")
                 return false;
             };
             if (gameObject.npcType && playerCombat) {
-                // console.log("Disengaging Combat in Targets Array Check: [npcTypes, playerCombat]")
                 this.scene.combatEngaged(false);
                 this.inCombat = false;
             };
             return true;
         });
+
         if (!this.targets.length && this.scene.state.computer) {
-            console.log('%c No more targets, clearing computer', 'color: green')
             this.scene.clearNAEnemy();
         };
 
         const someInCombat = this.targets.some(gameObject => gameObject.inCombat);
         if (someInCombat && !playerCombat) {
-            // console.log("Engaging Combat in Targets Array Check: [someInCombat, !playerCombat]")
             this.scene.combatEngaged(true);
             this.inCombat = true;
         } else if (!someInCombat && playerCombat && !this.isStealthing) {
-            console.log("%c Disengaging Combat in Targets Array Check: [!someInCombat, playerCombat]", 'color: green')
             this.scene.clearNAEnemy();
             this.scene.combatEngaged(false);
             this.inCombat = false;
         };
+
         if (!this.touching.length && (this.triggeredActionAvailable || this.actionAvailable)) {
-            // console.log('Not Touching Enemies, flushing triggeredActionAvailable: ', this.triggeredActionAvailable, ' and actionAvailable: ', this.actionAvailable)
             if (this.triggeredActionAvailable) this.triggeredActionAvailable = null;
             if (this.actionAvailable) this.actionAvailable = false;
         };
@@ -1091,7 +1073,6 @@ export default class Player extends Entity {
             if (this.currentTarget) {
                 this.currentTarget.clearTint();
             };
-            console.log(this.targetIndex, 'Tab Index') 
             const newTarget = this.targets[this.targetIndex];
             this.targetIndex = this.targetIndex + 1 >= this.targets.length ? 0 : this.targetIndex + 1;
             if (!newTarget) return;

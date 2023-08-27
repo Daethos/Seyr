@@ -405,7 +405,6 @@ export default class Enemy extends Entity {
             combat.gameObjectB.currentTarget = this;
             combat.gameObjectB.inCombat = true;
             combat.gameObjectB.highlightTarget(this);
-            console.log(`%c ${this.ascean.name} engaging combat: [Collide ${when}]`, 'color: orange')
             this.scene.combatEngaged(true);
         }; 
     };
@@ -420,7 +419,6 @@ export default class Enemy extends Entity {
     }; 
 
     setStun = () => {
-        console.log("%c Player Counter Success, Enemy Is Now Stunned", 'color: #00ff00')
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Stunned', 2500, 'effect', true);
         this.isStunned = true;
     };
@@ -623,7 +621,6 @@ export default class Enemy extends Entity {
         } else {
             this.isRolling = true; 
         }; 
-        console.log(`%c ${this.ascean.name} evading ranged attack with ${evade > 50 ? 'Dodge' : 'Roll'}`, 'color: gold')
         this.handleAnimations();
     };
     onEvasionUpdate = (dt) => {
@@ -824,7 +821,6 @@ export default class Enemy extends Entity {
         console.log(`%c ${this.ascean.name} Has Been Polymorphed`, 'color: #00ccff')
         this.isPolymorphed = true;
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Polymorphed', 1500, 'effect');
-        console.log(this.body, this.anims, "Body and Anims getting polymorphed")
         this.clearAnimations();
         this.anims.pause();
         this.anims.play('rabbit_idle_down', true);
@@ -958,7 +954,7 @@ export default class Enemy extends Entity {
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Snared', 1500, 'effect');
         this.snareDuration = 3000;
         this.setTint(0x888888);
-        this.adjustSpeed(-1.5);
+        this.adjustSpeed(-2);
         this.scene.time.addEvent({
             delay: this.snareDuration,
             callback: () => {
@@ -972,7 +968,7 @@ export default class Enemy extends Entity {
     // onSnareUpdate = (dt) => {};
     onSnareExit = () => { 
         this.clearTint();
-        this.adjustSpeed(1.5);
+        this.adjustSpeed(2);
     };
 
     enemyActionSuccess = () => {
@@ -1090,7 +1086,7 @@ export default class Enemy extends Entity {
                 direction.normalize();
                 this.setVelocityY(direction.y * this.speed * 2); // 4
             };
-            if (this.attacking.position.subtract(this.position).length() > DISTANCE.THRESHOLD * multiplier) { // 225-525
+            if (this.attacking.position.subtract(this.position).length() > DISTANCE.THRESHOLD * multiplier) { // 225-525 
                 this.anims.play('player_running', true);
                 direction.normalize();
                 this.setVelocityX(direction.x * (this.speed + 0.5)); // 2.25
@@ -1142,16 +1138,14 @@ export default class Enemy extends Entity {
 
     isUnderRangedAttack = () => {
         const player = this.getEnemyParticle();
-        if (!player) return;
+        if (!player) return false;
         return (this.attacking.isRanged && this.checkEvasion(player) && !this.stateMachine.isCurrentState(States.EVADE));
     }; 
 
     currentTargetCheck = () => {
         if (this.scene.state.enemyID === this.enemyID && !this.isCurrentTarget) { // attacking.currentTarget?.enemyID
-            console.log("%c Wasn't Current Target, Now Selected as Current Target", 'color: #00ff00')
             this.isCurrentTarget = true;
         } else if (this.scene.state.enemyID !== this.enemyID && this.isCurrentTarget) {
-            console.log("%c Was Current Target, Now Deselected as Current Target", 'color: #ff0000')
             this.isCurrentTarget = false;
         };
     };
@@ -1259,9 +1253,9 @@ export default class Enemy extends Entity {
     };
  
     update() {
-        this.evaluateEnemyState(); 
         this.metaMachine.update(this.scene.sys.game.loop.delta);   
         this.stateMachine.update(this.scene.sys.game.loop.delta);
+        this.evaluateEnemyState(); 
     };
 
     combat = (target) => { 

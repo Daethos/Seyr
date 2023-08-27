@@ -136,6 +136,15 @@ io.on("connection", (socket) => {
         io.to(parsedData.user._id).emit('playerSetup', `${parsedData.user.username} has joined with ${parsedData.ascean.name}.`);
     };
 
+    const updatePlayer = (data) => {
+        const inflate = zlib.inflateSync(data).toString();
+        const parse = JSON.parse(inflate);
+        combatData = {
+            ...combatData,
+            ...parse,
+        };
+    };
+
     const computerCombat = (data) => {
         combatData = { ...combatData, ...data };
         const res = gameService.phaserActionCompiler(combatData); // data
@@ -555,6 +564,7 @@ io.on("connection", (socket) => {
     socket.on('clearCombat', clearCombat);
     socket.on('setCombat', setCombat);
     socket.on('setupPlayer', setupPlayer);
+    socket.on('updatePlayer', updatePlayer);
     socket.on('setupEnemy', setupEnemy);
     socket.on('clearEnemy', clearEnemy);
     socket.on('setupCombatData', setupCombatData);

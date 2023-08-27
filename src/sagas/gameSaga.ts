@@ -102,7 +102,23 @@ function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
     yield put(setPlayerLevelUp(resTwo.data));
     yield put(setCombatPlayer(resThree.data.data));
     yield put(setAsceanState(asceanState));
-    // TODO:FIXME: Socket Concern ??
+
+    const data = {  
+        'player': resThree.data.data.ascean, 
+        'playerHealth': resThree.data.data.ascean.health.total, 
+        'newPlayerHealth': resThree.data.data.ascean.health.current,
+        'playerAttributes': resThree.data.data.attributes,
+        'playerDefense': resThree.data.data.defense,
+        'playerDefenseDefault': resThree.data.data.defense,
+        'weapons': [resThree.data.data.combat_weapon_one, resThree.data.data.combat_weapon_two, resThree.data.data.combat_weapon_three],
+        'weaponOne': resThree.data.data.combat_weapon_one,
+        'weaponTwo': resThree.data.data.combat_weapon_two,
+        'weaponThree': resThree.data.data.combat_weapon_three,
+    };
+
+    const press = yield call(compress, data);
+    const socket = getSocketInstance();
+    socket.emit(SOCKET.UPDATE_PLAYER, press);
 };
 function* workGetDrinkFirewaterFetch(action: any): SagaIterator {
     const firewater = yield select((state) => state.game.player.firewater);

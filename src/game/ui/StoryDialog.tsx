@@ -223,10 +223,8 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
     const [enemyArticle, setEnemyArticle] = useState<any>('');
 
     useEffect(() => { 
-        console.log(state?.computer, "Computer in StoryDialog.tsx");
         checkLuckout();
         checkPersuasion();
-        // checkMiniGame();
         setNamedEnemy(nameCheck(state?.computer?.name));
         setEnemyArticle(() => {
             return ['a', 'e', 'i', 'o', 'u'].includes(state?.computer?.name.charAt(0).toLowerCase()) ? 'an' : 'a';

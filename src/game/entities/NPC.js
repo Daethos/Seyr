@@ -114,7 +114,6 @@ export default class NPC extends Entity {
     };  
 
     onAwarenessEnter = () => {
-        console.log("Aware of Player")
         this.anims.play('player_idle', true);
         this.scene.showDialog(true);
         this.setVelocity(0);

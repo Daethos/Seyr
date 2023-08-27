@@ -56,18 +56,18 @@ class Particle {
         this.scene.matterCollision.addOnCollideStart({
             objectA: [sensor],
             callback: (other) => {
-                if (other.gameObjectB && ((other.gameObjectB.name === 'enemy' && !other.gameObjectB.isDefeated && player.name === 'player') || (other.gameObjectB.name === 'player' && player.name === 'enemy'))) {
-                    if (player.name === 'player') {
-                        player.attackedTarget = other.gameObjectB;
-                        if (this.scene.state.action !== effect.action) {
-                            this.scene.combatMachine.input('action', effect.action);
-                        };
-                    } else if (player.name === 'enemy') {
-                        if (player.isCurrentTarget && this.scene.state.computerAction !== effect.action) {
-                            this.scene.combatMachine.input('computerAction', effect.action, player.enemyID);
-                        };
+                if (other.gameObjectB && player.particleEffect && other.gameObjectB.name === 'enemy' && !other.gameObjectB.isDefeated && player.name === 'player') {
+                    player.attackedTarget = other.gameObjectB;
+                    player.particleEffect.success = true;
+                    if (this.scene.state.action !== effect.action) {
+                        this.scene.combatMachine.input('action', effect.action);
                     };
-                    if (player.particleEffect && this.scene.particleManager.particles.find((particle) => particle.id === player.particleEffect.id)) player.particleEffect.success = true;
+                };
+                if (other.gameObjectB && player.particleEffect && other.gameObjectB.name === 'player' && player.name === 'enemy') {
+                    if (player.isCurrentTarget && this.scene.state.computerAction !== effect.action) {
+                        this.scene.combatMachine.input('computerAction', effect.action, player.enemyID);
+                    };
+                    player.particleEffect.success = true;
                 };
             },
             context: this.scene,

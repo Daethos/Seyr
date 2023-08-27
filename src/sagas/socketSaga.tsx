@@ -11,6 +11,7 @@ export const SOCKET = {
     DISCONNECT: 'disconnect',
     URL: API_URL, // 'https://ascea.herokuapp.com' || 'http://localhost:3000'
     SETUP_PLAYER: 'setupPlayer',
+    UPDATE_PLAYER: 'updatePlayer',
 
     SET_PHASER_AGGRESSION: 'setPhaserAggression',
     SET_COMBAT: 'setCombat',

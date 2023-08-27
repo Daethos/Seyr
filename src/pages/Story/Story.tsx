@@ -30,19 +30,17 @@ const Story = () => {
     const dispatch = useDispatch();
     const gameChange = useSelector((state: any) => state.phaser.gameChange); 
 
-
     useEffect(() => {
+        const fetchData = async (): Promise<void> => {
+            try {
+                dispatch(getGameFetch(asceanID));
+                dispatch(getPhaserAssets());
+            } catch (err: any) {
+                console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
+            };
+        };  
         fetchData(); 
     }, [asceanID, dispatch]); 
-    
-    const fetchData = async (): Promise<void> => {
-        try {
-            dispatch(getGameFetch(asceanID));
-            dispatch(getPhaserAssets());
-        } catch (err: any) {
-            console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
-        };
-    };  
 
     return (
         <div>

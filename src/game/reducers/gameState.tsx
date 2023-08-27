@@ -250,7 +250,6 @@ export const gameSlice = createSlice({
             return { ...state, showPlayer: action.payload };
         },
         setStealth: (state, action) => {
-            console.log(action.payload, '<- Stealth')
             return { ...state, stealth: action.payload };
         },
         setTutorial: (state, action) => {

@@ -2,7 +2,7 @@ const StatusEffect = require('./faithServices.js');
 
 // ====================================== HELPERS ====================================== \\
 
-const roundToTwoDecimals = (num) => {
+function roundToTwoDecimals(num) {
     const roundedNum = Number(num.toFixed(2));
     if (roundedNum.toString().match(/\.\d{3,}$/)) {
         return parseFloat(roundedNum);
@@ -10,7 +10,7 @@ const roundToTwoDecimals = (num) => {
     return roundedNum;
 };
 
-const damageTypeCompiler = (damageType, enemy, weapon, physicalDamage, magicalDamage) => {
+function damageTypeCompiler(damageType, enemy, weapon, physicalDamage, magicalDamage) {
     if (damageType === 'Blunt' || damageType === 'Fire' || damageType === 'Earth' || damageType === 'Spooky') {
         if (weapon.attack_type === 'Physical') {
             if (enemy.helmet.type === 'Plate-Mail') {
@@ -250,7 +250,7 @@ const damageTypeCompiler = (damageType, enemy, weapon, physicalDamage, magicalDa
     return { physicalDamage, magicalDamage };
 };
 
-const criticalCompiler = (player, critChance, critClearance, weapon, physicalDamage, magicalDamage, weather, glancingBlow, criticalSuccess) => {
+function criticalCompiler(player, critChance, critClearance, weapon, physicalDamage, magicalDamage, weather, glancingBlow, criticalSuccess) {
     if (weather === 'Alluring Isles') critChance -= 10;
     if (weather === 'Astralands') critChance += 10;
     if (weather === 'Kingdom') critChance += 5;
@@ -324,21 +324,21 @@ const criticalCompiler = (player, critChance, critClearance, weapon, physicalDam
     return { criticalSuccess, glancingBlow, physicalDamage, magicalDamage };
 }; 
 
-const phaserActionConcerns =  (action) => {
+function phaserActionConcerns(action) {
     if (action === 'attack' || action === 'posture' || action === 'roll') {
         return true;
     };
     return false;
 };
 
-const phaserSuccessConcerns = (counterSuccess, rollSuccess, computerCounterSuccess, computerRollSuccess) => {
+function phaserSuccessConcerns(counterSuccess, rollSuccess, computerCounterSuccess, computerRollSuccess) {
     if (counterSuccess || rollSuccess || computerCounterSuccess || computerRollSuccess) {
         return true;
     };
     return false;
 };
 
-const weatherEffectCheck = (weapon, magDam, physDam, weather, critical) => {
+function weatherEffectCheck(weapon, magDam, physDam, weather, critical) {
     let magicalDamage = magDam;
     let physicalDamage = physDam;
     switch (weather) {
@@ -421,9 +421,8 @@ const weatherEffectCheck = (weapon, magDam, physDam, weather, critical) => {
     return { magicalDamage, physicalDamage };
 };
 
-const damageTick = (data, effect, player) => {
+function damageTick(data, effect, player) {
     if (player) {
-        console.log('Player DoT against Enemy Ticking...');
         data.newComputerHealth -= effect.effect.damage * 0.33;
         if (data.newComputerHealth < 0) {
             data.newComputerHealth = 0;
@@ -431,7 +430,6 @@ const damageTick = (data, effect, player) => {
             data.playerWin = true;
         };
     } else {
-        console.log('Enemy DoT against Player Ticking...');
         data.newPlayerHealth -= effect.effect.damage * 0.33;
         if (data.newPlayerHealth < 0) {
             if (data.playerEffects.find(effect => effect.prayer === 'Denial')) {
@@ -447,20 +445,18 @@ const damageTick = (data, effect, player) => {
     return data;
 };
 
-const healTick = (data, effect, player) => {
+function healTick(data, effect, player) {
     if (player) {
-        console.log('Player HoT Ticking...')
         data.newPlayerHealth += effect.effect.healing * 0.33;
         if (data.newPlayerHealth > 0) data.computerWin = false;
     } else {
-        console.log('Enemy HoT Ticking...')
         data.newComputerHealth += effect.effect.healing * 0.33;
         if (data.newComputerHealth > 0) data.playerWin = false;
     };
     return data;
 };
 
-const statusEffectCheck = (combatData) => {
+function statusEffectCheck(combatData) {
     combatData.playerEffects = combatData.playerEffects.filter(effect => {
         const matchingWeapon = combatData.weapons.find(weapon => weapon.name === effect.weapon);
         const matchingWeaponIndex = combatData.weapons.indexOf(matchingWeapon);
@@ -511,12 +507,10 @@ const statusEffectCheck = (combatData) => {
     return combatData;
 };
 
-const applyEffect = (prayer, defense, weapon, isBuff) => {
+function applyEffect(prayer, defense, weapon, isBuff) {
     const modifier = isBuff ? 1 : -1; 
-    console.log(`${prayer.playerName} applying ${prayer.prayer} to ${isBuff ? prayer.weapon : prayer.debuffTarget}`);
     for (let key in weapon) {
         if (prayer.effect[key]) {
-            // console.log(`Modifying ${key} from ${weapon[key]} by ${prayer.effect[key] * modifier}`)
             let modifiedValue = weapon[key] + prayer.effect[key] * modifier;
             modifiedValue = roundToTwoDecimals(modifiedValue);
             weapon[key] = modifiedValue;
@@ -524,7 +518,6 @@ const applyEffect = (prayer, defense, weapon, isBuff) => {
     };
     for (let key in defense) {
         if (prayer.effect[key]) {
-            // console.log(`Modifying ${key} from ${defense[key]} by ${prayer.effect[key] * modifier}`)
             let modifiedValue = defense[key] + prayer.effect[key] * modifier;
             modifiedValue = roundToTwoDecimals(modifiedValue);
             defense[key] = modifiedValue;
@@ -533,7 +526,7 @@ const applyEffect = (prayer, defense, weapon, isBuff) => {
     return { defense, weapon };
 };
 
-const stripEffect = (prayer, defense, weapon, isDebuff) => {
+function stripEffect(prayer, defense, weapon, isDebuff) {
     const modifier = isDebuff ? 1 : -1;
     console.log(`Stripping ${prayer.prayer} from ${prayer.weapon} of ${isDebuff ? prayer.enemyName : prayer.playerName}`);
     for (let key in weapon) {
@@ -553,7 +546,7 @@ const stripEffect = (prayer, defense, weapon, isDebuff) => {
     return { defense, weapon };
 };
 
-const faithSuccess = (combatData, name, weapon, index) => {
+function faithSuccess(combatData, name, weapon, index) {
     const desc = index === 0 ? '' : 'Two'
     if (name === 'player') {
         const blessing = combatData.playerBlessing;
@@ -676,7 +669,7 @@ const faithSuccess = (combatData, name, weapon, index) => {
     return combatData;
 };
 
-const faithModCompiler = (player, faithOne, weaponOne, faithTwo, weaponTwo, amuletInfluence, trinketInfluence) => {
+function faithModCompiler(player, faithOne, weaponOne, faithTwo, weaponTwo, amuletInfluence, trinketInfluence) {
     if (player.faith === 'devoted' && weaponOne.influences[0] === 'Daethos') faithOne += 5;
     if (player.faith === 'adherent' && weaponOne.influences[0] !== 'Daethos') faithOne += 5;
     if (player.faith === 'devoted' && weaponTwo.influences[0] === 'Daethos') faithTwo += 5;
@@ -711,7 +704,7 @@ const faithModCompiler = (player, faithOne, weaponOne, faithTwo, weaponTwo, amul
     return { faithOne, faithTwo };
 };
 
-const faithCompiler = (combatData) => { // The influence will add a chance to have a special effect occur
+function faithCompiler(combatData) { // The influence will add a chance to have a special effect occur
     if (combatData.playerWin === true || combatData.computerWin === true || combatData.playerBlessing === '') return;
     
     let faithNumber = Math.floor(Math.random() * 101);
@@ -762,7 +755,7 @@ const faithCompiler = (combatData) => { // The influence will add a chance to ha
 
 // ================================= COMPUTER COMPILER FUNCTIONS ================================== \\
 
-const computerActionCompiler = (newData, playerAction, computerAction, computerCounter) => {
+function computerActionCompiler(newData, playerAction, computerAction, computerCounter) {
     if (newData.sessionRound > 50) {
         newData.sessionRound = 0;
         newData.attackWeight = 0;
@@ -885,7 +878,7 @@ const computerActionCompiler = (newData, playerAction, computerAction, computerC
     return newData;
 };
 
-const computerDualWieldCompiler = (combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
+function computerDualWieldCompiler(combatData, playerPhysicalDefenseMultiplier, playerMagicalDefenseMultiplier) { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
     const computer = combatData.computer;
     const weapons = combatData.computerWeapons;
 
@@ -1009,7 +1002,7 @@ const computerDualWieldCompiler = (combatData, playerPhysicalDefenseMultiplier, 
     return combatData;
 };
 
-const computerAttackCompiler = (combatData, computerAction) => {
+function computerAttackCompiler(combatData, computerAction) {
     if (combatData.playerWin === true) { return }
     let computerPhysicalDamage = combatData.computerWeapons[0].physical_damage;
     let computerMagicalDamage = combatData.computerWeapons[0].magical_damage;
@@ -1211,7 +1204,7 @@ const computerAttackCompiler = (combatData, computerAction) => {
     return combatData;
 }; 
     
-const computerRollCompiler = (combatData, playerAction, computerAction) => {
+function computerRollCompiler(combatData, playerAction, computerAction) {
     const computerRoll = combatData.computerWeapons[0].roll;
     let rollCatch = Math.floor(Math.random() * 101) + combatData.playerAttributes.kyosirMod;
     if (combatData.weather === 'Alluring Isles') {
@@ -1236,7 +1229,7 @@ const computerRollCompiler = (combatData, playerAction, computerAction) => {
 
 // ================================== PLAYER COMPILER FUNCTIONS ====================================== \\
 
-const dualWieldCompiler = (combatData) => { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
+function dualWieldCompiler(combatData) { // Triggers if 40+ Str/Caer for 2h, 1h + Agi/Achre Mastery and 2nd weapon is 1h
     const computer = combatData.computer;
     const weapons = combatData.weapons;
 
@@ -1355,7 +1348,7 @@ const dualWieldCompiler = (combatData) => { // Triggers if 40+ Str/Caer for 2h, 
     return combatData;
 };
     
-const attackCompiler = (combatData, playerAction) => {
+function attackCompiler(combatData, playerAction) {
     if (combatData.computerWin === true) return;
     let playerPhysicalDamage = combatData.weapons[0].physical_damage;
     let playerMagicalDamage = combatData.weapons[0].magical_damage;
@@ -1540,7 +1533,7 @@ const attackCompiler = (combatData, playerAction) => {
     return combatData;
 };
 
-const playerRollCompiler = (combatData, playerAction, computerAction) => { 
+function playerRollCompiler(combatData, playerAction, computerAction) { 
     const playerRoll = combatData.weapons[0].roll;
     let rollCatch = Math.floor(Math.random() * 101) + combatData.computerAttributes.kyosirMod;
     if (combatData.weather === 'Alluring Isles') {
@@ -1567,7 +1560,7 @@ const playerRollCompiler = (combatData, playerAction, computerAction) => {
 
 // ================================== COMBAT COMPILER FUNCTIONS ====================================== \\
 
-const doubleRollCompiler = (combatData, playerInitiative, computerInitiative, playerAction, computerAction) => {
+function doubleRollCompiler(combatData, playerInitiative, computerInitiative, playerAction, computerAction) {
     const playerRoll = combatData.weapons[0].roll;
     const computerRoll = combatData.computerWeapons[0].roll;
     let rollCatch = Math.floor(Math.random() * 101) + combatData.computerAttributes.kyosirMod;
@@ -1625,7 +1618,7 @@ const doubleRollCompiler = (combatData, playerInitiative, computerInitiative, pl
     return combatData;
 };
 
-const actionSplitter = (combatData) => {
+function actionSplitter(combatData) {
     let newData = newDataCompiler(combatData);
     newData.actionData.push(newData.action);
     const playerInitiative = newData.playerAttributes.initiative;
@@ -1860,7 +1853,7 @@ const actionSplitter = (combatData) => {
     return newData;
 };
 
-const computerWeaponMaker = (combatData) => {
+function computerWeaponMaker(combatData) {
     // Possibly add a flag to check if this has been performed for the enemy already. Only needs to set itself up once per combat
     // combatData.computerWeaponChecked or something TODO:FIXME: It might help cut down on computation time
     
@@ -1935,7 +1928,7 @@ const computerWeaponMaker = (combatData) => {
     return combatData;
 };
 
-const phaserDualActionSplitter = (combatData) => {
+function phaserDualActionSplitter(combatData) {
     let newData = newDataCompiler(combatData);
     newData.actionData.push(newData.action);
     const playerInitiative = newData.playerAttributes.initiative;
@@ -2031,7 +2024,7 @@ const phaserDualActionSplitter = (combatData) => {
     return newData;
 };
 
-const phaserActionSplitter = (combatData) => {
+function phaserActionSplitter(combatData) {
     let cleanData = newDataCompiler(combatData);
     let changes = { ...cleanData };
     const playerActionLive = cleanData.action !== '' ? true : false;
@@ -2167,7 +2160,7 @@ const phaserActionSplitter = (combatData) => {
     return changes;
 };
 
-const newDataCompiler = (combatData) => {
+function newDataCompiler(combatData) {
     const newData = {
         player: combatData.player, // The player's Ascean
         action: combatData.action, // The player's action
@@ -2278,7 +2271,7 @@ const newDataCompiler = (combatData) => {
     return newData;
 };
 
-const computerDispel = (combatData) => {
+function computerDispel(combatData) {
     const effect = combatData.computerEffects.find(effect => (effect.prayer !== 'Debuff' || effect.prayer !== 'Damage'));
     const matchingWeapon = combatData.computerWeapons.find(weapon => weapon.name === effect.weapon);
     const matchingWeaponIndex = combatData.computerWeapons.indexOf(matchingWeapon);
@@ -2293,7 +2286,7 @@ const computerDispel = (combatData) => {
 
 // ================================== ACTION - SPLITTERS ===================================== \\
 
-const prayerSplitter = (combatData, prayer) => {
+function prayerSplitter(combatData, prayer) {
     let originalPrayer = combatData.playerBlessing;
     combatData.playerBlessing = prayer; 
     faithSuccess(combatData, 'player', combatData.weapons[0], 0);
@@ -2301,7 +2294,7 @@ const prayerSplitter = (combatData, prayer) => {
     return combatData;
 };
 
-const instantDamageSplitter = (combatData, mastery) => {
+function instantDamageSplitter(combatData, mastery) {
     let damage = combatData.player[mastery] * 0.5 + combatData.player.level;
     combatData.realizedPlayerDamage = damage;
     combatData.newComputerHealth -= combatData.realizedPlayerDamage;
@@ -2310,7 +2303,7 @@ const instantDamageSplitter = (combatData, mastery) => {
     combatData.playerActionDescription = `You attack ${combatData.computer.name}'s Caeren with your ${combatData.player.mastery}'s Invocation of ${combatData.weapons[0].influences[0]} for ${Math.round(damage)} Pure Damage.`;    
 };
 
-const instantActionSplitter = (combatData) => {
+function instantActionSplitter(combatData) {
     switch (combatData.player.mastery) {
         case 'Constitution':
             prayerSplitter(combatData, 'Heal');
@@ -2372,7 +2365,7 @@ const instantActionSplitter = (combatData) => {
     return changes;
 };
 
-const consumePrayerSplitter = (combatData) => {
+function consumePrayerSplitter(combatData) {
     if (combatData.prayerSacrifice === '') combatData.prayerSacrifice = combatData.playerEffects[0].prayer;
     if (combatData.prayerSacrificeName === '') combatData.prayerSacrificeName = combatData.playerEffects[0].name;
     combatData.actionData.push('consume');
@@ -2461,7 +2454,7 @@ const consumePrayerSplitter = (combatData) => {
     return changes;
 };
 
-const phaserEffectTickSplitter = (data) => { 
+function phaserEffectTickSplitter(data) { 
     let { combatData, effect, effectTimer } = data;
 
     if (effect.playerName === combatData.player.name) { 
@@ -2506,7 +2499,7 @@ const phaserEffectTickSplitter = (data) => {
     return changes;
 };
 
-const phaserRemoveTickSplitter = (data) => {
+function phaserRemoveTickSplitter(data) {
     const { combatData, statusEffect } = data;
     const target = (statusEffect.prayer === 'Damage' || statusEffect.prayer === 'Debuff') ? statusEffect.enemyName : statusEffect.playerName;
     console.log(target, combatData.player.name, combatData.computer.name, 'Removing Tick from Target - Player Name - Computer Name');
@@ -2567,7 +2560,7 @@ const phaserRemoveTickSplitter = (data) => {
 
 // ================================= CONTROLLER - SERVICE ===================================== \\
 
-const actionCompiler = async (combatData) => {
+function actionCompiler (combatData) {
     try {
         let res = actionSplitter(combatData);
         if (res.realizedComputerDamage > 0) res.playerDamaged = true;
@@ -2580,7 +2573,7 @@ const actionCompiler = async (combatData) => {
     };
 };
 
-const instantActionCompiler = (combatData) => {
+function instantActionCompiler(combatData) {
     try {
         const res = instantActionSplitter(combatData);
         return res;
@@ -2590,7 +2583,7 @@ const instantActionCompiler = (combatData) => {
     };
 };
 
-const consumePrayer = (combatData) => {
+function consumePrayer(combatData) {
     try {
         const res = consumePrayerSplitter(combatData);
         return res;
@@ -2600,7 +2593,7 @@ const consumePrayer = (combatData) => {
     };
 };
 
-const phaserActionCompiler = (combatData) => {
+function phaserActionCompiler(combatData) {
     try {
         const res = phaserActionSplitter(combatData);
         return res;
@@ -2610,7 +2603,7 @@ const phaserActionCompiler = (combatData) => {
     };
 };
 
-const phaserEffectTick = (data) => {
+function phaserEffectTick(data) {
     try {
         const res = phaserEffectTickSplitter(data);
         return res;
@@ -2620,7 +2613,7 @@ const phaserEffectTick = (data) => {
     };
 };
 
-const phaserRemoveTick = (data) => {
+function phaserRemoveTick(data) {
     try {
         const res = phaserRemoveTickSplitter(data);
         return res;

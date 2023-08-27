@@ -126,7 +126,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
             ) }
             <img src={playerHealthbar} alt="Health Bar" style={{ position: "absolute", width: '150px', height: '40px' }} />
             <p className='story-name'>{state.player.name}</p>
-            <ProgressBar variant={stealth ? "black" : "info"} now={playerHealthPercentage} className='story-health-bar' />
+            <ProgressBar variant={stealth ? "dark" : "info"} now={playerHealthPercentage} className='story-health-bar' />
             <p className='story-portrait'>{`${Math.round(state.newPlayerHealth)} / ${state.playerHealth} [${playerHealthPercentage}%]`}</p>
             <img src ={playerPortrait} alt="Player Portrait" className='player-portrait' />
             <ProgressBar variant="success" now={staminaPercentage} className='story-stamina-bubble'  />
