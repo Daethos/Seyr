@@ -1253,9 +1253,9 @@ export default class Enemy extends Entity {
     };
  
     update() {
+        this.evaluateEnemyState(); 
         this.metaMachine.update(this.scene.sys.game.loop.delta);   
         this.stateMachine.update(this.scene.sys.game.loop.delta);
-        this.evaluateEnemyState(); 
     };
 
     combat = (target) => { 

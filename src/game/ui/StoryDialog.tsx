@@ -146,7 +146,6 @@ const DialogTree = ({ ascean, enemy, dialogNodes, gameState, state, actions, set
         } else {
             let nextNodeIndex = dialogNodes.findIndex((node: { id: string; }) => node.id === nextNodeId);
             if (nextNodeIndex === -1) nextNodeIndex = 0;
-            // console.log("Next Node Index: ", nextNodeIndex, "Next Node ID: ", nextNodeId);
             dispatch(setCurrentNodeIndex(nextNodeIndex));
         };
     };
@@ -277,7 +276,6 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
         } else { 
             enemyPersuasion *= 1.1; 
         };
-        // console.log(persuasionTrait, playerPersuasion, enemyPersuasion, "Persuasion");
         if (playerPersuasion >= enemyPersuasion) {
             dispatch(getPersuasionFetch({ persuasion, id: state.player._id, persuaded: true }));
             const num = Math.floor(Math.random() * 2); 
@@ -323,7 +321,6 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
         } else { 
             enemyLuck *= 1.25; 
         };
-        // console.log(playerLuck, enemyLuck, "Luckout");
         if (playerLuck >= enemyLuck) {
             playReligion();
             dispatch(getLuckoutFetch({ luck, id: state.player._id, luckedOut: true }));
@@ -380,7 +377,6 @@ export const StoryDialog = ({ deleteEquipment, state }: StoryDialogProps) => {
 
     const engageGrappling = async (): Promise<void> => {
         await checkingLoot();
-        // dispatch TODO:FIXME: getGrapplingFetch({ id: state.player._id, grappling: true });
     }; 
 
     const checkPersuasion = async (): Promise<void> => {

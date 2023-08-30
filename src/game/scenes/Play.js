@@ -147,10 +147,7 @@ export default class Play extends Phaser.Scene {
             if (!pointer.rightButtonDown()) this.player.holdingBothMouseButtons = false;
         });
           
-        // Disable the default context menu when right-clicking on the Phaser canvas
-        this.game.canvas.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
+        this.game.canvas.addEventListener('contextmenu', (e) => e.preventDefault());
   
         this.player.inputKeys = {
             up: this.input.keyboard.addKeys('W,UP'),

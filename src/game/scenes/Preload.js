@@ -42,6 +42,7 @@ export default class Preload extends Phaser.Scene {
         this.load.audio('caerenic', process.env.PUBLIC_URL + '/sounds/caerenic.wav');
         this.load.audio('stalwart', process.env.PUBLIC_URL + '/sounds/stalwart.mp3');
         this.load.audio('stealth', process.env.PUBLIC_URL + '/sounds/stealth.mp3');
+        this.load.audio('prayer', process.env.PUBLIC_URL + '/sounds/religious.mp3');
         this.gameData.assets.forEach(asset => {
             this.load.image(asset.sprite,  process.env.PUBLIC_URL + asset.imgURL, { frameWidth: 32, frameHeight: 32 });
         });
