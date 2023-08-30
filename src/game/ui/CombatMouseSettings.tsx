@@ -51,8 +51,7 @@ const CombatMouseSettings = ({ damageType, weapons }: CombatMouseSettingsProps) 
             if (weapons.length === 2) one = [weapons?.[newIndex], weapons?.[0]];
             dispatch(getCombatSettingFetch({ loadout: one, type: 'Weapon' }));
             dispatch(setSelectedHighlight('Weapon'));
-        };
-        
+        }; 
         playWO();
     };
 

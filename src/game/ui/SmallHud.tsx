@@ -18,6 +18,7 @@ const SmallHud = ({ ascean, dialogTag }: Props) => {
     const [experience, setExperience] = useState<number>(ascean.experience);
     const [experienceAlert, setExperienceAlert] = useState({ title: '', content: '' });
     const [experienceGained, setExperienceGained] = useState<boolean>(false);
+    
     const expCallback = useCallback(() => {
         if (ascean.experience > experience) {
             setExperienceAlert({ title: 'Experience Gained', content: `You've gained ${ascean.experience - experience} experience!` });
@@ -32,6 +33,7 @@ const SmallHud = ({ ascean, dialogTag }: Props) => {
     useEffect(() => {
         expCallback();
     }, [ascean.experience, expCallback, experience]);
+
     return (
         <div id='ui-hud'>
             <div style={{ position: 'absolute', marginTop: '-10%', left: '2.5%', width: '25%' }}>

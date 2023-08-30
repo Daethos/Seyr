@@ -2008,6 +2008,12 @@
   left: 230px;
   top: -5px;
 }
+.disengage {
+    position: absolute;
+    left: 25px;
+    top: 25px;
+    font-family: 'Cinzel';
+}
 .chat-image {
   width: 100px;
   max-height: 100px;

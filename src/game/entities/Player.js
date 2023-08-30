@@ -1368,7 +1368,7 @@ export default class Player extends Entity {
         // =================== VARIABLES IN MOTION ================== \\
 
         if (this.inputKeys.strafe.E.isDown || this.inputKeys.strafe.Q.isDown) {
-            if (!this.spriteShield.visible) this.spriteShield.setVisible(true);
+            if (!this.spriteShield.visible && !this.isDodging && !this.isRolling) this.spriteShield.setVisible(true);
             if (!this.isStrafing) this.isStrafing = true;
         } else if (this.isStrafing) {
             this.isStrafing = false;

@@ -21,14 +21,14 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
     const [effectTimer, setEffectTimer] = useState<number>(effect.endTime - effect.startTime);
     const specials = ['Avarice', 'Dispel', 'Denial', 'Silence'];
     const specialDescription = {
-        'Avarice': 'Increases the amount of experience and gold gained',
+        'Avarice': 'Increases the amount of experience and gold gained.',
         'Dispel': 'Removes the last prayer affecting the enemy.',
         'Denial': 'Prevents the enemy from killing you.',
         'Silence': 'Prevents the enemy from praying.'
     }; 
 
     const useStatusEffect = (prayer: StatusEffect, prayerEnd: number, pause: boolean, prayerTimer: number, combatTimer: number, inCombat: boolean) => {
-        const tickEffect = () => {
+        function tickEffect() {
             if (pause) return;
 
             if (canTick(prayer, prayerTimer, combatTimer)) {
@@ -36,12 +36,12 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
                 dispatch(getEffectTickFetch({ effect: prayer, effectTimer: prayerTimer }));
             };
             if (prayerEnd < prayer.endTime) {
-                // console.log('%c Effect Refreshing...', 'color: green');
+                console.log(`%c Effect Refreshing from ${prayerEnd}s to ${prayer.endTime}s end time...`, 'color: green');
                 setEndTime(prayer.endTime);
-                setEffectTimer(prayerTimer => prayerTimer + (prayer.endTime - prayerEnd));
+                setEffectTimer(prayer.endTime - combatTimer);
             };
-            const expired = prayerTimer <= 0 || !inCombat || prayerEnd <= combatTimer;
             
+            const expired = prayerTimer <= 0 || !inCombat || prayer.endTime <= combatTimer;
             if (!expired) {
                 setEffectTimer(prayerTimer => prayerTimer - 1);
             } else {
@@ -110,7 +110,7 @@ const PhaserEffects = ({ state, effect, enemy, pauseState }: StatusEffectProps) 
 
     const getEffectStyle = {
         marginTop: getInnerWidth(),
-        border: 2 + 'px solid ' + borderColor(effect?.prayer),
+        border: '2px solid ' + borderColor(effect?.prayer),
         boxShadow: '0 0 1em ' + borderColor(effect?.prayer),  
         borderRadius: '6px',
         marginLeft: '5%',

@@ -17,17 +17,18 @@ export const LootDropUI = ({ gameState }: Props) => {
         if (visible.length === 0) dispatch(setShowLootOne(false));
         setVisibleLoot(visible);
     }, [gameState.showLootIds, gameState.lootDrops]);
+    
     return (
         <div className='story-loot'>
         <img src={logWindow} alt='Log Window' style={{ position: 'absolute' }} />
             <div style={{ display: 'inline-block', position: 'absolute' }} className='story-loot-scroll'>
-                { visibleLoot.length > 0 ? (
+                { visibleLoot.length > 0 && (
                     visibleLoot.map((lootDrop: Equipment, index: number) => { 
                         return (
                             <LootDrop key={index} story={true} lootDrop={lootDrop} ascean={gameState.player} />
                         );
                      })
-                ) : ( '' ) }
+                ) }
             </div> 
         </div>
     );

@@ -76,7 +76,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
                     })}
                 </div>
             ) } 
-            <div style={{ position: 'absolute', left: '25px', top: '25px', fontFamily: 'Cinzel' }}>
+            <div className='disengage'>
                 {stealth && state.computer ? <Button variant='' style={{ color: '#fdf6d8', fontSize: '12px' }} onClick={disengage}>Disengage</Button> : ''}
             </div>
         </div> 
