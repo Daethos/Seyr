@@ -269,8 +269,8 @@ export default class Player extends Entity {
 
     constantUpdate = (e) => {
         if (this.health > e.newPlayerHealth) {
-            this.isHurt = true;
-            this.clearAnimations();
+            // this.isHurt = true;
+            // this.clearAnimations();
             let damage = Math.round(this.health - e.newPlayerHealth);
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.computerCriticalSuccess);
             console.log(`%c ${damage} Damage Taken by ${e?.computer?.name}`, 'color: #ff0000')
@@ -844,7 +844,7 @@ export default class Player extends Entity {
     };
     onPolymorphingExit = () => {
         if (this.polymorphSuccess) {
-            this.scene.polymorph(this.attacking.enemyID);
+            this.scene.polymorph(this.attacking?.enemyID);
             this.setTimeEvent('polymorphCooldown', 4000);    
             screenShake(this.scene);
             this.polymorphSuccess = false;

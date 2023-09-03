@@ -37,6 +37,8 @@ const gameService = require('./services/gameServices');
 const pvpService = require('./services/pvpServices');
 const asceanService = require('./services/asceanServices');
 const WorldMap = require('./services/worldServices');
+// const MultiplayerGame = require('./services/multiplayerServices');
+
 const port = process.env.PORT || 3001;
 const server = app.listen(port, function() {
   console.log(`Express app listening on port ${port}`);
@@ -87,7 +89,11 @@ io.on("connection", (socket) => {
     };
     let players = {};
 
+    // const game = new MultiplayerGame();
+
     function addPlayer(player) {
+        // TODO:FIXME: 
+
         players[player.id] = player;
         socket.emit('currentPlayers', players);
         socket.broadcast.emit('playerAdded', player);
@@ -352,176 +358,68 @@ io.on("connection", (socket) => {
         };  
     };
 
-    async function joinRoom(preData, callback) {
+    function joinRoom(preData, callback) {
         const newData = zlib.inflateSync(preData).toString();
         const data = JSON.parse(newData);
         const room = rooms.get(data.room);
-        
         if (!room) {
-            rooms.set(data.room, { players: new Set(), password: data.password });
+            rooms.set(data.room, { playersInRoom: new Set(), password: data.password }); // new Set()
         };
         
-        const { players, password: correctPassword } = rooms.get(data.room);
-        const numPlayers = players.size;
+        const { playersInRoom, password: correctPassword } = rooms.get(data.room);
+        const numPlayers = playersInRoom.size;
 
-        if (numPlayers >= maxPlayersPerRoom) {
+        if (numPlayers >= maxPlayersPerRoom && data.room !== 'Lobby') {
             return callback('The Room you attempted to join is full.');
         };
+        
         if (data.password !== correctPassword) {
             return callback('You have typed the incorrect password for room: ' + data.room);
         };
 
-        players.add(socket.id);
+        playersInRoom.add(socket.id);
         socket.join(data.room);
         callback(); 
 
         console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`);
         connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size;
-        if (data.user._id === personalUser.user._id) personalUser.ascean = data.ascean;
-        newUser = {
-        room: data.room,
-        ascean: data.ascean,
-        user: data.user,
-        player: connectedUsersCount,
-        ready: false,
-        };
 
-        if (newUser.player === 1) {
-            playerStateData.playerOne = newUser;
-        } else if (newUser.player === 2) {
-            playerStateData.playerTwo = newUser;
-        } else if (newUser.player === 3) {
-            playerStateData.playerThree = newUser;
-        } else if (newUser.player === 4) {
-            playerStateData.playerFour = newUser;
+        newUser = {
+            ascean: data.ascean,
+            id: socket.id,
+            position: connectedUsersCount,
+            room: data.room,
+            ready: false,
+            user: data.user,
+            x: data.x,
+            y: data.y,
         };
         
-        const response = await asceanService.asceanCompiler(data.ascean);
-        const responseData = {
-        data: response.data,
-        user: data.user,
-        };
-        combatData = {
-        room: data.room,
-    
-        player: response.data.ascean,
-        action: '',
-        player_action: '',
-        counter_guess: '',
-        playerBlessing: 'Buff',
-        prayerSacrifice: '',
-        player_health: response.data.attributes.healthTotal,
-        current_player_health: response.data.attributes.healthTotal,
-        new_player_health: response.data.attributes.healthTotal,
-    
-        weapons: [response.data.combat_weapon_one, response.data.combat_weapon_two, response.data.combat_weapon_three],
-        weapon_one: response.data.combat_weapon_one,
-        weapon_two: response.data.combat_weapon_two,
-        weapon_three: response.data.combat_weapon_three,
-        playerEffects: [],
-        player_damage_type: response.data.combat_weapon_one.damage_type,
-        player_defense: response.data.defense,
-        player_attributes: response.data.attributes,
-        player_defense_default: response.data.defense,
-        realized_player_damage: 0,
-        player_start_description: '',
-        player_special_description: '',
-        player_action_description: '',
-        player_influence_description: '',
-        player_influence_description_two: '',
-        player_death_description: '',
-    
-        critical_success: false,
-        counter_success: false,
-        dual_wielding: false,
-        glancing_blow: false,
-        religious_success: false,
-        roll_success: false,
-        player_win: false,
-    
-        enemy: {},
-        enemy_action: '',
-        enemy_counter_guess: '',
-        enemyBlessing: 'Buff',
-        enemy_health: 0,
-        current_enemy_health: 0,
-        new_enemy_health: 0,
-    
-        enemy_weapons: [],
-        enemy_weapon_one: {},
-        enemy_weapon_two: {},
-        enemy_weapon_three: {},
-        enemyEffects: [],
-        enemy_damage_type: '',
-        enemy_defense: {},
-        enemy_attributes: {},
-        enemy_defense_default: {},
-        realized_enemy_damage: 0,
-    
-        attack_weight: 0,
-        counter_weight: 0,
-        dodge_weight: 0,
-        posture_weight: 0,
-        roll_weight: 0,
-        counter_attack_weight: 0,
-        counter_counter_weight: 0,
-        counter_dodge_weight: 0,
-        counter_posture_weight: 0,
-        counter_roll_weight: 0,
-    
-        enemy_start_description: '',
-        enemy_special_description: '',
-        enemy_action_description: '',
-        enemy_influence_description: '',
-        enemy_influence_description_two: '',
-        enemy_death_description: '',
-    
-        enemy_critical_success: false,
-        enemy_counter_success: false,
-        enemy_dual_wielding: false,
-        enemy_glancing_blow: false,
-        enemy_religious_success: false,
-        enemy_roll_success: false,
-        enemy_win: false,
-    
-        playerReady: false,
-        enemyReady: false,
-        playerOneReady: false,
-        playerTwoReady: false,
-    
-        combatInitiated: false,
-        actionStatus: false,
-        gameIsLive: false,
-        combatEngaged: false,
-        dodgeStatus: false,
-        instantStatus: false,
-    
-        combatRound: 0,
-        sessionRound: 0,
-        highScore: 0,
-        winStreak: 0,
-        loseStreak: 0,
-        weather: '',
-        };
-        io.to(data.room).emit(`playerData`, responseData);
-        io.to(data.room).emit(`player_position`, newUser);
-        io.to(data.room).emit(`player_state`, playerStateData);
+        players[socket.id] = newUser;
+        socket.emit('currentPlayers', players);
+        socket.broadcast.emit('playerAdded', newUser);
+        // Properties: id, x, y, playerId
+
+        // io.to(data.room).emit(`playerData`, responseData);
+        // io.to(data.room).emit(`playerPosition`, newUser);
+        // io.to(data.room).emit(`playerState`, playerStateData);
         io.to(data.room).emit('newUser', newUser);
         
         const helloMessage = {
-        room: data.room,
-        author: 'The Ascea',
-        message: `Welcome to the Ascea, ${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)}.`,
-        time: Date.now()
+            room: data.room,
+            author: 'The Ascea',
+            message: `Welcome, ${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)}.`,
+            time: Date.now()
         };
         const userUpdateMessage = {
-        room: data.room,
-        author: 'The Ascea',
-        message: `${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)} has joined the game.`,
-        time: Date.now()
+            room: data.room,
+            author: 'The Ascean',
+            message: `${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)} has joined the game.`,
+            time: Date.now()
         };
-        socket.to(data.room).emit('receive_message', userUpdateMessage);
-        socket.emit('receive_message', helloMessage);
+
+        socket.to(data.room).emit('receiveMessage', userUpdateMessage);
+        socket.emit('receiveMessage', helloMessage);
     };
 
     async function createMap(mapData) {
@@ -586,9 +484,9 @@ io.on("connection", (socket) => {
     socket.on('playerWin', playerWin);
     socket.on('computerWin', computerWin);
 
-    socket.on("join_room", joinRoom);
+    socket.on("joinRoom", joinRoom);
     socket.on('typing', (room) => socket.in(room).emit('typing'));
-    socket.on('stop_typing', (room) => socket.in(room).emit('stop_typing'));
+    socket.on('stopTyping', (room) => socket.in(room).emit('stopTyping'));
     socket.on('createMap', createMap);
     socket.on('playerDirectionChange', playerDirection);
     socket.on('commenceGame', commenceGame);
@@ -605,7 +503,7 @@ io.on("connection", (socket) => {
         if (!chat.users) return console.log('Chat.Users is not defined');
         chat.users.forEach(user => {
             if (user._id === newMessageReceived.sender._id) return;
-            socket.in(user._id).emit("message_received", newMessageReceived);
+            socket.in(user._id).emit("messageReceived", newMessageReceived);
         });
     });
 
@@ -731,11 +629,11 @@ io.on("connection", (socket) => {
         if (newUser.player === 1) {
         newData.player_one_ready = true;
         duelMessage.message = `${data.player_one.name.charAt(0).toUpperCase() + data.player_one.name.slice(1)} is ready to duel.`
-        io.to(duelMessage.room).emit(`receive_message`, duelMessage)
+        io.to(duelMessage.room).emit(`receiveMessage`, duelMessage)
         } else {
         newData.player_two_ready = true;
         duelMessage.message = `${data.player_two.name.charAt(0).toUpperCase() + data.player_two.name.slice(1)} is ready to duel.`
-        io.to(duelMessage.room).emit(`receive_message`, duelMessage)
+        io.to(duelMessage.room).emit(`receiveMessage`, duelMessage)
         };
         if (newData.player_one_ready === true && newData.player_two_ready === true) {
         io.to(newUser.room).emit('Game Commencing');
@@ -813,7 +711,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("send_message", (data) => {
-        socket.to(data.room).emit("receive_message", data);
+        socket.to(data.room).emit("receiveMessage", data);
         console.log(data);
     });
 
@@ -824,12 +722,12 @@ io.on("connection", (socket) => {
     socket.on('leaveRoom', async () => {
         const room = rooms.get(newUser.room);
         if (!room) return;
-        const { players } = room;
-        players.delete(socket.id);
-        if (players.size === 0) {
-        rooms.delete(room.id);
+        const { playersInRoom } = room;
+        playersInRoom.delete(socket.id);
+        if (playersInRoom.size === 0) {
+            rooms.delete(room.id);
         } else {
-        await socket.to(newUser.room).emit("playerLeft", newUser.player);
+            await socket.to(newUser.room).emit("playerLeft", newUser.player);
         };
         socket.leave(newUser.room);
     });

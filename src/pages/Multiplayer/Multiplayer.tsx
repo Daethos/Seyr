@@ -11,6 +11,9 @@ import { getUserAsceanFetch } from '../../game/reducers/userState';
 import { compress } from '../../sagas/combatSaga';
 import { User } from '../App/App';
 import SolaAscean from '../../components/SolaAscean/SolaAscean';
+import { getSocketInstance } from '../../sagas/socketManager';
+import { setIsTyping, setMessageList, setPassword, setRoom, setShowChat } from '../../game/reducers/phaserState';
+import MultiChat from '../../game/ui/MultiChat';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -30,108 +33,161 @@ export const useKeyEvent = (event: string, callback: any) => {
         };
     }, [event, callback]);
 };
+
+const useSocketEvent = (event: string, callback: any) => {
+    const socket = getSocketInstance();
+    useEffect(() => {
+        socket.on(event, callback);
+        return () => {
+            socket.off(event, callback);
+        };
+    }, [event, callback]);
+};
+
 interface Props {
     user: User
 };
 
+
 const Multiplayer = ({ user }: Props) => {
     const dispatch = useDispatch();
-    const gameChange = useSelector((state: any) => state.game.gameChange);
     const asceans = useSelector((state: any) => state.user.ascean) as Player[];
     const ascean = useSelector((state: any) => state.game.player) as Player;
-    const [password, setPassword] = useState<any>('');
-    const [room, setRoom] = useState<any>('');
-    const [username, setUsername] = useState<any>('');
-
+    const [asceanId, setAsceanId] = useState<any>('');
+    const phaser = useSelector((state: any) => state.phaser);
+    const socket = getSocketInstance();
+    
     useEffect(() => {
         dispatch(getUserAsceanFetch());
     }, [dispatch]);
 
-    // useEffect(() => {
-    //     const fetchData = async (): Promise<void> => {
-    //         try {
-    //             dispatch(getGameFetch('asceanID'));
-    //             const res = await eqpAPI.index();
-    //             const sanitized = await sanitizeAssets(res.data);
-    //             setAssets(sanitized);
-    //             dispatch(setGameChange(true));
-    //         } catch (err: any) {
-    //             console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
-    //         };
-    //     }; 
-    //     fetchData(); 
-    // }, [dispatch]); 
-
     useEffect(() => {
-        if (username === '') return;
-        console.log(username, "Fetching This ID")
+        if (asceanId === '') return;
         fetchData();
-    }, [username]);
+        // dispatch(getGameFetch(asceanId));
+    }, [asceanId]);
     
     const fetchData = async (): Promise<void> => {
         try {
-            dispatch(getGameFetch(username));
-            // const res = await eqpAPI.index();
-            // const sanitized = await sanitizeAssets(res.data);
-            // setAssets(sanitized);
-            // dispatch(setGameChange(true));
+            dispatch(getGameFetch(asceanId));
+            const asceanData = {
+                user: user,
+                ascean: ascean,
+                room: phaser.room,
+                password: phaser.password,
+                x: 0,
+                y: 0,
+            };
+            const compressAsceanData = compress(asceanData);
+            socket.emit('joinRoom', compressAsceanData, (error: any) => {
+                if (error) {
+                    const errorMessage = {
+                        room: phaser.room,
+                        author: 'The Ascea',
+                        message: `Error Joining Room: ${error}`,
+                        time: Date.now()
+                    };
+                    dispatch(setMessageList([...phaser.messageList, errorMessage]));
+                    return;
+                };
+            });
+            const messageData = {
+                room: phaser.room,
+                author: user.username,
+                message: 'Entering Lobby',
+                time: Date.now()
+            };
+            dispatch(setMessageList([...phaser.messageList, messageData]));
         } catch (err: any) {
             console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
         };
-    }; 
+    };  
 
-    const sanitizeAssets = async (assets: any): Promise<[]> => {
-        const fields = ['weapons', 'shields', 'helmets', 'chests', 'legs', 'rings', 'amulets', 'trinkets'];
-        const array: any = [];
-        const imageSprite = async (url: string): Promise<string> => url.split('/')[2].split('.')[0];
-
-        await Promise.all(fields.map(async (field: string) => {
-            await Promise.all(assets[field].map(async (item: any) => {
-                const sprite = await imageSprite(item.imgURL);
-                array.push({
-                    sprite: sprite,
-                    imgURL: item.imgURL,
-                });
-            }));
-        }));
-        return array;
-    };
-
-    const joinRoom = async () => {
-        if (username !== '' && room !== '') {
-            const asceanData = {
-                user: user,
-                room: room,
-                password: password,
-            };
-            const compressAsceanData = await compress(asceanData);
-            // await socket.emit("join_room", compressAsceanData, (error: any) => {
-            //     if (error) {
-            //         console.log(error, "Error Joining Room");
-            //         const messageData = {
-            //             room: room,
-            //             author: user.username,
-            //             message: `Error Joining Room: ${error}`,
-            //             time: Date.now()
-            //         };
-            //         setMessageList((list: any) => [...list, messageData]);
-            //         return;
-            //     };
-            // });
-            // await socket.emit(`ascean`, compressAsceanData);
-            // setShowChat(true);
+    function joinRoom(): void {
+        if (asceanId === '') {
+            dispatch(setMessageList([...phaser.messageList, {
+                room: phaser?.room,
+                author: 'The Ascea',
+                message: 'You must choose an Ascean before joining a room.',
+                time: Date.now()
+            }]));
+            return;
         };
+        const strippedAscean = {
+            _id: ascean._id,
+            name: ascean.name,
+            level: ascean.level,
+            health: ascean.health,
+            weapon_one: ascean.weapon_one,
+            weapon_two: ascean.weapon_two,
+            weapon_three: ascean.weapon_three,
+            helmet: ascean.helmet,
+            chest: ascean.chest,
+            legs: ascean.legs,
+            amulet: ascean.amulet,
+            ring_one: ascean.ring_one,
+            ring_two: ascean.ring_two,
+            trinket: ascean.trinket,
+        };
+        const asceanData = {
+            user: user,
+            ascean: strippedAscean,
+            room: phaser.room,
+            password: phaser.password,
+            x: 0,
+            y: 0,
+        };
+        const compressAsceanData = compress(asceanData);
+        socket.emit("joinRoom", compressAsceanData, (error: any) => {
+            if (error) {
+                const messageData = {
+                    room: phaser.room,
+                    author: 'The Ascea',
+                    message: `Error Joining Room: ${error}`,
+                    time: Date.now()
+                };
+                dispatch(setMessageList([...phaser.messageList, messageData]));
+                return;
+            };
+        });
+        dispatch(setShowChat(true));
     };
+
+    function handleRoomReset(): void {
+        socket.emit("leaveRoom");
+        dispatch(setShowChat(false));
+    };
+
+    function currentPlayers(players: any): void {
+        console.log(players, "Current Players?");
+    };
+
+    function playerAdded(player: any): void {
+        console.log(player, "Player Added?");
+    };
+
+    useSocketEvent('currentPlayers', currentPlayers);
+    useSocketEvent('playerAdded', playerAdded);
+
+    useSocketEvent('receiveMessage', (messageData: any) => dispatch(setMessageList([...phaser.messageList, messageData])));
+    useSocketEvent('typing', () => dispatch(setIsTyping(true)));
+    useSocketEvent('stopTyping', () => dispatch(setIsTyping(false)));
         
     return (
         <div>
-            <div style={{ maxWidth: '75%', marginLeft: '12.5%', marginTop: '5%' }}>
-            <div>
-                <input className='my-1' type='text' placeholder='Room ID...' onChange={(e) => setRoom(e.target.value)} style={{ width: '39%' }}/>{' '}
-                <input className='my-1' type='text' placeholder='Password...' onChange={(e) => setPassword(e.target.value)} style={{ width: '39%' }}/>{' '}
-                <button className='btn btn-outline-info my-1' onClick={joinRoom} style={{ width: '20%' }}>Join Room</button>
-            </div>
-            <select value={username} onChange={(e) => setUsername(e.target.value)} style={{ width: '45%', marginRight: '10%' }}>
+            <h3 style={{ color: '#fdf6d8', textAlign: 'center', marginTop: '3%', fontSize: '32px' }}>Multiplayer</h3>
+            {/* { phaser.showChat && ( */}
+                <MultiChat ascean={ascean} user={user} socket={socket} handleRoomReset={handleRoomReset} />
+            {/* )} */}
+            <div style={{ maxWidth: '75%', marginLeft: '12.5%', marginTop: '3%' }}>
+                { !phaser.showChat && (
+                    <div>
+                        <input className='my-1' type='text' placeholder='Room ID...' onChange={(e) => dispatch(setRoom(e.target.value))} style={{ width: '39%' }}/>{' '}
+                        <input className='my-1' type='text' placeholder='Password...' onChange={(e) => dispatch(setPassword(e.target.value))} style={{ width: '39%' }}/>{' '}
+                        <button className='btn btn-outline-info my-1' onClick={joinRoom} style={{ width: '20%' }}>Join Room</button>
+                    </div>
+                ) }
+            <select value={asceanId} onChange={(e) => setAsceanId(e.target.value)} style={{ width: '50%', marginLeft: '25%' }}>
                 <option>Ascean</option>
                 {asceans.map((ascean: Player, index: number) => {
                     return (
@@ -139,11 +195,11 @@ const Multiplayer = ({ user }: Props) => {
                     )
                 })}
             </select>
-            { ascean._id === username && (
+            { ascean._id === asceanId && (
                 <SolaAscean ascean={ascean} />
             ) }
-                </div>
-            { gameChange && ( 
+            </div>
+            { phaser.gameChange && ( 
                 <HostScene /> 
             ) }
         </div>

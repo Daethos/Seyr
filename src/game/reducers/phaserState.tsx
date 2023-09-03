@@ -7,6 +7,13 @@ export const phaserSlice = createSlice({
         assets: null as [] | null,
         player: null,
         gameChange: false,
+        currentMessage: '',
+        messageList: [],
+        showChat: false,
+        loading: true,
+        isTyping: false,
+        room: 'Lobby',
+        password: 'Lobby',
     },
     reducers: {
         getPhaserAssets: (state) => {
@@ -23,6 +30,49 @@ export const phaserSlice = createSlice({
             };
         },
 
+        setMessageList: (state, action) => {
+            console.log(action.payload, "Action Payload For Message List?")
+            return {
+                ...state,
+                messageList: action.payload,
+            };
+        },
+        setCurrentMessage: (state, action) => {
+            return {
+                ...state,
+                currentMessage: action.payload,
+            };
+        },
+        setRoom: (state, action) => {
+            return {
+                ...state,
+                room: action.payload,
+            };
+        },
+        setPassword: (state, action) => {
+            return {
+                ...state,
+                password: action.payload,
+            };
+        },
+        setShowChat: (state, action) => {
+            return {
+                ...state,
+                showChat: action.payload,
+            };
+        },
+        setLoading: (state, action) => {
+            return {
+                ...state,
+                loading: action.payload,
+            };
+        },
+        setIsTyping: (state, action) => {
+            return {
+                ...state,
+                isTyping: action.payload,
+            };
+        },
         setPhaserAssets: (state, action) => {
             return {
                 ...state,
@@ -50,6 +100,14 @@ export const {
     getPhaserAssets,
     getPhaserPlayer,
     
+    setMessageList,
+    setCurrentMessage,
+    setRoom,
+    setPassword,
+    setShowChat,
+    setLoading,
+    setIsTyping,
+
     setPhaserAssets,
     setPhaserPlayer,
     setPhaserGameChange,

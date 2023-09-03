@@ -232,7 +232,7 @@ export default class Enemy extends Entity {
             this.scrollingCombatText = new ScrollingCombatText(this.scene, this.x, this.y, damage, 1500, 'damage', e.criticalSuccess);
             console.log(`%c ${e.player.name} Dealt ${damage} Damage To ${this.ascean.name}`, 'color: #00ff00')
 
-            if (!this.isConsumed) this.stateMachine.setState(States.HURT);
+            if (!this.isConsumed && !this.isHurt) this.stateMachine.setState(States.HURT);
             if (this.currentRound !== e.combatRound) {
                 if (this.isStunned) this.isStunned = false;
                 if (this.isPolymorphed) this.isPolymorphed = false;

@@ -31,8 +31,8 @@ const GameLobby = ({ user }: Props) => {
         socket.on("Connected", () => setSocketConnected(true));
 
         socket.on('typing', () => setIsTyping(true));
-        socket.on('stop_typing', () => setIsTyping(false));
-        socket.on('message_received', () => setFetchAgain(true));
+        socket.on('stopTyping', () => setIsTyping(false));
+        socket.on('messageReceived', () => setFetchAgain(true));
     }, [user]);
 
     useEffect(() => {
