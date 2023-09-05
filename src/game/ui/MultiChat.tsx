@@ -60,7 +60,7 @@ const MultiChat = ({ ascean, socket, user, handleRoomReset }: Props) => {
         };
     };
 
-    function unwrapPlayers(): any {
+    function unwrapPlayers(): JSX.Element[] {
         const players = phaser.players;
         const playerArray = [];
         for (const player in players) {

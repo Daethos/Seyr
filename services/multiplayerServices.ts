@@ -10,8 +10,6 @@ class MultiplayerGame {
             return;
         };
     };
-
-
 };
 
 module.exports = MultiplayerGame;

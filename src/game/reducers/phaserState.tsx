@@ -6,6 +6,7 @@ export const phaserSlice = createSlice({
         assets: null as [] | null,
         player: null,
         players: {},
+        self: null,
         socketId: '',
         gameChange: false,
         currentMessage: '',
@@ -93,19 +94,25 @@ export const phaserSlice = createSlice({
                 gameChange: action.payload,
             };
         },
-        setPlayers: (state, action) => {
-            console.log(action.payload, "Players?")
+        setPlayers: (state, action) => { 
             return {
                 ...state,
                 players: action.payload,
             };
         },
         setSocketId: (state, action) => {
+            console.log(action.payload, "Socket ID")
             return {
                 ...state,
                 socketId: action.payload,
             };
-        }
+        },
+        setSelf: (state, action) => {
+            return {
+                ...state,
+                self: action.payload,
+            };
+        },
     },
     extraReducers: (builder) => {},
 });
@@ -127,6 +134,7 @@ export const {
     setPhaserGameChange,
     setPlayers,
     setSocketId,
+    setSelf,
 
 } = phaserSlice.actions;
 

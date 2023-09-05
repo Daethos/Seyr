@@ -73,7 +73,6 @@ io.on("connection", (socket) => {
         // const size = data ? JSON.stringify(data).length : 0;
         // console.log((size / 1000), "KBs");
     // });
-
     console.log(`User Connected: ${socket.id}`);
 
     let connectedUsersCount;
@@ -81,25 +80,23 @@ io.on("connection", (socket) => {
     let newUser = { user: null, room: null, ascean: null, player: null, ready: false };
     let newMap = {}; 
     let players = {};
- 
 
-    function addPlayer(player) {  
-        if (players[player.id]) return;
+    function sendPlayer(player) {  
         console.log(player.id, 'Player ID');
-        players[player.id] = player;
-        socket.emit('currentPlayers', players);
-        socket.broadcast.emit('playerAdded', player); 
+        io.to(player.room).emit('currentPlayers', players);
+        // io.to(player.room).emit('playerAdded', player);
     };
 
-    function removePlayer(player) {
-        delete players[player.id];
-        socket.broadcast.emit('playerRemoved', player.id);
+    function removePlayer(id) {
+        delete players[id];
+        socket.broadcast.emit('playerRemoved', id);
     };
 
     function playerMovement(data) {
-        players[socket.id].x = data.x;
-        players[socket.id].y = data.y;
-        socket.broadcast.emit('playerMoved', players[socket.id]);
+        const { id, x, y } = data
+        players[id].x = x;
+        players[id].y = y;
+        socket.broadcast.emit('playerMoved', players[id]);
     };
 
     function onSetup(userData) {
@@ -357,22 +354,17 @@ io.on("connection", (socket) => {
             exists = false;
             rooms.set(data.room, { playersInRoom: new Set(), password: data.password }); // new Set()
         };
-        
         const { playersInRoom, password: correctPassword } = rooms.get(data.room);
         const numPlayers = playersInRoom.size;
-
         if (numPlayers >= maxPlayersPerRoom && data.room !== 'Lobby') {
             return callback('The Room you attempted to join is full.');
         };
-
         if (data.password !== correctPassword) {
             return callback('You have typed the incorrect password for room: ' + data.room);
         };
-
         playersInRoom.add(socket.id);
         socket.join(data.room);
         callback(); 
-
         console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`);
         connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size;
 
@@ -385,14 +377,10 @@ io.on("connection", (socket) => {
             user: data.user,
             x: data.x,
             y: data.y,
-        };
-         
+        }; 
         players[socket.id] = newUser;
-        socket.emit('currentPlayers', players);
-        socket.broadcast.emit('playerAdded', newUser);
+        io.to(data.room).emit('playerAdded', newUser);
 
-        io.to(data.room).emit('newUser', newUser);
-        
         const welcomeMessage = {
             room: data.room,
             sender: {
@@ -461,7 +449,7 @@ io.on("connection", (socket) => {
     socket.on('updateCombatData', updateCombatData);
     socket.on('setPhaserAggression', setPhaserAggression);
 
-    socket.on('addPlayer', addPlayer);
+    socket.on('sendPlayer', sendPlayer);
     socket.on('removePlayer', removePlayer);
     socket.on('playerMovement', playerMovement);
 
@@ -710,7 +698,7 @@ io.on("connection", (socket) => {
         socket.to(data.room).emit("receive_opponent", data);
     });
 
-    socket.on('leaveRoom', async () => {
+    socket.on('leaveRoom', () => {
         const room = rooms.get(newUser.room);
         if (!room) return;
         const { playersInRoom } = room;
@@ -718,7 +706,8 @@ io.on("connection", (socket) => {
         if (playersInRoom.size === 0) {
             rooms.delete(room.id);
         } else {
-            await socket.to(newUser.room).emit("playerLeft", newUser.player);
+            socket.to(newUser.room).emit('removePlayer', socket.id);
+            // socket.to(newUser.room).emit("playerLeft", newUser.player);
             const message = {
                 room: newUser.room,
                 sender: {
@@ -737,5 +726,31 @@ io.on("connection", (socket) => {
 
     socket.off("setup", () => {
         socket.leave(userData._id);
+    });
+
+    socket.on("disconnect", () => {
+        const room = rooms.get(newUser.room);
+        if (!room) return;
+        const { playersInRoom } = room;
+        playersInRoom.delete(socket.id);
+        if (playersInRoom.size === 0) {
+            rooms.delete(room.id);
+        } else {
+            socket.to(newUser.room).emit('removePlayer', socket.id);
+            // socket.to(newUser.room).emit("playerLeft", newUser.player);
+            const message = {
+                room: newUser.room,
+                sender: {
+                    username: 'The Ascea',
+                }, 
+                message: `${newUser.user.username.charAt(0).toUpperCase() + newUser.user.username.slice(1)} has left ${newUser.room === 'Lobby' ? 'the Lobby' : `room ${newUser.room}`}.`,
+                time: Date.now()
+            };
+            socket.to(newUser.room).emit('receiveMessage', message);
+        };
+        socket.leave(newUser.room);
+        for (const player in players) {
+            delete players[player];
+        };
     });
 });

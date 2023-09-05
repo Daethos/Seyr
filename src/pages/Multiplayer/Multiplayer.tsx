@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
 import * as eqpAPI from '../../utils/equipmentApi';
 import * as asceanAPI from '../../utils/asceanApi';
 import HostScene from '../../game/scenes/HostScene';
@@ -12,8 +11,9 @@ import { compress } from '../../sagas/combatSaga';
 import { User } from '../App/App';
 import SolaAscean from '../../components/SolaAscean/SolaAscean';
 import { getSocketInstance } from '../../sagas/socketManager';
-import { setIsTyping, setMessageList, setPassword, setPlayers, setRoom, setShowChat } from '../../game/reducers/phaserState';
+import { setIsTyping, setMessageList, setPassword, setPlayers, setRoom, setSelf, setShowChat, setSocketId } from '../../game/reducers/phaserState';
 import MultiChat from '../../game/ui/MultiChat';
+import { Socket } from 'socket.io-client';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -34,14 +34,13 @@ export const useKeyEvent = (event: string, callback: any) => {
     }, [event, callback]);
 };
 
-const useSocketEvent = (event: string, callback: any) => {
-    const socket = getSocketInstance();
+const useSocketEvent = (websocket: Socket, event: string, callback: any) => {
     useEffect(() => {
-        socket.on(event, callback);
+        websocket.on(event, callback);
         return () => {
-            socket.off(event, callback);
+            websocket.off(event, callback);
         };
-    }, [event, callback]);
+    }, [websocket, event, callback]);
 };
 
 interface Props {
@@ -54,7 +53,8 @@ const Multiplayer = ({ user }: Props) => {
     const ascean = useSelector((state: any) => state.game.player) as Player;
     const [asceanId, setAsceanId] = useState<any>('');
     const phaser = useSelector((state: any) => state.phaser);
-    const socket = getSocketInstance();
+    // let socket: Socket = getSocketInstance();
+    const [socket, setSocket] = useState<Socket>(getSocketInstance());
     
     useEffect(() => {
         dispatch(getUserAsceanFetch());
@@ -64,7 +64,6 @@ const Multiplayer = ({ user }: Props) => {
     useEffect(() => {
         if (asceanId === '') return;
         fetchData();
-        // dispatch(getGameFetch(asceanId));
     }, [asceanId]);
     
     const fetchData = async (): Promise<void> => {
@@ -76,6 +75,7 @@ const Multiplayer = ({ user }: Props) => {
     };  
 
     function joinLobby(): void {
+        if (!socket.id) setSocket(getSocketInstance());
         const asceanData = {
             user: user,
             ascean: ascean,
@@ -178,16 +178,25 @@ const Multiplayer = ({ user }: Props) => {
         Object.keys(players).forEach((id: string) => {
             const existingPlayer = phaser.players[id];
             if (!existingPlayer) {
+                console.log('Setting Players in currentPlayers', id)
                 dispatch(setPlayers({...phaser.players, [id]: players[id]}));
             };
         });
     };
 
     function playerAdded(player: any): void {
-        for (const id in phaser.iders) {
-            if (id === player._id) return;
+        const existing = phaser.players[player.id];
+        if (existing) return;
+        
+        if (player.id === socket.id) {
+            console.log(player, 'Setting Self')
+            dispatch(setSelf(player));
         };
-        dispatch(setPlayers({...phaser.players, [player.id]: player}));
+        if (player.id !== socket.id && phaser.self) {
+            console.log(phaser.players[socket.id], 'Sending Yourself')
+            socket.emit('sendPlayer', phaser.self);
+        };
+        dispatch(setPlayers({ ...phaser.players, [player.id]: player }));
     };
 
     function addNewPlayer(player: any): void {
@@ -195,21 +204,24 @@ const Multiplayer = ({ user }: Props) => {
         dispatch(setPlayers({...phaser.players, [player.id]: player}));
     };
 
-    function removePlayer(player: any): void {
-        const players = phaser.players;
-        delete players[player.id];
+    function removePlayer(id: string): void {
+        let players = { ...phaser.players };
+        console.log(players, id, 'Players and ID being Removed')
+        console.log(players[id], 'Player Before Removal')
+        if (players[id]) delete players[id];
+        console.log(players, 'Players After Removal')
         dispatch(setPlayers(players));
     };
 
-    useSocketEvent('currentPlayers', currentPlayers);
-    useSocketEvent('playerAdded', playerAdded);
-    useSocketEvent('newPlayer', addNewPlayer);
-    useSocketEvent('playerMoved', (player: any) => dispatch(setPlayers({...phaser.players, [player.id]: { ...phaser.players[player.id], x: player.x, y: player.y }})));
-    useSocketEvent('playerRemoved', removePlayer);
+    useSocketEvent(socket, 'currentPlayers', currentPlayers);
+    useSocketEvent(socket, 'playerAdded', playerAdded);
+    useSocketEvent(socket, 'newPlayer', addNewPlayer);
+    useSocketEvent(socket, 'playerMoved', (player: any) => dispatch(setPlayers({...phaser.players, [player.id]: { ...phaser.players[player.id], x: player.x, y: player.y }})));
+    useSocketEvent(socket, 'removePlayer', removePlayer);
 
-    useSocketEvent('receiveMessage', (message: any) => dispatch(setMessageList([...phaser.messageList, message])));
-    useSocketEvent('typing', (_flag: any) => dispatch(setIsTyping(true)));
-    useSocketEvent('stopTyping', (_flag: any) => dispatch(setIsTyping(false)))
+    useSocketEvent(socket, 'receiveMessage', (message: any) => dispatch(setMessageList([...phaser.messageList, message])));
+    useSocketEvent(socket, 'typing', (_flag: any) => dispatch(setIsTyping(true)));
+    useSocketEvent(socket, 'stopTyping', (_flag: any) => dispatch(setIsTyping(false)))
         
     return (
         <div>
@@ -231,9 +243,11 @@ const Multiplayer = ({ user }: Props) => {
                     <button className='btn btn-outline-info my-1' onClick={joinRoom} style={{ width: '20%' }}>Join Room</button>
                 </div>
             ) }
+            </div>
+            <div className='mt-5' style={{ width: '85%', marginLeft: '7.5%' }}>
             { ascean._id === asceanId && (
                 <SolaAscean ascean={ascean} />
-            ) }
+                ) }
             </div>
             { phaser.gameChange && ( 
                 <HostScene /> 
