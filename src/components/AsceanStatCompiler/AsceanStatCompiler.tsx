@@ -71,7 +71,7 @@ const AsceanStatCompiler = ({ ascean }: Props) => {
 
     return (
         <>
-        <div className="actions">
+        <div className="actions" style={{ marginTop: '-5%' }}>
             <h3>Combat Statistics</h3>
         </div>
         <div className="property-line" style={{ marginTop: -15 + 'px' }}>

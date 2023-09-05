@@ -6,6 +6,26 @@ import * as chatLogic from '../../config/chatLogics'
 import GroupChatModal from './GroupChatModal';
 import { User } from '../../pages/App/App';
 
+const getLastMessageColor = (latestMessages: any, userId: any): string | undefined => {
+    if (!latestMessages) return;
+    if (latestMessages.sender._id === userId) {
+        return '#fdf6d8';
+    } else if (!latestMessages.readBy.includes(userId)) {
+        return 'gold';
+    } else {
+        return 'green';
+    };
+};
+
+const checkWidth = (): string => {
+    const width = window.innerWidth;
+    if (width < 768) {
+        return '100%';
+    } else {
+        return '90%';
+    };
+};
+
 interface Props {
     selectedChat: any;
     setSelectedChat: React.Dispatch<React.SetStateAction<never[]>>;
@@ -35,26 +55,6 @@ const MyChats = ({ selectedChat, setSelectedChat, user, chats, setChats, fetchAg
     useEffect(() => {
         handleClose();
     }, [selectedChat]);
-
-    const getLastMessageColor = (latestMessages: any, userId: any): string | undefined => {
-        if (!latestMessages) return;
-        if (latestMessages.sender._id === userId) {
-            return '#fdf6d8';
-        } else if (!latestMessages.readBy.includes(userId)) {
-            return 'gold';
-        } else {
-            return 'green';
-        };
-    };
-
-    const checkWidth = (): string => {
-        const width = window.innerWidth;
-        if (width < 768) {
-            return '100%';
-        } else {
-            return '90%';
-        };
-    };
 
     return (
         <>

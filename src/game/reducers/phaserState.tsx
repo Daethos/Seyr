@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Equipment } from '../../components/GameCompiler/GameStore';
 
 export const phaserSlice = createSlice({
     name: 'phaser',
     initialState: {
         assets: null as [] | null,
         player: null,
+        players: {},
+        socketId: '',
         gameChange: false,
         currentMessage: '',
         messageList: [],
@@ -31,7 +32,6 @@ export const phaserSlice = createSlice({
         },
 
         setMessageList: (state, action) => {
-            console.log(action.payload, "Action Payload For Message List?")
             return {
                 ...state,
                 messageList: action.payload,
@@ -68,6 +68,7 @@ export const phaserSlice = createSlice({
             };
         },
         setIsTyping: (state, action) => {
+            console.log(action.payload, "Is Typing?")
             return {
                 ...state,
                 isTyping: action.payload,
@@ -92,6 +93,19 @@ export const phaserSlice = createSlice({
                 gameChange: action.payload,
             };
         },
+        setPlayers: (state, action) => {
+            console.log(action.payload, "Players?")
+            return {
+                ...state,
+                players: action.payload,
+            };
+        },
+        setSocketId: (state, action) => {
+            return {
+                ...state,
+                socketId: action.payload,
+            };
+        }
     },
     extraReducers: (builder) => {},
 });
@@ -111,6 +125,8 @@ export const {
     setPhaserAssets,
     setPhaserPlayer,
     setPhaserGameChange,
+    setPlayers,
+    setSocketId,
 
 } = phaserSlice.actions;
 

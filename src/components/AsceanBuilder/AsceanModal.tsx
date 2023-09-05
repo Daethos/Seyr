@@ -23,7 +23,7 @@ export const AsceanModal = ({ ascean, link, symbol }: AsceanModalProps) => {
     const [show, setShow] = useState(false);
     return (
         <>
-        <Button variant="outline" style={{ color: ascean?.hardcore ? 'red' : 'gold', marginLeft: '-14px', fontWeight: 600 }} onClick={() => setShow(true)}>{symbol}</Button>
+        <Button variant="outline" style={{ color: ascean?.hardcore ? 'red' : 'gold', marginLeft: '-14px', fontWeight: 600, float: 'left' }} onClick={() => setShow(true)}>{symbol}</Button>
         <Modal show={show} onHide={() => setShow(false)} centered aria-labelledby="contained-modal-title-vcenter" >
             <Modal.Header style={{ fontSize: "28px", color: "gold", border: '4px solid #5a0043', boxShadow: '0 0 1.25em #5a0043' }}>
                 <div className='creature-heading'>

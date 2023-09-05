@@ -79,25 +79,16 @@ io.on("connection", (socket) => {
     let connectedUsersCount;
     let personalUser = { user: null, ascean: null };
     let newUser = { user: null, room: null, ascean: null, player: null, ready: false };
-    let newMap = {};
-    let duelData = { playerOneData: null, playerTwoData: null };
-    let playerStateData = {
-        playerOne: null,
-        playerTwo: null,
-        playerThree: null,
-        playerFour: null,
-    };
+    let newMap = {}; 
     let players = {};
+ 
 
-    // const game = new MultiplayerGame();
-
-    function addPlayer(player) {
-        // TODO:FIXME: 
-
+    function addPlayer(player) {  
+        if (players[player.id]) return;
+        console.log(player.id, 'Player ID');
         players[player.id] = player;
         socket.emit('currentPlayers', players);
-        socket.broadcast.emit('playerAdded', player);
-        // Properties: id, x, y, playerId
+        socket.broadcast.emit('playerAdded', player); 
     };
 
     function removePlayer(player) {
@@ -363,6 +354,7 @@ io.on("connection", (socket) => {
         const data = JSON.parse(newData);
         const room = rooms.get(data.room);
         if (!room) {
+            exists = false;
             rooms.set(data.room, { playersInRoom: new Set(), password: data.password }); // new Set()
         };
         
@@ -372,7 +364,7 @@ io.on("connection", (socket) => {
         if (numPlayers >= maxPlayersPerRoom && data.room !== 'Lobby') {
             return callback('The Room you attempted to join is full.');
         };
-        
+
         if (data.password !== correctPassword) {
             return callback('You have typed the incorrect password for room: ' + data.room);
         };
@@ -394,32 +386,32 @@ io.on("connection", (socket) => {
             x: data.x,
             y: data.y,
         };
-        
+         
         players[socket.id] = newUser;
         socket.emit('currentPlayers', players);
         socket.broadcast.emit('playerAdded', newUser);
-        // Properties: id, x, y, playerId
 
-        // io.to(data.room).emit(`playerData`, responseData);
-        // io.to(data.room).emit(`playerPosition`, newUser);
-        // io.to(data.room).emit(`playerState`, playerStateData);
         io.to(data.room).emit('newUser', newUser);
         
-        const helloMessage = {
+        const welcomeMessage = {
             room: data.room,
-            author: 'The Ascea',
-            message: `Welcome, ${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)}.`,
+            sender: {
+                username: 'The Ascea',
+            }, 
+            message: `Welcome, ${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)}. You have connected to ${data.room === 'Lobby' ? 'the Lobby' : `room ${data.room}`}.`,
             time: Date.now()
         };
         const userUpdateMessage = {
             room: data.room,
-            author: 'The Ascean',
-            message: `${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)} has joined the game.`,
+            sender: {
+                username: 'The Ascea',
+            }, 
+            message: `${data?.user.username.charAt(0).toUpperCase() + data?.user.username.slice(1)} has joined ${data.room === 'Lobby' ? 'the Lobby' : `room ${data.room}`}.`,
             time: Date.now()
         };
 
         socket.to(data.room).emit('receiveMessage', userUpdateMessage);
-        socket.emit('receiveMessage', helloMessage);
+        socket.emit('receiveMessage', welcomeMessage);
     };
 
     async function createMap(mapData) {
@@ -690,16 +682,15 @@ io.on("connection", (socket) => {
     socket.on('request_reduel', async (data) => {
         let newData = data;
         if (newUser.player === 1) {
-        newData.player_one_reduel = true;
+            newData.player_one_reduel = true;
         } else {
-        newData.player_two_reduel = true;
+            newData.player_two_reduel = true;
         }
         if (newData.player_one_reduel === true && newData.player_two_reduel === true) {
-        io.to(newUser.room).emit('reset_duel');
+            io.to(newUser.room).emit('reset_duel');
         } else {
-        io.to(newUser.room).emit('reduel_requested', newData);
+            io.to(newUser.room).emit('reduel_requested', newData);
         }
-
     });
     
     socket.on('auto_engage', async (combatData) => {
@@ -728,8 +719,20 @@ io.on("connection", (socket) => {
             rooms.delete(room.id);
         } else {
             await socket.to(newUser.room).emit("playerLeft", newUser.player);
+            const message = {
+                room: newUser.room,
+                sender: {
+                    username: 'The Ascea',
+                }, 
+                message: `${newUser.user.username.charAt(0).toUpperCase() + newUser.user.username.slice(1)} has left ${newUser.room === 'Lobby' ? 'the Lobby' : `room ${newUser.room}`}.`,
+                time: Date.now()
+            };
+            socket.to(newUser.room).emit('receiveMessage', message);
         };
         socket.leave(newUser.room);
+        for (const player in players) {
+            delete players[player];
+        };
     });
 
     socket.off("setup", () => {

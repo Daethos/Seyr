@@ -46,26 +46,25 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
         <Row className="justify-content-center my-3">
         <Col className="stat-block wide">
         <hr className="orange-border" />
-        <div className="section-left">
         { userProfile ? ( 
-            <>
+            <div className='' style={{ width: '50%', marginLeft: '25%' }}>
                 {/* <AsceanModal ascean={ascean} link={'/Solo/'} symbol={Symbols.play} /> */}
                 <AsceanModal ascean={ascean} link={'/Story/'} symbol={Symbols.phaser} />
                 <Delete ascean={ascean} deleteAscean={deleteAscean} />
                 <Update ascean={ascean} symbol={Symbols.update} />
-                {Symbols.space}
-            </>
+                {Symbols.space}<br />
+            </div>
         ) : ( '' ) }
         { accordion === 'Tight' ? (
-            <>
+            <div className='section-left'>
             <div className="creature-heading">
                 <h1>{ascean.name}</h1>
                 <h2 className='ascean-description'>{ascean.description}</h2>
             </div>
             <img src={process.env.PUBLIC_URL + '/images/' + ascean.origin + '-' + ascean.sex + '.jpg'} alt={ascean.origin + ascean.sex} id="ascean-home-pic" />
-            </> 
+            </div> 
         ) : accordion === 'Lean' ? (
-            <>
+            <div className='section-left'>
                 <div className="creature-heading">
                     <h1>{ascean.name}</h1>
                     <h2 className='ascean-description'>{ascean.description}</h2>
@@ -92,9 +91,9 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                     <h4>Mastery</h4>
                     <p> {ascean.mastery}</p>
                 </div>
-            </> 
+            </div> 
         ) : accordion === 'Half' ? (
-            <>
+            <div className='section-left'>
                 <div className="creature-heading">
                     <h1>{ascean.name}</h1>
                     <h2 className='ascean-description'>{ascean.description}</h2>
@@ -140,9 +139,10 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                     loading={loading}
                 />
                 </div>
-            </>
+            </div>
         ) : (
             <>
+            <div className="section-left">
                 <div className="creature-heading">
                     <h1>{ascean.name}</h1>
                     <h2 className='ascean-description'>{ascean.description}</h2>
@@ -188,11 +188,13 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                     loading={loading}
                     />
                 </div> 
+            </div>
+            <div className='section-right'>
                 <div className="top-stats">
                     {Symbols.space}
                 </div>
                 <AsceanStatCompiler ascean={ascean} />
-                { userProfile ? ( 
+                { userProfile && ( 
                     <>
                         <div className="actions">
                         <h3>Communal</h3>
@@ -206,10 +208,10 @@ const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, han
                         <p>{ascean.shareable.charAt(0).toUpperCase() + ascean.shareable.slice(1)}</p>
                         </div>
                     </>
-                ) : ( '' ) }
+                ) }
+            </div>
             </>
         ) }
-            </div> 
             <hr className='orange-border bottom' />
         </Col>
         </Row>

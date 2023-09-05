@@ -10,7 +10,7 @@ import { SOCKET } from "./socketSaga";
 import * as asceanAPI from '../utils/asceanApi';
 import * as equipmentAPI from '../utils/equipmentApi';
 import * as settingsAPI from '../utils/settingsApi';
-import { setPhaserPlayer } from "../game/reducers/phaserState";
+import { setPhaserPlayer, setSocketId } from "../game/reducers/phaserState";
 
 const checkStatisticalValue = (rarity: string) => {
     switch (rarity) {
@@ -73,6 +73,7 @@ function* workGetGameFetch(action: any): SagaIterator {
     yield put(setTraits(traitRes));
     yield put(setPhaser(true));
     yield put(setPhaserPlayer(gameRes.data));
+    yield put(setSocketId(socket.id));
 }; 
 function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
     console.log(action.payload, "Leveling Up");
