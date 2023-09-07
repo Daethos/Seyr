@@ -79,7 +79,6 @@ export const phaserSlice = createSlice({
             return {
                 ...state,
                 assets: action.payload,
-                gameChange: true,
             };
         },
         setPhaserPlayer: (state, action) => {
@@ -101,7 +100,6 @@ export const phaserSlice = createSlice({
             };
         },
         setSocketId: (state, action) => {
-            console.log(action.payload, "Socket ID")
             return {
                 ...state,
                 socketId: action.payload,

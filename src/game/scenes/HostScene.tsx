@@ -28,6 +28,7 @@ const HostScene = () => {
     const assets = useSelector((state: any) => state.phaser.assets);
     const combatState = useSelector((state: any) => state.combat);
     const gameState = useSelector((state: any) => state.game);
+    const phaser = useSelector((state: any) => state.phaser);
     const STAMINA = useSelector((state: any) => state.combat.playerAttributes.stamina);
     const { playDeath, playReligion, playCounter, playRoll, playPierce, playSlash, playBlunt, playDaethic, playWild, playEarth, playFire, playBow, playFrost, playLightning, playSorcery, playWind } = useGameSounds(gameState.soundEffectVolume);
 
@@ -149,6 +150,7 @@ const HostScene = () => {
     const sendDispatch = async (): Promise<boolean> => EventEmitter.emit('get-dispatch', dispatch);
     const sendEnemyData = async (): Promise<boolean> => EventEmitter.emit('get-enemy', combatState.computer);
     const sendGameData = async (): Promise<boolean> => EventEmitter.emit('get-game-data', gameState);
+    const sendPhaserData = async (): Promise<boolean> => EventEmitter.emit('get-phaser-data', phaser);
     const showDialog = async (e: boolean) => dispatch(setDialogTag(e));
     const updateCombatListener = (data: CombatData): boolean => EventEmitter.emit('update-combat-data', data); // Was Async
     const updateCombatTimer = async (e: number) => dispatch(getCombatTimerFetch(e)); 
@@ -186,6 +188,7 @@ const HostScene = () => {
     usePhaserEvent('request-enemy', sendEnemyData);
     usePhaserEvent('request-combat-data', sendCombatData);
     usePhaserEvent('request-game-data', sendGameData); 
+    usePhaserEvent('request-phaser-data', sendPhaserData);
     usePhaserEvent('show-dialog', showDialog);
     usePhaserEvent('interacting-loot', interactingLoot);
     usePhaserEvent('launch-game', launchGame);

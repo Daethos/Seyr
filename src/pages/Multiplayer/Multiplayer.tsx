@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import * as eqpAPI from '../../utils/equipmentApi';
-import * as asceanAPI from '../../utils/asceanApi';
 import HostScene from '../../game/scenes/HostScene';
 import { useDispatch, useSelector } from 'react-redux';
-import { getGameFetch, setGameChange } from '../../game/reducers/gameState';
+import { getGameFetch } from '../../game/reducers/gameState';
 import EventEmitter from '../../game/phaser/EventEmitter';
 import { Player } from '../../components/GameCompiler/GameStore';
 import { getUserAsceanFetch } from '../../game/reducers/userState';
@@ -11,7 +9,7 @@ import { compress } from '../../sagas/combatSaga';
 import { User } from '../App/App';
 import SolaAscean from '../../components/SolaAscean/SolaAscean';
 import { getSocketInstance } from '../../sagas/socketManager';
-import { setIsTyping, setMessageList, setPassword, setPlayers, setRoom, setSelf, setShowChat, setSocketId } from '../../game/reducers/phaserState';
+import { setIsTyping, setMessageList, setPassword, setPlayers, setRoom, setSelf, setShowChat, setPhaserGameChange, getPhaserAssets } from '../../game/reducers/phaserState';
 import MultiChat from '../../game/ui/MultiChat';
 import { Socket } from 'socket.io-client';
 
@@ -58,6 +56,7 @@ const Multiplayer = ({ user }: Props) => {
     
     useEffect(() => {
         dispatch(getUserAsceanFetch());
+        dispatch(getPhaserAssets());
         joinLobby();
     }, [dispatch]);
 
@@ -187,13 +186,10 @@ const Multiplayer = ({ user }: Props) => {
     function playerAdded(player: any): void {
         const existing = phaser.players[player.id];
         if (existing) return;
-        
         if (player.id === socket.id) {
-            console.log(player, 'Setting Self')
             dispatch(setSelf(player));
         };
         if (player.id !== socket.id && phaser.self) {
-            console.log(phaser.players[socket.id], 'Sending Yourself')
             socket.emit('sendPlayer', phaser.self);
         };
         dispatch(setPlayers({ ...phaser.players, [player.id]: player }));
@@ -213,45 +209,55 @@ const Multiplayer = ({ user }: Props) => {
         dispatch(setPlayers(players));
     };
 
+    function startGame(): void {
+        socket.emit('startGame');
+    };
+
+    usePhaserEvent('playerMoving', (data: any) => socket.emit('playerMoving', { ...data, id: socket.id }));
+    usePhaserEvent('playerMoved', (data: any) => EventEmitter.emit('playerMoved', data));
+
+    useSocketEvent(socket, 'gameStarted', () => dispatch(setPhaserGameChange(true)));
     useSocketEvent(socket, 'currentPlayers', currentPlayers);
     useSocketEvent(socket, 'playerAdded', playerAdded);
     useSocketEvent(socket, 'newPlayer', addNewPlayer);
     useSocketEvent(socket, 'playerMoved', (player: any) => dispatch(setPlayers({...phaser.players, [player.id]: { ...phaser.players[player.id], x: player.x, y: player.y }})));
     useSocketEvent(socket, 'removePlayer', removePlayer);
-
     useSocketEvent(socket, 'receiveMessage', (message: any) => dispatch(setMessageList([...phaser.messageList, message])));
     useSocketEvent(socket, 'typing', (_flag: any) => dispatch(setIsTyping(true)));
     useSocketEvent(socket, 'stopTyping', (_flag: any) => dispatch(setIsTyping(false)))
         
     return (
         <div>
-            <h3 style={{ color: '#fdf6d8', textAlign: 'center', marginTop: '3%', fontSize: '32px' }}>Multiplayer</h3>
-            <MultiChat ascean={ascean} user={user} socket={socket} handleRoomReset={handleRoomReset} />
-            <div style={{ width: '75%', marginLeft: '14.5%' }}>
-            { !phaser.showChat && (
-                <div>
-                    <select className='my-1' value={asceanId} onChange={(e) => setAsceanId(e.target.value)} >
-                        <option>Ascean</option>
-                        {asceans.map((ascean: Player, index: number) => {
-                            return (
-                                <option value={ascean._id} key={index}>{ascean.name} - Level: {ascean.level}</option>
-                            )
-                        })}
-                    </select><br />
-                    <input className='my-1' type='text' placeholder='Room ID...' onChange={(e) => dispatch(setRoom(e.target.value))}/><br />
-                    <input className='my-1' type='text' placeholder='Password...' onChange={(e) => dispatch(setPassword(e.target.value))}/><br />
-                    <button className='btn btn-outline-info my-1' onClick={joinRoom} style={{ width: '20%' }}>Join Room</button>
+            { phaser.gameChange ? ( 
+                <HostScene /> 
+            ) : (
+                <div style={{ width: '75%', marginLeft: '12.5%', marginTop: '2%', fontFamily: 'Cinzel' }}>
+                { !phaser.showChat && (
+                    <div>
+                        <select className='my-1' value={asceanId} onChange={(e) => setAsceanId(e.target.value)} >
+                            <option>Ascean</option>
+                            {asceans.map((ascean: Player, index: number) => {
+                                return (
+                                    <option value={ascean._id} key={index}>{ascean.name} - Level: {ascean.level}</option>
+                                )
+                            })}
+                        </select><br />
+                        <input className='my-1' type='text' placeholder='Room ID...' onChange={(e) => dispatch(setRoom(e.target.value))}/><br />
+                        <input className='my-1' type='text' placeholder='Password...' onChange={(e) => dispatch(setPassword(e.target.value))}/><br />
+                        <button className='btn btn-outline-info my-1' onClick={joinRoom} style={{ width: '20%' }}>Join Room</button>
+                    </div>
+                ) }
                 </div>
             ) }
-            </div>
+            <MultiChat ascean={ascean} user={user} socket={socket} handleRoomReset={handleRoomReset} />
+            { Object.keys(phaser.players).length > 0 && ( 
+                <button className='btn btn-outline-success mt-3' onClick={startGame} style={{ width: '20%', marginLeft: '40%' }}>Start Game</button>
+            )}
             <div className='mt-5' style={{ width: '85%', marginLeft: '7.5%' }}>
-            { ascean._id === asceanId && (
+            { ascean._id === asceanId && !phaser.gameChange && (
                 <SolaAscean ascean={ascean} />
                 ) }
             </div>
-            { phaser.gameChange && ( 
-                <HostScene /> 
-            ) }
         </div>
     );
 };

@@ -68,11 +68,11 @@ let player = {
 let combatData = {};
 
 io.on("connection", (socket) => {
-    // socket.onAny((_eventName, ...args) => {
-        // const data = args[0];
-        // const size = data ? JSON.stringify(data).length : 0;
-        // console.log((size / 1000), "KBs");
-    // });
+    socket.onAny((_eventName, ...args) => {
+        const data = args[0];
+        const size = data ? JSON.stringify(data).length : 0;
+        console.log((size / 1000), "KBs");
+    });
     console.log(`User Connected: ${socket.id}`);
 
     let connectedUsersCount;
@@ -92,11 +92,18 @@ io.on("connection", (socket) => {
         socket.broadcast.emit('playerRemoved', id);
     };
 
-    function playerMovement(data) {
-        const { id, x, y } = data
-        players[id].x = x;
-        players[id].y = y;
-        socket.broadcast.emit('playerMoved', players[id]);
+    function playerMoving(data) {
+        console.time('Player Moving');
+        // const { id, x, y } = data
+        // players[id].x = x;
+        // players[id].y = y;
+        // socket.broadcast.emit('playerMoved', players[id]);
+        socket.broadcast.emit('playerMoved', data);
+        console.timeEnd('Player Moving');    
+    };
+
+    function startGame() {
+        io.to(newUser.room).emit('gameStarted');
     };
 
     function onSetup(userData) {
@@ -451,7 +458,8 @@ io.on("connection", (socket) => {
 
     socket.on('sendPlayer', sendPlayer);
     socket.on('removePlayer', removePlayer);
-    socket.on('playerMovement', playerMovement);
+    socket.on('playerMoving', playerMoving);
+    socket.on('startGame', startGame);
 
     socket.on('playerAction', playerBlindCombat);
     socket.on('computerCombat', computerCombat);

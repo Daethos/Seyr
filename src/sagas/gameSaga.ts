@@ -66,7 +66,6 @@ function* workGetGameFetch(action: any): SagaIterator {
     const socket = getSocketInstance();
     socket.emit(SOCKET.SETUP_PLAYER, press);
 
-    console.log(socket.id, "Setting Socket ID")
     yield put(setSocketId(socket.id));
     yield put(setPlayer(gameRes.data));
     yield put(setCombatPlayer(combatRes.data.data));

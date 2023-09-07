@@ -231,7 +231,44 @@ export default class Player extends Entity {
         this.playerStateListener();
         this.checkLootdropCollision(playerSensor);
         this.checkNpcCollision(playerSensor);
+        this.playerMoved();
     }; 
+
+    playerMoved = () => {
+        EventEmitter.on('playerMoved', (data) => {
+            const player = this.scene.players[data.id];
+            if (!player) return;
+            player.setPosition(data.x, data.y);
+            player.setFlipX(data.flipX);
+            player.isAttacking = data.attacking;
+            player.isCountering = data.countering;
+            player.isDodging = data.dodging;
+            player.isPosturing = data.posturing;
+            player.isRolling = data.rolling;
+            player.isMoving = data.isMoving;
+            player.isConsuming = data.consuming;
+            player.isCaerenic = data.caerenic;
+            player.isTshaering = data.tshaering;
+            player.isPolymorphing = data.polymorphing;
+            player.isPraying = data.praying;
+            player.isHealing = data.healing;
+            player.isStunned = data.stunned;
+            player.isStealthing = data.stealthing;
+            player.currentWeaponSprite = data.currentWeaponSprite;
+            player.currentShieldSprite = data.currentShieldSprite;
+            player.health = data.health;
+        });
+    };
+
+    multiplayerMovement = () => {
+        EventEmitter.emit('playerMoving', { 
+            x: this.x, y: this.y, flipX: this.flipX, attacking: this.isAttacking, countering: this.isCountering,
+            dodging: this.isDodging, posturing: this.isPosturing, rolling: this.isRolling, isMoving: this.isMoving,
+            consuming: this.isConsuming, caerenic: this.isCaerenic, tshaering: this.isTshaering, polymorphing: this.isPolymorphing,
+            praying: this.isPraying, healing: this.isHealing, stunned: this.isStunned, stealthing: this.isStealthing,
+            currentWeaponSprite: this.currentWeaponSprite, currentShieldSprite: this.currentShieldSprite, health: this.health,
+        });
+    };
 
     cleanUp() {
         EventEmitter.off('update-combat-data', this.constantUpdate);
@@ -1380,6 +1417,7 @@ export default class Player extends Entity {
         
         this.playerVelocity.limit(speed);
         this.setVelocity(this.playerVelocity.x, this.playerVelocity.y);
+        if (this.scene.multiplayer) this.multiplayerMovement(); 
     }; 
     update() {
         this.handleConcerns();

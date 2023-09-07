@@ -14,6 +14,7 @@ import { getDrinkFirewaterFetch } from '../reducers/gameState';
 import CombatMachine from '../phaser/CombatMachine';
 import { Mrpas } from 'mrpas';
 import ActionButtons from '../phaser/ActionButtons';
+import MultiPlayer from '../entities/MultiPlayer';
 
 export const { Bodies } = Phaser.Physics.Matter.Matter;
 export const worldToTile = (tile) => Math.floor(tile / 32);
@@ -35,11 +36,13 @@ export default class Play extends Phaser.Scene {
         EventEmitter.once('get-ascean', this.asceanOn);
         EventEmitter.once('get-combat-data', this.stateOn);
         EventEmitter.once('get-game-data', this.gameStateOn);
+        EventEmitter.once('get-phaser-data', this.phaserStateOn);
         EventEmitter.once('get-dispatch', this.dispatchOn);
         EventEmitter.emit('request-dispatch');
         EventEmitter.emit('request-ascean');
         EventEmitter.emit('request-combat-data');
         EventEmitter.emit('request-game-data');
+        EventEmitter.emit('request-phaser-data');
         this.enemy = {};
         this.npcs = [];
         this.combat = false;
@@ -66,11 +69,20 @@ export default class Play extends Phaser.Scene {
         this.combatTimer = null;
         this.lootDrops = [];
         this.players = [];
+        this.multiplayer = false;
     }; 
 
     asceanOn = (e) => this.ascean = e;
     dispatchOn = (e) => this.dispatch = e;
     gameStateOn = (e) => this.gameState = e;
+    phaserStateOn = (e) => {
+        this.phaserState = e;
+        if (Object.keys(e.players).length > 0) {
+            console.log(e.players, 'players')
+            this.currentPlayers(e.players);
+            this.multiplayer = true;
+        };
+    };
     stateOn = (e) => this.state = e;
     
     create() { 
@@ -300,39 +312,40 @@ export default class Play extends Phaser.Scene {
 
     // ================== Combat ================== \\
 
-    // multiplayerListeners = () => {
-    //     EventEmitter.emit('addPlayer', { id: this.player.playerID, x: this.player.x, y: this.player.y });
-    //     EventEmitter.on('playerMoved', (e) => {
-    //         this.players.forEach(player => {
-    //             if (player.playerID === e.id) { 
-    //                 player.setPosition(e.x, e.y);
-    //             };
-    //         });
-    //     });
-    //     EventEmitter.on('currentPlayers', this.currentPlayers);
-    //     EventEmitter.on('playerAdded', this.addPlayer);
-    //     EventEmitter.on('playerRemoved', this.removePlayer);
-    // };
+    multiplayerListeners = () => {
+        // EventEmitter.emit('addPlayer', { id: this.player.playerID, x: this.player.x, y: this.player.y });
+        EventEmitter.on('playerMoved', (e) => {
+            this.players.forEach(player => {
+                if (player.playerID === e.id) { 
+                    player.setPosition(e.x, e.y);
+                };
+            });
+        });
+        // EventEmitter.on('currentPlayers', this.currentPlayers);
+        // EventEmitter.on('playerAdded', this.addPlayer);
+        // EventEmitter.on('playerRemoved', this.removePlayer);
+    };
 
-    // addPlayer = (e) => {
-    //     if (e.id !== this.player.playerID) this.players.push(new Player({ scene: this, x: e.x, y: e.y, texture: 'player_actions', frame: 'player_idle_0' }));
-    // };
-    // currentPlayers = (e) => {
-    //     Object.keys(e).forEach((id) => {
-    //         if (e[id].playerID !== this.player.playerID) this.players.push(new Player({ scene: this, x: e[id].x, y: e[id].y, texture: 'player_actions', frame: 'player_idle_0' }));
-    //     });
-    // };
-    // removePlayer = (e) => {
-    //     this.players = this.players.filter(player => player.playerID !== e.id); 
-    // };
-    // addPlayerListener = () => EventEmitter.on('add-player', this.addPlayer);
-    // removePlayerListener = () => EventEmitter.on('remove-player', this.removePlayer);
+    addPlayer = (e) => {
+        if (e.id !== this.player.playerID) this.players.push(new Player({ scene: this, x: e.x, y: e.y, texture: 'player_actions', frame: 'player_idle_0' }));
+    };
+    currentPlayers = (e) => {
+        Object.keys(e).forEach((id) => {
+            if (e[id].id !== this.player.id) this.players.push(new MultiPlayer({ scene: this, x: e[id].x, y: e[id].y, texture: 'player_actions', frame: 'player_idle_0', player: e[id] }));
+        });
+    };
+    removePlayer = (e) => {
+        this.players = this.players.filter(player => player.playerID !== e.id); 
+    };
+    addPlayerListener = () => EventEmitter.on('add-player', this.addPlayer);
+    removePlayerListener = () => EventEmitter.on('remove-player', this.removePlayer);
 
     // ================== Listeners ================== \\
 
     cleanUp() {
         EventEmitter.off('enemyLootDrop', this.enemyDrops);
         EventEmitter.off('aggressive-enemy', this.enemyAggro);
+        EventEmitter.off('playerMoved', this.multiplayerListeners);
     };
 
     enemyLootDropListener = () => EventEmitter.on('enemyLootDrop', this.enemyDrops);
