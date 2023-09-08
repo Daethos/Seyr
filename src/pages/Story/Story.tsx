@@ -35,7 +35,8 @@ const Story = () => {
             try {
                 dispatch(getGameFetch(asceanID));
                 dispatch(getPhaserAssets());
-                dispatch(setPhaserGameChange(true));
+                setTimeout(() => dispatch(setPhaserGameChange(true))
+                , 1000)
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
             };

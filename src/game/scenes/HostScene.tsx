@@ -177,7 +177,7 @@ const HostScene = () => {
             };
         }, [timer, pause, ref, game]);
     };
-    
+
     useKeyEvent('keydown', gameHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('clear-npc', clearNPC);

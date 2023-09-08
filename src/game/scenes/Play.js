@@ -76,10 +76,10 @@ export default class Play extends Phaser.Scene {
     dispatchOn = (e) => this.dispatch = e;
     gameStateOn = (e) => this.gameState = e;
     phaserStateOn = (e) => {
+        console.log(e, "Phaser State?")
         this.phaserState = e;
         if (Object.keys(e.players).length > 0) {
-            console.log(e.players, 'players')
-            this.currentPlayers(e.players);
+            this.players = e.players;
             this.multiplayer = true;
         };
     };
@@ -255,7 +255,9 @@ export default class Play extends Phaser.Scene {
         this.enemyStateListener();
         // this.addPlayerListener();
         // this.removePlayerListener();
-        // this.multiplayerListeners();
+        this.multiplayerListeners();
+        console.log(this.players, "This.players in play create()")
+        this.currentPlayers(this.players);
 
         // =========================== Music =========================== \\
         this.music = this.sound.add('background', { volume: this.gameState.soundEffectVolume, loop: true });
@@ -313,25 +315,40 @@ export default class Play extends Phaser.Scene {
     // ================== Combat ================== \\
 
     multiplayerListeners = () => {
-        // EventEmitter.emit('addPlayer', { id: this.player.playerID, x: this.player.x, y: this.player.y });
-        EventEmitter.on('playerMoved', (e) => {
-            this.players.forEach(player => {
-                if (player.playerID === e.id) { 
-                    player.setPosition(e.x, e.y);
-                };
-            });
+        EventEmitter.on('playerMoved', (data) => {
+            const player = this.players[data.id];
+            if (!player) return;
+            player.setPosition(data.x, data.y);
+            player.setFlipX(data.flipX);
+            player.isAttacking = data.attacking;
+            player.isCountering = data.countering;
+            player.isDodging = data.dodging;
+            player.isPosturing = data.posturing;
+            player.isRolling = data.rolling;
+            player.isMoving = data.isMoving;
+            player.isConsuming = data.consuming;
+            player.isCaerenic = data.caerenic;
+            player.isTshaering = data.tshaering;
+            player.isPolymorphing = data.polymorphing;
+            player.isPraying = data.praying;
+            player.isHealing = data.healing;
+            player.isStunned = data.stunned;
+            player.isStealthing = data.stealthing;
+            player.currentWeaponSprite = data.currentWeaponSprite;
+            player.currentShieldSprite = data.currentShieldSprite;
+            player.health = data.health;
         });
-        // EventEmitter.on('currentPlayers', this.currentPlayers);
-        // EventEmitter.on('playerAdded', this.addPlayer);
-        // EventEmitter.on('playerRemoved', this.removePlayer);
     };
 
-    addPlayer = (e) => {
-        if (e.id !== this.player.playerID) this.players.push(new Player({ scene: this, x: e.x, y: e.y, texture: 'player_actions', frame: 'player_idle_0' }));
-    };
     currentPlayers = (e) => {
-        Object.keys(e).forEach((id) => {
-            if (e[id].id !== this.player.id) this.players.push(new MultiPlayer({ scene: this, x: e[id].x, y: e[id].y, texture: 'player_actions', frame: 'player_idle_0', player: e[id] }));
+        console.log(e, "e in Play for Multiplayer", this.phaserState)
+        const players = this.phaserState.players;
+        Object.keys(players).forEach((id) => {
+            console.log(players[id].ascean._id, this.player.playerID, 'Matching?')
+            if (players[id].ascean._id !== this.player.playerID) {
+                console.log(players[id], "players[id] being Created in Play for Multiplayer")
+                this.players.push(new MultiPlayer({ scene: this, x: players[id].x, y: players[id].y, texture: 'player_actions', frame: 'player_idle_0', player: players[id] }));
+            };
         });
     };
     removePlayer = (e) => {

@@ -9,7 +9,7 @@ import { compress } from '../../sagas/combatSaga';
 import { User } from '../App/App';
 import SolaAscean from '../../components/SolaAscean/SolaAscean';
 import { getSocketInstance } from '../../sagas/socketManager';
-import { setIsTyping, setMessageList, setPassword, setPlayers, setRoom, setSelf, setShowChat, setPhaserGameChange, getPhaserAssets } from '../../game/reducers/phaserState';
+import { setIsTyping, setMessageList, setPassword, setPlayers, setRoom, setSelf, setShowChat, setPhaserGameChange, getPhaserAssets, setRemovePlayer } from '../../game/reducers/phaserState';
 import MultiChat from '../../game/ui/MultiChat';
 import { Socket } from 'socket.io-client';
 
@@ -51,6 +51,7 @@ const Multiplayer = ({ user }: Props) => {
     const ascean = useSelector((state: any) => state.game.player) as Player;
     const [asceanId, setAsceanId] = useState<any>('');
     const phaser = useSelector((state: any) => state.phaser);
+    const [gameRoom, setGameRoom] = useState<string>('')
     // let socket: Socket = getSocketInstance();
     const [socket, setSocket] = useState<Socket>(getSocketInstance());
     
@@ -64,6 +65,10 @@ const Multiplayer = ({ user }: Props) => {
         if (asceanId === '') return;
         fetchData();
     }, [asceanId]);
+
+    useEffect(() => {
+        currentPlayers(phaser.players);
+    }, [phaser.players])
     
     const fetchData = async (): Promise<void> => {
         try {
@@ -80,8 +85,8 @@ const Multiplayer = ({ user }: Props) => {
             ascean: ascean,
             room: 'Lobby',
             password: 'Lobby',
-            x: 0,
-            y: 0,
+            x: 200,
+            y: 200,
         };
         const compressAsceanData = compress(asceanData);
         socket.emit('joinRoom', compressAsceanData, (error: any) => {
@@ -111,13 +116,14 @@ const Multiplayer = ({ user }: Props) => {
     function joinRoom(): void {
         if (asceanId === '') {
             dispatch(setMessageList([...phaser.messageList, {
-                room: phaser?.room,
+                room: gameRoom,
                 sender: 'The Ascea',
                 message: 'You must choose an Ascean before joining a room.',
                 time: Date.now()
             }]));
             return;
         };
+        if (phaser.playerCount > 1) resetPlayers(phaser.players);
         socket.emit("leaveRoom");
         const strippedAscean = {
             _id: ascean._id,
@@ -138,23 +144,23 @@ const Multiplayer = ({ user }: Props) => {
         const asceanData = {
             user: user,
             ascean: strippedAscean,
-            room: phaser.room,
+            room: gameRoom,
             password: phaser.password,
             x: 0,
             y: 0,
         };
         const compressAsceanData = compress(asceanData);
         const message = {
-            room: phaser.room,
+            room: gameRoom,
             sender: user,
-            message: `Entering: ${phaser.room}`,
+            message: `Entering: ${gameRoom}`,
             time: Date.now()
         };
         dispatch(setMessageList([...phaser.messageList, message])); 
         socket.emit("joinRoom", compressAsceanData, (error: any) => {
             if (error) {
                 const errorMsg = {
-                    room: phaser.room,
+                    room: gameRoom,
                     sender: 'The Ascea',
                     message: `Error Joining Room: ${error}`,
                     time: Date.now()
@@ -163,10 +169,12 @@ const Multiplayer = ({ user }: Props) => {
                 return;
             };
         });
+        dispatch(setRoom(gameRoom));
         dispatch(setShowChat(true));
     };
 
     function handleRoomReset(): void {
+        socket.emit('removePlayer', socket.id);
         socket.emit("leaveRoom");
         dispatch(setPlayers({}));
         dispatch(setShowChat(false));
@@ -178,7 +186,9 @@ const Multiplayer = ({ user }: Props) => {
             const existingPlayer = phaser.players[id];
             if (!existingPlayer) {
                 console.log('Setting Players in currentPlayers', id)
+                console.log(players[id], 'Player in currentPlayers')
                 dispatch(setPlayers({...phaser.players, [id]: players[id]}));
+                socket.emit('playerAdded', players[id]);
             };
         });
     };
@@ -188,11 +198,15 @@ const Multiplayer = ({ user }: Props) => {
         if (existing) return;
         if (player.id === socket.id) {
             dispatch(setSelf(player));
+            socket.emit('requestPlayers');
         };
         if (player.id !== socket.id && phaser.self) {
+            console.log('Sending myself to the new player')    
             socket.emit('sendPlayer', phaser.self);
         };
+        console.log(player, 'Player Added')
         dispatch(setPlayers({ ...phaser.players, [player.id]: player }));
+        socket.emit('playerAdded', player);
     };
 
     function addNewPlayer(player: any): void {
@@ -201,12 +215,29 @@ const Multiplayer = ({ user }: Props) => {
     };
 
     function removePlayer(id: string): void {
+        console.log(id, 'Player ID being Removed')
+        // dispatch(setRemovePlayer(id));
         let players = { ...phaser.players };
-        console.log(players, id, 'Players and ID being Removed')
-        console.log(players[id], 'Player Before Removal')
+        // console.log(players, id, 'Players and ID being Removed')
+        // console.log(players[id], 'Player Before Removal')
         if (players[id]) delete players[id];
         console.log(players, 'Players After Removal')
         dispatch(setPlayers(players));
+    };
+
+    function playerRequested(): void {
+        socket.emit('sendPlayer', phaser.self);
+    };
+
+    function resetPlayers(players: any): void {
+        let keys = { ...players };
+        Object.keys(keys).forEach((id: string) => {
+            if (id !== socket.id) {
+                delete keys[id];
+                socket.emit('playerRemoved', id);
+            };
+        });
+        dispatch(setPlayers(keys));
     };
 
     function startGame(): void {
@@ -216,6 +247,7 @@ const Multiplayer = ({ user }: Props) => {
     usePhaserEvent('playerMoving', (data: any) => socket.emit('playerMoving', { ...data, id: socket.id }));
     usePhaserEvent('playerMoved', (data: any) => EventEmitter.emit('playerMoved', data));
 
+    useSocketEvent(socket, 'playerRequested', playerRequested);
     useSocketEvent(socket, 'gameStarted', () => dispatch(setPhaserGameChange(true)));
     useSocketEvent(socket, 'currentPlayers', currentPlayers);
     useSocketEvent(socket, 'playerAdded', playerAdded);
@@ -231,6 +263,7 @@ const Multiplayer = ({ user }: Props) => {
             { phaser.gameChange ? ( 
                 <HostScene /> 
             ) : (
+                <>
                 <div style={{ width: '75%', marginLeft: '12.5%', marginTop: '2%', fontFamily: 'Cinzel' }}>
                 { !phaser.showChat && (
                     <div>
@@ -242,22 +275,23 @@ const Multiplayer = ({ user }: Props) => {
                                 )
                             })}
                         </select><br />
-                        <input className='my-1' type='text' placeholder='Room ID...' onChange={(e) => dispatch(setRoom(e.target.value))}/><br />
+                        <input className='my-1' type='text' placeholder='Room ID...' onChange={(e) => setGameRoom(e.target.value)}/><br />
                         <input className='my-1' type='text' placeholder='Password...' onChange={(e) => dispatch(setPassword(e.target.value))}/><br />
                         <button className='btn btn-outline-info my-1' onClick={joinRoom} style={{ width: '20%' }}>Join Room</button>
                     </div>
                 ) }
                 </div>
+                <MultiChat ascean={ascean} user={user} socket={socket} handleRoomReset={handleRoomReset} />
+                { Object.keys(phaser.players).length > 0 && phaser.room !== 'Lobby' && ( 
+                    <button className='btn btn-outline-success mt-3' onClick={startGame} style={{ width: '20%', marginLeft: '40%' }}>Start Game</button>
+                )}
+                <div className='mt-4' style={{ width: '85%', marginLeft: '7.5%' }}>
+                    { ascean._id === asceanId && (
+                        <SolaAscean ascean={ascean} />
+                    ) }
+                </div>
+                </>
             ) }
-            <MultiChat ascean={ascean} user={user} socket={socket} handleRoomReset={handleRoomReset} />
-            { Object.keys(phaser.players).length > 0 && ( 
-                <button className='btn btn-outline-success mt-3' onClick={startGame} style={{ width: '20%', marginLeft: '40%' }}>Start Game</button>
-            )}
-            <div className='mt-5' style={{ width: '85%', marginLeft: '7.5%' }}>
-            { ascean._id === asceanId && !phaser.gameChange && (
-                <SolaAscean ascean={ascean} />
-                ) }
-            </div>
         </div>
     );
 };

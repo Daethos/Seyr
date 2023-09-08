@@ -231,34 +231,34 @@ export default class Player extends Entity {
         this.playerStateListener();
         this.checkLootdropCollision(playerSensor);
         this.checkNpcCollision(playerSensor);
-        this.playerMoved();
+        // this.playerMoved();
     }; 
 
-    playerMoved = () => {
-        EventEmitter.on('playerMoved', (data) => {
-            const player = this.scene.players[data.id];
-            if (!player) return;
-            player.setPosition(data.x, data.y);
-            player.setFlipX(data.flipX);
-            player.isAttacking = data.attacking;
-            player.isCountering = data.countering;
-            player.isDodging = data.dodging;
-            player.isPosturing = data.posturing;
-            player.isRolling = data.rolling;
-            player.isMoving = data.isMoving;
-            player.isConsuming = data.consuming;
-            player.isCaerenic = data.caerenic;
-            player.isTshaering = data.tshaering;
-            player.isPolymorphing = data.polymorphing;
-            player.isPraying = data.praying;
-            player.isHealing = data.healing;
-            player.isStunned = data.stunned;
-            player.isStealthing = data.stealthing;
-            player.currentWeaponSprite = data.currentWeaponSprite;
-            player.currentShieldSprite = data.currentShieldSprite;
-            player.health = data.health;
-        });
-    };
+    // playerMoved = () => {
+    //     EventEmitter.on('playerMoved', (data) => {
+    //         const player = this.scene.players[data.id];
+    //         if (!player) return;
+    //         player.setPosition(data.x, data.y);
+    //         player.setFlipX(data.flipX);
+    //         player.isAttacking = data.attacking;
+    //         player.isCountering = data.countering;
+    //         player.isDodging = data.dodging;
+    //         player.isPosturing = data.posturing;
+    //         player.isRolling = data.rolling;
+    //         player.isMoving = data.isMoving;
+    //         player.isConsuming = data.consuming;
+    //         player.isCaerenic = data.caerenic;
+    //         player.isTshaering = data.tshaering;
+    //         player.isPolymorphing = data.polymorphing;
+    //         player.isPraying = data.praying;
+    //         player.isHealing = data.healing;
+    //         player.isStunned = data.stunned;
+    //         player.isStealthing = data.stealthing;
+    //         player.currentWeaponSprite = data.currentWeaponSprite;
+    //         player.currentShieldSprite = data.currentShieldSprite;
+    //         player.health = data.health;
+    //     });
+    // };
 
     multiplayerMovement = () => {
         EventEmitter.emit('playerMoving', { 
@@ -1055,7 +1055,7 @@ export default class Player extends Entity {
         };
             
         if (!this.isRanged) this.knockback(this.actionTarget); // actionTarget
-        screenShake(this.scene); 
+        // screenShake(this.scene); 
     };
 
     playerDodge = () => {

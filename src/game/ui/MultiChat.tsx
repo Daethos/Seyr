@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -9,16 +9,16 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { Player } from '../../components/GameCompiler/GameStore';
 import { User } from '../../pages/App/App';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrentMessage, setIsTyping, setMessageList } from '../reducers/phaserState';
-import dialogWindow from '../images/dialog_window.png';
+import { setCurrentMessage, setMessageList } from '../reducers/phaserState';
 import { useNavigate } from 'react-router-dom';
 import * as chatLogic from '../../config/chatLogics';
+import EventEmitter from '../phaser/EventEmitter';
 
 interface Props {
     ascean: Player;
     socket: any;
     user: User;
-    handleRoomReset: () => void;
+    handleRoomReset?: () => void;
 };
 
 const MultiChat = ({ ascean, socket, user, handleRoomReset }: Props) => {
@@ -54,6 +54,7 @@ const MultiChat = ({ ascean, socket, user, handleRoomReset }: Props) => {
     };
 
     function checkKey(e: any): void {
+        e.stopPropagation();
         if (e.keyCode === 13 || e.key === 'Enter') {
             e.preventDefault();
             sendMessage();
@@ -82,8 +83,7 @@ const MultiChat = ({ ascean, socket, user, handleRoomReset }: Props) => {
         if (!socket.connected) return;
         dispatch(setCurrentMessage(e.target.value)); 
         socket.emit('typing', phaser.room);
-        setTimeout(() => socket.emit('stopTyping', phaser.room), 3000);
-    };
+    }; 
 
     const chatStyle = {
         top: window.innerHeight > 900 ? '2.5vh' : '4vh',
@@ -96,14 +96,14 @@ const MultiChat = ({ ascean, socket, user, handleRoomReset }: Props) => {
         <Container style={{ textAlign: 'center', color: '#fdf6d8', width: '100%' }}>
         <div className='Chat-Window'>
         <div className='Chat-Header mt-3' style={{ color: '#fdf6d8' }}>
-            {phaser.room !== 'Lobby' && (
+            {phaser.room !== 'Lobby' && handleRoomReset && (
                 <span style={{ float: 'left', marginLeft: '1%', marginTop: '-0.5%' }} onClick={() => handleRoomReset()}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left" viewBox="0 0 16 16">
                     <path fillRule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
                     </svg> 
                 </span>
             )}
-            <span style={{ marginLeft: '-5%', marginTop: '-0.75%', color: 'gold' }}>
+            <span style={{ marginLeft: '-5%', marginTop: '-1%', color: 'gold' }}>
                 Room: {phaser.room} | Ascean: {ascean?.name ? ascean.name : 'Unchosen'} 
             </span>
             <Button variant="" onClick={() => setModalShow(true)} style={{ float: 'right', color: '#fdf6d8', marginTop: '-1.25%' }}>
@@ -113,12 +113,12 @@ const MultiChat = ({ ascean, socket, user, handleRoomReset }: Props) => {
                 </svg>
             </Button>
             
-            <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
+            <Modal show={modalShow} onHide={() => setModalShow(false)} style={{ zIndex: 9999 }} centered>
                 <Modal.Header closeButton closeVariant='white'>
                     <Modal.Title style={{ color: 'gold' }}>Players: {Object.keys(phaser.players).length} Room: {phaser.room}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    { unwrapPlayers() }
+                    {unwrapPlayers()}
                 </Modal.Body>
             </Modal>
         </div>
@@ -157,7 +157,7 @@ const MultiChat = ({ ascean, socket, user, handleRoomReset }: Props) => {
             </ScrollToBottom>
         </div>
         <div className="chat-footer" style={{ marginTop: '5%' }}>
-            <Form.Control as="textarea" style={{ maxHeight: '60px', width: '95%' }} type="text" placeholder='Warning, no profanity filter...' value={phaser.currentMessage} onChange={typingHandler} onKeyDown={checkKey} />
+            <Form.Control as="textarea" id='multichat-input' style={{ maxHeight: '60px', width: '95%' }} type="text" placeholder='Warning, no profanity filter...' value={phaser.currentMessage} onChange={typingHandler} onKeyDown={checkKey} />
             <Button variant="outline-info" onClick={sendMessage} style={{ float: 'right' }}>Submit</Button>
         </div>
         </div> 

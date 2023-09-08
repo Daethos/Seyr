@@ -81,23 +81,32 @@ io.on("connection", (socket) => {
     let newMap = {}; 
     let players = {};
 
+    function requestPlayers() {
+        socket.to(newUser.room).emit('playerRequested');
+    };
+
     function sendPlayer(player) {  
         console.log(player.id, 'Player ID');
         io.to(player.room).emit('currentPlayers', players);
         // io.to(player.room).emit('playerAdded', player);
     };
 
+    function playerAdded(player) {
+        players[player.id] = player;
+    };
+
     function removePlayer(id) {
-        delete players[id];
-        socket.broadcast.emit('playerRemoved', id);
+        // delete players[id];
+        // socket.broadcast.emit('playerRemoved', id);
+        socket.to(newUser.room).emit('removePlayer', id);
+    };
+
+    function playerRemoved(id) {
+        if (players[id]) delete players[id];
     };
 
     function playerMoving(data) {
         console.time('Player Moving');
-        // const { id, x, y } = data
-        // players[id].x = x;
-        // players[id].y = y;
-        // socket.broadcast.emit('playerMoved', players[id]);
         socket.broadcast.emit('playerMoved', data);
         console.timeEnd('Player Moving');    
     };
@@ -374,7 +383,6 @@ io.on("connection", (socket) => {
         callback(); 
         console.log(`User with ID: ${socket.id} joined room: ${data.room} with ${data.ascean.name}`);
         connectedUsersCount = io.sockets.adapter.rooms.get(data.room).size;
-
         newUser = {
             ascean: data.ascean,
             id: socket.id,
@@ -386,6 +394,7 @@ io.on("connection", (socket) => {
             y: data.y,
         }; 
         players[socket.id] = newUser;
+        socket.to(data.room).emit('currentPlayers', players);
         io.to(data.room).emit('playerAdded', newUser);
 
         const welcomeMessage = {
@@ -456,7 +465,10 @@ io.on("connection", (socket) => {
     socket.on('updateCombatData', updateCombatData);
     socket.on('setPhaserAggression', setPhaserAggression);
 
+    socket.on('requestPlayers', requestPlayers);
+    socket.on('playerAdded', playerAdded);
     socket.on('sendPlayer', sendPlayer);
+    socket.on('playerRemoved', playerRemoved);
     socket.on('removePlayer', removePlayer);
     socket.on('playerMoving', playerMoving);
     socket.on('startGame', startGame);
@@ -699,7 +711,6 @@ io.on("connection", (socket) => {
 
     socket.on("send_message", (data) => {
         socket.to(data.room).emit("receiveMessage", data);
-        console.log(data);
     });
 
     socket.on("send_ascean", (data) => {
@@ -744,7 +755,7 @@ io.on("connection", (socket) => {
         if (playersInRoom.size === 0) {
             rooms.delete(room.id);
         } else {
-            socket.to(newUser.room).emit('removePlayer', socket.id);
+            // socket.to(newUser.room).emit('removePlayer', socket.id);
             // socket.to(newUser.room).emit("playerLeft", newUser.player);
             const message = {
                 room: newUser.room,

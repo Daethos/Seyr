@@ -41,7 +41,7 @@ export default class ScreenShaker {
 
 let totalTrauma = 0;
  
-export const screenShake = (scene: Phaser.Scene, duration = 200, intensity = 0.015) => {
+export const screenShake = (scene: Phaser.Scene, duration = 150, intensity = 0.015) => {
     totalTrauma += 1.05;
     intensity *= Math.pow(totalTrauma, 2);
     
@@ -57,15 +57,6 @@ export const screenShake = (scene: Phaser.Scene, duration = 200, intensity = 0.0
     }, 1);
 };
  
-// export const pauseGame = (scene: Phaser.Scene, duration: number) => {
-//     scene.pause();
-//     return new Promise((resolve) => {
-//         setTimeout(() => {
-//             resolve();
-//         }, duration);
-//     });
-// };
-  
 export function walk(scene: Phaser.Scene, duration = 48, intensity = 0.0004) { // 32 || 0.0003
     scene.cameras.main.shake(duration, intensity);
 };
