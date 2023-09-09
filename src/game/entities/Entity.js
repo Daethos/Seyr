@@ -17,7 +17,7 @@ export const FRAME_COUNT = {
     ATTACK_LIVE: 16,
     ATTACK_SUCCESS: 39,
     
-    COUNTER_LIVE: 5,
+    COUNTER_LIVE: 5, 
     COUNTER_SUCCESS: 10,
 
     POSTURE_LIVE: 16, // 11 for frameRate: 12

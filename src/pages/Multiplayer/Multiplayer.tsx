@@ -217,13 +217,26 @@ const Multiplayer = ({ user }: Props) => {
     function removePlayer(id: string): void {
         console.log(id, 'Player ID being Removed')
         // dispatch(setRemovePlayer(id));
-        let players = { ...phaser.players };
         // console.log(players, id, 'Players and ID being Removed')
         // console.log(players[id], 'Player Before Removal')
+        let players = { ...phaser.players };
         if (players[id]) delete players[id];
         console.log(players, 'Players After Removal')
         dispatch(setPlayers(players));
     };
+
+    //TODO:FIXME: Order of Operations and Timing for Sockets/Redux-Saga
+    // Player joins room: (2) Events occur: 
+    // The player joining pings and gives a copy of themself to everyone present
+    // The player pings the room to give copies of themself?
+    // Or the people present in turn send a copy of themself to the specific player?
+    // Can specifically ping socket.id's, use that method
+
+    // When a player leaves a room, (2) Events occur:
+    // Player leaving removes everyone else from his players object
+    // Other players remove leaving player from their players object
+
+    // That should be everything, tackle this tomorrow
 
     function playerRequested(): void {
         socket.emit('sendPlayer', phaser.self);
