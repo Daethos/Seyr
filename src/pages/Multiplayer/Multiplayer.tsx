@@ -225,7 +225,7 @@ const Multiplayer = ({ user }: Props) => {
         dispatch(setPlayers(players));
     };
 
-    //TODO:FIXME: Order of Operations and Timing for Sockets/Redux-Saga
+    //TODO:FIXME: Order of Operations and Timing for Sockets/Redux-Saga TODO:FIXME:
     // Player joins room: (2) Events occur: 
     // The player joining pings and gives a copy of themself to everyone present
     // The player pings the room to give copies of themself?
@@ -243,7 +243,7 @@ const Multiplayer = ({ user }: Props) => {
     };
 
     function resetPlayers(players: any): void {
-        let keys = { ...players };
+        let keys = { ...players }; // Deep Copy, not Reference
         Object.keys(keys).forEach((id: string) => {
             if (id !== socket.id) {
                 delete keys[id];
