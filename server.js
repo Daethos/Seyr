@@ -81,18 +81,21 @@ io.on("connection", (socket) => {
     let newMap = {}; 
     let players = {};
 
-    function requestPlayers() {
-        socket.to(newUser.room).emit('playerRequested');
+    function requestPlayers(id) {
+        socket.to(newUser.room).emit('playerRequested', id);
     };
 
-    function sendPlayer(player) {  
-        console.log(player.id, 'Player ID');
-        io.to(player.room).emit('currentPlayers', players);
+    function sendPlayer(data) {
+        const { id, player } = data;  
+        console.log(player.id, 'Player ID being Sent via Request');
+        io.to(id).emit('playerAdded', player);
+        // io.to(player.room).emit('currentPlayers', players);
         // io.to(player.room).emit('playerAdded', player);
     };
 
     function playerAdded(player) {
         players[player.id] = player;
+        console.log(Object.keys(players).length, "# of Players in server backend")
     };
 
     function removePlayer(id) {
@@ -107,8 +110,8 @@ io.on("connection", (socket) => {
 
     function playerMoving(data) {
         console.time('Player Moving');
-        socket.broadcast.emit('playerMoved', data);
-        console.timeEnd('Player Moving');    
+        socket.to(newUser.room).emit('playerMoved', data);
+        console.timeEnd('Player Moving');
     };
 
     function startGame() {
@@ -423,7 +426,7 @@ io.on("connection", (socket) => {
         newMap = zlib.deflateSync(JSON.stringify(map));
         const roomSockets = await io.of('/').in(newUser.room).fetchSockets();
         for (const clientSocket of roomSockets) {
-        clientSocket.emit('mapCreated', newMap);
+            clientSocket.emit('mapCreated', newMap);
         };
     };
 
@@ -737,6 +740,7 @@ io.on("connection", (socket) => {
             };
             socket.to(newUser.room).emit('receiveMessage', message);
         };
+        connectedUsersCount = 0;
         socket.leave(newUser.room);
         for (const player in players) {
             delete players[player];
@@ -755,7 +759,7 @@ io.on("connection", (socket) => {
         if (playersInRoom.size === 0) {
             rooms.delete(room.id);
         } else {
-            // socket.to(newUser.room).emit('removePlayer', socket.id);
+            socket.to(newUser.room).emit('removePlayer', socket.id);
             // socket.to(newUser.room).emit("playerLeft", newUser.player);
             const message = {
                 room: newUser.room,

@@ -13,6 +13,17 @@ import { setIsTyping, setMessageList, setPassword, setPlayers, setRoom, setSelf,
 import MultiChat from '../../game/ui/MultiChat';
 import { Socket } from 'socket.io-client';
 
+interface Multiplayer {
+    id: string;
+    ascean: Player;
+    position: number;
+    room: string;
+    ready: boolean;
+    user: User;
+    x: number;
+    y: number;
+};
+
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
         EventEmitter.on(event, callback);
@@ -69,6 +80,10 @@ const Multiplayer = ({ user }: Props) => {
     useEffect(() => {
         currentPlayers(phaser.players);
     }, [phaser.players])
+
+    useEffect(() => {
+        socket.emit('requestPlayers', socket.id);
+    }, [phaser.room, socket])
     
     const fetchData = async (): Promise<void> => {
         try {
@@ -125,6 +140,8 @@ const Multiplayer = ({ user }: Props) => {
         };
         if (phaser.playerCount > 1) resetPlayers(phaser.players);
         socket.emit("leaveRoom");
+        dispatch(setPlayers({}))
+
         const strippedAscean = {
             _id: ascean._id,
             name: ascean.name,
@@ -141,13 +158,14 @@ const Multiplayer = ({ user }: Props) => {
             ring_two: ascean.ring_two,
             trinket: ascean.trinket,
         };
+        console.log(strippedAscean, "The Lighter Ascean being Utilized for the Players Object")
         const asceanData = {
             user: user,
             ascean: strippedAscean,
             room: gameRoom,
             password: phaser.password,
-            x: 0,
-            y: 0,
+            x: 200,
+            y: 200,
         };
         const compressAsceanData = compress(asceanData);
         const message = {
@@ -181,37 +199,41 @@ const Multiplayer = ({ user }: Props) => {
         joinLobby();
     };
 
+    function addSelf(player: Multiplayer) {
+        console.log('SELF', player.ascean)
+        dispatch(setSelf(player));
+        dispatch(setPlayers({ ...phaser.players, [player.id]: player }));
+        socket.emit('requestPlayers', socket.id);
+    };
+
+    function addPlayer(player: Multiplayer) {
+        console.log('OTHER', player.ascean)
+        dispatch(setPlayers({ ...phaser.players, [player.id]: player }));
+        socket.emit('playerAdded', player);
+    }; 
+
     function currentPlayers(players: any): void {
         Object.keys(players).forEach((id: string) => {
             const existingPlayer = phaser.players[id];
             if (!existingPlayer) {
-                console.log('Setting Players in currentPlayers', id)
-                console.log(players[id], 'Player in currentPlayers')
+                console.log(players[id].ascean, 'pinged: currentPlayers')
                 dispatch(setPlayers({...phaser.players, [id]: players[id]}));
                 socket.emit('playerAdded', players[id]);
             };
         });
     };
 
-    function playerAdded(player: any): void {
+    // Realized that because you join a lobby first and you have your character, the .ascean is {} empty, and needs to be essentially reimplemented
+    // So I have to marry or also set the phaser.self when I set the socket.emit perhaps? Just make sure I ping itself so it gets itself, so to speak.
+
+    function playerAdded(player: Multiplayer): void {
         const existing = phaser.players[player.id];
         if (existing) return;
         if (player.id === socket.id) {
-            dispatch(setSelf(player));
-            socket.emit('requestPlayers');
+            addSelf(player);
+        } else {
+            addPlayer(player);
         };
-        if (player.id !== socket.id && phaser.self) {
-            console.log('Sending myself to the new player')    
-            socket.emit('sendPlayer', phaser.self);
-        };
-        console.log(player, 'Player Added')
-        dispatch(setPlayers({ ...phaser.players, [player.id]: player }));
-        socket.emit('playerAdded', player);
-    };
-
-    function addNewPlayer(player: any): void {
-        console.log(player, 'New Player')
-        dispatch(setPlayers({...phaser.players, [player.id]: player}));
     };
 
     function removePlayer(id: string): void {
@@ -238,8 +260,8 @@ const Multiplayer = ({ user }: Props) => {
 
     // That should be everything, tackle this tomorrow
 
-    function playerRequested(): void {
-        socket.emit('sendPlayer', phaser.self);
+    function playerRequested(id: string): void {
+        socket.emit('sendPlayer', { id, player: phaser.self});
     };
 
     function resetPlayers(players: any): void {
@@ -257,14 +279,19 @@ const Multiplayer = ({ user }: Props) => {
         socket.emit('startGame');
     };
 
-    usePhaserEvent('playerMoving', (data: any) => socket.emit('playerMoving', { ...data, id: socket.id }));
-    usePhaserEvent('playerMoved', (data: any) => EventEmitter.emit('playerMoved', data));
+    usePhaserEvent('playerMoving', (data: any) => {
+        const move = { ...data, id: socket.id };
+        socket.emit('playerMoving', move);
+    });
+    useSocketEvent(socket, 'playerMoved', (data: any) => {
+        // console.log(data, 'Player Moved')
+        EventEmitter.emit('playerMoved', data);
+    });
 
     useSocketEvent(socket, 'playerRequested', playerRequested);
     useSocketEvent(socket, 'gameStarted', () => dispatch(setPhaserGameChange(true)));
     useSocketEvent(socket, 'currentPlayers', currentPlayers);
     useSocketEvent(socket, 'playerAdded', playerAdded);
-    useSocketEvent(socket, 'newPlayer', addNewPlayer);
     useSocketEvent(socket, 'playerMoved', (player: any) => dispatch(setPlayers({...phaser.players, [player.id]: { ...phaser.players[player.id], x: player.x, y: player.y }})));
     useSocketEvent(socket, 'removePlayer', removePlayer);
     useSocketEvent(socket, 'receiveMessage', (message: any) => dispatch(setMessageList([...phaser.messageList, message])));

@@ -76,11 +76,14 @@ export default class Play extends Phaser.Scene {
     dispatchOn = (e) => this.dispatch = e;
     gameStateOn = (e) => this.gameState = e;
     phaserStateOn = (e) => {
-        console.log(e, "Phaser State?")
-        this.phaserState = e;
+        console.log(e.players, Object.keys(e.players).length, "Phaser State?")
+        this.phaser = e;
         if (Object.keys(e.players).length > 0) {
             this.players = e.players;
+            console.log('setting multiplayer to true!', this.multiplayer)
             this.multiplayer = true;
+            console.log('setting multiplayer to true!', this.multiplayer)
+
         };
     };
     stateOn = (e) => this.state = e;
@@ -256,7 +259,6 @@ export default class Play extends Phaser.Scene {
         // this.addPlayerListener();
         // this.removePlayerListener();
         this.multiplayerListeners();
-        console.log(this.players, "This.players in play create()")
         this.currentPlayers(this.players);
 
         // =========================== Music =========================== \\
@@ -315,8 +317,9 @@ export default class Play extends Phaser.Scene {
     // ================== Combat ================== \\
 
     multiplayerListeners = () => {
+        console.log('Player Moved Emitter Created')
         EventEmitter.on('playerMoved', (data) => {
-            const player = this.players[data.id];
+            const player = this.players.find(player => player.player.id === data.id);
             if (!player) return;
             player.setPosition(data.x, data.y);
             player.setFlipX(data.flipX);
@@ -341,8 +344,8 @@ export default class Play extends Phaser.Scene {
     };
 
     currentPlayers = (e) => {
-        console.log(e, "e in Play for Multiplayer", this.phaserState)
-        const players = this.phaserState.players;
+        console.log(e, "e in Play for Multiplayer", this.phaser)
+        const players = this.phaser.players;
         Object.keys(players).forEach((id) => {
             console.log(players[id].ascean._id, this.player.playerID, 'Matching?')
             if (players[id].ascean._id !== this.player.playerID) {
@@ -595,6 +598,9 @@ export default class Play extends Phaser.Scene {
         for (let i = 0; i < this.npcs.length; i++) {
             this.npcs[i].update();
         };
+        // for (let i = 0; i < this.players.length; i++) {
+        //     this.players[i].update();
+        // };
         // this.enemies.forEach((enemy) => enemy.update());
         // this.npcs.forEach((npc) => npc.update());
         this.combatMachine.processor();

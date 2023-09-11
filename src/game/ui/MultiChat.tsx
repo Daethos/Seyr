@@ -74,6 +74,7 @@ const MultiChat = ({ ascean, socket, user, handleRoomReset }: Props) => {
                     <Button onClick={() => navigate(`/${player.user.username}`)} variant="" size="lg" style={{ fontWeight: 500, fontSize: '25px', color: '#fdf6d8', fontVariant: 'small-caps' }}>
                         <u>{player.user.username.charAt(0).toUpperCase() + player.user.username.slice(1)}</u>
                         <p style={{ fontSize: '16px' }}>{player.user.email}</p>
+                        <p style={{ fontSize: '16px' }}>{player.ascean?.name}</p>
                     </Button>
                 </div>
         )});

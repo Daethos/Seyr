@@ -16,7 +16,7 @@ export default class MultiPlayer extends Player {
     //     EventEmitter.emit('playerMoved')
     // };
 
-    // preUpdate() {
-        
-    // };
+    update() {
+        super.update();
+    };
 };
