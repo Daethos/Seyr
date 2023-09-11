@@ -56,6 +56,13 @@ export default function LoginPage({ handleSignUpOrLogin }: LoginProps) {
               <svg height="5" width="100%" className="tapered-rule mt-4">
               <polyline points="0,0 400,2.5 0,5"></polyline>
               </svg>
+                <p style={{ color: '#fdf6d8' }}>
+                    To Demo, use the following credentials: <br />
+                    Email: demo@ascea.com | Password: demo
+                </p>
+              <svg height="5" width="100%" className="tapered-rule mt-4">
+              <polyline points="0,0 400,2.5 0,5"></polyline>
+              </svg>
               <div className="actions">
               <div className="property-line first">
                   <h3>Email Address</h3>

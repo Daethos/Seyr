@@ -66,7 +66,7 @@ const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
         { asceans.length && (
             asceans.map((ascean: Player, index: number) => {
                 return (
-                    <SolaAscean ascean={ascean} key={index} userProfile={true} handleAsceanCreate={saveAsceanMiddleware} deleteAscean={deleteAscean} accordion={accordionState} />
+                    <SolaAscean ascean={ascean} user={user} key={index} userProfile={true} handleAsceanCreate={saveAsceanMiddleware} deleteAscean={deleteAscean} accordion={accordionState} />
             )})
         ) }
         </Container>
