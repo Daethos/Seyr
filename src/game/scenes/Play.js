@@ -321,8 +321,10 @@ export default class Play extends Phaser.Scene {
         EventEmitter.on('playerMoved', (data) => {
             const player = this.players.find(player => player.player.id === data.id);
             if (!player) return;
+            console.log(player.velocity, "Velocity?")
             player.setPosition(data.x, data.y);
             player.setFlipX(data.flipX);
+            player.setVelocity(data.velocity.x, data.velocity.y);
             player.isAttacking = data.attacking;
             player.isCountering = data.countering;
             player.isDodging = data.dodging;
@@ -598,16 +600,13 @@ export default class Play extends Phaser.Scene {
         for (let i = 0; i < this.npcs.length; i++) {
             this.npcs[i].update();
         };
-        // for (let i = 0; i < this.players.length; i++) {
-        //     this.players[i].update();
-        // };
-        // this.enemies.forEach((enemy) => enemy.update());
-        // this.npcs.forEach((npc) => npc.update());
+        for (let i = 0; i < this.players.length; i++) {
+            this.players[i].update();
+        };
         this.combatMachine.processor();
 
         this.playerLight.setPosition(this.player.x, this.player.y);
         this.fpsText.setText('FPS: ' + this.game.loop.actualFps.toFixed(2));
-        // this.actionBar.update(this, this.game.loop.delta, this.game.loop.time);
 
         // this.computerFov();
         // if (this.vision) this.vision.setPosition(this.player.x, this.player.y);

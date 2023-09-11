@@ -17,6 +17,8 @@ export default class MultiPlayer extends Player {
     // };
 
     update() {
-        super.update();
+        // super.update();
+        this.handleAnimations();
+        this.handleConcerns();
     };
 };

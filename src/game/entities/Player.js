@@ -267,6 +267,7 @@ export default class Player extends Entity {
             consuming: this.isConsuming, caerenic: this.isCaerenic, tshaering: this.isTshaering, polymorphing: this.isPolymorphing,
             praying: this.isPraying, healing: this.isHealing, stunned: this.isStunned, stealthing: this.isStealthing,
             currentWeaponSprite: this.currentWeaponSprite, currentShieldSprite: this.currentShieldSprite, health: this.health,
+            velocity: { x: this.playerVelocity.x, y: this.playerVelocity.y },
         });
     };
 

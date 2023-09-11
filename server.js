@@ -68,11 +68,11 @@ let player = {
 let combatData = {};
 
 io.on("connection", (socket) => {
-    socket.onAny((_eventName, ...args) => {
-        const data = args[0];
-        const size = data ? JSON.stringify(data).length : 0;
-        console.log((size / 1000), "KBs");
-    });
+    // socket.onAny((_eventName, ...args) => {
+    //     const data = args[0];
+    //     const size = data ? JSON.stringify(data).length : 0;
+    //     console.log((size / 1000), "KBs");
+    // });
     console.log(`User Connected: ${socket.id}`);
 
     let connectedUsersCount;
@@ -89,8 +89,6 @@ io.on("connection", (socket) => {
         const { id, player } = data;  
         console.log(player.id, 'Player ID being Sent via Request');
         io.to(id).emit('playerAdded', player);
-        // io.to(player.room).emit('currentPlayers', players);
-        // io.to(player.room).emit('playerAdded', player);
     };
 
     function playerAdded(player) {
@@ -99,8 +97,6 @@ io.on("connection", (socket) => {
     };
 
     function removePlayer(id) {
-        // delete players[id];
-        // socket.broadcast.emit('playerRemoved', id);
         socket.to(newUser.room).emit('removePlayer', id);
     };
 
@@ -109,9 +105,7 @@ io.on("connection", (socket) => {
     };
 
     function playerMoving(data) {
-        console.time('Player Moving');
         socket.to(newUser.room).emit('playerMoved', data);
-        console.timeEnd('Player Moving');
     };
 
     function startGame() {
@@ -729,7 +723,6 @@ io.on("connection", (socket) => {
             rooms.delete(room.id);
         } else {
             socket.to(newUser.room).emit('removePlayer', socket.id);
-            // socket.to(newUser.room).emit("playerLeft", newUser.player);
             const message = {
                 room: newUser.room,
                 sender: {
@@ -760,7 +753,6 @@ io.on("connection", (socket) => {
             rooms.delete(room.id);
         } else {
             socket.to(newUser.room).emit('removePlayer', socket.id);
-            // socket.to(newUser.room).emit("playerLeft", newUser.player);
             const message = {
                 room: newUser.room,
                 sender: {
