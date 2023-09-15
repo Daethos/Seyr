@@ -1419,7 +1419,7 @@ export default class Player extends Entity {
         this.playerVelocity.limit(speed);
         this.setVelocity(this.playerVelocity.x, this.playerVelocity.y);
         // console.log(this.scene.multiplayer)
-        this.multiplayerMovement(); 
+        // this.multiplayerMovement(); 
     }; 
     update() {
         this.handleConcerns();

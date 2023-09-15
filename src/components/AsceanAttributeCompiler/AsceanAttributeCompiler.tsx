@@ -36,7 +36,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <Popover.Body id='popover-body'>
             <p style={{ fontStyle: 'italic', color: 'gold' }}>
                 The determination of several factors within combat is based on your Constitution. Overall your health is most weighted by your Constitution, 
-                in addition toward being able to augment higher thresholds of endurance, like the quality of your critical attacks and ability to absord damage.
+                in addition toward being able to augment higher thresholds of endurance, like the quality of your critical attacks and ability to absorb damage.
             </p><br />
             <p> Increases Health, Defenses, Posturing, Crit Damage, and Stamina--its Mastery Pervasive</p>
             </Popover.Body>
@@ -70,9 +70,9 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <Popover.Body id='popover-body'>
             <p style={{ fontStyle: 'italic', color: 'gold' }}>
             Of Achreo, the Wild Ancient.<br /><br />
-            Synonymous with being an Arbiter, they are measured by the quality of their Achre: discernment, poise, sagacity, and existence above error.</p>
+            (/ɑːkər/): Synonymous with being an Arbiter, they are measured by the quality of their Achre: discernment, poise, sagacity, and existence above error.</p>
             <br />
-            <p>Increases Magi Crit Change, Magi Damage, Dodge, Critical Posture, and Roll. Affects Dual-Wielding One-Hand Spells</p>
+            <p>Increases Magi Crit Chance, Magi Damage, Dodge, Critical Posture, and Roll. Affects Dual-Wielding One-Hand Spells</p>
             </Popover.Body>
         </Popover>
     );
@@ -82,7 +82,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <Popover.Body id='popover-body'>
             <p style={{ fontStyle: 'italic', color: 'gold' }}>
             Of Cambire, the Ancient of Potential, lingering essence and manifestation.<br /><br />
-            An idealized person or thing. A specter or phantom. Eidolon.<br />
+            (/'sɛərən/): An idealized person or thing. A specter or phantom. Eidolon.<br />
             <br /> The Caer (Informal, Colloquial): Synonymous to 'the will.'
             </p>
             <br />
@@ -96,7 +96,7 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
             <Popover.Body id='popover-body'>
             <p style={{ fontStyle: 'italic', color: 'gold' }}>
             Of Ancients Otherwise.<br /><br />
-            Compulsion concocted through the golden veins of Kyrisos with bile and phlegm of Chiomyr.<br /><br />
+            (/kaɪəsɪə(ɹ)/): Compulsion concocted through the golden veins of Kyrisos with bile and phlegm of Chiomyr.<br /><br />
             A charisma that warps those regardless of their caer, shearing their shields while capable of quelling their most quality strikes.
             </p>
             <br />

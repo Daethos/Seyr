@@ -40,7 +40,6 @@ export const Symbols = {
         </svg>
 };
 const SolaAscean = ({ ascean, userProfile, deleteAscean, loading, accordion, handleAsceanCreate, user }: Props) => {
-    console.log(user)
      return (
         <React.Fragment>
         <Row className="justify-content-center my-3">

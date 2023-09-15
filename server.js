@@ -30,12 +30,12 @@ app.use('/api/chatMessages', require('./routes/api/chatMessages'));
 app.use('/api/maps', require('./routes/api/maps'));
 app.use('/api/gamesettings', require('./routes/api/gamesettings'));
 
-app.get('/*', function(req, res) {
+app.get('/*', function(_req, res) {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 const gameService = require('./services/gameServices');
 const pvpService = require('./services/pvpServices');
-const asceanService = require('./services/asceanServices');
+// const asceanService = require('./services/asceanServices');
 const WorldMap = require('./services/worldServices');
 // const MultiplayerGame = require('./services/multiplayerServices');
 

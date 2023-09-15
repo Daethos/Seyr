@@ -195,8 +195,8 @@ const Typewriter = ({ stringText, styling, performAction }: TypewriterProps) => 
         const clean = styleHTML(stringText);
         const typedContent = {
             strings: [clean],
-            typeSpeed: 10,
-            backSpeed: 15,
+            typeSpeed: 25,
+            backSpeed: 25,
             showCursor: false,
             onComplete: () => {
                 clearInterval(scrollInterval);
