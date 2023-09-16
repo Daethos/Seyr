@@ -21,7 +21,7 @@ const NavBar = ({ user, handleLogout }: NavProps) => {
     return (
         <Navbar className="" expand="xxl" expanded={true} id="navbar" style={location.pathname.startsWith('/Solo') || location.pathname.startsWith(`/Hardcore`) || location.pathname.startsWith(`/Multiplayer`) || location.pathname.startsWith(`/Story`) ? { display: 'none' } : {}}>
         <Container fluid>
-            <Button className="nav-item" variant='' onClick={() => setModalShow(true)}>
+            <Button className="nav-item" variant='' onClick={() => setModalShow(user?.username !== 'demo' ? true : false)}>
                 <img src={user?.photoUrl} alt={user?.photoUrl} id="nav-pic" />
             </Button>
             <Modal show={modalShow} onHide={() => setModalShow(false)} centered>

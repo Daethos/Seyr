@@ -2,6 +2,7 @@ import { useEffect, useState, useReducer } from 'react';
 import * as eqpAPI from '../../utils/equipmentApi';
 import * as asceanAPI from '../../utils/asceanApi';
 import Table from 'react-bootstrap/Table';
+import Modal from 'react-bootstrap/Modal';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -9,18 +10,18 @@ import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Loading from '../../components/Loading/Loading';
-import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { useNavigate } from 'react-router-dom';
 import AsceanListItem from '../../components/GameCompiler/AsceanListItem';
 import AdminAscean from '../../components/GameCompiler/AdminAscean';
 import MerchantTable from '../../components/GameCompiler/MerchantTable';
-import { Enemy, GAME_ACTIONS, GameStore, initialGameData } from '../../components/GameCompiler/GameStore';
+import { GAME_ACTIONS, GameStore, initialGameData } from '../../components/GameCompiler/GameStore';
 import LevelUpModal from '../../components/GameCompiler/LevelUpModal';
 import { MapStore, initialMapData } from '../../components/GameCompiler/WorldStore';
 import InventoryBag from '../../components/GameCompiler/InventoryBag';
 import EnemyDialogNodes from '../../components/GameCompiler/EnemyDialogNodes.json';
-import { Tree } from 'react-d3-tree';
+import userService from '../../utils/userService';
+import { User } from '../App/App';
+import UserModal from '../../components/UserModal/UserModal';
 
 interface DialogNodeOption {
     text: string;
@@ -748,6 +749,9 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     const [enemyNodes, setEnemyNodes] = useState<any[]>([]);
     const [searchedEnemy, setSearchedEnemy] = useState<string>('');
     const [treeData, setTreeData] = useState<any>([]);
+    const [search, setSearch] = useState<string>('')
+    const [searchResult, setSearchResult] = useState<User[] | null>(null);
+    const [modalShow, setModalShow] = useState<boolean>(false);
 
     useEffect(() => {
         // if (user.username !== 'lonely guy' && user._id !== '636f2510f0ad1c1ad6a373a8') navigate('/');
@@ -1049,10 +1053,22 @@ const GameAdmin = ({ user }: GameAdminProps) => {
         } else {
             return title;
         };
-    }
+    };
+
+    const handleSearch = async (event: any, search: string) => {
+        if (!search) return;
+        event.preventDefault();
+        try {
+            const response = await userService.searchUser(search);
+            setSearchResult(response);
+        } catch (err: any) {
+            console.log(err.message, 'Error Searching for Users');
+        };
+    };
     
     return (
         <Container>
+
             <Row className='mb-5'>
             <Card style={{ background: 'black', color: 'white' }}>
                 <Card.Body>
@@ -1086,6 +1102,39 @@ const GameAdmin = ({ user }: GameAdminProps) => {
                     : '' }
                     </>
                     : ''}
+                    <br /><br /><br /><br />
+                </Card.Body>
+            </Card>
+            </Row>
+            <Row className='mb-5'>
+            <Card style={{ background: 'black', color: 'white' }}>
+                <Card.Body>
+                    <Card.Title>Test User</Card.Title>
+                    <Card.Text>
+                        Placeholder Test for the User
+                    </Card.Text>
+                    <Form>
+                    <Form.Group>
+                        <Form.Label>User Name</Form.Label>
+                        <Form.Control type="text" placeholder="Enter User Name" onChange={(e) => setSearch(e.target.value)} onKeyDown={(e) => { e.key === 'Enter' && handleSearch(e, search) }} />
+                    </Form.Group>
+                    </Form>
+                    { searchResult && (
+                        searchResult.map((user: User, index: number) => {
+                            return (
+                                <div key={index}>
+                                    <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
+                                        <Modal.Body>
+                                        <UserModal user={user} />
+                                        </Modal.Body>
+                                    </Modal>
+                                    {user.username} <br />
+                                    {user.email} <br />
+                                    <Button variant="" onClick={() => setModalShow(true)} style={{ color: '#fdf6d8' }}>Edit</Button>
+                                </div>
+                            )
+                        })
+                        ) }
                     <br /><br /><br /><br />
                 </Card.Body>
             </Card>

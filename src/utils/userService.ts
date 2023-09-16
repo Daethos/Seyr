@@ -84,6 +84,20 @@ async function updateBio(user: object) {
   });
 };
 
+async function updatePassword(user: object) {
+    return fetch (BASE_URL + 'changePassword', {
+        method: 'PUT',
+        body: JSON.stringify(user),
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + tokenService.getToken()
+        }
+    }).then((res) => {
+        if (res.ok) return res.json()
+        throw new Error('Error Updating User')
+    });
+};
+
 function getUser() {
   return tokenService.getUserFromToken();
 };
@@ -127,6 +141,17 @@ async function createGuestToken() {
     }).then(({ token }) => tokenService.setToken(token));
 };
 
+async function demo() {
+    return fetch(BASE_URL + 'demo', {
+        method: 'POST',
+        headers: new Headers({'Content-Type': 'application/json'}),
+    }).then(async res => {
+        if (res.ok) return res.json();
+        const response = await res.json();
+        console.log(response);
+        throw new Error(response.err);
+    }).then(({token}) => tokenService.setToken(token));
+};
 
 export default {
   signup, 
@@ -137,7 +162,9 @@ export default {
   searchUser,
   updateUser,
   updateBio,
+  updatePassword,
   getRandomEnemy,
   getRandomDeadEnemy,
-  createGuestToken
+  createGuestToken,
+  demo
 };

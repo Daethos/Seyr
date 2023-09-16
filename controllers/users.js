@@ -50,7 +50,9 @@ module.exports = {
   allUsers,
   updateUser,
   updateUserBio,
+  changePassword,
   createGuestToken,
+  demo,
 };
 
 async function createGuestToken(req, res) {
@@ -150,6 +152,28 @@ async function deadEnemy(req, res) {
   }
 };
 
+async function changePassword(req, res) {
+    try {
+        const user = await User.findById(req.body.id);
+        const newPassword = req.body.password;
+        user.password = newPassword;
+        await user.save();
+        res.status(200).json({ message: "Password Changed Successfully" });
+    } catch (err) {
+        console.log(err.message, " <- Error Changing Password");
+    };
+};
+
+async function demo(_req, res) {
+    try {
+        const user = await User.findOne({ email: 'demo@ascea.com' });
+        const token = createJWT(user);
+        res.json({ token });
+    } catch (err) {
+        console.log(err.message, " <- Error Logging In Demo User");
+    };
+};
+
 async function signup(req, res) {
   if (!req.file) return res.status(400).json({ error: "Please Submit A Photo! I Know Its Trite, I Apologize" });
   const key = `seyr/${uuidv4()}-${req.file.originalname}`;
@@ -192,7 +216,7 @@ async function login(req, res) {
   try {
     const user = await User.findOne({email: req.body.email});
     if (!user) return res.status(401).json({err: 'This Email Address Is Not Registered With The Seyr'});
-    user.comparePassword(req.body.password, (err, isMatch) => {
+    user.comparePassword(req.body.password, (_err, isMatch) => {
       if (isMatch) {
         const token = createJWT(user);
         res.json({token});
