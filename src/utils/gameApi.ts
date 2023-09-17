@@ -72,19 +72,4 @@ export async function consumePrayer(combatData: any) {
         return res.json();
     const response = await res.json();
     console.log(response, '<- Response in Game Utility API');
-};
-
-export async function pvpAction(combatData: any) {
-    const res = await fetch(BASE_URL + 'pvp', {
-        method: 'PUT',
-        body: JSON.stringify(combatData),
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + tokenService.getToken(),
-        },
-    });
-    if (res.ok)
-        return res.json();
-    const response = await res.json();
-    console.log(response, '<- Response in Game Utility API');
-};
+}; 

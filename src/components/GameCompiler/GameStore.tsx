@@ -4,6 +4,7 @@ export interface Ascean {
     name: string;
     description: string;
     user: object;
+    health: { current: number; total: number; };
     
     constitution: number;
     strength: number;
@@ -50,7 +51,6 @@ export interface Ascean {
 };
 
 export interface Player extends Ascean {
-    health: { current: number; total: number; };
     primary: { name: string, description: string };
     secondary: { name: string, description: string };
     tertiary: { name: string, description: string };

@@ -11,10 +11,9 @@ import ToastAlert from '../../components/ToastAlert/ToastAlert';
 
 interface AuthProps {
     handleSignUpOrLogin: () => void;
-    handleGuest: () => void;
 };
 
-export default function AuthPage({ handleSignUpOrLogin, handleGuest }: AuthProps) {
+export default function AuthPage({ handleSignUpOrLogin }: AuthProps) {
     const [showSignUp, setShowSignUp]  = useState(false);
     const [error, setError] = useState<any>({})
     const navigate = useNavigate();

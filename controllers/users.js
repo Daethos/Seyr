@@ -175,41 +175,41 @@ async function demo(_req, res) {
 };
 
 async function signup(req, res) {
-  if (!req.file) return res.status(400).json({ error: "Please Submit A Photo! I Know Its Trite, I Apologize" });
-  const key = `seyr/${uuidv4()}-${req.file.originalname}`;
-  const params = { Bucket: BUCKET_NAME, Key: key, Body: req.file.buffer };
+    if (!req.file) return res.status(400).json({ error: "Please Submit A Photo! I Know Its Trite, I Apologize" });
+    const key = `seyr/${uuidv4()}-${req.file.originalname}`;
+    const params = { Bucket: BUCKET_NAME, Key: key, Body: req.file.buffer };
 
-  s3.upload(params, async function (err, data) {
-    console.log(err, " <--- err from aws");
-    if (err)
-      return res.status(400).json({
-        err: "Error from AWS, their server may be experiencing issues.",
-      });
-
-    const user = new User({ ...req.body, photoUrl: data.Location });
-    try {
-      await user.save();
-      const token = createJWT(user);
-      res.json({ token });
-    } catch (err) {
-      if (err.name === "MongoServerError" && err.code === 11000) {
-        console.log(err.message, "err.message");
-        res
-          .status(423)
-          .json({
-            errorMessage: err,
-            err: `${identifyKeyInMongooseValidationError(
-              err.message
-            )} Already Taken!`,
-          });
-      } else {
-        res.status(500).json({
-          err: err,
-          message: "Internal Server Error, Please Try Again",
+    s3.upload(params, async function (err, data) {
+        console.log(err, " <--- err from aws");
+        if (err)
+        return res.status(400).json({
+            err: "Error from AWS, their server may be experiencing issues.",
         });
-      };
-    };
-  });
+
+        const user = new User({ ...req.body, photoUrl: data.Location });
+        try {
+            await user.save();
+            const token = createJWT(user);
+            res.json({ token });
+        } catch (err) {
+            if (err.name === "MongoServerError" && err.code === 11000) {
+                console.log(err.message, "err.message");
+                res
+                .status(423)
+                .json({
+                    errorMessage: err,
+                    err: `${identifyKeyInMongooseValidationError(
+                    err.message
+                    )} Already Taken!`,
+                });
+            } else {
+                res.status(500).json({
+                err: err,
+                message: "Internal Server Error, Please Try Again",
+                });
+            };
+        };
+    });
 };
 
 async function login(req, res) {
