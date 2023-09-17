@@ -7,475 +7,75 @@ interface Props {
 };
 
 const AttributesCreate = ({ asceanState, setAsceanState }: Props) => {
-    const conMinusButton = document.getElementById('con-minus');
-    const conPlusButton = document.getElementById('con-plus');
-    const strMinusButton = document.getElementById('str-minus');
-    const strPlusButton = document.getElementById('str-plus');
-    const agiMinusButton = document.getElementById('agi-minus');
-    const agiPlusButton = document.getElementById('agi-plus');
-    const achMinusButton = document.getElementById('ach-minus');
-    const achPlusButton = document.getElementById('ach-plus');
-    const caerMinusButton = document.getElementById('caer-minus');
-    const caerPlusButton = document.getElementById('caer-plus');
-    const kyoMinusButton = document.getElementById('kyo-minus');
-    const kyoPlusButton = document.getElementById('kyo-plus');
-
-    let poolOutput = document.getElementById('pool-output') as HTMLOutputElement | null;
     const [poolTotal, setPoolTotal] = useState<number>(0);
 
-    const [constitutionOutput, setConstitutionOutput] = useState<number>(8)
-    const [strengthOutput, setStrengthOutput] = useState<number>(8)
-    const [agilityOutput, setAgilityOutput] = useState<number>(8)
-    const [achreOutput, setAchreOutput] = useState<number>(8)
-    const [caerenOutput, setCaerenOutput] = useState<number>(8)
-    const [kyosirOutput, setKyosirOutput] = useState<number>(8)
+    const attributes = [
+        { name: 'constitution', label: 'Constitution', description: 'Health, Defenses, Crit Damage' },
+        { name: 'strength', label: 'Strength', description: 'Crit Damage, Physical Damage, Health, Defenses' },
+        { name: 'agility', label: 'Agility', description: 'Crit Damage, Dodge, Phys Damage, Roll' },
+        { name: 'achre', label: 'Achre', description: 'Crit Chance, Dodge, Spell Damage, Roll' },
+        { name: 'caeren', label: 'Caeren', description: 'Crit Damage, Defenses, Health, Spell Damage' },
+        { name: 'kyosir', label: 'Kyosir', description: 'Defenses, Penetration' },
+    ];
 
-    const conOut = document.getElementById('con-box') as HTMLOutputElement | null;
-    useEffect(() => { 
-        if (conOut !== null) {
-            conOut!.innerHTML = `${constitutionOutput}`;
-        };
-    }, [constitutionOutput]);
-
-    const strOut = document.getElementById('str-box');
-    useEffect(() => {
-        if (strOut !== null) {
-            strOut!.innerHTML = `${strengthOutput}`;
-        };
-    }, [strengthOutput]);
-
-    const agiOut = document.getElementById('agi-box');
-    useEffect(() => {
-        if (agiOut !== null) {
-            agiOut!.innerHTML = `${agilityOutput}`;
-        };
-    }, [agilityOutput]);
-
-    const achOut = document.getElementById('ach-box');
-    useEffect(() => {
-        if (achOut !== null) {
-            achOut!.innerHTML = `${achreOutput}`;
-        };
-    }, [achreOutput]);
-
-    const caerOut = document.getElementById('caer-box');
-    useEffect(() => {
-        if (caerOut !== null) {
-            caerOut!.innerHTML = `${caerenOutput}`;
-        };
-    }, [caerenOutput]);
-
-    const kyoOut = document.getElementById('kyo-box');
-    useEffect(() => {
-        if (kyoOut !== null) {
-            kyoOut!.innerHTML = `${kyosirOutput}`;
-        };
-    }, [kyosirOutput]); 
+    const handleAttributeChange = (event: any, name: string, value: number) => {
+        event.preventDefault();
+        setAsceanState({
+            ...asceanState,
+            [name]: Number(asceanState[name as keyof typeof asceanState]) + value,
+        });
+        setPoolTotal(poolTotal => poolTotal + value);
+    };
 
     useEffect(() => {
-        checkPoolTotal();
-    }, [poolTotal]);
+        setPoolTotal(asceanState.achre + asceanState.caeren + asceanState.kyosir + asceanState.agility + asceanState.strength + asceanState.constitution - 48);
+    }, [asceanState]); 
 
-    async function checkPoolTotal() {
-        if (poolOutput != null) {
-            poolOutput!.innerHTML = poolTotal + ' Points / 25 Points';
-        };
-        if (poolTotal >= 25) {
-            conPlusButton!.style.display = 'none';
-            strPlusButton!.style.display = 'none';
-            agiPlusButton!.style.display = 'none';
-            achPlusButton!.style.display = 'none';
-            caerPlusButton!.style.display = 'none';
-            kyoPlusButton!.style.display = 'none';
-            conMinusButton!.style.display = 'inline-block';
-            strMinusButton!.style.display = 'inline-block';
-            agiMinusButton!.style.display = 'inline-block';
-            achMinusButton!.style.display = 'inline-block';
-            caerMinusButton!.style.display = 'inline-block';
-            kyoMinusButton!.style.display = 'inline-block';
-        };
-        if (poolTotal < 25 && constitutionOutput >= 18) {
-            if (conPlusButton !== null) {
-                conPlusButton!.style.display = 'none';
-            };
-        };
-        if (poolTotal < 25 && strengthOutput >= 18) {
-            if (strPlusButton !== null) {
-                strPlusButton!.style.display = 'none';
-            };
-        };
-        if (poolTotal < 25 && agilityOutput >= 18) {
-            if (agiPlusButton !== null) {
-                agiPlusButton!.style.display = 'none';
-            }
-        }
-        if (poolTotal < 25 && achreOutput >= 18) {
-            if (achPlusButton !== null) {
-                achPlusButton!.style.display = 'none';
-            }
-        }
-        if (poolTotal < 25 && caerenOutput >= 18) {
-            if (caerPlusButton !== null) {
-                caerPlusButton!.style.display = 'none';
-            }
-        }
-        if (poolTotal < 25 && kyosirOutput >= 18) {
-            if (kyoPlusButton !== null) {
-                kyoPlusButton!.style.display = 'none';
-            }
-        }
-        if (poolTotal < 25 && constitutionOutput < 18) {
-            if (conPlusButton !== null) {
-                conPlusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal < 25 && strengthOutput < 18) {
-            if (strPlusButton !== null) {
-                strPlusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal < 25 && agilityOutput < 18) {
-            if (agiPlusButton !== null) {
-                agiPlusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal < 25 && achreOutput < 18) {
-            if (achPlusButton !== null) {
-                achPlusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal < 25 && caerenOutput < 18) {
-            if (caerPlusButton !== null) {
-                caerPlusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal < 25 && kyosirOutput < 18) {
-            if (kyoPlusButton !== null) {
-                kyoPlusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal <= 25 && constitutionOutput > 8) {
-            if (conMinusButton !== null) {
-                conMinusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal <= 25 && strengthOutput > 8) {
-            if (strMinusButton !== null) {
-                strMinusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal <= 25 && agilityOutput > 8) {
-            if (agiMinusButton !== null) {
-                agiMinusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal <= 25 && achreOutput > 8) {
-            if (achMinusButton !== null) {
-                achMinusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal <= 25 && caerenOutput > 8) {
-            if (caerMinusButton !== null) {
-                caerMinusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal <= 25 && kyosirOutput > 8) {
-            if (kyoMinusButton !== null) {
-                kyoMinusButton!.style.display = 'inline-block';
-            }
-        }
-        if (poolTotal <= 25 && constitutionOutput <= 8) {
-            if (conMinusButton !== null) {
-                conMinusButton!.style.display = 'none';
-            }
-        }
-        if (poolTotal <= 25 && strengthOutput <= 8) {
-            if (strMinusButton !== null) {
-                strMinusButton!.style.display = 'none';
-            }
-        }
-        if (poolTotal <= 25 && agilityOutput <= 8) {
-            if (agiMinusButton !== null) {
-                agiMinusButton!.style.display = 'none';
-            }
-        }
-        if (poolTotal <= 25 && achreOutput <= 8) {
-            if (achMinusButton !== null) {
-                achMinusButton!.style.display = 'none';
-            }
-        }
-        if (poolTotal <= 25 && caerenOutput <= 8) {
-            if (caerMinusButton !== null) {
-                caerMinusButton!.style.display = 'none';
-            }
-        }
-        if (poolTotal <= 25 && kyosirOutput <= 8) {
-            if (kyoMinusButton !== null) {
-                kyoMinusButton!.style.display = 'none';
-            }
-        }
-    }
-    checkPoolTotal()
-
-    function handleConMinus(e: any) {
-        e.preventDefault();
-        e.target.value -= 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setConstitutionOutput(e.target.value);
-        setPoolTotal(poolTotal - 1);
-    };
-    function handleConPlus(e: any) {
-        e.preventDefault();
-        e.target.value = Number(e.target.value) + 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setConstitutionOutput(e.target.value);
-        setPoolTotal(poolTotal + 1);
-    };
-
-    function handleStrMinus(e: any) {
-        e.preventDefault();
-        e.target.value -= 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setStrengthOutput(e.target.value);
-        setPoolTotal(poolTotal - 1);
-    };
-    function handleStrPlus(e: any) {
-        e.preventDefault();
-        e.target.value = Number(e.target.value) + 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setStrengthOutput(e.target.value);
-        setPoolTotal(poolTotal + 1);
-    };
-
-    function handleAgiMinus(e: any) {
-        e.preventDefault();
-        e.target.value -= 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setAgilityOutput(e.target.value);
-        setPoolTotal(poolTotal - 1);
-    };
-    function handleAgiPlus(e: any) {
-        e.preventDefault();
-        e.target.value = Number(e.target.value) + 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setAgilityOutput(e.target.value);
-        setPoolTotal(poolTotal + 1);
-    };
-   
-    function handleAchreMinus(e: any) {
-        e.preventDefault();
-        e.target.value -= 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setAchreOutput(e.target.value);
-        setPoolTotal(poolTotal - 1);
-    };
-    function handleAchrePlus(e: any) {
-        e.preventDefault();
-        e.target.value = Number(e.target.value) + 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setAchreOutput(e.target.value);
-        setPoolTotal(poolTotal + 1);
-    };
-    
-    function handleCaerenMinus(e: any) {
-        e.preventDefault();
-        e.target.value -= 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setCaerenOutput(e.target.value);
-        setPoolTotal(poolTotal - 1);
-    };
-    function handleCaerenPlus(e: any) {
-        e.preventDefault();
-        e.target.value = Number(e.target.value) + 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setCaerenOutput(e.target.value);
-        setPoolTotal(poolTotal + 1);
-    };
-
-    function handleKyosirMinus(e: any) {
-        e.preventDefault();
-        e.target.value -= 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setKyosirOutput(e.target.value);
-        setPoolTotal(poolTotal - 1);
-    };
-    function handleKyosirPlus(e: any) {
-        e.preventDefault();
-        e.target.value = Number(e.target.value) + 1;
-        setAsceanState({
-            ...asceanState,
-            [e.target.name]: e.target.value,
-        });
-        setKyosirOutput(e.target.value);
-        setPoolTotal(poolTotal + 1);
-    };
     return (
         <>
         <div className="actions">
-            <h3>Attributes</h3>
+            <h3>+{poolTotal} Attribute Points</h3>
             <h3 id="pool-output"></h3>
         </div>
-        <div className="property-line first">
-            <h4>Constitution</h4>
-            <p> Increases Health, Defense, Posturing, Crit Damage</p>
-            <InputGroup className="mb-1" style={{width: 100 + '%', display: 'flex'}}>
-            <button id="con-minus" onClick={handleConMinus} name="constitution" value={asceanState.constitution}>−</button>
-                <input 
-                    id="con-slider" 
-                    className="form-control-number" 
-                    type="number" 
-                    name="constitution" 
-                    value={asceanState.constitution} 
-                    min="8" max="18"
-                    step="1"
-                    readOnly 
-                ></input>
-                <button id="con-plus" onClick={handleConPlus} name="constitution" value={asceanState.constitution}>+</button>
-                <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="con-box">
-                </h4>
-            </InputGroup>
-        </div>
-        <div className="property-line">
-            <h4>Strength</h4>
-            <p> Increases Crit Damage, Physical Damage, Posturing</p>
-            <InputGroup className="mb-1">
-            <button id="str-minus" onClick={handleStrMinus} name="strength" value={asceanState.strength}>−</button>
-            <input 
-                    id="con-slider" 
-                    className="form-control-number" 
-                    type="number" 
-                    name="strength" 
-                    value={asceanState.strength} 
-                    min="8" max="18"
-                    step="1"
-                    readOnly 
-                ></input>
-            <button id="str-plus" onClick={handleStrPlus} name="strength" value={asceanState.strength}>+</button>
-            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="str-box">
-                </h4>
-            </InputGroup>
-        </div>
-        <div className="property-line">
-            <h4>Agility</h4>
-            <p> Increases Crit Damage, Dodge, Phys Damage, Roll</p>
-            <InputGroup className="mb-1">
-            <button id="agi-minus" onClick={handleAgiMinus} name="agility" value={asceanState.agility}>−</button>
-            <input 
-                    id="con-slider" 
-                    className="form-control-number" 
-                    type="number" 
-                    name="agility" 
-                    value={asceanState.agility} 
-                    min="8" max="18"
-                    step="1"
-                    readOnly 
-                ></input>
-            <button id="agi-plus" onClick={handleAgiPlus} name="agility" value={asceanState.agility}>+</button>
-            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="agi-box">
-            </h4>
-            </InputGroup>
-        </div>
-        <div className="property-line">
-            <h4>Achre: </h4>
-            <p>Synonymous with being an Arbiter, they are measured by the quality of their achre, catchall for discernment, poise, sagacity, and existence above error.<br />
-                Increases Crit Chance, Dodge, Spell Damage, Roll</p>
-            <InputGroup className="mb-1">
-            <button id="ach-minus" onClick={handleAchreMinus} name="achre" value={asceanState.achre}>−</button>
-            <input 
-                    id="con-slider" 
-                    className="form-control-number" 
-                    type="number" 
-                    name="achre" 
-                    value={asceanState.achre} 
-                    min="8" max="18"
-                    step="1"
-                    readOnly 
-                ></input>
-            <button id="ach-plus" onClick={handleAchrePlus} name="achre" value={asceanState.achre}>+</button>
-            <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="ach-box">
-                </h4>
-            </InputGroup>
-        </div>
-        <div className="property-line last">
-            <h4>Caeren: </h4>
-            <p> Of Cambire, the Ancient of Potential.
-                    <br />An idealized person or thing. A specter or phantom. Root: Eidolon.<br />
-                    <br /> The Caer: synonymous to 'the Will.'
-                <br />Increases Crit Damage, Defense, Health, Spell Damage</p>
-            <InputGroup className="mb-1">
-            <button id="caer-minus" onClick={handleCaerenMinus} name="caeren" value={asceanState.caeren}>−</button>
-            <input 
-                    id="con-slider" 
-                    className="form-control-number" 
-                    type="number" 
-                    name="caeren" 
-                    value={asceanState.caeren} 
-                    min="8" max="18"
-                    step="1"
-                    readOnly 
-                ></input>
-                <button id="caer-plus" onClick={handleCaerenPlus} name="caeren" value={asceanState.caeren}>+</button>
-                <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="caer-box">
-                </h4>
-            </InputGroup>
-        </div>
-        <div className="property-line last">
-            <h4>Kyosir: </h4>
-            <p> Compulsion concocted through the Gold Veins of Kyrisos mixed with bile and phlegm of Chiomyr, Ancient of Humor.
-                A charisma that warps those regardless of their caer, capable of quelling the most quality strikes, it grants a sure sight that shears shields.
-                <br />Increases Defenses, Penetration</p>
-            <InputGroup className="mb-1">
-            <button id="kyo-minus" onClick={handleKyosirMinus} name="kyosir" value={asceanState.kyosir}>−</button>
-            <input 
-                    id="con-slider" 
-                    className="form-control-number" 
-                    type="number" 
-                    name="kyosir" 
-                    value={asceanState.kyosir} 
-                    min="8" max="18"
-                    step="1"
-                    readOnly 
-                ></input>
-                <button id="kyo-plus" onClick={handleKyosirPlus} name="kyosir" value={asceanState.kyosir}>+</button>
-                <h4 className="" style={{ marginLeft: '10%', fontSize: '20px', color: 'gold' }} id="kyo-box">
-                </h4>
-            </InputGroup>
-        </div>
+        {attributes.map((attribute) => (
+            <div className="property-line" key={attribute.name}>
+                <h4>{attribute.label}: </h4>
+                <p style={{ color: '#fdf6d8' }}>{attribute.description}</p>
+                <InputGroup className="mb-1" style={{ width: '100%', display: 'flex' }}>
+                    <button
+                        id={`${attribute.name}-minus`}
+                        onClick={(e) => handleAttributeChange(e, attribute.name, -1)}
+                        style={{ display: Number(asceanState[attribute.name as keyof typeof asceanState]) > 8 ? 'inline-block' : 'none' }}
+                    > − </button>
+                    <input
+                        style={{ width: '35%', textAlign: 'center' }}
+                        className="form-control-number mx-1"
+                        type="number"
+                        name={attribute.name}
+                        value={asceanState[attribute.name]}
+                        step="1"
+                        readOnly
+                    ></input>
+                    <button
+                        id={`${attribute.name}-plus`}
+                        onClick={(e) => handleAttributeChange(e, attribute.name, 1)}
+                        style={{ display:( poolTotal < 25 && asceanState[attribute.name] < 18) ? 'inline-block' : 'none' }}
+                    > + </button>
+                    <h4 style={attributeStyle} id={`${attribute.name}-box`}>
+                        {asceanState[attribute.name]}
+                    </h4>
+                </InputGroup>
+            </div>
+        ))}
     </>
     );
+};
+
+const attributeStyle = {
+    marginLeft: '15%',
+    color: 'gold',
+    marginTop: '2.5%',
+    fontSize: '18px',
 };
 
 export default AttributesCreate;

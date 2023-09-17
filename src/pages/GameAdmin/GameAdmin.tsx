@@ -754,7 +754,7 @@ const GameAdmin = ({ user }: GameAdminProps) => {
     const [modalShow, setModalShow] = useState<boolean>(false);
 
     useEffect(() => {
-        // if (user.username !== 'lonely guy' && user._id !== '636f2510f0ad1c1ad6a373a8') navigate('/');
+        if (user.username !== 'lonely guy' && user._id !== '636f2510f0ad1c1ad6a373a8') navigate('/');
     }, [user]);
 
     useEffect(() => {

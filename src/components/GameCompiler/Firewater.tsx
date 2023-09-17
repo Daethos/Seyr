@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Popover from 'react-bootstrap/Popover';
 import Button from 'react-bootstrap/Button';
@@ -39,7 +39,6 @@ const Firewater = ({ story }: FirewaterProps) => {
     const replenishFirewater = async () => {
         try {
             setShowBleed(false);
-            console.log('Bleeding...');
             dispatch(getReplenishFirewaterFetch(ascean._id));
             setShowFirewaterModal(false); 
         } catch (err: any) {
@@ -106,13 +105,13 @@ const Firewater = ({ story }: FirewaterProps) => {
                         Do you wish to set camp and let it bleed?
                     </p>
                     <br />
-                    { firewater?.charges === 0 ? (
+                    { firewater?.charges === 0 && (
                     <>
-                        { showBleed ? (
+                        { showBleed && (
                             <Button variant='' style={{ float: "left", color: "red", fontSize: "24px" }} onClick={replenishFirewater}>Bleed</Button>
-                        ) : ( '' ) }
+                        ) }
                     </>
-                    ) : ( '' ) }
+                    ) }
                     <Button onClick={() => setShowFirewaterModal(false)} variant='' style={{ float: "right", color: "gold", fontSize: "24px" }}>Resist</Button>
                 </Modal.Body>
             </Modal>

@@ -37,12 +37,12 @@ const CombatSpectatorOverlay = ({ ascean, enemy, gameDispatch, playerWin, comput
 
     const critStyle = {
         color: 'red',
-        fontSize: 32 + 'px',
+        fontSize: '32px',
     };
 
     const rollStyle = {
         color: 'green',
-        fontSize: 32 + 'px',
+        fontSize: '32px',
     };
 
     const getStyle = () => {

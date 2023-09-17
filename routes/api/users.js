@@ -17,7 +17,6 @@ router.post('/dead-enemy', usersCtrl.deadEnemy);
 router.put('/update', protect, usersCtrl.updateUser);
 router.put('/updateBio', protect, usersCtrl.updateUserBio);
 router.put('/changePassword', protect, usersCtrl.changePassword);
-
 /*---------- Protected Routes ----------*/
 
 module.exports = router;

@@ -45,7 +45,7 @@ const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
         e.preventDefault();
         async function asceanVaEsai() {
             try {
-                editAscean(editState)
+                await editAscean(editState);
             } catch (err: any) {
                 console.log(err.message, '<- Error initiating Ascean Edit')
             };
@@ -80,7 +80,7 @@ const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
             <div className="actions">
                 <h3>Eccentricities & Equipment</h3>
                 <div className='property-block'>
-                { ascean ? (
+                { ascean && (
                     <AsceanImageCard
                         weapon_one={ascean?.weapon_one}
                         weapon_two={ascean?.weapon_two}
@@ -95,7 +95,7 @@ const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
                         trinket={ascean?.trinket}
                         key={ascean._id}
                     />
-                ) : ( '' ) }
+                ) }
                 </div>
             </div>
             <div className="actions">
@@ -107,7 +107,7 @@ const EditAscean = ({ editAscean, createSuccess, setCreateSuccess }: Props) => {
         <button 
             className="btn" 
             value={editState} 
-            style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+            style={{ color: 'blueviolet', fontWeight: 400, fontVariant: 'small-caps', fontSize: '25px' }}
             type="submit">
                 Update {ascean.name}
         </button>

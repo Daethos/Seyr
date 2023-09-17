@@ -1,19 +1,19 @@
-import AsceanImageCard from "../AsceanImageCard/AsceanImageCard"
-import GamePlayerStats from "./GamePlayerStats"
+import AsceanImageCard from "../AsceanImageCard/AsceanImageCard";
+import GamePlayerStats from "./GamePlayerStats";
 
 interface AdminAsceanProps {
     ascean: any;
     loading: boolean;
-}
+};
 
 const AdminAscean = ({ ascean, loading }: AdminAsceanProps) => {
     
     return (
-        <div  style={{ marginTop: 0 + '%' }} >
+        <div>
             <div className="game-block-top">
                 <GamePlayerStats attributes={ascean.attributes} player={ascean.ascean} magicalDefense={ascean.defense.magicalDefenseModifier} magicalPosture={ascean.defense.magicalPosture} physicalDefense={ascean.defense.physicalDefenseModifier} physicalPosture={ascean.defense.physicalPosture} />
             </div>
-            <div style={{ marginTop: 10 + '%' }}>
+            <div style={{ marginTop: '10%' }}>
             <AsceanImageCard
                 weapon_one={ascean.combat_weapon_one}
                 weapon_two={ascean.combat_weapon_two}
@@ -34,7 +34,7 @@ const AdminAscean = ({ ascean, loading }: AdminAsceanProps) => {
             <div className="actions">
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default AdminAscean
+export default AdminAscean;

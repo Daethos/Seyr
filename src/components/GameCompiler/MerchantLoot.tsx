@@ -206,11 +206,11 @@ const MerchantLoot = ({ item, ascean, error, setError, table, gameDispatch, stea
                 Price:{' '} 
                 {purchaseSetting?.cost?.gold}g{' '}
                 {purchaseSetting?.cost?.silver}s{' '}
-                <Button variant='' style={{ color: 'green', fontWeight: 600, float: 'right', marginTop: -4 + '%', fontSize: 18 + 'px', marginRight: -5 + '%' }} onClick={purchaseItem}>Purchase</Button>
+                <Button variant='' style={{ color: 'green', fontWeight: 600, float: 'right', marginTop: '-4%', fontSize: '18px', marginRight: '-5%' }} onClick={purchaseItem}>Purchase</Button>
                 { thievery ? (
                     <>
                     <br />
-                    <Button variant='' style={{ color: 'red', fontWeight: 600, marginTop: '0%', fontSize: 18 + 'px', marginLeft: '72.5%' }} onClick={() => stealItem({ ascean: ascean, item: item, cost: { silver: 0, gold: 0 } })}>Steal</Button>
+                    <Button variant='' style={{ color: 'red', fontWeight: 600, fontSize: '18px', marginLeft: '72.5%' }} onClick={() => stealItem({ ascean: ascean, item: item, cost: { silver: 0, gold: 0 } })}>Steal</Button>
                     </>
                 ) : ( '' ) }
                 </>

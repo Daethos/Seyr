@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Ascean, Equipment, GAME_ACTIONS, GameData } from './GameStore';
+import { Ascean, Equipment, GAME_ACTIONS } from './GameStore';
 import MerchantLoot from './MerchantLoot';
 import Row from 'react-bootstrap/Row';
 import * as asceanAPI from '../../utils/asceanApi';
@@ -67,27 +67,27 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
             default: return 0;
         };
     };
-    const getFine = (rarity: string): number | string => {
-        switch (rarity) {
-            case 'Common': return '5 silver';
-            case 'Uncommon': return '50 silver';
-            case 'Rare': return '2 gold';
-            case 'Epic': return '6 gold';
-            case 'Legendary': return '120 gold';
-            default: return 0;
-        };
-    };
+    // const getFine = (rarity: string): number | string => {
+    //     switch (rarity) {
+    //         case 'Common': return '5 silver';
+    //         case 'Uncommon': return '50 silver';
+    //         case 'Rare': return '2 gold';
+    //         case 'Epic': return '6 gold';
+    //         case 'Legendary': return '120 gold';
+    //         default: return 0;
+    //     };
+    // };
     const stealItem = async (purchaseSetting: { ascean: Ascean, item: Equipment, cost: { silver: number, gold: number } }): Promise<void> => {
         try {
-            const weight = {
-                Common: 0,
-                Uncommon: 5,
-                Rare: 10,
-                Epic: 25,
-                Legendary: 50,
-            }
-            const chance = Math.floor(Math.random() * 100) + 1 + weight[purchaseSetting.item.rarity as keyof typeof weight];
-            const successChance = ascean.agility + ascean.achre;
+            // const weight = {
+            //     Common: 0,
+            //     Uncommon: 5,
+            //     Rare: 10,
+            //     Epic: 25,
+            //     Legendary: 50,
+            // };
+            // const chance = Math.floor(Math.random() * 100) + 1 + weight[purchaseSetting.item.rarity as keyof typeof weight];
+            // const successChance = ascean.agility + ascean.achre;
             // console.log(successChance, 'Success Chance', chance, 'Chance');
             // if (chance > successChance) { // Failure
             //     const statistic = {
@@ -118,8 +118,7 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
             //     return;
             // };
             if (gameDispatch) {
-                const res = await asceanAPI.purchaseToInventory(purchaseSetting);
-                console.log(res, 'Stole Item!');
+                await asceanAPI.purchaseToInventory(purchaseSetting);
                 gameDispatch({ type: GAME_ACTIONS.ITEM_SAVED, payload: true });
                 gameDispatch({ type: GAME_ACTIONS.SET_MERCHANT_EQUIPMENT, payload: table.filter((i: any) => i._id !== purchaseSetting.item._id) });    
                 const statistic = {
@@ -130,7 +129,6 @@ const MerchantTable = ({ table, ascean, error, setError, gameDispatch, gameState
                     totalValue: checkStatisticalValue(purchaseSetting.item.rarity),
                 };
                 const response = await asceanAPI.recordThievery(statistic);
-                console.log(response, "Thievery Success Response Recorded");
                 gameDispatch({ type: GAME_ACTIONS.SET_STATISTICS, payload: response });
             } else { // Phaser
                 dispatch(getThieverySuccessFetch({ item: purchaseSetting, id: ascean._id }));

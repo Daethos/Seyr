@@ -132,11 +132,11 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
   useEffect(() => {
     if (!enemy) return;
     setBodyParts(bodyParts.map((bodyPart) => {
-      const { player, opponent } = calculateBodyPartStat(ascean, enemy, bodyPart, bodyPartStats);
+      const { player } = calculateBodyPartStat(ascean, enemy, bodyPart, bodyPartStats);
       return player;
     }));
     setEnemyBodyParts(enemyBodyParts.map((bodyPart) => {
-      const { player, opponent } = calculateBodyPartStat(ascean, enemy, bodyPart, bodyPartStats);
+      const { opponent } = calculateBodyPartStat(ascean, enemy, bodyPart, bodyPartStats);
       return opponent;
     }));
   }, [ascean, enemy])
@@ -169,10 +169,7 @@ const GameplayUnderlay = ({ ascean, enemy, state, dispatch, gameState, gameDispa
   };
 
   const handleGrapple = async (sequence: typeof grapplingSequence) => {
-    // const response = await gameApi.grapple(sequence);
-    // console.log(response, "Grappling Response");
     const newBankedSequence = bankedSequence.map((move: any) => move.move);
-    console.log(sequence, newBankedSequence, "Starting Grappling Sequence!");
     const areArraysEqual = sequence.every((element: any, index: string | number) => element === newBankedSequence[index]);
     if (areArraysEqual) {
       if (positionsGained === 0) setGrapplingContent('You have successfully gained position!');

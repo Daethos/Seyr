@@ -56,7 +56,7 @@ const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
 
     if (isLoading) {
         return (
-        <Loading Chat={true} />
+            <Loading Chat={true} />
         );
     };
 

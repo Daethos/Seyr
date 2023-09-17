@@ -727,7 +727,6 @@ export default class Enemy extends Entity {
     };
 
     onLeashEnter = () => {
-        console.log(`Leashing ${this.ascean.name} to Origin Point of Encounter`)
         this.anims.play('player_running', true);
         if (this.attacking) {
             this.attacking.removeTarget(this.enemyID);
@@ -776,7 +775,6 @@ export default class Enemy extends Entity {
         };
     };
     onLeashExit = () => {
-        console.log(`%c ${this.ascean.name} Leashed to Origin Point of Encounter`, 'color: #00ccff')
         this.anims.stop('player_running');
         this.setVelocity(0, 0);
         this.leashTimer.destroy();
@@ -818,7 +816,6 @@ export default class Enemy extends Entity {
     };
 
     onPolymorphEnter = () => {
-        console.log(`%c ${this.ascean.name} Has Been Polymorphed`, 'color: #00ccff')
         this.isPolymorphed = true;
         this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, 'Polymorphed', 1500, 'effect');
         this.clearAnimations();
@@ -858,7 +855,6 @@ export default class Enemy extends Entity {
                 this.polymorphMovement = 'idle';                
             };
             this.polymorphDirection = direction;
-            console.log(`%c ${this.ascean.name} Polymorphed: [Movemtn: ${this.polymorphMovement} Direction: ${this.polymorphDirection}]`, 'color: #00ffff')
         };
 
         this.polymorphTimer = this.scene.time.addEvent({
@@ -872,7 +868,6 @@ export default class Enemy extends Entity {
                     randomDirection();
                     this.specialCombatText = new ScrollingCombatText(this.scene, this.x, this.y, '...thump', 1000, 'effect');
                     if (this.isCurrentTarget && this.health < this.ascean.health.total) {
-                        console.log(`%c ${this.ascean.name} is healing for ${this.ascean.health.total * 0.2} from Polymorph`, 'color: orange');
                         this.scene.combatMachine.action({ type: 'Health', data: { key: 'enemy', value: 20 } });
                     } else if (this.health < this.ascean.health.total) {
                         this.health = this.health + (this.ascean.health.total * 0.1);

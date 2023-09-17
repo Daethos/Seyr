@@ -181,6 +181,7 @@ export default class Player extends Entity {
         // const helmetName = scene?.state?.player?.helmet.imgURL.split('/')[2].split('.')[0];
         // const chestName = scene?.state?.player?.chest.imgURL.split('/')[2].split('.')[0];
         // const legsName = scene?.state?.player?.legs.imgURL.split('/')[2].split('.')[0];
+        
         // this.spriteHelmet = new Phaser.GameObjects.Sprite(this.scene, 0, 0, helmetName);
         // this.spriteHelmet.setScale(0.35);
         // this.spriteHelmet.setOrigin(0.5, 1.15);
@@ -231,34 +232,7 @@ export default class Player extends Entity {
         this.playerStateListener();
         this.checkLootdropCollision(playerSensor);
         this.checkNpcCollision(playerSensor);
-        // this.playerMoved();
-    }; 
-
-    // playerMoved = () => {
-    //     EventEmitter.on('playerMoved', (data) => {
-    //         const player = this.scene.players[data.id];
-    //         if (!player) return;
-    //         player.setPosition(data.x, data.y);
-    //         player.setFlipX(data.flipX);
-    //         player.isAttacking = data.attacking;
-    //         player.isCountering = data.countering;
-    //         player.isDodging = data.dodging;
-    //         player.isPosturing = data.posturing;
-    //         player.isRolling = data.rolling;
-    //         player.isMoving = data.isMoving;
-    //         player.isConsuming = data.consuming;
-    //         player.isCaerenic = data.caerenic;
-    //         player.isTshaering = data.tshaering;
-    //         player.isPolymorphing = data.polymorphing;
-    //         player.isPraying = data.praying;
-    //         player.isHealing = data.healing;
-    //         player.isStunned = data.stunned;
-    //         player.isStealthing = data.stealthing;
-    //         player.currentWeaponSprite = data.currentWeaponSprite;
-    //         player.currentShieldSprite = data.currentShieldSprite;
-    //         player.health = data.health;
-    //     });
-    // };
+    };  
 
     multiplayerMovement = () => {
         EventEmitter.emit('playerMoving', { 
@@ -765,59 +739,6 @@ export default class Player extends Entity {
     onTshaeralEnter = () => {
         this.isTshaering = true;
         this.attacking.isConsumed = true;
-        // this.tshaeringGraphic = this.scene.add.graphics();
-        // const setColor = (mastery) => {
-        //     switch (mastery) {
-        //         case 'Constitution': return 0xFDF6D8;
-        //         case 'Strength': return 0xFF0000;
-        //         case 'Agility': return 0x00FF00;
-        //         case 'Achre': return 0x0000FF;
-        //         case 'Caeren': return 0x800080;
-        //         case 'Kyosir': return 0xFFD700;
-        //         default: return 0xFFFFFF;
-        //     };
-        // }; 
-        // let graphicColor = setColor(this.ascean.mastery);
-        // console.log(this.ascean.mastery, graphicColor)
-        // this.tshaeringGraphic.clear();
-        // this.tshaeringGraphic.lineStyle(2, graphicColor, 1);
-        // this.tshaeringGraphic.setDepth(1);
-
-        // const glowFilter = this.scene.plugins.get('rexGlowFilterPipeline');
-
-        // const updateBeam = (time) => {
-        //     if (!this.isTshaering || !this.attacking) return;
-        //     if (glowFilter) glowFilter.remove(this.tshaeringGraphic);
-
-        //     const outerStrength = 2 + Math.sin(time * 0.005) * 2;
-        //     const innerStrength = 2 + Math.cos(time * 0.005) * 2;
-        //     const intensity = 0.25;
-
-        //     glowFilter.add(this.tshaeringGraphic, {
-        //         outerStrength,
-        //         innerStrength,
-        //         glowColor: graphicColor,
-        //         intensity,
-        //         knockout: true
-        //     }); 
-
-        //     this.tshaeringGraphic.clear();
-        //     this.tshaeringGraphic.lineStyle(Phaser.Math.Between(3, 6), graphicColor, 1);
-        //     this.tshaeringGraphic.beginPath();
-        //     this.tshaeringGraphic.moveTo(this.x, this.y);
-        //     this.tshaeringGraphic.lineTo(this.attacking.x, this.attacking.y);
-        //     this.tshaeringGraphic.strokePath();
-        // };
-        
-        // updateBeam(this.scene.time.now);
-
-        // this.beamTimer = this.scene.time.addEvent({
-        //     delay: 500,
-        //     callback: () => updateBeam(this.scene.time.now),
-        //     callbackScope: this,
-        //     repeat: 8,
-        // });
-
         this.scene.useStamina(PLAYER.STAMINA.TSHAER);
         screenShake(this.scene);
         if (!this.isCaerenic) {

@@ -86,7 +86,7 @@ const GameAscean = ({ state, dispatch, ascean, player, currentPlayerHealth, tota
       />
     <div className="actions">
     </div>
-    {state.computerEffects.length > 0 ?
+    {state.computerEffects.length > 0 ? 
           (state.computerEffects.map((effect: any, index: number) => {
             return ( <StatusEffects effect={effect} key={index} /> )
         })) : '' }

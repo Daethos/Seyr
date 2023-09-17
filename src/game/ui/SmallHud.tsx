@@ -41,7 +41,6 @@ const SmallHud = ({ ascean, dialogTag }: Props) => {
     }, [ascean.experience, expCallback, experience]);
 
     function checkChat() {
-        console.log(phaser.showChat, 'Show Chat?')
         dispatch(setShowChat(!phaser.showChat));
     };
 

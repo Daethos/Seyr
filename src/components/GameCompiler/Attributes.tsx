@@ -19,8 +19,8 @@ const Attributes = ({ asceanState }: Props) => {
         { name: 'kyosir', label: 'Kyosir', description: 'Defenses, Penetration' },
     ];
 
-const handleAttributeChange = (name: string, value: number) => {
-    dispatch(setAsceanState({
+    const handleAttributeChange = (name: string, value: number) => {
+        dispatch(setAsceanState({
             ...asceanState,
             [name]: Number(asceanState[name as keyof typeof asceanState]) + value,
         }));
