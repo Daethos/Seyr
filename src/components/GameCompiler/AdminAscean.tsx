@@ -1,10 +1,5 @@
 import AsceanImageCard from "../AsceanImageCard/AsceanImageCard"
-import Loading from "../Loading/Loading"
-import GameHealthBar from "./GameHealthBar"
 import GamePlayerStats from "./GamePlayerStats"
-import ExperienceBar from "./ExperienceBar"
-import StatusEffects from "./StatusEffects"
-import { Ascean } from "../../pages/GameAdmin/GameAdmin"
 
 interface AdminAsceanProps {
     ascean: any;
@@ -17,7 +12,6 @@ const AdminAscean = ({ ascean, loading }: AdminAsceanProps) => {
         <div  style={{ marginTop: 0 + '%' }} >
             <div className="game-block-top">
                 <GamePlayerStats attributes={ascean.attributes} player={ascean.ascean} magicalDefense={ascean.defense.magicalDefenseModifier} magicalPosture={ascean.defense.magicalPosture} physicalDefense={ascean.defense.physicalDefenseModifier} physicalPosture={ascean.defense.physicalPosture} />
-                {/* <GameHealthBar totalPlayerHealth={ascean.attributes.healthTotal} currentPlayerHealth={ascean.attributes.healthTotal} /> */}
             </div>
             <div style={{ marginTop: 10 + '%' }}>
             <AsceanImageCard
@@ -38,7 +32,6 @@ const AdminAscean = ({ ascean, loading }: AdminAsceanProps) => {
                 />
             </div>
             <div className="actions">
-                {/* <ExperienceBar totalExperience={ascean.ascean.level * 1000} currentExperience={ascean.ascean.experience} /> */}
             </div>
         </div>
     )

@@ -194,7 +194,7 @@ const FeelingsCard = ({ loggedUser, ascean }: Props) => {
 
   return (
     <div className="actions">
-      <h3 id="feelings" className='svg-wrapper' style={{ marginTop: 40 + 'px' }}>
+      <h3 id="feelings" className='svg-wrapper' style={{ marginTop: '40px' }}>
       <OverlayTrigger placement="bottom" delay={{ show: 250, hide: 400 }} overlay={renderLikesTooltip}>
         <svg onClick={likeHandler} 
           color={likeColor} xmlns="http://www.w3.org/2000/svg" 

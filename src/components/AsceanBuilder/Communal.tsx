@@ -24,10 +24,10 @@ const Communal = ({ editState, setEditState }: Props) => {
           <option value="private" label="Private">private</option>
       </Form.Select>
         {/* <div className='actions'>
-    <h3>Communal Sharibility</h3></div>
-    <p style={{ color: '#fdf6d8', fontSize: "14px" }}>
-    Whether or not other users can clone your character to play with.
-    </p>
+        <h3>Communal Sharibility</h3></div>
+        <p style={{ color: '#fdf6d8', fontSize: "14px" }}>
+            Whether or not other users can clone your character to play with.
+        </p>
         <Form.Select onChange={handleVisibility} name="shareable" className="my-3">
             <option value={editState?.shareable}>Select Preference</option>
             <option value="public" label="Public">public</option>

@@ -75,7 +75,7 @@ const Origin = ({ asceanState, setAsceanState, originModalShow, setOriginModalSh
             <Button variant="outline" 
                 className="my-2" 
                 size="lg" 
-                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: 25 + 'px' }}
+                style={{ color: 'orangered', fontWeight: 400, fontVariant: 'small-caps', fontSize: '25px' }}
                 onClick={() => setOriginModalShow!(true)}
             >Origins</Button>
             <Modal show={originModalShow} onHide={() => setOriginModalShow!(false)} centered aria-labelledby="contained-modal-title-vcenter" id="modal-weapon" > 

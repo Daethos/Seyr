@@ -1,7 +1,4 @@
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Button from 'react-bootstrap/Button';
-import Popover from 'react-bootstrap/Popover';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Loading from '../Loading/Loading';
 import { useEffect, useState } from 'react';
@@ -31,7 +28,6 @@ interface GrapplingProps {
 const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, helmet, chest, legs, amulet, ring_one, ring_two, trinket, loading, damage, grapplingSequence, setGrapplingSequence, addToSequence, newSequence, setNewSequence, bankedSequence }: GrapplingProps) => {
    
     const [damaged, setDamaged] = useState<boolean>(false);
-    const [backgroundColor, setBackgroundColor] = useState('black');
     const [backgroundRH, setBackgroundRH] = useState('black');
     const [backgroundRA, setBackgroundRA] = useState('black');
     const [backgroundRL, setBackgroundRL] = useState('black');
@@ -413,67 +409,67 @@ const AsceanGrapplingCard = ({ weapon_one, weapon_two, weapon_three, shield, hel
         border: getBorderStyle(weapon_one?.rarity),
         background: backgroundRH,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const rightArmStyle = {
         border: getBorderStyle(weapon_two?.rarity),
         background: backgroundRA,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const rightLegStyle = {
         border: getBorderStyle(weapon_three?.rarity),
         background: backgroundRL,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const rightFootStyle = {
         border: getBorderStyle(shield?.rarity),
         background: backgroundRF,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const getHelmStyle = {
         border: getBorderStyle(helmet?.rarity),
         background: backgroundH,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const getChestStyle = {
         border: getBorderStyle(chest?.rarity),
         background: backgroundC,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const getLegsStyle = {
         border: getBorderStyle(legs?.rarity),
         background: backgroundL,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const leftHandStyle = {
         border: getBorderStyle(amulet?.rarity),
         background: backgroundLH,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const leftArmStyle = {
         border: getBorderStyle(ring_one?.rarity),
         background: backgroundLA,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const leftLegStyle = {
         border: getBorderStyle(ring_two?.rarity),
         background: backgroundLL,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
     const leftFootStyle = {
         border: getBorderStyle(trinket?.rarity),
         background: backgroundLF,
         boxShadow: '2px 2px 2px black',
-        borderRadius: 1 + 'px',
+        borderRadius: '1px',
     };
 
     if (loading) {

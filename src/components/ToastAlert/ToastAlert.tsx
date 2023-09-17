@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Toast from 'react-bootstrap/Toast';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 interface Props {
   error: { title: string, content: string };
@@ -34,7 +33,6 @@ const ToastAlert = ({ error, setError, story }: Props) => {
                 <Toast.Header className="bg-black" style={{ color: story ? 'green' : 'red' }}>
                     <img src="holder.js/20x20?text=%20" className="rounded me-2" alt="" />
                     <strong className="me-auto">{error?.title}</strong>
-                    {/* <small>{formatDistanceToNow(Date.now())}</small> */}
                 </Toast.Header>
                 <Toast.Body  style={{ fontWeight: 600, color: story ? 'green' : 'red' }}>
                     {error?.content}

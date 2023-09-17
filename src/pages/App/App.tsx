@@ -15,7 +15,7 @@ import ProfilePage from "../ProfilePage/ProfilePage"
 import GameSolo from "../GameSolo/GameSolo";
 import GameLobby from "../GameLobby/GameLobby";
 import Story from "../Story/Story";
-import GameAdmin from "../GameAdmin/GameAdmin";
+// import GameAdmin from "../GameAdmin/GameAdmin";
 import Multiplayer from "../Multiplayer/Multiplayer";
 
 export interface User {
@@ -65,7 +65,7 @@ const App = () => {
             <NavBar user={user} handleLogout={handleLogout} />
             <Routes>
                 <Route path="/" element={<UserProfile setCreateSuccess={setCreateSuccess} handleAsceanCreate={handleAsceanCreate} />} />
-                <Route path="/GameAdmin" element={<GameAdmin user={user} />} />
+                {/* <Route path="/GameAdmin" element={<GameAdmin user={user} />} /> */}
                 <Route path="/Ascean" element={<NewAscean handleAsceanCreate={handleAsceanCreate} />} />
                 <Route path="/Solo/:asceanID" element={<GameSolo user={user} />} />
                 <Route path="/Story/:asceanID" element={<Story />} />

@@ -7,12 +7,12 @@ import Loading from '../../components/Loading/Loading';
 import CommunityAscean from '../../components/Community/CommunityAscean';
 import { getCommunityAsceanFetch } from '../../game/reducers/communityState';
 import CommunitySearch from '../../components/Community/CommunitySearch';
-import CommunityScores from '../../components/Community/CommunityScores';
+// import CommunityScores from '../../components/Community/CommunityScores';
 
 const CommunityFeed = () => { 
   const user = useSelector((state: any) => state.user.user);
   const ascean = useSelector((state: any) => state.community.ascean);
-  const highScores = useSelector((state: any) => state.community.scores);
+//   const highScores = useSelector((state: any) => state.community.scores);
   const isLoading = useSelector((state: any) => state.community.isLoading); 
   const dispatch = useDispatch(); 
 

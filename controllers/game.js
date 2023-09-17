@@ -4,9 +4,6 @@ module.exports = {
     initiate,
     instant,
     prayer,
-    pvpInitiate,
-    pvpInstant,
-    pvpPrayer,
     phaser,
     phaserEffect,
 };

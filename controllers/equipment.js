@@ -50,7 +50,7 @@ async function getTestEquipment(req, res) {
     };
 }; 
 
-async function indexEquipment(req, res) {
+async function indexEquipment(_req, res) {
     try {
         const weapons = await Weapon.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();
         const shields = await Shield.find({ rarity: { $in: [ 'Epic' ] } }).populate().exec();

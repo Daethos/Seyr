@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import Overlay from 'react-bootstrap/Overlay';
-import Button from 'react-bootstrap/Button';
 import { GAME_ACTIONS } from './GameStore';
 
 

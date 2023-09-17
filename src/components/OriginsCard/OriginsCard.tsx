@@ -9,7 +9,6 @@ interface OriginProps {
 
 const OriginsCard = ({ origin }: OriginProps) => {
     const [originModalShow, setOriginModalShow] = useState(false);
-    // closeButton closeVariant='white' 
     return (
         <>
         <Modal show={originModalShow} onHide={() => setOriginModalShow(false)} centered id='modal-weapon'>

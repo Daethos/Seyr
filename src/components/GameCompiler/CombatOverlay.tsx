@@ -40,17 +40,17 @@ const CombatOverlay = ({ ascean, enemy, combatEngaged, gameDispatch, playerWin, 
 
     const critStyle = {
         color: 'red',
-        fontSize: 32 + 'px',
+        fontSize: '32px',
     };
 
     const luckoutStyle = {
         color: 'gold',
-        fontSize: 32 + 'px',
+        fontSize: '32px',
     }
 
     const rollStyle = {
         color: 'green',
-        fontSize: 32 + 'px',
+        fontSize: '32px',
     };
 
     const getStyle = () => {
@@ -87,29 +87,28 @@ const CombatOverlay = ({ ascean, enemy, combatEngaged, gameDispatch, playerWin, 
             }}
             >
             <h5 className='overlay-content-combat' style={ loadingCombatOverlay ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
-                { playerLuckout ?
+                { playerLuckout ? (
                     <p style={luckoutStyle}>{ascean?.name} has successfully defeated {enemy?.name} without needing to land a single strike.
                     <br />
                     {combatOverlayText}
                     </p>
-                : playerWin ?
+                ) : playerWin ? (
                     <p style={getStyle()}>{ascean?.name} Wins with {pArticle} {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}, dealing {Math.round(playerDamageTotal)} Damage!
                     <br />
                     {combatOverlayText}
                     </p> 
-                : computerWin ?
+                ) : computerWin ? (
                     <p style={getEnemyStyle()}>{enemy?.name} Wins with {cArticle} {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}, dealing {Math.round(computerDamageTotal)} Damage!
                     <br />
                     {combatOverlayText}
                     </p>
-                : combatEngaged ?
+                ) : combatEngaged ? (
                     <>
                     <p style={getStyle()}>{ascean?.name}: {pArticle} {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)} for {Math.round(playerDamageTotal)} Damage </p>
                     <p style={getEnemyStyle()}>{enemy?.name}: {cArticle} {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)} for {Math.round(computerDamageTotal)} Damage </p>
                     {combatOverlayText}
                     </>
-                : null
-}
+                ) : null }
             </h5>
             </div>
         </Overlay>

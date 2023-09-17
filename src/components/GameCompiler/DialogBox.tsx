@@ -10,7 +10,7 @@ import { GAME_ACTIONS, GameData, nameCheck } from './GameStore';
 import { getNodesForNPC, npcIds } from './DialogNode';
 import { useLocation } from 'react-router-dom';
 import { ProvincialWhispersButtons, Region, regionInformation } from './Regions';
-import { LuckoutModal, PersuasionModal, checkPlayerTrait, getAsceanTraits, traitStyle } from './PlayerTraits';
+import { LuckoutModal, PersuasionModal, checkPlayerTrait, getAsceanTraits } from './PlayerTraits';
 
 const DialogButtons = ({ options, setIntent }: { options: any, setIntent: any }) => {
     const filteredOptions = Object.keys(options);
