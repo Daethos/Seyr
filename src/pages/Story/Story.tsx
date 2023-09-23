@@ -33,10 +33,9 @@ const Story = () => {
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             try {
-                dispatch(getGameFetch(asceanID));
                 dispatch(getPhaserAssets());
-                setTimeout(() => dispatch(setPhaserGameChange(true))
-                , 1000)
+                dispatch(getGameFetch(asceanID));
+                setTimeout(() => dispatch(setPhaserGameChange(true)), 1000);
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
             };
