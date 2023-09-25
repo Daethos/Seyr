@@ -77,7 +77,7 @@ export const gameSlice = createSlice({
         getAsceanLevelUpFetch: (state, _action) => {},
         getThieverySuccessFetch: (state, _action) => {},
         getPurchaseFetch: (state, _action) => {},
-
+        getPhaserFetch: (state, _action) => {},
         // ==================== Meta Concerns ==================== \\
 
         setGameClear: (state) => {
@@ -320,6 +320,7 @@ export const gameSlice = createSlice({
 
 export const { 
     getGameFetch, 
+    getPhaserFetch,
     getAsceanAndInventoryFetch, 
     getAsceanLevelUpFetch, 
     getDrinkFirewaterFetch, 

@@ -2,6 +2,7 @@ import { SagaIterator } from "redux-saga";
 import { takeEvery, select, put, call } from "redux-saga/effects";
 import { getAsceanTraits } from "../components/GameCompiler/PlayerTraits";
 import EventEmitter from "../game/phaser/EventEmitter";
+import * as eqpAPI from '../utils/equipmentApi';
 import { setCombatPlayer, setPhaser, setRest } from "../game/reducers/combatState";
 import { setPlayer, setInitialAsceanState, setSettings, setTraits, setPlayerLevelUp, setAsceanState, setFirewater, setExperience, setCurrency, setInventory, setLootDrops, setShowLoot, setStatistics, setTutorialContent } from "../game/reducers/gameState";
 import { compress, workGetCombatStatistic } from "./combatSaga";
@@ -10,7 +11,8 @@ import { SOCKET } from "./socketSaga";
 import * as asceanAPI from '../utils/asceanApi';
 import * as equipmentAPI from '../utils/equipmentApi';
 import * as settingsAPI from '../utils/settingsApi';
-import { setPhaserPlayer, setSocketId } from "../game/reducers/phaserState";
+import { setPhaserAssets, setPhaserGameChange, setPhaserPlayer, setSocketId } from "../game/reducers/phaserState";
+import { sanitizeAssets } from "./phaserSaga";
 
 const checkStatisticalValue = (rarity: string) => {
     switch (rarity) {
@@ -25,6 +27,7 @@ const checkStatisticalValue = (rarity: string) => {
 
 export function* gameSaga(): SagaIterator {
     yield takeEvery('game/getGameFetch', workGetGameFetch);
+    yield takeEvery('game/getPhaserFetch', workGetPhaserFetch);
     yield takeEvery('game/getAsceanLevelUpFetch', workGetAsceanLevelUpFetch);
     yield takeEvery('game/getDrinkFirewaterFetch', workGetDrinkFirewaterFetch);
     yield takeEvery('game/getReplenishFirewaterFetch', workGetReplenishFirewaterFetch);
@@ -37,6 +40,48 @@ export function* gameSaga(): SagaIterator {
     yield takeEvery('game/getInteracingLootFetch', workGetInteracingLootFetch);
     yield takeEvery('game/getPurchaseFetch', workGetPurchaseFetch);
     yield takeEvery('game/getThieverySuccessFetch', workGetThieverySuccessFetch);
+};
+
+function* workGetPhaserFetch(action: any): SagaIterator {
+    const gameRes = yield call(asceanAPI.getOneAscean, action.payload);
+    const combatRes = yield call(asceanAPI.getAsceanStats, action.payload);
+    const settingsRes = yield call(settingsAPI.getSettings);
+    const traitRes = yield call(getAsceanTraits, gameRes.data);
+    const asceanState = yield select((state) => state.game.asceanState);
+    const data = { 
+        user: yield select((state) => state.user.user),
+        ascean: gameRes.data, 
+        stats: combatRes.data.data, 
+        settings: settingsRes,
+        temp: { 
+            ...asceanState, 
+            'ascean': gameRes.data,
+            'currentHealth': gameRes.data.health.current,
+            'level': gameRes.data.level,
+            'experience': gameRes.data.experience,
+            'experienceNeeded': gameRes.data.level * 1000,
+            'mastery': gameRes.data.mastery,
+            'faith': gameRes.data.faith, 
+        },
+        traits: traitRes, 
+    };
+    const press = yield call(compress, data);
+    const socket = getSocketInstance();
+    socket.emit(SOCKET.SETUP_PLAYER, press);
+    
+    const res = yield call(eqpAPI.index);
+    const sanitized = yield call(sanitizeAssets, res.data);
+    yield put(setPhaserAssets(sanitized));
+
+    yield put(setSocketId(socket.id));
+    yield put(setPlayer(gameRes.data));
+    yield put(setCombatPlayer(combatRes.data.data));
+    yield put(setInitialAsceanState(combatRes.data.data));
+    yield put(setSettings(settingsRes));
+    yield put(setTraits(traitRes));
+    yield put(setPhaser(true));
+    yield put(setPhaserPlayer(gameRes.data));
+    yield put(setPhaserGameChange(true));
 };
 
 function* workGetGameFetch(action: any): SagaIterator {

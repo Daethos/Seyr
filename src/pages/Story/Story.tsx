@@ -2,9 +2,8 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router-dom';
 import HostScene from '../../game/scenes/HostScene';
 import { useDispatch, useSelector } from 'react-redux';
-import { getGameFetch } from '../../game/reducers/gameState';
+import { getPhaserFetch } from '../../game/reducers/gameState';
 import EventEmitter from '../../game/phaser/EventEmitter';
-import { getPhaserAssets, setPhaserGameChange } from '../../game/reducers/phaserState';
 
 export const usePhaserEvent = (event: string, callback: any) => {
     useEffect(() => {
@@ -33,9 +32,7 @@ const Story = () => {
     useEffect(() => {
         const fetchData = async (): Promise<void> => {
             try {
-                dispatch(getPhaserAssets());
-                dispatch(getGameFetch(asceanID));
-                setTimeout(() => dispatch(setPhaserGameChange(true)), 1000);
+                dispatch(getPhaserFetch(asceanID));
             } catch (err: any) {
                 console.log(err.message, '<- Error in Getting an Ascean for Solo Gameplay')
             };
