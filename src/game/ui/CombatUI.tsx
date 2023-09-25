@@ -59,13 +59,13 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
             <img src ={playerPortrait} alt="Player Portrait" className='player-portrait' />
             <ProgressBar variant="success" now={staminaPercentage} className='story-stamina-bubble'  />
             <p className='story-stamina'>{Math.round((staminaPercentage / 100) * state.playerAttributes.stamina)}</p>
-            <div className='combat-ui-weapon'> 
+            <div id={state.isCaerenic ? 'phaser-caerenic' : ''} className='combat-ui-weapon'> 
                 <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} caerenic={state.isCaerenic} />
             </div>
             <div className='stalwart'>
             { state.isStalwart && (
                 <OverlayTrigger trigger="click" rootClose placement="auto-start" overlay={itemPopover(state.player.shield, true)}>
-                    <img src={state.player.shield.imgURL} className="m-1 eqp-popover spec" alt={state.player.shield.name} style={getItemRarityStyle(state.player.shield.rarity)} />
+                    <img src={state.player.shield.imgURL} id='phaser-pulse' className="m-1 eqp-popover spec" alt={state.player.shield.name} style={getItemRarityStyle(state.player.shield.rarity)} />
                 </OverlayTrigger>
             ) }
             </div>

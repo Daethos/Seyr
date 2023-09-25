@@ -79,6 +79,7 @@ export default class Player extends Entity {
         this.isStealthing = false;
         this.tshaeralCooldown = 0;
         this.polymorphCooldown = 0;
+        this.staminaModifier = 0;
 
         const shieldName = scene?.state?.player?.shield.imgURL.split('/')[2].split('.')[0];
         this.spriteShield = new Phaser.GameObjects.Sprite(this.scene, 0, 0, shieldName);
@@ -564,7 +565,7 @@ export default class Player extends Entity {
     onAttackEnter = () => {
         this.isAttacking = true;
         this.swingReset(States.ATTACK);
-        this.scene.useStamina(PLAYER.STAMINA.ATTACK);
+        this.scene.useStamina(this.staminaModifier + PLAYER.STAMINA.ATTACK);
     }; 
     onAttackUpdate = (dt) => {
         if (this.frameCount === FRAME_COUNT.ATTACK_LIVE && !this.isRanged) {
@@ -579,7 +580,7 @@ export default class Player extends Entity {
     onCounterEnter = () => {
         this.isCountering = true;    
         this.swingReset(States.COUNTER);
-        this.scene.useStamina(PLAYER.STAMINA.COUNTER);
+        this.scene.useStamina(this.staminaModifier + PLAYER.STAMINA.COUNTER);
     };
     onCounterUpdate = (dt) => {
         if (this.frameCount === FRAME_COUNT.COUNTER_LIVE && !this.isRanged) {
@@ -595,7 +596,7 @@ export default class Player extends Entity {
     onPostureEnter = () => {
         this.isPosturing = true;
         this.swingReset(States.POSTURE);
-        this.scene.useStamina(PLAYER.STAMINA.POSTURE);
+        this.scene.useStamina(this.staminaModifier + PLAYER.STAMINA.POSTURE);
     };
     onPostureUpdate = (dt) => {
         if (this.frameCount === FRAME_COUNT.POSTURE_LIVE && !this.isRanged) { //
@@ -610,7 +611,7 @@ export default class Player extends Entity {
     onRollEnter = () => {
         this.isRolling = true;
         if (this.inCombat) this.swingReset(States.ROLL);
-        this.scene.useStamina(PLAYER.STAMINA.ROLL);
+        this.scene.useStamina(this.staminaModifier + PLAYER.STAMINA.ROLL);
         this.body.parts[2].position.y += this.sensorDisp;
         this.body.parts[2].circleRadius = PLAYER.SENSOR.EVADE;
         this.body.parts[1].vertices[0].y += this.colliderDisp;
@@ -1250,8 +1251,10 @@ export default class Player extends Entity {
             this.currentWeaponSprite = this.assetSprite(this.scene.state.weapons[0]);
             this.spriteWeapon.setTexture(this.currentWeaponSprite);
             if (this.scene.state.weapons[0].grip === 'Two Hand') {
+                this.staminaModifier = 5;
                 this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON_TWO);
             } else {
+                this.staminaModifier = 0;
                 this.spriteWeapon.setScale(PLAYER.SCALE.WEAPON_ONE);
             };
         };

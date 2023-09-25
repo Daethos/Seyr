@@ -37,10 +37,8 @@
 }
 .settings-button {
   position: absolute;
-  grid-column-start: 1;
-  grid-row-start: 1;
-  margin-left: -5%;
-  margin-top: -1%;
+  margin-left: -10%;
+  margin-top: 0%;
   z-index: 99; 
   color: goldenrod;
 }
@@ -2023,4 +2021,48 @@
 }
 .chat-name {
   left: -50px;
+}
+.control-settings {
+    position: absolute;
+    background-color: black;
+    text-align: center;
+    padding: 2px;
+    font-size: 12px;
+    top: -500px;
+    left: 5px;
+    width: 175px;
+}
+#phaser-caerenic {
+    animation: phaser-caerenic 2s ease-in-out; 
+}
+@keyframes phaser-caerenic {
+    0% {
+        opacity: 1;
+        transform: scale(0.75);
+    }
+    50% {
+        opacity: 0.75;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(0.75);
+    }
+}
+#phaser-pulse {
+    animation: phaser-pulse 2s ease-in-out; 
+}
+@keyframes phaser-pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.75;
+        transform: scale(0.75);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }

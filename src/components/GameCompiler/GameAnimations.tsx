@@ -31,45 +31,45 @@ const GameAnimations = ({ spectator, rollSuccess, computerRollSuccess, counterSu
 
     return (
         <>
-         { playerCritical ? 
+         { playerCritical ? (
             <div className="player pulse" style={critStyle} id={ spectator ? 'player-animation-spec' : 'player-animation'}>
                 {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
                 <br />
                 { playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
             </div>
-        : rollSuccess || counterSuccess ?
+        ) : rollSuccess || counterSuccess ? (
             <div className="player pulse" style={rollStyle} id={ spectator ? 'player-animation-spec' : 'player-animation'}>
                 {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
                 <br />
                 { playerDamageTotal > 0 ?  '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
             </div>
-        :
+        ) : (
             <div className="player pulse" id={ spectator ? 'player-animation-spec' : 'player-animation'}>
                 {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}
             <br />
                 {playerDamageTotal > 0 ? '-' + Math.round(playerDamageTotal) + (visibility ? `\n[You]` : '') : ''}
             </div>
-        }
+        ) }
         <br />
-        { computerCritical ?
+        { computerCritical ? (
             <div className="computer hidden" style={critStyle} id={spectator ? 'computer-animation-spec' : 'computer-animation'}>
                 {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                 <br />
                 { computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) + (visibility ? `\n[Enemy]` : '') : ''}
             </div>
-        : computerRollSuccess || computerCounterSuccess ?
+        ) : computerRollSuccess || computerCounterSuccess ? (
             <div className="computer hidden" style={rollStyle} id={spectator ? 'computer-animation-spec' : 'computer-animation'}>
                 {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                 <br />
                 { computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) + (visibility ? `\n[Enemy]` : '') : ''}
             </div> 
-        :
+        ) : (
             <div className="computer hidden" id={spectator ? 'computer-animation-spec' : 'computer-animation'}>
                 {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}
                 <br />
                 {computerDamageTotal > 0 ? '-' + Math.round(computerDamageTotal) + (visibility ? `\n[Enemy]` : '') : ''}
             </div>
-        }
+        ) }
         </>
     );
 };

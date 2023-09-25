@@ -8,6 +8,7 @@ import ToastAlert from '../../components/ToastAlert/ToastAlert';
 import MultiChat from './MultiChat';
 import { getSocketInstance } from '../../sagas/socketManager';
 import { setShowChat } from '../reducers/phaserState';
+import { ControlSettings } from '../../components/GameCompiler/SettingConcerns';
 
 interface Props {
     ascean: Player;
@@ -24,6 +25,7 @@ const SmallHud = ({ ascean, dialogTag }: Props) => {
     const [experience, setExperience] = useState<number>(ascean.experience);
     const [experienceAlert, setExperienceAlert] = useState({ title: '', content: '' });
     const [experienceGained, setExperienceGained] = useState<boolean>(false);
+    const [showControls, setShowControls] = useState<boolean>(false);
     
     const expCallback = useCallback(() => {
         if (ascean.experience > experience) {
@@ -52,6 +54,12 @@ const SmallHud = ({ ascean, dialogTag }: Props) => {
             <Button variant='outline' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps' }} className='ascean-ui' onClick={() => dispatch(setShowPlayer(!showPlayer))}>
                 <h3 style={{ fontSize: '12px', textAlign: 'center' }}>{ascean.name}</h3>
             </Button>
+            <Button variant='' style={{ color: '#fdf6d8', fontVariant: 'small-caps', fontSize: '12px', textAlign: 'center', marginTop: '-0.75%' }} className='ascean-ui' onClick={() => setShowControls(!showControls)}>Controls</Button>
+            { showControls && (
+                <div className='control-settings'>
+                    <ControlSettings />
+                </div>
+            ) }
             { phaser.gameChange && phaser.showChat && (
                 <Button variant='' style={{ color: '#fdf6d8', fontWeight: 400, fontVariant: 'small-caps', fontSize: '12px', marginTop: '-0.75%' }} className='ascean-ui' onClick={() => dispatch(setShowChat(!phaser.showChat))}>
                     Chat

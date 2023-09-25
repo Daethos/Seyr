@@ -25,26 +25,24 @@ interface CombatProps {
     combatEngaged: boolean;
 };
 
+const article = (char: string): string => {
+    return ['a', 'e', 'i', 'o', 'u'].includes(char.toLowerCase()) ? 'an' : 'a';
+};
+
 const CombatSpectatorOverlay = ({ ascean, enemy, gameDispatch, playerWin, computerWin, loadingCombatSpectatorOverlay, combatSpectatorOverlayText, combatSpectatorResolved, playerAction, computerAction, playerDamageTotal, computerDamageTotal, playerCritical, computerCritical, rollSuccess, computerRollSuccess, counterSuccess, computerCounterSuccess }: CombatProps) => {
     const overlayRef = useRef(null);
-    const pArticle = ['a', 'e', 'i', 'o', 'u'].includes(playerAction.charAt(0).toLowerCase()) ? 'an' : 'a';
-    const cArticle = ['a', 'e', 'i', 'o', 'u'].includes(computerAction.charAt(0).toLowerCase()) ? 'an' : 'a';
+    const pArticle = article(playerAction.charAt(0));
+    const cArticle =article(computerAction.charAt(0));
+
     useEffect(() => {
         setTimeout(() => {
             gameDispatch({ type: GAME_ACTIONS.SET_COMBAT_SPECTATOR_RESOLVED, payload: false });
         }, 3000);
     }, []);
-
-    const critStyle = {
-        color: 'red',
-        fontSize: '32px',
-    };
-
-    const rollStyle = {
-        color: 'green',
-        fontSize: '32px',
-    };
-
+    
+    const critStyle = { color: 'red', fontSize: '32px' };
+    const rollStyle = { color: 'green', fontSize: '32px' };
+    
     const getStyle = () => {
         if (playerCritical) {
             return critStyle;
@@ -67,29 +65,19 @@ const CombatSpectatorOverlay = ({ ascean, enemy, gameDispatch, playerWin, comput
 
     return (
         <Overlay target={overlayRef} show={loadingCombatSpectatorOverlay}>
-            <div
-            className='d-flex align-items-center justify-content-center'
-            style={{
-                position: 'fixed',
-                top: "32.5vh",
-                left: 0,
-                width: '100%',
-                height: '35%',
-                zIndex: 9999,
-            }}
-            >
-            <h5 className='overlay-content-combat' style={ loadingCombatSpectatorOverlay ? { animation: "fade 1s ease-in 0.5s forwards" } : { animation: "" } }>
-                { playerWin ?
+            <div className='d-flex align-items-center justify-content-center' style={{ position: 'fixed', top: "32.5vh", width: '100%', height: '35%', zIndex: 9999 }}>
+            <h5 className='overlay-content-combat' style={ loadingCombatSpectatorOverlay ? { animation: "fade 1s ease-in 0.5s forwards" } : {} }>
+                { playerWin ? (
                     <p style={getStyle()}>{ascean?.name} Wins with {pArticle} {playerAction.charAt(0).toUpperCase() + playerAction.slice(1)}, dealing {Math.round(playerDamageTotal)} Damage!
                     <br />
                     {combatSpectatorOverlayText}
                     </p> 
-                : computerWin ?
+                ) : computerWin ? (
                     <p style={getEnemyStyle()}>{enemy?.name} Wins with {cArticle} {computerAction.charAt(0).toUpperCase() + computerAction.slice(1)}, dealing {Math.round(computerDamageTotal)} Damage!
                     <br />
                     {combatSpectatorOverlayText}
                     </p>
-                : null }
+                ) : null }
             </h5>
             </div>
         </Overlay>

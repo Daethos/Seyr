@@ -34,7 +34,6 @@ export const userSlice = createSlice({
             state.isLoading = false;
         },
         getUserLogout: (state) => {
-            console.log('getUserLogout');
             state.user = null;
             state.ascean = [];
         }, 

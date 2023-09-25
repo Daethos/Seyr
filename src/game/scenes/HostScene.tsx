@@ -21,6 +21,7 @@ import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcern
 import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
 import { config } from './Config';
 import { setPhaserGameChange } from '../reducers/phaserState';
+import { ControlSettings } from '../../components/GameCompiler/SettingConcerns';
 
 const HostScene = () => {
     const dispatch = useDispatch();

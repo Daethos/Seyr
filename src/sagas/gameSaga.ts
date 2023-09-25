@@ -76,9 +76,7 @@ function* workGetGameFetch(action: any): SagaIterator {
     yield put(setPhaserPlayer(gameRes.data));
 }; 
 function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
-    console.log(action.payload, "Leveling Up");
     const res = yield call(asceanAPI.levelUp, action.payload);
-    console.log(res, "Response Leveling Up");
     let asceanState = yield select((state) => state.game.asceanState);
     asceanState = {
         ...asceanState,
@@ -99,7 +97,6 @@ function* workGetAsceanLevelUpFetch(action: any): SagaIterator {
     };
     const resTwo = yield call(asceanAPI.getCleanAscean, res.data._id);
     const resThree = yield call(asceanAPI.getAsceanStats, res.data._id);
-    console.log(resTwo, resThree, "Responses to Getting Clean Ascean and Stats");
     yield put(setPlayerLevelUp(resTwo.data));
     yield put(setCombatPlayer(resThree.data.data));
     yield put(setAsceanState(asceanState));
@@ -140,7 +137,6 @@ function* workGetRestoreFirewaterFetch(action: any): SagaIterator {
     yield put(setFirewater(res.firewater));
 };
 export function* workGetGainExperienceFetch(action: any): SagaIterator {
-    console.log(action, "Gain Experience");
     let { asceanState, combatState } = action.payload;
     let opponentExp = Math.round(combatState.computer.level * 100 * (combatState.computer.level / combatState.player.level) + combatState.playerAttributes.rawKyosir);
     const hasAvaricePrayer = combatState.prayerData.includes('Avarice');
@@ -213,6 +209,5 @@ function* workGetThieverySuccessFetch(action: any): SagaIterator {
 };
 function* workGetPurchaseFetch(action: any): SagaIterator {
     const res = yield call(asceanAPI.purchaseToInventory, action.payload);
-    console.log(res, "Response Purchasing Item");
     yield put(setCurrency(res.currency));
 }; 

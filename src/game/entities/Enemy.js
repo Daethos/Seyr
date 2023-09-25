@@ -562,6 +562,7 @@ export default class Enemy extends Entity {
         }); 
     }; 
     onChaseUpdate = (dt) => {
+        if (!this.attacking) return;
         const rangeMultiplier = this.rangedDistanceMultiplier(1.75);
         const direction = this.attacking.position.subtract(this.position);
         const distance = direction.length();
@@ -1106,8 +1107,8 @@ export default class Enemy extends Entity {
             if (direction.length() > DISTANCE.ATTACK) { 
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * (this.speed + 0.75)); // 2.5
-                this.setVelocityY(direction.y * (this.speed + 0.75)); // 2.5
+                this.setVelocityX(direction.x * (this.speed + 1.25)); // 2.5
+                this.setVelocityY(direction.y * (this.speed + 1.25)); // 2.5
             } else { // Inside melee range
                 this.setVelocity(0);
                 this.anims.play('player_idle', true);

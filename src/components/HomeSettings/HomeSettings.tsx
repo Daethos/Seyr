@@ -26,7 +26,7 @@ const HomeSettings = ({ ascean, loggedUser, userProfile, accordionChange, accord
         <>
         <Modal show={homeSettingsModalShow} onHide={() => setHomeSettingsModalShow(false)} centered>
         <Modal.Body style={settingsStyle}>
-        <SearchCard ascean={ascean} loggedUser={loggedUser} userProfile={true} />
+        {/* <SearchCard ascean={ascean} loggedUser={loggedUser} userProfile={true} /> */}
         <AccordionForm accordionState={accordionState} accordionChange={accordionChange} />
         </Modal.Body>
         </Modal>
