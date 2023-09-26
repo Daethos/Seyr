@@ -615,7 +615,7 @@ function faithSuccess(combatData, name, weapon, index) {
         };
     } else { // Computer Effect
         const blessing = combatData.computerBlessing;
-        console.log(`${combatData.computer.name} ${blessing} Success`);
+        // console.log(`${combatData.computer.name} ${blessing} Success`);
         combatData.computerReligiousSuccess = true;
         const negativeEffect = blessing === 'Damage' || blessing === 'Debuff';
         let exists;
@@ -706,7 +706,6 @@ function faithModCompiler(player, faithOne, weaponOne, faithTwo, weaponTwo, amul
 
 function faithCompiler(combatData) { // The influence will add a chance to have a special effect occur
     if (combatData.playerWin === true || combatData.computerWin === true || combatData.playerBlessing === '') return;
-    
     let faithNumber = Math.floor(Math.random() * 101);
     let faithNumberTwo = Math.floor(Math.random() * 101); 
     let computerFaithNumber = Math.floor(Math.random() * 101);
@@ -769,7 +768,6 @@ function computerActionCompiler(newData, playerAction, computerAction, computerC
         newData.counterPostureWeight = 0;
         newData.counterRollWeight = 0;
     };
-    
     const computerActions = {
         attack: 50 + newData.attackWeight,
         counter: 10 + newData.counterWeight,
@@ -1854,14 +1852,9 @@ function actionSplitter(combatData) {
 };
 
 function computerWeaponMaker(combatData) {
-    // Possibly add a flag to check if this has been performed for the enemy already. Only needs to set itself up once per combat
-    // combatData.computerWeaponChecked or something TODO:FIXME: It might help cut down on computation time
-    
     let prayers = ['Buff', 'Damage', 'Debuff', 'Heal'];
     let newPrayer = Math.floor(Math.random() * prayers.length);
     combatData.computerBlessing = prayers[newPrayer];
-
-    // if (combatData.computerWeaponChecked) return combatData;
 
     let defenseTypes = {
         "Leather-Cloth": 0,
@@ -2062,7 +2055,6 @@ function phaserActionSplitter(combatData) {
             'computerDualWielding': cleanData.computerDualWielding, 
         };
     } else if (playerActionLive && !computerActionLive) {
-        // console.log(cleanData.player.name, "Player Attacking");
         computerActionCompiler(cleanData, cleanData.action, cleanData.computerAction, cleanData.computerCounterGuess);
         attackCompiler(cleanData, cleanData.action);
         changes = {
@@ -2569,7 +2561,6 @@ function actionCompiler (combatData) {
         return res;
     } catch (err) {
         console.log(err, 'Error in the Action Compiler of Game Services');
-        res.status(400).json({ err })
     };
 };
 
@@ -2579,7 +2570,6 @@ function instantActionCompiler(combatData) {
         return res;
     } catch (err) {
         console.log(err, 'Error in the Instant Action Compiler of Game Services');
-        res.status(400).json({ err })
     };
 };
 
@@ -2589,7 +2579,6 @@ function consumePrayer(combatData) {
         return res;
     } catch (err) {
         console.log(err, 'Error in the Consume Prayer of Game Services');
-        res.status(400).json({ err })
     };
 };
 
@@ -2599,7 +2588,6 @@ function phaserActionCompiler(combatData) {
         return res;
     } catch (err) {
         console.log(err, 'Error in the Phaser Action Compiler of Game Services');
-        res.status(400).json({ err });
     };
 };
 
@@ -2609,7 +2597,6 @@ function phaserEffectTick(data) {
         return res;
     } catch (err) {
         console.log(err, 'Error in the Phaser Effect Tick of Game Services');
-        res.status(400).json({ err });
     };
 };
 
@@ -2619,7 +2606,6 @@ function phaserRemoveTick(data) {
         return res;
     } catch (err) {
         console.log(err, 'Error in the Phaser Effect Tick of Game Services');
-        res.status(400).json({ err });
     };
 };
 

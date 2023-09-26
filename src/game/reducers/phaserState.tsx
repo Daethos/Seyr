@@ -70,7 +70,6 @@ export const phaserSlice = createSlice({
             };
         },
         setIsTyping: (state, action) => {
-            console.log(action.payload, "Is Typing?")
             return {
                 ...state,
                 isTyping: action.payload,
@@ -80,6 +79,7 @@ export const phaserSlice = createSlice({
             return {
                 ...state,
                 assets: action.payload,
+                gameChange: true,
             };
         },
         setPhaserPlayer: (state, action) => {
@@ -103,7 +103,6 @@ export const phaserSlice = createSlice({
         },
         setRemovePlayer: (state, action) => {
             const id = action.payload;
-            console.log(id, "ID")
             delete state.players[id as keyof typeof state.players];
             return {
                 ...state,

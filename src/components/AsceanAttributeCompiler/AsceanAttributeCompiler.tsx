@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import * as asceanAPI from '../../utils/asceanApi';
 import Loading from '../Loading/Loading';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
@@ -8,27 +8,28 @@ import { Player } from '../GameCompiler/GameStore';
 interface Props {
     ascean: Player;
     story?: boolean;
+    stats?: any;
 };
 
-const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [attributes, setAttributes] = useState<any>([])
+const AsceanAttributeCompiler = ({ ascean, story, stats }: Props) => {
+    const [attributes, setAttributes] = useState<any>({});
 
-    useEffect(() => {
-        asceanAttributeCompiler();
-    }, [ascean]);
-
-    async function asceanAttributeCompiler() {
-        setLoading(true)
+    const compile = useCallback(async (): Promise<void> => {
         try {
             const res = await asceanAPI.getAsceanStats(ascean._id);
             setAttributes(res.data.data.attributes);
-            setLoading(false);
         } catch (err: any) {
-            setLoading(false)
             console.log(err.message, 'Error Compiling Ascean Stats')
         };
-    };
+    }, [ascean]);
+
+    useEffect(() => {
+        if (stats) {
+            setAttributes(stats);
+            return;
+        };
+        compile();
+    }, [ascean, compile]);
 
     const constitutionPopover = (
         <Popover id='popover'>
@@ -116,11 +117,6 @@ const AsceanAttributeCompiler = ({ ascean, story }: Props) => {
         fontSize: story ? '12.5px' : '',
     };
 
-    if (loading) {
-        return (
-            <Loading NavBar={true} />
-        );
-    };
     return (
         <div className="abilities" style={{ fontSize: story ? '10px' : '', marginTop: story ? '-2.5%' : '' }}>
         <div className="ability-strength" style={{ width: story ? '27.5%' : '' }}>

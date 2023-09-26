@@ -420,7 +420,7 @@ const StoryAscean = ({ ascean, asceanViews, restartGame }: Props) => {
                         Physical Defense: <p style={{ color: "gold" }}>{state.playerDefense.physicalDefenseModifier}% / [{state.playerDefense.physicalPosture}%]</p><br />
                         Initiative: <p style={{ color: "gold" }}>{state.playerAttributes.initiative}</p>
                     </div>
-                    <AsceanAttributeCompiler ascean={state.player} story={true} />
+                    <AsceanAttributeCompiler ascean={state.player} story={true} stats={state.playerAttributes} />
                 </div>
             ) : asceanViews === VIEWS.INVENTORY ? (
                 <>

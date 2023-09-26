@@ -71,16 +71,17 @@ function* workGetPhaserFetch(action: any): SagaIterator {
     
     const res = yield call(eqpAPI.index);
     const sanitized = yield call(sanitizeAssets, res.data);
-    yield put(setPhaserAssets(sanitized));
-
+    
+    yield put(setCombatPlayer(combatRes.data.data));
     yield put(setSocketId(socket.id));
     yield put(setPlayer(gameRes.data));
-    yield put(setCombatPlayer(combatRes.data.data));
+    yield put(setPhaserPlayer(gameRes.data));
     yield put(setInitialAsceanState(combatRes.data.data));
     yield put(setSettings(settingsRes));
     yield put(setTraits(traitRes));
+    
+    yield put(setPhaserAssets(sanitized));
     yield put(setPhaser(true));
-    yield put(setPhaserPlayer(gameRes.data));
     yield put(setPhaserGameChange(true));
 };
 
