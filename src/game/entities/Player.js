@@ -663,16 +663,19 @@ export default class Player extends Entity {
 
     onPrayerEnter = () => {
         this.isHealing = true;
+        this.setStatic(true);
     };
     onPrayerUpdate = (dt) => {
         this.combatChecker(this.isHealing);
     };
     onPrayerExit = () => {
         this.scene.drinkFlask();
+        this.setStatic(false);
     };
 
     onInvokeEnter = () => {
         this.isPraying = true;
+        this.setStatic(true);
         if (!this.isCaerenic) this.glow = this.setGlow(this, true);
         this.invokeCooldown = 30;
         if (this.playerBlessing === '' || this.playerBlessing !== this.scene.state.playerBlessing) {
@@ -683,6 +686,7 @@ export default class Player extends Entity {
         this.combatChecker(this.isPraying);
     };
     onInvokeExit = () => {
+        this.setStatic(false);
         if (!this.isCaerenic) this.glow = this.setGlow(this, false);
         this.scene.combatMachine.action({ type: 'Instant', data: this.scene.state.playerBlessing });
         screenShake(this.scene);

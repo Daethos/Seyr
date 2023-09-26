@@ -27,6 +27,12 @@ const combatSlice = createSlice({
         getRemoveEffectFetch: (state, _action) => {},
         getHealthFetch: (state, _action) => {},
 
+        clearEverything: (state) => {
+            return {
+                ...initialCombatData
+            };
+        },
+
         // ==================== Combat Setup / Breakdown ==================== \\
 
         setCombatPlayer: (state, action) => {
@@ -473,6 +479,8 @@ export const {
     getDrainFetch,
     getRemoveEffectFetch,
     getHealthFetch,
+
+    clearEverything,
     
     setClearGame,
     setCombatPlayer,

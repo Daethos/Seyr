@@ -60,6 +60,7 @@ export default class NPC extends Entity {
         this.setFixedRotation();
         this.npcSensor = npcSensor;
         this.npcCollision(npcSensor); 
+        this.setStatic(true);
     }; 
 
     cleanUp() {

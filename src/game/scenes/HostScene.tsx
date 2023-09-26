@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useParams } from 'react-router-dom';
 import Phaser from "phaser"; 
 import CombatMouseSettings from '../ui/CombatMouseSettings';
 import CombatUI from '../ui/CombatUI';
@@ -16,14 +17,14 @@ import { LootDropUI } from '../ui/LootDropUI';
 import { StoryDialog } from '../ui/StoryDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearNpc, getCombatTimerFetch, setClearGame, setToggleDamaged } from '../reducers/combatState';
-import { setShowDialog, setMerchantEquipment, setShowLoot, setGameTimer, setStaminaPercentage, setAsceanViews, setShowPlayer, setDialogTag, setPauseState, setCurrentGame, setScrollEnabled, setCurrentNodeIndex, setGameChange, setStealth } from '../reducers/gameState';
+import { setShowDialog, setMerchantEquipment, setShowLoot, setGameTimer, setStaminaPercentage, setAsceanViews, setShowPlayer, setDialogTag, setPauseState, setCurrentGame, setScrollEnabled, setCurrentNodeIndex, setStealth } from '../reducers/gameState';
 import { fetchEnemy, fetchNpc } from '../../components/GameCompiler/EnemyConcerns';
 import { useKeyEvent, usePhaserEvent } from '../../pages/Story/Story';
-import { config } from './Config';
 import { setPhaserGameChange } from '../reducers/phaserState';
-import { ControlSettings } from '../../components/GameCompiler/SettingConcerns';
+import gameManager from './Game';
 
 const HostScene = () => {
+    const { asceanID } = useParams();
     const dispatch = useDispatch();
     const gameRef = useRef<Phaser.Game | null | any>(null); 
     const assets = useSelector((state: any) => state.phaser.assets);
@@ -35,11 +36,31 @@ const HostScene = () => {
 
     useEffect(() => { 
         startGame();
-    }, []);
+    }, [asceanID]);
 
     useEffect(() => {
         updateCombatListener(combatState);
     }, [combatState]); 
+
+    function destroyGame() {
+        const game = gameRef?.current;
+        if (!game) return;
+        console.log(game, 'Game')
+        const scene = game?.scene?.getScene('Play');
+        for (let i = 0; i < scene.enemies.length; i++) {
+            scene.enemies[i].cleanUp();
+        };
+        for (let i = 0; i < scene.npcs.length; i++) {
+            scene.npcs[i].cleanUp();
+        };
+        scene.player.cleanUp();
+        scene.cleanUp();
+        while (game.firstChild) {
+            game.removeChild(game.firstChild);
+        };
+        game.destroy(true);
+        gameRef.current = null;
+    };
 
     const restartGame = async (): Promise<void> => {
         try {
@@ -47,21 +68,7 @@ const HostScene = () => {
             dispatch(setCurrentGame(false)); 
             dispatch(setClearGame());
             dispatch(setShowPlayer(!gameState.showPlayer));
-            const game = gameRef.current;
-            const scene = game.scene.getScene('Play');
-            for (let i = 0; i < scene.enemies.length; i++) {
-                scene.enemies[i].cleanUp();
-            };
-            for (let i = 0; i < scene.npcs.length; i++) {
-                scene.npcs[i].cleanUp();
-            };
-            scene.player.cleanUp();
-            scene.cleanUp();
-            while (game.firstChild) {
-                game.removeChild(game.firstChild);
-            };
-            game.destroy(true);
-            gameRef.current = null;
+            destroyGame();
             dispatch(setPhaserGameChange(true));
             setTimeout(() => {
                 startGame();
@@ -71,7 +78,7 @@ const HostScene = () => {
         };
     };
 
-    const startGame = async (): Promise<Phaser.Game> => gameRef.current = new Phaser.Game(config); 
+    const startGame = (): Phaser.Game => gameRef.current = gameManager.createGame(asceanID!);
  
     const clearNPC = async (): Promise<void> => {
         if (gameState.merchantEquipment.length > 0) {
@@ -178,7 +185,6 @@ const HostScene = () => {
             };
         }, [timer, pause, ref, game]);
     };
-
     useKeyEvent('keydown', gameHud);
     usePhaserEvent('retrieve-assets', retrieveAssets);
     usePhaserEvent('clear-npc', clearNPC);

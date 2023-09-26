@@ -21,6 +21,7 @@ interface CombatUIProps {
 const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
     const dispatch = useDispatch();
     const stealth = useSelector((state: any) => state.game.stealth);
+    const stamina = useSelector((state: any) => state.combat.playerAttributes.stamina);
     const [playerHealthPercentage, setPlayerHealthPercentage] = useState<number>(0);
 
     useEffect(() => {
@@ -58,7 +59,7 @@ const CombatUI = ({ state, staminaPercentage, pauseState }: CombatUIProps) => {
             <p className='story-portrait'>{`${Math.round(state.newPlayerHealth)} / ${state.playerHealth} [${playerHealthPercentage}%]`}</p>
             <img src ={playerPortrait} alt="Player Portrait" className='player-portrait' />
             <ProgressBar variant="success" now={staminaPercentage} className='story-stamina-bubble'  />
-            <p className='story-stamina'>{Math.round((staminaPercentage / 100) * state.playerAttributes.stamina)}</p>
+            <p className='story-stamina'>{Math.round((staminaPercentage / 100) * stamina)}</p>
             <div id={state.isCaerenic ? 'phaser-caerenic' : ''} className='combat-ui-weapon'> 
                 <ItemPopover item={state.weapons[0]} prayer={state.playerBlessing} caerenic={state.isCaerenic} />
             </div>

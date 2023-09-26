@@ -3,15 +3,15 @@ import { takeEvery, select, put, call } from "redux-saga/effects";
 import { getAsceanTraits } from "../components/GameCompiler/PlayerTraits";
 import EventEmitter from "../game/phaser/EventEmitter";
 import * as eqpAPI from '../utils/equipmentApi';
-import { setCombatPlayer, setPhaser, setRest } from "../game/reducers/combatState";
-import { setPlayer, setInitialAsceanState, setSettings, setTraits, setPlayerLevelUp, setAsceanState, setFirewater, setExperience, setCurrency, setInventory, setLootDrops, setShowLoot, setStatistics, setTutorialContent } from "../game/reducers/gameState";
+import { clearEverything, setCombatPlayer, setPhaser, setRest } from "../game/reducers/combatState";
+import { setPlayer, setInitialAsceanState, setSettings, setTraits, setPlayerLevelUp, setAsceanState, setFirewater, setExperience, setCurrency, setInventory, setLootDrops, setShowLoot, setStatistics, setTutorialContent, setGameClear } from "../game/reducers/gameState";
 import { compress, workGetCombatStatistic } from "./combatSaga";
 import { getSocketInstance } from "./socketManager";
 import { SOCKET } from "./socketSaga";
 import * as asceanAPI from '../utils/asceanApi';
 import * as equipmentAPI from '../utils/equipmentApi';
 import * as settingsAPI from '../utils/settingsApi';
-import { setPhaserAssets, setPhaserGameChange, setPhaserPlayer, setSocketId } from "../game/reducers/phaserState";
+import { clearPhaserPlayer, setPhaserAssets, setPhaserGameChange, setPhaserPlayer, setSocketId } from "../game/reducers/phaserState";
 import { sanitizeAssets } from "./phaserSaga";
 
 const checkStatisticalValue = (rarity: string) => {
@@ -26,6 +26,7 @@ const checkStatisticalValue = (rarity: string) => {
 };
 
 export function* gameSaga(): SagaIterator {
+    yield takeEvery('game/getClearGame', workGetClearGame);
     yield takeEvery('game/getGameFetch', workGetGameFetch);
     yield takeEvery('game/getPhaserFetch', workGetPhaserFetch);
     yield takeEvery('game/getAsceanLevelUpFetch', workGetAsceanLevelUpFetch);
@@ -40,6 +41,12 @@ export function* gameSaga(): SagaIterator {
     yield takeEvery('game/getInteracingLootFetch', workGetInteracingLootFetch);
     yield takeEvery('game/getPurchaseFetch', workGetPurchaseFetch);
     yield takeEvery('game/getThieverySuccessFetch', workGetThieverySuccessFetch);
+};
+
+function* workGetClearGame(): SagaIterator {
+    yield put(setGameClear());
+    yield put(clearEverything());
+    yield put(clearPhaserPlayer());
 };
 
 function* workGetPhaserFetch(action: any): SagaIterator {

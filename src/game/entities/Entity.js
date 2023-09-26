@@ -24,7 +24,7 @@ export const FRAME_COUNT = {
     POSTURE_SUCCESS: 17, // 11 for frameRate: 12
     
     ROLL_LIVE: 10,
-    ROLL_SUCCESS: 10,
+    ROLL_SUCCESS: 20,
     
     DISTANCE_CLEAR: 51,
 }; 
@@ -474,7 +474,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                 }; 
                 
                 if (this.frameCount === FRAME_COUNT.COUNTER_SUCCESS) {
-                this.checkActionSuccess(entity, target);
+                    this.checkActionSuccess(entity, target);
                 };
             };
 
@@ -491,7 +491,9 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     if (this.hasBow) this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
                 };
             };
-
+            if (this.frameCount >= FRAME_COUNT.ROLL_LIVE && this.frameCount <= FRAME_COUNT.ROLL_SUCCESS) {
+                this.checkActionSuccess(entity, target);
+            };
             this.frameCount += 1;
         } else if (this.isAttacking) {
             if (this.frameCount === FRAME_COUNT.ATTACK_LIVE) {

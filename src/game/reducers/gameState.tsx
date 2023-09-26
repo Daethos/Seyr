@@ -78,6 +78,8 @@ export const gameSlice = createSlice({
         getThieverySuccessFetch: (state, _action) => {},
         getPurchaseFetch: (state, _action) => {},
         getPhaserFetch: (state, _action) => {},
+        getClearGame: (state) => {},
+
         // ==================== Meta Concerns ==================== \\
 
         setGameClear: (state) => {
@@ -113,8 +115,9 @@ export const gameSlice = createSlice({
                 showLootIds: [] as string[],
                 showLoot: false,
                 showPlayer: false,
+                staminaPercentage: 100,
                 traits: null,
-                asceanstate: {
+                asceanState: {
                     ascean: {},
                     currentHealth: 0,
                     constitution: 0,
@@ -318,7 +321,8 @@ export const gameSlice = createSlice({
     },
 });
 
-export const { 
+export const {
+    getClearGame,
     getGameFetch, 
     getPhaserFetch,
     getAsceanAndInventoryFetch, 
@@ -331,7 +335,7 @@ export const {
     getReplenishFirewaterFetch, 
     getRestoreFirewaterFetch,
     getThieverySuccessFetch,
-    
+
     setGameClear,
     setPlayer, 
     setSettings, 

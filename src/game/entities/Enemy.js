@@ -9,9 +9,9 @@ import EventEmitter from "../phaser/EventEmitter";
 
 const DISTANCE = {
     MIN: 0,
-    ATTACK: 60,
+    ATTACK: 50,
     THRESHOLD: 75,
-    CHASE: 175,
+    CHASE: 200,
     RANGED_ALIGNMENT: 10,
 };
 
@@ -698,7 +698,7 @@ export default class Enemy extends Entity {
         this.isPosturing = true;
         this.posture();
     };
-    onPostureUpdate = (dt) => {
+    onPostureUpdate = (_dt) => {
         if (this.frameCount === FRAME_COUNT.POSTURE_LIVE && !this.isRanged) this.scene.combatMachine.input('computerAction', 'posture', this.enemyID);
         if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isPosturing) this.evaluateCombatDistance();
@@ -715,7 +715,7 @@ export default class Enemy extends Entity {
         this.body.parts[1].vertices[1].y += this.colliderDisp; 
         this.handleAnimations();
     };
-    onRollUpdate = (dt) => { 
+    onRollUpdate = (_dt) => { 
         if (this.frameCount === FRAME_COUNT.ROLL_LIVE && !this.isRanged) this.scene.combatMachine.input('computerAction', 'roll', this.enemyID);
         if (!this.isRolling) this.evaluateCombatDistance();
     };
@@ -759,7 +759,7 @@ export default class Enemy extends Entity {
             loop: true
         }); 
     };
-    onLeashUpdate = (dt) => {
+    onLeashUpdate = (_dt) => {
         let originPoint = new Phaser.Math.Vector2(this.originPoint.x, this.originPoint.y);
         let direction = originPoint.subtract(this.position);
         
@@ -1107,8 +1107,8 @@ export default class Enemy extends Entity {
             if (direction.length() > DISTANCE.ATTACK) { 
                 this.anims.play('player_running', true);
                 direction.normalize();
-                this.setVelocityX(direction.x * (this.speed + 1.25)); // 2.5
-                this.setVelocityY(direction.y * (this.speed + 1.25)); // 2.5
+                this.setVelocityX(direction.x * (this.speed + 1.5)); // 2.5
+                this.setVelocityY(direction.y * (this.speed + 1.5)); // 2.5
             } else { // Inside melee range
                 this.setVelocity(0);
                 this.anims.play('player_idle', true);

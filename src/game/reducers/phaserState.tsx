@@ -33,6 +33,14 @@ export const phaserSlice = createSlice({
             };
         },
 
+        clearPhaserPlayer: (state) => {
+            return {
+                ...state,
+                player: null,
+                gameChange: false,
+            };
+        },
+
         setMessageList: (state, action) => {
             return {
                 ...state,
@@ -128,6 +136,8 @@ export const phaserSlice = createSlice({
 export const {
     getPhaserAssets,
     getPhaserPlayer,
+
+    clearPhaserPlayer,
     
     setMessageList,
     setCurrentMessage,

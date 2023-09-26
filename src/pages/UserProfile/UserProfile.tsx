@@ -10,6 +10,7 @@ import HomeSettings from '../../components/HomeSettings/HomeSettings';
 import Player from '../../game/entities/Player';
 import { getUserAsceanFetch } from '../../game/reducers/userState';
 import { User } from '../App/App';
+import { getClearGame } from '../../game/reducers/gameState';
 
 interface UserProps {
     setCreateSuccess: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,6 +25,10 @@ const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
     const hasAscean = useSelector((state: any) => state.user.hasAscean);
     const isLoading = useSelector((state: any) => state.user.isLoading);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getClearGame());
+    }, [])
 
     useEffect(() => {
         dispatch(getUserAsceanFetch());
