@@ -10,7 +10,7 @@ import Mastery from '../AsceanBuilder/Mastery';
 import Sex from '../AsceanBuilder/Sex';
 import Preference from '../AsceanBuilder/Preference';
 import Communal from '../AsceanBuilder/Communal';
-import Hardcore from '../AsceanBuilder/Hardcore';
+// import Hardcore from '../AsceanBuilder/Hardcore';
 import { Symbols } from '../SolaAscean/SolaAscean';
 
 interface AsceanProps {
@@ -63,7 +63,7 @@ const NewAscean = ({ handleAsceanCreate }: AsceanProps) => {
 
     return (
         <Row className="justify-content-center my-3" >
-            <h3 style={{ color: '#fdf6d8', textAlign: 'center' }}>New Character</h3>
+            <h3 style={{ color: '#fdf6d8', textAlign: 'center' }}>Create Character</h3>
         <Form className="stat-block wide my-3" id="new-ascean" onSubmit={handleSubmit} style={{ color: "gold" }}>
             <hr className="orange-border" />
             <div className="section-left" >
@@ -83,8 +83,8 @@ const NewAscean = ({ handleAsceanCreate }: AsceanProps) => {
             <Communal editState={asceanState} setEditState={setAsceanState} />
             {/* <Hardcore asceanState={asceanState} setAsceanState={setAsceanState} /> */}
             {Symbols.space} 
-            <button className="btn my-2" value={asceanState} style={{ color: 'gold', fontWeight: 600, fontVariant: 'small-caps', fontSize: '28px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }} type="submit">
-                Create Character
+            <button className="btn my-3" value={asceanState} style={{ color: 'gold', fontWeight: 600, fontVariant: 'small-caps', fontSize: '28px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }} type="submit">
+                Create {asceanState.name}
             </button>
             </div>
             <hr className="orange-border bottom" />

@@ -41,7 +41,7 @@ export default class ScreenShaker {
 
 let totalTrauma = 0;
  
-export const screenShake = (scene: Phaser.Scene, duration = 150, intensity = 0.015) => {
+export const screenShake = (scene: Phaser.Scene, duration = 120, intensity = 0.015) => {
     totalTrauma += 1.05;
     intensity *= Math.pow(totalTrauma, 2);
     

@@ -12,23 +12,23 @@ interface SearchProps {
 
 const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
     const [searchText, setSearchText] = useState<string>('');
-    const [allAscean, setAllAscean] = useState<any>(ascean);
+    const [result, setResult] = useState<any>(ascean);
 
     async function filterAscean(results: any) {
         let finalResults = [];
-            for (let i = 0; i < results.length; i++){
-                if (finalResults.length < ascean.length) {
-                        finalResults.push(results[i]);
-                };
+        for (let i = 0; i < results.length; i++){
+            if (finalResults.length < ascean.length) {
+                finalResults.push(results[i]);
+            };
         };
-        setAllAscean(finalResults);
+        setResult(finalResults);
     };
 
     function displayResults() {
         let views = [];
-        for (let i = 0; i < allAscean.length; i++) {
+        for (let i = 0; i < result.length; i++) {
             views.push(
-                <SolaAscean ascean={allAscean[i]} key={allAscean[i].index} userProfile={userProfile} />
+                <SolaAscean ascean={result[i]} key={result[i].index} userProfile={userProfile} />
             );
         };
         return (views);
@@ -36,16 +36,16 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
 
     function handleChange(e: any) {
         e.preventDefault();
-        setSearchText(e.target.value);
+        setSearchText(e.target.value.toLowerCase());
     };
 
     useEffect(() => {
-        setAllAscean([]);
+        setResult([]);
         if (searchText === '') {
-            setAllAscean([]);
+            setResult([]);
             return;
         };
-        const filteredResults = ascean.filter((a: any) => a['index'].includes(searchText));     
+        const filteredResults = ascean.filter((a: any) => a['index'].toLowerCase().includes(searchText));     
         filterAscean(filteredResults);
         console.log(searchText, '<- the changing search text');
     }, [searchText, ascean]);
@@ -53,9 +53,6 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
     return (
         <React.Fragment>
             <Col md={{ span: 8, offset: 2 }} className="my-4">
-            <p style={{ color: '#fdf6d8', textAlign: 'center' }}>
-        Character Search
-        </p>
         <InputGroup className="bg-black">
         <InputGroup.Text className="bg-black">
         <img 
@@ -65,16 +62,17 @@ const SearchCard = ({ ascean, loggedUser, userProfile }: SearchProps) => {
         />
         </InputGroup.Text>
         <Form.Control 
+            style={{ textAlign: 'center' }}
             className="headerSearchInput bg-black text-white" 
-            placeholder="Names Are Case Sensitive, Beware!" 
+            placeholder="Search Through Your Ascean Here!" 
             type="text" value={searchText} 
             onChange={handleChange}
         />
         </InputGroup>
         </Col>
-        { ascean.length > 0 ? (
+        { ascean.length > 0 && (
             <>{displayResults()}</>
-        ) : ( '' ) }
+        ) }
         </React.Fragment>
     );
 };

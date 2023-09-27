@@ -491,7 +491,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
                     if (this.hasBow) this.particleEffect = this.scene.particleManager.addEffect('roll', this, 'arrow');
                 };
             };
-            if (this.frameCount >= FRAME_COUNT.ROLL_LIVE && this.frameCount <= FRAME_COUNT.ROLL_SUCCESS) {
+            if (this.frameCount >= FRAME_COUNT.ROLL_LIVE && this.frameCount <= FRAME_COUNT.ROLL_SUCCESS && entity === 'enemy') {
                 this.checkActionSuccess(entity, target);
             };
             this.frameCount += 1;

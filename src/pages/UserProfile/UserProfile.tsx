@@ -11,6 +11,7 @@ import Player from '../../game/entities/Player';
 import { getUserAsceanFetch } from '../../game/reducers/userState';
 import { User } from '../App/App';
 import { getClearGame } from '../../game/reducers/gameState';
+import SearchCard from '../../components/SearchCard/SearchCard';
 
 interface UserProps {
     setCreateSuccess: React.Dispatch<React.SetStateAction<boolean>>;
@@ -68,6 +69,7 @@ const UserProfile = ({ setCreateSuccess, handleAsceanCreate }: UserProps) => {
     return (
         <Container>
         <HomeSettings ascean={asceans} loggedUser={user} userProfile={true} accordionState={accordionState} accordionChange={accordionChange} />
+        <SearchCard ascean={asceans} loggedUser={user} userProfile={true} />
         { asceans.length && (
             asceans.map((ascean: Player, index: number) => {
                 return (

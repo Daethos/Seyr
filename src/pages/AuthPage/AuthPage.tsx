@@ -36,21 +36,21 @@ export default function AuthPage({ handleSignUpOrLogin }: AuthProps) {
         <Container fluid>
         <Row>
         <h2 className='welcome-text'>
-            Ascea
+            The Ascean
         </h2>
         <h6 className='welcome-explanation'>
             Welcome one and all to the greatest spectacle this world has seen, a coliseum holding tests of triumph between the steeliest souls across
             the land, arriving in the beautiful fields of Licivitas to have a hand at capturing glory and renown, with the winner achieving the title
-            known as the <br /><br /> 
-            <div className='ascean'>
-            'Ascean va'Esai.'
+            <br /><br /> 
+            <div className='ascean' style={{ fontSize: '48px' }}>
+            Ascean va'Esai.
             </div>
             <br />
             <div className="game">
-            Test your will against others in turn-based, rpg combat utilizing a series of weapons and skills to prove you are
+            Test your will against others in real-time combat utilizing a series of weapons and skills to prove you are
             </div>
             <br />
-            <div className="aenservaesai">
+            <div className="aenservaesai" style={{ fontSize: '48px' }}>
             'worthy of the preservation of being.'
             </div>
         </h6>

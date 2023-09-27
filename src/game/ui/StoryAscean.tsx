@@ -283,15 +283,15 @@ const StoryAscean = ({ ascean, asceanViews, restartGame }: Props) => {
             case CHARACTERS.TRAITS:
                 return (
                     <>
-                        <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.primary?.name}</h6>
-                            <p>{playerTraitWrapper?.primary?.traitOneName} - {playerTraitWrapper?.primary?.traitOneDescription}</p>
-                            <p>{playerTraitWrapper?.primary?.traitTwoName} - {playerTraitWrapper?.primary?.traitTwoDescription}</p>
-                        <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.secondary?.name}</h6>
-                            <p>{playerTraitWrapper?.secondary?.traitOneName} - {playerTraitWrapper?.secondary?.traitOneDescription}</p>
-                            <p>{playerTraitWrapper?.secondary?.traitTwoName} - {playerTraitWrapper?.secondary?.traitTwoDescription}</p>
-                        <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.tertiary?.name}</h6>
-                            <p>{playerTraitWrapper?.tertiary?.traitOneName} - {playerTraitWrapper?.tertiary?.traitOneDescription}</p>
-                            <p>{playerTraitWrapper?.tertiary?.traitTwoName} - {playerTraitWrapper?.tertiary?.traitTwoDescription}</p>
+                    <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.primary?.name}</h6>
+                        <p>{playerTraitWrapper?.primary?.traitOneName} - {playerTraitWrapper?.primary?.traitOneDescription}</p>
+                        <p>{playerTraitWrapper?.primary?.traitTwoName} - {playerTraitWrapper?.primary?.traitTwoDescription}</p>
+                    <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.secondary?.name}</h6>
+                        <p>{playerTraitWrapper?.secondary?.traitOneName} - {playerTraitWrapper?.secondary?.traitOneDescription}</p>
+                        <p>{playerTraitWrapper?.secondary?.traitTwoName} - {playerTraitWrapper?.secondary?.traitTwoDescription}</p>
+                    <h6 style={{ color: '#fdf6d8', fontWeight: 600, textShadow: '2px 2px 2px purple' }}>{playerTraitWrapper?.tertiary?.name}</h6>
+                        <p>{playerTraitWrapper?.tertiary?.traitOneName} - {playerTraitWrapper?.tertiary?.traitOneDescription}</p>
+                        <p>{playerTraitWrapper?.tertiary?.traitTwoName} - {playerTraitWrapper?.tertiary?.traitTwoDescription}</p>
                     </>
                 );
             default:
@@ -424,9 +424,9 @@ const StoryAscean = ({ ascean, asceanViews, restartGame }: Props) => {
                 </div>
             ) : asceanViews === VIEWS.INVENTORY ? (
                 <>
-                { highlighted.comparing ? (
+                { highlighted.comparing && (
                     <Inventory bag={ascean.inventory} inventory={highlighted.item} ascean={ascean} index={0} compare={true} story={true} />
-                ) : ( '' ) }
+                ) }
                 </> 
             ) : asceanViews === VIEWS.SETTINGS ? (
                 <div style={{ justifyContent: "center", alignItems: "center", height: "100%" }}>

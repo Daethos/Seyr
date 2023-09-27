@@ -19,7 +19,6 @@ const HomeSettings = ({ ascean, loggedUser, userProfile, accordionChange, accord
         fontWeight: 400,
         fontVariant: 'small-caps',
         fontSize: '25px',
-        height: '65vh',
         overflow: 'auto',
     };
     return (

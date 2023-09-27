@@ -36,6 +36,7 @@ const PhaserInventoryBag = ({ setHighlighted, highlighted, dragAndDropInventory,
             <div className='story-inventory-bag'>
                 { dragAndDropInventory?.length > 0 && (
                     dragAndDropInventory.map((item: any, index: number) => {
+                        if (!item) return;
                         return (
                             <Droppable key={index} droppableId={item._id}>
                             {(provided, snapshot) => (

@@ -230,6 +230,7 @@ const Inventory = ({ ascean, inventory, bag, gameDispatch, blacksmith, index, ga
                 inventoryType: inventoryType,
                 upgradeMatches: matches,
             };
+            console.log(data, "Upgrading Item?")
             const res = await eqpAPI.upgradeEquipment(data);
             setInventoryModalShow(false);
             setForgeModalShow(false);
