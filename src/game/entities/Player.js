@@ -441,17 +441,17 @@ export default class Player extends Entity {
             objectA: [playerSensor],
             callback: (other) => {
                 if (this.isValidEnemyCollision(other)) {
-                    const collisionPoint = this.calculateCollisionPoint(other);
-                    const attackDirection = this.getAttackDirection(collisionPoint);
-                    console.log(`Are you properly oriented? ${attackDirection} ${this.flipX} ${attackDirection === this.flipX}`)
-                    if (attackDirection === this.flipX) {
+                    // const collisionPoint = this.calculateCollisionPoint(other);
+                    // const attackDirection = this.getAttackDirection(collisionPoint);
+                    // console.log(`Are you properly oriented? ${attackDirection} ${this.flipX} ${attackDirection === this.flipX}`)
+                    // if (attackDirection === this.flipX) {
                         this.actionAvailable = true;
                         this.triggeredActionAvailable = other.gameObjectB;
                         if (!this.actionTarget) this.actionTarget = other;
                         if (!this.attacking) this.attacking = other.gameObjectB;
                         if (!this.currentTarget) this.currentTarget = other.gameObjectB;
                         if (!this.targetID) this.targetID = other.gameObjectB.enemyID;    
-                    };
+                    // };
                 };
             },
             context: this.scene,
@@ -1346,8 +1346,6 @@ export default class Player extends Entity {
         
         // ==================== SETTING VELOCITY ==================== \\
         
-        // this.flipX = this.body.velocity.x < 0;
-        console.log(`Player Orientation: ${this.flipX ? 'Left' : 'Right'}`)
         this.playerVelocity.limit(speed);
         this.setVelocity(this.playerVelocity.x, this.playerVelocity.y);
         // console.log(this.scene.multiplayer)

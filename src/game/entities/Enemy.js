@@ -517,7 +517,7 @@ export default class Enemy extends Entity {
             loop: false,
         });
     }; 
-    onPatrolUpdate = (dt) => { 
+    onPatrolUpdate = (_dt) => { 
         this.setVelocity(this.patrolVelocity.x, this.patrolVelocity.y);
     };
     onPatrolExit = () => {
@@ -529,9 +529,12 @@ export default class Enemy extends Entity {
         this.setVelocity(0);
         this.scene.showDialog(true);
     };
-    onAwarenessUpdate = (dt) => {};
+    onAwarenessUpdate = (_dt) => {
+        this.setStatic(true);
+    };
     onAwarenessExit = () => {
         this.anims.stop('player_idle');
+        this.setStatic(false);
         this.scene.showDialog(false);
     };
 
@@ -561,7 +564,7 @@ export default class Enemy extends Entity {
             loop: true
         }); 
     }; 
-    onChaseUpdate = (dt) => {
+    onChaseUpdate = (_dt) => {
         if (!this.attacking) return;
         const rangeMultiplier = this.rangedDistanceMultiplier(1.75);
         const direction = this.attacking.position.subtract(this.position);
@@ -601,7 +604,7 @@ export default class Enemy extends Entity {
             loop: true,
         });
     };
-    onCombatUpdate = (dt) => {
+    onCombatUpdate = (_dt) => {
         this.evaluateCombatDistance();
     };
     onCombatExit = () => { 
@@ -624,7 +627,7 @@ export default class Enemy extends Entity {
         }; 
         this.handleAnimations();
     };
-    onEvasionUpdate = (dt) => {
+    onEvasionUpdate = (_dt) => {
         if (this.isDodging) { 
             this.anims.play('player_slide', true);
         };
@@ -644,7 +647,7 @@ export default class Enemy extends Entity {
         this.isAttacking = true;
         this.attack();
     };
-    onAttackUpdate = (dt) => {
+    onAttackUpdate = (_dt) => {
         if (this.frameCount === FRAME_COUNT.ATTACK_LIVE && !this.isRanged) this.scene.combatMachine.input('computerAction', 'attack', this.enemyID);
         if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isAttacking) this.evaluateCombatDistance(); 
@@ -657,7 +660,7 @@ export default class Enemy extends Entity {
         this.isCountering = true;
         this.counter();
     };
-    onCounterUpdate = (dt) => {
+    onCounterUpdate = (_dt) => {
         if (this.frameCount === FRAME_COUNT.COUNTER_LIVE && !this.isRanged) this.scene.combatMachine.input('computerAction', 'counter', this.enemyID);
         if (!this.isRanged) this.swingMomentum(this.attacking);
         if (!this.isCountering) this.evaluateCombatDistance();
@@ -680,7 +683,7 @@ export default class Enemy extends Entity {
         this.body.parts[1].vertices[0].x += this.wasFlipped ? this.colliderDisp : -this.colliderDisp;
         this.handleAnimations();
     };
-    onDodgeUpdate = (dt) => {
+    onDodgeUpdate = (_dt) => {
         if (!this.isDodging) this.evaluateCombatDistance();
     };
     onDodgeExit = () => {

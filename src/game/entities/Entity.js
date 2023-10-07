@@ -99,7 +99,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.touching = [];
         this.knockbackActive = false;
         this.knocedBack = false;
-        this.knockbackForce = 0.01; // 0.1 is for Platformer, trying to lower it for Top Down
+        this.knockbackForce = 0.1; // 0.1 is for Platformer, trying to lower it for Top Down
         this.knockbackDirection = {};
         this.knockbackDuration = 250;
         
@@ -297,44 +297,39 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     knockback(other) {
         if (!other.pair.gameObjectB || !other.pair.gameObjectB.body) return;
         let bodyPosition = other.pair.gameObjectB.body.position;
-        let body = other.pair.gameObjectB.body; 
+        // let body = other.pair.gameObjectB.body; 
         let offset = Phaser.Physics.Matter.Matter.Vector.mult(other.pair.collision.normal, other.pair.collision.depth); 
         let collisionPoint = Phaser.Physics.Matter.Matter.Vector.add(offset, bodyPosition);
         this.knockbackDirection = this.flipX ? Phaser.Physics.Matter.Matter.Vector.sub(collisionPoint, bodyPosition) : Phaser.Physics.Matter.Matter.Vector.sub(bodyPosition, collisionPoint);
         this.knockbackDirection = Phaser.Physics.Matter.Matter.Vector.normalise(this.knockbackDirection); 
-       
+        
+        const enemy = this.scene.getEnemy(other.pair.gameObjectB.enemyID);
         const accelerationFrames = 12; 
         const accelerationStep = this.knockbackForce / accelerationFrames; 
         const dampeningFactor = 0.9; 
-        const knockbackDuration = 12; 
-        const knockbackInterval = 16;
+        const knockbackDuration = 350;
         let currentForce = 0; 
-        let elapsedTime = 0; 
- 
-        const knockbackLoop = () => {
-            if (elapsedTime >= knockbackDuration) { 
-                knockbackEvent.remove();
+
+        const knockbackLoop = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            console.log(`Knockback: ${elapsed} / ${knockbackDuration}`);
+            if (elapsed >= knockbackDuration) {
                 return;
             };
-            
-            if (currentForce < this.knockbackForce) currentForce += accelerationStep; 
+
+            if (currentForce < this.knockbackForce) currentForce += accelerationStep;
             const forceX = (this.knockbackDirection.x * currentForce) * (this.flipX ? -5 : 5);
             const forceY = (this.knockbackDirection.y * currentForce) * (this.flipX ? -5 : 5);
-            Phaser.Physics.Matter.Matter.Body.applyForce(body, bodyPosition, {
-                x: forceX,
-                y: forceY
-            });
+            enemy.setVelocityX(forceX);
+            enemy.setVelocityY(forceY);
             currentForce *= dampeningFactor;
-            elapsedTime++;
+            requestAnimationFrame(knockbackLoop);
         };
-           
-        const knockbackEvent = this.scene.time.addEvent({
-            delay: knockbackInterval,
-            callback: knockbackLoop,
-            callbackScope: this,
-            loop: true
-        });
 
+        let startTime = null;
+        requestAnimationFrame(knockbackLoop);
+        
         if ("vibrate" in navigator) {
             navigator.vibrate(40);
         };
