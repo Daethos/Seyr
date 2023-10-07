@@ -146,7 +146,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     startingSpeed = (entity) => {
-        let speed = 1.5; // PLAYER.SPEED.INITIAL
+        let speed = 1.25; // PLAYER.SPEED.INITIAL
         const helmet = entity.helmet.type;
         const chest = entity.chest.type;
         const legs = entity.legs.type;
@@ -311,7 +311,6 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         let currentForce = 0; 
         let elapsedTime = 0; 
  
-
         const knockbackLoop = () => {
             if (elapsedTime >= knockbackDuration) { 
                 knockbackEvent.remove();
@@ -410,6 +409,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
     };
 
     checkActionSuccess = (entity, target) => {
+        if (entity === 'player') console.log(`Checking if ${entity} action: ${this.scene.state.action} is successful: ${this.actionAvailable}`);
         if (entity === 'player' && this.actionAvailable && this.triggeredActionAvailable) {
             this.actionSuccess = true;
             this.attackedTarget = this.triggeredActionAvailable;

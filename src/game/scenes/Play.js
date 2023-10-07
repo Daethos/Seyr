@@ -130,6 +130,14 @@ export default class Play extends Phaser.Scene {
         this.map.getObjectLayer('Enemies').objects.forEach(enemy => this.enemies.push(new Enemy({ scene: this, x: enemy.x, y: enemy.y, texture: 'player_actions', frame: 'player_idle_0' })));
         this.map.getObjectLayer('Npcs').objects.forEach(npc => this.npcs.push(new NPC({ scene: this, x: npc.x, y: npc.y, texture: 'player_actions', frame: 'player_idle_0' })));
         // this.map.getObjectLayer('Treasures').objects.forEach(treasure => this.enemies.push(new Treasure({ scene: this, treasure })));
+        this.player.setCollisionGroup(1);
+        this.player.setCollidesWith(0);
+        this.enemies.forEach(enemy => {
+            enemy.setCollisionGroup(2)
+            enemy.setCollidesWith(0);
+        });
+        // this.npcs.forEach(npc => npc.setCollisionGroup(0));
+
 
         // ====================== Combat Machine ====================== \\
 

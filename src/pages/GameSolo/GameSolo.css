@@ -851,27 +851,27 @@
 }
 
 @media screen and (max-width: 800px) {
-  .game-block {
-      height: 100%;
-  }
-  .game-stat h4,
-  .game-stat p {
-        font-size: 10px;
-  } 
-  .text-box {
-      height: 20%;
-      width: 100%;
-      font-size: 7.5px;
-  }
+    .game-block {
+        height: 100%;
+    }
+    .game-stat h4,
+    .game-stat p {
+            font-size: 10px;
+    } 
+    .text-box {
+        height: 20%;
+        width: 100%;
+        font-size: 7.5px;
+    }
 }
 
 .game-map {
-  border: 3px solid purple;
-  border-radius: 6px;
-  box-shadow: 2px 2px 2px black;
-  z-index: 99;
-  position: absolute;
-  background-color: black;
+    border: 3px solid purple;
+    border-radius: 6px;
+    box-shadow: 2px 2px 2px black;
+    z-index: 99;
+    position: absolute;
+    background-color: black;
 }
 .gameplayername {
   font-size: 13.5px;
@@ -881,7 +881,7 @@
 }
 
 .dialog-picture {
-  width: 15vw;
+  max-width: 15vw;
   border: 2px solid purple;
   border-radius: 50%;
 }

@@ -443,6 +443,7 @@ export default class Player extends Entity {
                 if (this.isValidEnemyCollision(other)) {
                     const collisionPoint = this.calculateCollisionPoint(other);
                     const attackDirection = this.getAttackDirection(collisionPoint);
+                    console.log(`Are you properly oriented? ${attackDirection} ${this.flipX} ${attackDirection === this.flipX}`)
                     if (attackDirection === this.flipX) {
                         this.actionAvailable = true;
                         this.triggeredActionAvailable = other.gameObjectB;
@@ -532,6 +533,7 @@ export default class Player extends Entity {
     
     getAttackDirection(collisionPoint) {
         const sensorPosition = this.sensor.position;
+        // console.log(collisionPoint.x < sensorPosition.x, 'collisionPoint.x < sensorPosition.x')
         return collisionPoint.x < sensorPosition.x;
     };
 
@@ -981,7 +983,7 @@ export default class Player extends Entity {
             };
         };
             
-        if (!this.isRanged) this.knockback(this.actionTarget); // actionTarget
+        this.knockback(this.actionTarget); // actionTarget
         // screenShake(this.scene); 
     };
 
@@ -1344,6 +1346,8 @@ export default class Player extends Entity {
         
         // ==================== SETTING VELOCITY ==================== \\
         
+        // this.flipX = this.body.velocity.x < 0;
+        console.log(`Player Orientation: ${this.flipX ? 'Left' : 'Right'}`)
         this.playerVelocity.limit(speed);
         this.setVelocity(this.playerVelocity.x, this.playerVelocity.y);
         // console.log(this.scene.multiplayer)
