@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import Firewater from '../../components/GameCompiler/Firewater';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOnlyInventoryFetch, setShakeDuration, setShakeIntensity, setTutorialContent, setVibrationTime, setVolume } from '../reducers/gameState';
-import { Player } from '../../components/GameCompiler/GameStore';
+import { Equipment, Player } from '../../components/GameCompiler/GameStore';
 import {CombatSettings, GeneralSettings, InventorySettings, TacticSettings, ControlSettings} from '../../components/GameCompiler/SettingConcerns';
 import { CombatData } from '../../components/GameCompiler/CombatStore';
 
@@ -78,15 +78,15 @@ const StoryAscean = ({ ascean, asceanViews, restartGame }: Props) => {
 
     const checkHighlight = (): void => {
         if (highlighted?.item) {
-            const item = ascean.inventory.find((item: any) => item._id === highlighted?.item?._id);
+            const item = ascean.inventory.find((item: Equipment) => item?._id === highlighted?.item?._id);
             if (!item) setHighlighted({ item: null, comparing: false });
         };
     };
 
-    const saveInventory = async (inventory: any): Promise<void> => {
+    const saveInventory = async (inventory: Equipment[]): Promise<void> => {
         try {
             setSavingInventory(true);
-            const flattenedInventory = inventory.map((item: any) => item._id);
+            const flattenedInventory = inventory.map((item: Equipment) => item?._id);
             const data = { ascean: ascean._id, inventory: flattenedInventory };
             await asceanAPI.saveAsceanInventory(data);
             dispatch(getOnlyInventoryFetch(ascean._id));

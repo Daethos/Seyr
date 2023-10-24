@@ -160,10 +160,10 @@ export default class Player extends Entity {
 
         this.metaMachine = new StateMachine(this, 'player');
         this.metaMachine
-                .addState(States.CLEAN, {
-                    onEnter: this.onCleanEnter,
-                    onExit: this.onCleanExit,
-                })
+            .addState(States.CLEAN, {
+                onEnter: this.onCleanEnter,
+                onExit: this.onCleanExit,
+            })
             .addState(States.STEALTH, {
                 onEnter: this.onStealthEnter,
                 onUpdate: this.onStealthUpdate,
@@ -982,8 +982,8 @@ export default class Player extends Entity {
                 this.scene.combatMachine.action({ type: 'Player', data: { playerAction: { action: action, counter: this.scene.state.counterGuess }, enemyID: this.attackedTarget.enemyID, ascean: this.attackedTarget.ascean, damageType: this.attackedTarget.currentDamageType, combatStats: this.attackedTarget.combatStats, weapons: this.attackedTarget.weapons, health: this.attackedTarget.health, actionData: { action: this.attackedTarget.currentAction, counter: this.attackedTarget.counterAction }} });
             };
         };
-            
         this.knockback(this.actionTarget); // actionTarget
+        if (this.isStealthing) this.scene.stun(this.attackedTarget.enemyID);
         // screenShake(this.scene); 
     };
 

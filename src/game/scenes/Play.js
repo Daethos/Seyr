@@ -15,6 +15,7 @@ import CombatMachine from '../phaser/CombatMachine';
 import { Mrpas } from 'mrpas';
 import ActionButtons from '../phaser/ActionButtons';
 import MultiPlayer from '../entities/MultiPlayer';
+import { States } from '../phaser/StateMachine';
 
 export const { Bodies } = Phaser.Physics.Matter.Matter;
 export const worldToTile = (tile) => Math.floor(tile / 32);
@@ -444,6 +445,11 @@ export default class Play extends Phaser.Scene {
     snare = (id) => {
         let enemy = this.enemies.find(enemy => enemy.enemyID === id);
         enemy.isSnared = true;
+    };
+    stun = (id) => {
+        let enemy = this.enemies.find(enemy => enemy.enemyID === id);
+        console.log(`Enemy is stunned`)
+        enemy.isBlindsided = true;
     };
 
     // ============================ Game ============================ \\

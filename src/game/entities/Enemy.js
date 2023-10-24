@@ -9,7 +9,7 @@ import EventEmitter from "../phaser/EventEmitter";
 
 const DISTANCE = {
     MIN: 0,
-    ATTACK: 50,
+    ATTACK: 35,
     THRESHOLD: 75,
     CHASE: 200,
     RANGED_ALIGNMENT: 10,
@@ -234,7 +234,7 @@ export default class Enemy extends Entity {
 
             if (!this.isConsumed && !this.isHurt) this.stateMachine.setState(States.HURT);
             if (this.currentRound !== e.combatRound) {
-                if (this.isStunned) this.isStunned = false;
+                // if (this.isStunned) this.isStunned = false;
                 if (this.isPolymorphed) this.isPolymorphed = false;
                 if (!this.inCombat && !this.isDefeated) {
                     this.jumpIntoCombat();
@@ -903,7 +903,7 @@ export default class Enemy extends Entity {
     };
 
     onStunEnter = () => {
-        this.stunDuration = 2500;
+        this.stunDuration = 2000;
         this.setTint(0x888888); 
         this.setStatic(true);
     };
@@ -912,6 +912,7 @@ export default class Enemy extends Entity {
         if (!this.isStunned) this.evaluateCombatDistance(); // Wasn't if (!this.isStunned)
         this.stunDuration -= dt;
         if (this.stunDuration <= 0) {
+            this.isBlindsided = false;
             this.isStunned = false;
         };
     };
@@ -1200,6 +1201,12 @@ export default class Enemy extends Entity {
         if (this.isSnared && !this.metaMachine.isCurrentState(States.SNARE)) {
             this.metaMachine.setState(States.SNARE); 
             return;    
+        };
+        if (this.isBlindsided && !this.stateMachine.isCurrentState(States.STUN)) {
+            this.setStun();
+            this.stateMachine.setState(States.STUN);
+            this.isBlindsided = false;
+            return;
         };
         if (this.actionSuccess) {
             this.actionSuccess = false;

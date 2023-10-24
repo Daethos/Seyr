@@ -67,6 +67,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.isRolling = false;
 
         this.isAtEdge = false;
+        this.isBlindsided = false;
         this.inCombat = false;
         this.isConsuming = false;
         this.isCrouching = false;
@@ -98,7 +99,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         this.targets = [];
         this.touching = [];
         this.knockbackActive = false;
-        this.knocedBack = false;
+        this.knocedBack = false; 
         this.knockbackForce = 0.1; // 0.1 is for Platformer, trying to lower it for Top Down
         this.knockbackDirection = {};
         this.knockbackDuration = 250;
@@ -313,7 +314,7 @@ export default class Entity extends Phaser.Physics.Matter.Sprite {
         const knockbackLoop = (timestamp) => {
             if (!startTime) startTime = timestamp;
             const elapsed = timestamp - startTime;
-            console.log(`Knockback: ${elapsed} / ${knockbackDuration}`);
+            // console.log(`Knockback: ${elapsed} / ${knockbackDuration}`);
             if (elapsed >= knockbackDuration) {
                 return;
             };
